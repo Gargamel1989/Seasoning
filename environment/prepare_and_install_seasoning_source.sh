@@ -5,7 +5,7 @@ cd $SEASONING_HOME
 
 # Prepare apache configuration
 
-sed "s#\*SEASONING_HOME\*#$SEASONING_HOME#" seasoning_website/apache/seasoning.conf > /tmp/seasoning.conf
+sed "s#\*SEASONING_HOME\*#$SEASONING_HOME#g" seasoning_website/apache/seasoning.conf > /tmp/seasoning.conf
 
 
 # Prepare django configuration
