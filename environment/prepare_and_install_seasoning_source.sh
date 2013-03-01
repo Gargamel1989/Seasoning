@@ -1,5 +1,6 @@
 #!/bin/sh
-cd $SEASONING_HOME
+cd $SEASONING_HOME/
+source $SEASONING_HOME/seasoning_conf/secrets.sh
 
 ### PREPARE CONFIGURATION ###
 
@@ -10,8 +11,12 @@ sed "s#\*SEASONING_HOME\*#$SEASONING_HOME#g" seasoning_website/apache/seasoning.
 
 # Prepare django configuration
 
-echo "TODO: insert passwords etc in django settings files"
-
+sed "s#\*SEASONING_HOME\*#$SEASONING_HOME#g" seasoning_website/Seasoning/Seasoning/deploy_settings.py | \
+sed "s#\*DATABASE_NAME\*#$DATABASE_NAME#g" | \
+sed "s#\*DATABASE_PASSWORD\*#$DATABASE_PASSWORD#g" | \
+sed "s#\*SECRET_KEY\*#$SECRET_KEY#g" | \
+sed "s#\*EMAIL_HOST_PASSWORD\*#$EMAIL_HOST_PASSWORD#g" | \
+sed "s#\*RECAPTCHA_PRIVATE_KEY\*#$RECAPTCHA_PRIVATE_KEY#g" > seasoning_website/Seasoning/Seasoning/settings.py
 
 
 ### MOVE FILES ###
@@ -29,9 +34,3 @@ echo "TODO: insert passwords etc in django settings files"
 # Move Apache config
 
 sudo cp /tmp/seasoning.conf /etc/httpd/conf.d/
-
-
-# Set Django in Production Mode
-
-echo "TODO: Switch deployment setting files"
-
