@@ -1,2 +1,0 @@
-# Prepare apache configuration
-sed "s#\*SEASONING_HOME\*#$SEASONING_HOME#" seasoning_website/apache/seasoning.conf.tmp > seasoning_website/apache/seasoning.conf
