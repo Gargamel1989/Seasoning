@@ -1,0 +1,2 @@
+rm -rf $SEASONING_HOME/seasoning_website
+git pull git://github.com/Gargamel1989/Seasoning.git stable/$SEASONING_VERSION $SEASONING_HOME/seasoning_website
