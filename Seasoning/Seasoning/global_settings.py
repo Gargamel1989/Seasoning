@@ -93,18 +93,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.admin',
-    'django.contrib.comments',
     
     # 3rd party:
-    'captcha',
-    'registration',
-    'Seasoning.registration',
-    'djangoratings',
     
     # Custom applications:
-    'Seasoning.news',
-    'Seasoning.ingredients',
-    'Seasoning.recipes',
 )
 
 # A sample logging configuration. The only tangible logging

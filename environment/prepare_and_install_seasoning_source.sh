@@ -13,6 +13,7 @@ sed "s#\*SEASONING_HOME\*#$SEASONING_HOME#g" seasoning_website/apache/seasoning.
 
 sed "s#\*SEASONING_HOME\*#$SEASONING_HOME#g" seasoning_website/Seasoning/Seasoning/deploy_settings.py | \
 sed "s#\*DATABASE_NAME\*#$DATABASE_NAME#g" | \
+sed "s#\*DATABASE_USER\*#$DATABASE_USER#g" | \
 sed "s#\*DATABASE_PASSWORD\*#$DATABASE_PASSWORD#g" | \
 sed "s#\*SECRET_KEY\*#$SECRET_KEY#g" | \
 sed "s#\*EMAIL_HOST_PASSWORD\*#$EMAIL_HOST_PASSWORD#g" | \
