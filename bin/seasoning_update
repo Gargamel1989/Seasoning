@@ -1,5 +1,5 @@
 #!/bin/sh
 
 rm -rf $SEASONING_HOME/seasoning_website
-git pull git://github.com/Gargamel1989/Seasoning.git stable/$SEASONING_VERSION $SEASONING_HOME/seasoning_website
+git clone git://github.com/Gargamel1989/Seasoning.git stable/$SEASONING_VERSION $SEASONING_HOME/seasoning_website
 sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_source.sh
