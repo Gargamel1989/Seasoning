@@ -1,6 +1,6 @@
 #!/bin/sh
 cd $SEASONING_HOME/
-source $SEASONING_HOME/seasoning_conf/secrets.sh
+source $SEASONING_HOME/seasoning_conf/secrets
 
 ### PREPARE CONFIGURATION ###
 
