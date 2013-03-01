@@ -1,0 +1,5 @@
+# Sync database
+$SEASONING_HOME/seasoning_env/bin/python $SEASONING_HOME/seasoning_website/Seasoning/manage.py syncdb
+
+# Restart Apache
+sudo service httpd restart
