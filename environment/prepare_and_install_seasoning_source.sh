@@ -23,7 +23,7 @@ echo "TODO: insert passwords etc in django settings files"
     mkdir ~/bin
   fi
   chmod -R 774 seasoning_website/bin
-  cp -p seasoning_website/bin/* ~/bin
+  sudo cp -p seasoning_website/bin/* /usr/local/bin
 
 
 # Move Apache config
