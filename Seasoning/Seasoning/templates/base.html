@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="en-us" />
+    <title>Seasoning | {% block title %}Geef smaak aan de seizoenen{% endblock %}</title>
+    <meta name="ROBOTS" content="ALL" />
+    <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="De Gilde der Feesters" />
+    <meta name="keywords" content="Duurzaam, Eten, Koken" />
+    <meta name="description" content="Seasoning is een online applicatie die u helpt bij het duurzamer maken van uw dagelijkse leven." />
+    <link href="{{ STATIC_URL }}css/{% block cssid %}base{% endblock %}.css" rel="stylesheet" type="text/css" media="screen" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/base.js" type="text/javascript"></script>
+	<script src="{{ STATIC_URL }}js/setcsrf.js" type="text/javascript"></script>
+    {% block extrahead %}{% endblock %}
+</head>
+  
+<body>
+    <div id="container">	
+	  	<!--  BEGIN Header -->
+	  	<div id="header-container">
+		    
+		    <!-- BEGIN Top Header -->
+		    <div id="header-top">
+		    	
+		    	<div id="headerlogo">
+		    		<a href="/"><img src="{{ STATIC_URL }}img/logo.png" /></a>
+		    	</div>  	
+		    	
+				<div id="headersearch">
+					<input name="search" id="headerSearchText" type="text" value="Zoek Seasoning.be"/>
+				</div>
+				
+				<div class="clear"></div>
+			</div>
+		    <!-- END Top Header -->
+				
+		    <!-- BEGIN Bottom Header -->
+		    <div id="header-bottom">
+		    	
+		    </div>
+		    <!-- END Bottom Header -->
+	    </div>
+		<!-- END Header -->
+	    	
+	    <!-- BEGIN Content -->    
+	    <div id="columnwrap">
+	    	<div id="content-main">
+	        	{% block content %}
+	        	{% endblock %}
+	        </div>
+		</div>
+	    <!-- END Content -->
+	    
+	    <!-- BEGIN Footer -->
+	    <div id="footer">
+	    	<div id="footer-container">
+		    	<div id="fleft">
+		    		<h1>Seasoning</h1>
+		    		<p id="slogan">
+			    		Geef smaak aan de seizoenen<br/>
+		    		</p>
+		    		<p id="ccl">
+		    			De inhoud en alle bestanddelen van Seasoning vallen onder de
+		    			<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl">
+		    				Creative Commons licentie
+		    			</a> <br/>
+		    		</p>
+		    		
+		    		<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl">
+		    			<img alt="Creative Commons Licentie" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" />
+		    		</a>
+		    	</div>
+		    	<div class="flinks">
+		    		<h1>Over Ons</h1>
+		    		<p>
+			    		<a href="/motifs/">Motivering</a>
+			    		<a href="/support/">Ondersteuning</a><br/>
+		    			<a href="/contact/">Contact</a><br/>
+		    		</p>
+		    	</div>
+		    	<div class="flinks">
+		    		<h1>Algemeen</h1>
+		    		<p>
+			    		<a href="/terms/">Voorwaarden</a><br/>
+			    		<a href="/privacypolicy/">Privacybeleid</a><br/>
+			    		<a href="/sitemap/">Sitemap</a><br/>
+		    		</p>
+		    	</div>
+	    	</div>
+	    </div>
+	    <!-- END Footer -->
+    </div>
+</body>
+</html>
