@@ -5,7 +5,7 @@ git pull -q git://github.com/Gargamel1989/Seasoning.git master
 
 
 if [ -n "$1" ]; then
-  git tag | grep $1
+  git tag | grep -q $1
   if [[ $? -eq 0 ]]; then
     SEASONING_VERSION=$1
   else
