@@ -1,7 +1,8 @@
 #!/bin/sh
 
 cd $SEASONING_HOME/seasoning_website
-git pull -q git://github.com/Gargamel1989/Seasoning.git master
+git fetch -q origin master
+git fetch -qt origin master
 
 
 if [ -n "$1" ]; then
