@@ -1,0 +1,9 @@
+{% load humanize %}
+Dit e-mail adres is enkele ogenblikken geleden gebruikt om een account te registreren bij
+<a href="www.seasoning.be">www.seasoning.be</a>. Indien u, de eigenaar van dit e-mail adres, dit gedaan hebt, kan u onderstaande 
+link gebruiken om het account te activeren:
+
+<a href="http://www.seasoning.be/activate/{{ activation_key }}/">http://www.seasoning.be/activate/{{ activation_key }}/</a>
+
+Indien u geen account geregistreerd hebt bij <a href="www.seasoning.be">www.seasoning.be</a>, kan u deze e-mail gewoon negeren. Het 
+account zal dan na {{ expiration_days|apnumber }} dagen verwijderd worden.
