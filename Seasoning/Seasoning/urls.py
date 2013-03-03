@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('',
     # General Pages
@@ -9,5 +9,8 @@ urlpatterns = patterns('',
     url(r'^sitemap/$', 'Seasoning.views.sitemap'),
     url(r'^support/$', 'Seasoning.views.support'),
     url(r'^terms/$', 'Seasoning.views.terms'),
+    
+    # Registration pages
+    url(r'^', include('registration.urls')),
 
 )

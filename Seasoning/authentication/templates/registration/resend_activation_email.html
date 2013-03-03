@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    <link href="{{ STATIC_URL }}css/accounts.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block content %}
+
+<h1>Activatie E-mail opnieuw verzenden</h1>
+
+{% if done %}
+
+<p>
+	Een nieuwe e-mail is met succes verzonden. Deze e-mail zou binnen de 15 minuten moeten
+	aankomen.
+</p>
+
+{% else %}
+
+<p>
+	Indien u na 15 minuten of langer nog geen activatie e-mail ontvangen hebt, kan u onderstaand
+	formuleer gebruiken om een nieuw exemplaar te verzenden.
+</p>
+
+<form action="/activate/resend/" method="post" class="account-form">
+	{% csrf_token %}
+	
+	<div class="field-wrapper">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+		{{ form.email.errors }}
+	</div>
+	
+	<input type="submit" value="Opnieuw Verzenden" id="account-submit" />
+</form>
+
+{% endif %}
+
+{% endblock %}
