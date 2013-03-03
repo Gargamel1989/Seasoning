@@ -1,17 +1,19 @@
 #!/bin/sh
 
 cd $SEASONING_HOME/seasoning_website
-git pull git://github.com/Gargamel1989/Seasoning.git master
+git pull -q git://github.com/Gargamel1989/Seasoning.git master
 
 
 if [ -n "$1" ]; then
   git tag | grep $1
   if [[ $? -eq 0 ]]; then
     SEASONING_VERSION=$1
+  else
+    echo "Requested version does not exist, using version " + $SEASONING_VERSION
   fi
 fi
 
-git checkout $SEASONING_VERSION
+git checkout -q $SEASONING_VERSION
 
 sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_source.sh
 
