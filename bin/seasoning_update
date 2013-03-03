@@ -9,7 +9,7 @@ if [ -n "$1" ]; then
   if [[ $? -eq 0 ]]; then
     SEASONING_VERSION=$1
   else
-    echo "Requested version does not exist, using version " + $SEASONING_VERSION
+    echo "Requested version does not exist, using version $SEASONING_VERSION"
   fi
 fi
 
