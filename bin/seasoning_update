@@ -1,7 +1,18 @@
 #!/bin/sh
 
-rm -rf $SEASONING_HOME/seasoning_website
-git clone git://github.com/Gargamel1989/Seasoning.git -b stable/$SEASONING_VERSION $SEASONING_HOME/seasoning_website
+cd $SEASONING_HOME/seasoning_website
+git pull git://github.com/Gargamel1989/Seasoning.git master
+
+
+if [ -n $1 ]; then
+  git tag | grep $1
+  if [[ $? -eq 0 ]]; then
+    SEASONING_VERSION=$1
+  fi
+fi
+
+git checkout $SEASONING_VERSION
+
 sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_source.sh
 
 # Collect static files
