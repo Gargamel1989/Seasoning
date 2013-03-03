@@ -31,11 +31,14 @@
 		    	
 		    	<div id="headerlogo">
 		    		<a href="/"><img src="{{ STATIC_URL }}img/logo.png" /></a>
-		    	</div>  	
+		    	</div>
 		    	
-				<div id="headersearch">
-					<input name="search" id="headerSearchText" type="text" value="Zoek Seasoning.be"/>
-				</div>
+		    	{% if user.is_authenticated %}
+		    	<a href="/logout/">Logout</a>
+		    	{% else %}
+		    	<a href="/register/">Registreer</a> of 
+		    	<a href="/login/">Login</a>
+		    	{% endif %}
 				
 				<div class="clear"></div>
 			</div>

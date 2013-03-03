@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    <link href="{{ STATIC_URL }}css/accounts.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block content %}
+
+<h1>Registratie Geslaagd!</h1>
+
+<p>Uw registratie is succesvol verlopen.</p>
+
+<p>
+	Er is zonet een e-mail verstuurd naar het door u opgegeven e-mail adres met verder
+	instructies om uw account te activeren. Deze e-mail zou binnen de 15 minuten moeten
+	aankomen. Indien u de e-mail binnen het kwartier niet ontvangen hebt, kan u <a href="/activate/resend/">deze link</a>
+	gebruiken om hem opnieuw te verzenden, of proberen aanmelden met uw inactieve account.
+</p>
+
+<p>
+	Zolang uw account niet geactiveerd is kan u zich spijtig genoeg nog niet aanmelden
+	op Seasoning.be. Terwijl u wacht kan u echter wel al <a href="/recipes/search/">enkele
+	lekkere recepten zoeken</a>, of wat <a href="/broken/">bijkomende informatie over duurzaam consumeren</a> lezen.
+</p>
+
+{% endblock %}
