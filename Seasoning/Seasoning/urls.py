@@ -11,6 +11,6 @@ urlpatterns = patterns('',
     url(r'^terms/$', 'Seasoning.views.terms'),
     
     # Registration pages
-    url(r'^', include('registration.urls')),
+    url(r'^', include('authentication.urls')),
 
 )
