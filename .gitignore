@@ -4,3 +4,4 @@
 .project
 .pydevproject
 dev_secrets.py
+.settings
