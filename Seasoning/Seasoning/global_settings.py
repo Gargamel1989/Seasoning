@@ -83,17 +83,24 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'django.contrib.staticfiles',
-#    'django.contrib.auth',
-#    'django.contrib.contenttypes',
-#    'django.contrib.sessions',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
 #    'django.contrib.sites',
 #    'django.contrib.messages',
 #    'django.contrib.humanize',
 #    'django.contrib.admin',
     
-    # 3rd party:
+    # Authentication:
+    'django.contrib.auth',
+    'registration',
+    'authentication',
+    
     
     # Custom applications:
+)
+
+AUTHENTICATION_BACKENDS = (
+    'authentication.backends.EmailAuthBackend',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -118,10 +125,6 @@ LOGGING = {
         },
     }
 }
-
-AUTHENTICATION_BACKENDS = (
-    'Seasoning.registration.backends.EmailAuthBackend',
-)
 
 # AUTH_PROFILE_MODULE = 'Seasoning.social.UserProfile'
 LOGIN_URL = '/login/'
