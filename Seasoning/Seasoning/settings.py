@@ -21,8 +21,8 @@ SECRET_KEY = 'devkey123123'
 
 EMAIL_HOST = 'smtp.live.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'test@seasoning.be'
-EMAIL_HOST_PASSWORD = 'none'
+EMAIL_HOST_USER = 'joeper_100@hotmail.com'
+EMAIL_HOST_PASSWORD = 'Zone6Tsand'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'activation@seasoning.be'
 
