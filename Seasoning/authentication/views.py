@@ -40,7 +40,7 @@ def login(request):
     else:
         return auth_login(request, authentication_form=EmailAuthenticationForm)
     
-def register(request):
+def register(request, *args, **kwargs):
     if request.is_ajax():
         if request.method == 'POST':
             form = EmailAuthenticationForm(data=request.POST)
@@ -50,4 +50,4 @@ def register(request):
                 #print form.username.errors
                 return HttpResponse(None,'application/javascript')
     else:
-        return auth_register(request, 'Seasoning.registration.backends.UserProfileRegistrationBackend', form_class=EmailUserCreationForm)
+        return auth_register(request, *args, **kwargs)
