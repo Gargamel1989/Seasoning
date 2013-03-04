@@ -94,6 +94,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'registration',
     'authentication',
+    'captcha'
     
     
     # Custom applications:
