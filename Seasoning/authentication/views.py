@@ -50,4 +50,4 @@ def register(request, *args, **kwargs):
                 #print form.username.errors
                 return HttpResponse(None,'application/javascript')
     else:
-        return auth_register(request, *args, **kwargs)
+        return auth_register(request, *args, form_class=EmailUserCreationForm, **kwargs)
