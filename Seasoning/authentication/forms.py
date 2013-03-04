@@ -18,7 +18,7 @@ class EmailAuthenticationForm(AuthenticationForm):
     password = forms.CharField(label="Wachtwoord", widget=forms.PasswordInput, error_messages={'required': 'Dit veld is verplicht'})
     next = forms.CharField(label=REDIRECT_FIELD_NAME, widget=forms.HiddenInput, initial=settings.LOGIN_REDIRECT_URL)
     message_incorrect_password = "Gelieve een geldige e-mail en wachtwoord combinatie in te voeren."
-    message_inactive = mark_safe('Dit account is nog niet geactiveerd. Volg de instructies in de activatie e-mail om het te activeren. Indien u na 15' + \
+    message_inactive = mark_safe('Deze account is nog niet geactiveerd. Volg de instructies in de activatie e-mail om het te activeren. Indien u na 15' + \
         ' minuten nog steeds geen activatiemail hebt gekregen, gebruik dan <a href="/activate/resend/">dit formulier</a> om een nieuwe te verzenden.')
 
     def __init__(self, request=None, *args, **kwargs):

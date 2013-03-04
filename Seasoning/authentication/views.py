@@ -1,5 +1,5 @@
 from django.template.response import TemplateResponse
-from Seasoning.authentication.forms import ResendActivationEmailForm,\
+from authentication.forms import ResendActivationEmailForm,\
     EmailAuthenticationForm, EmailUserCreationForm
 from django.contrib.sites.models import RequestSite
 from django.contrib.auth.views import login as auth_login
