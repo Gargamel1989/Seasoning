@@ -3,7 +3,7 @@ from authentication.forms import EmailAuthenticationForm
 
 urlpatterns = patterns('',
                        
-    url(r'^login/$', 'django.contrib.auth.views.login', {'authentication_form'=EmailAuthenticationForm}),
+    url(r'^login/$', 'django.contrib.auth.views.login', {'authentication_form': EmailAuthenticationForm}),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
     url(r'^register/$', 'authentication.views.register', {'backend': 'registration.backends.default.DefaultBackend'}),
     url(r'^activate/resend/$', 'authentication.views.resend_activation_email'),                       
