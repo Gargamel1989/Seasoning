@@ -5,26 +5,31 @@ from authentication.views import registration_complete, registration_closed,\
 from authentication.backends import DefaultBackend
 
 urlpatterns = patterns('',
-                       
+    
+    # Registration urls                   
+    url(r'^register/$', register, {'backend': DefaultBackend},
+        name='registration'),
+    url(r'^register/closed/$', registration_closed,
+        name='registration_disallowed'),
+    url(r'^register/complete/$', registration_complete,
+        name='registration_complete'),
+    
+    # Activation urls
+    url(r'^activate/resend/$', resend_activation_email,
+        name='resend_activation_email'),
+    url(r'^activate/complete/$', activation_complete, 
+        name='activation_complete'),
+    url(r'^activate/(?P<activation_key>\w+)/$', activate, {'backend': DefaultBackend},
+        name='registration_activate'),
+    
+    # Login urls
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'authentication/login.html',
                                                          'authentication_form': EmailAuthenticationForm}),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
-    url(r'^register/$', register, {'backend': DefaultBackend}),
-    url(r'^activate/resend/$', resend_activation_email),
-    url(r'^activate/complete/$', activation_complete, 
-        name='registration_activation_complete'),
-    # Activation keys get matched by \w+ instead of the more specific
-    # [a-fA-F0-9]{40} because a bad activation key should still get to the view;
-    # that way it can return a sensible "invalid key" message instead of a
-    # confusing 404.
-    url(r'^activate/(?P<activation_key>\w+)/$',
-                           activate,
-                           {'backend': DefaultBackend},
-                           name='registration_activate'),
-    url(r'^register/complete/$', registration_complete,
-        name='registration_complete'),
-    url(r'^register/closed/$', registration_closed,
-        name='registration_disallowed'),
+    
+    # Profile urls
     url(r'^profile/account/$', 'authentication.views.account_settings'),
-    url(r'', include('registration.auth_urls')),
+    
+    # Misc urls
+    url(r'', include('django.contrib.auth.urls')),
 )
