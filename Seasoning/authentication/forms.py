@@ -110,7 +110,8 @@ class EmailAuthenticationForm(forms.Form):
                            "Note that both fields may be case-sensitive."),
         'no_cookies': _("Your Web browser doesn't appear to have cookies "
                         "enabled. Cookies are required for logging in."),
-        'inactive': _("This account is inactive."),
+        'inactive': mark_safe(_("This account has not been activated yet, so you may not log in at this time. If you haven't received an activation email for 15 \
+                      minutes after registering, you can use <a href=\"/activate/resend/\">this form</a> to resend an activation email.")),
     }
 
     def __init__(self, request=None, *args, **kwargs):
@@ -122,7 +123,7 @@ class EmailAuthenticationForm(forms.Form):
         """
         self.request = request
         self.user_cache = None
-        super(AuthenticationForm, self).__init__(*args, **kwargs)
+        super(EmailAuthenticationForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         email = self.cleaned_data.get('email')

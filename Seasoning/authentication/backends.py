@@ -135,7 +135,7 @@ class DefaultBackend(object):
         account activation.
         
         """
-        return ('registration_activation_complete', (), {})
+        return ('activation_complete', (), {})
     
 
 class EmailAuthBackend(ModelBackend):
