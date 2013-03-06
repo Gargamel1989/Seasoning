@@ -2,9 +2,10 @@ from django.template.response import TemplateResponse
 from authentication.forms import ResendActivationEmailForm,\
     EmailAuthenticationForm, EmailUserCreationForm
 from django.contrib.sites.models import RequestSite
-from django.contrib.auth.views import login as auth_login
 from registration.views import register as auth_register
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
 def resend_activation_email(request):
     
