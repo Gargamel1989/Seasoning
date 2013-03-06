@@ -7,6 +7,7 @@ from django.forms.fields import BooleanField
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from registration.forms import RegistrationFormUniqueEmail
+from django.utils.translation import ugettext_lazy as _
 
 required_string = "Dit veld is verplicht."
 
