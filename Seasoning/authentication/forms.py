@@ -1,5 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm,\
-    PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import AuthenticationForm,PasswordResetForm, SetPasswordForm
 from django import forms
 from django.contrib.auth import authenticate, REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
@@ -7,6 +6,8 @@ from captcha.fields import ReCaptchaField
 from django.forms.fields import BooleanField
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from registration.forms import RegistrationFormUniqueEmail
+from django.utils.translation import ugettext_lazy as _
 
 required_string = "Dit veld is verplicht."
 
@@ -44,63 +45,20 @@ class EmailAuthenticationForm(AuthenticationForm):
         self.check_for_test_cookie()
         return self.cleaned_data
     
-class EmailUserCreationForm(UserCreationForm):
+class EmailUserCreationForm(RegistrationFormUniqueEmail):
     """
-    Override error messages for language reasons
+    Subclass of ``RegistrationFormUniqueEmail`` which adds a required checkbox
+    for agreeing to a site's Terms of Service and a recaptcha.
+    
     """
-    error_messages = {
-        'duplicate_username': "De opgegeven gebruikersnaam is reeds in gebruik.",
-        'password_mismatch': "De opgegeven wachtwoorden kwamen niet overeen.",
-    }
-    
-    
-    username = forms.RegexField(label="Gebruikersnaam", max_length=30,
-                                regex=r'^[\w.@+-]+$',
-                                help_text = "",
-                                error_messages = {'invalid': "De gebruikersnaam mag enkel letters, nummers en @/./+/-/_ bevatten.",
-                                                  'required': required_string})
-   
+    tos = forms.BooleanField(widget=forms.CheckboxInput(attrs=attrs_dict),
+                             label=_(u'I have read and agree to the Terms of Service'),
+                             error_messages={'required': _("You must agree to the terms to register")})
+                             
     captcha = ReCaptchaField(attrs={'theme': 'clean',
                                     'tabindex': 5},
-                             error_messages = {'required': required_string})
-    
-    terms = BooleanField(error_messages = {'required': "U moet de voorwaarden en het privacybeleid aanvaarden"})
-   
-    """
-    Override the default UserCreationForm to force email-as-username behavior.
-    """
-    
-    email = forms.EmailField(label="E-mail", max_length=75,
-                             error_messages = {'invalid': "Gelieve een geldig e-mail adres op te geven.",
-                                               'required': required_string})
+                             error_messages = {'required': _("You must enter the correct ReCaptcha characters")})
 
-    class Meta:
-        model = User
-        fields = ("username", "email",)
-
-    def __init__(self, *args, **kwargs):
-        super(EmailUserCreationForm, self).__init__(*args, **kwargs)
-        self.fields['password1'].label = "Wachtwoord"
-        self.fields['password1'].error_messages['required'] = required_string
-        self.fields['password2'].label = "Bevestig Wachtwoord"
-        self.fields['password2'].error_messages['required'] = required_string
-        self.fields['password2'].help_text = ""
-
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        try:
-            User.objects.get(email=email)
-            raise forms.ValidationError("Het opgegeven e-mail adres is reeds in gebruik.")
-        except User.DoesNotExist:
-            return email
-    
-    def clean(self):
-        cleaned_data = super(EmailUserCreationForm, self).clean()
-        
-#        if not cleaned_data.get("terms"):
-#            raise forms.ValidationError("U moet de voorwaarden en het privacybeleid aanvaarden")
-                
-        return cleaned_data
     
 class ResendActivationEmailForm(forms.Form):
     
@@ -124,26 +82,3 @@ class ResendActivationEmailForm(forms.Form):
         
         except User.DoesNotExist:
             raise forms.ValidationError("Het opgegeven e-mail adres werd niet gevonden. (" + self.cleaned_data["email"] + ").")
-        
-class CustomPasswordResetForm(PasswordResetForm):
-    
-    error_messages = {
-        'unknown': "Het opgegeven e-mail adres werd niet gevonden. "
-                     "Hebt u zich reeds geregistreerd?",
-        'unusable': "O-o, het wachtwoord van dit account kan niet veranderd worden.",
-    }
-     
-    email = forms.EmailField(label="E-mail", max_length=75,
-                             error_messages = {'invalid': "Gelieve een geldig e-mail adres op te geven.",
-                                               'required': required_string})
-    
-class CustomSetPasswordForm(SetPasswordForm):
-    
-    error_messages = {
-        'password_mismatch': "De opgegeven wachtwoorden kwamen niet overeen.",
-    }
-    
-    new_password1 = forms.CharField(label="Nieuw Wachtwoord",
-                                    widget=forms.PasswordInput)
-    new_password2 = forms.CharField(label="Bevestig Wachtwoord",
-                                    widget=forms.PasswordInput)

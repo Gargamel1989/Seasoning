@@ -34,12 +34,6 @@ def resend_activation_email(request):
         
     return TemplateResponse(request, 'registration/resend_activation_email.html', context)
 
-def login(request):    
-    if request.is_ajax():
-        pass
-    else:
-        return auth_login(request, authentication_form=EmailAuthenticationForm)
-    
 def register(request, *args, **kwargs):
     if request.is_ajax():
         if request.method == 'POST':
@@ -51,3 +45,7 @@ def register(request, *args, **kwargs):
                 return HttpResponse(None,'application/javascript')
     else:
         return auth_register(request, *args, form_class=EmailUserCreationForm, **kwargs)
+
+@login_required
+def account_settings(request):
+    return render(request, 'registration/account_settings.html')
