@@ -34,12 +34,6 @@ def resend_activation_email(request):
         
     return TemplateResponse(request, 'registration/resend_activation_email.html', context)
 
-def login(request):    
-    if request.is_ajax():
-        pass
-    else:
-        return auth_login(request, authentication_form=EmailAuthenticationForm)
-    
 def register(request, *args, **kwargs):
     if request.is_ajax():
         if request.method == 'POST':
