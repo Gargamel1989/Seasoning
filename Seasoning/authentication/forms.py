@@ -51,7 +51,7 @@ class EmailUserCreationForm(RegistrationFormUniqueEmail):
     for agreeing to a site's Terms of Service and a recaptcha.
     
     """
-    tos = forms.BooleanField(widget=forms.CheckboxInput(attrs=attrs_dict),
+    tos = forms.BooleanField(widget=forms.CheckboxInput(),
                              label=_(u'I have read and agree to the Terms of Service'),
                              error_messages={'required': _("You must agree to the terms to register")})
                              
