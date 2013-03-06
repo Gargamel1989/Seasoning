@@ -1,9 +1,6 @@
 mysql-python==1.2.3
 pillow==1.7.8
-django==1.4.3
+django==1.5
 django-registration==0.8
-django-profiles==0.2
-django-ratings==0.3.7
 django-imagekit==2.0.2
-django-messages==0.4.4
 django-recaptcha==0.0.5
