@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     url(r'^register/$', 'authentication.views.register', {'backend': 'registration.backends.default.DefaultBackend'}),
     url(r'^activate/resend/$', 'authentication.views.resend_activation_email'),                       
     url(r'^', include('registration.urls')),
+    url(r'^profile/account/$', 'authentication.views.account_settings'),
 )
