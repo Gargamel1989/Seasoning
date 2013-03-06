@@ -62,18 +62,18 @@
 	
 	<div class="field-wrapper" id="captcha-wrapper">
 		{{ form.captcha.errors }}
-        {{ form.captcha }}
+        {{ form.captcha|tabindex:5 }}
 	</div>
 	
 	<div class="field-wrapper" id="terms-wrapper">
-        {% if form.terms.errors %}        
-			{{ form.terms.errors }}
+        {% if form.tos.errors %}        
+			{{ form.tos.errors }}
         {% else %}
         	<ul class="errorlist"><li></li></ul>	
         {% endif %}
         
-        {{ form.terms }}
-        <span id="termslabel">Ik ga akkoord met de <a href="/terms/" target="_blank">voorwaarden</a> en het <a href="/privacypolicy/" target="_blank">privacybeleid</a></span>
+        {{ form.tos|tabindex:6 }}
+        {{ form.tos.label_tag}}
 	</div>
   
 	<input type="submit" value="Registreer" id="account-submit" tabindex=5/>

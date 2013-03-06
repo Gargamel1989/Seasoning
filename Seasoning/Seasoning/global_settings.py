@@ -92,7 +92,6 @@ INSTALLED_APPS = (
     
     # Authentication:
     'django.contrib.auth',
-    'registration',
     'authentication',
     'captcha'
     
