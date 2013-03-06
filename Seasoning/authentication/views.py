@@ -45,3 +45,7 @@ def register(request, *args, **kwargs):
                 return HttpResponse(None,'application/javascript')
     else:
         return auth_register(request, *args, form_class=EmailUserCreationForm, **kwargs)
+
+@login_required
+def account_settings(request):
+    return render(request, 'registration/account_settings.html')
