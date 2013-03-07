@@ -2,6 +2,7 @@ from django.conf.urls.defaults import patterns, url
 from authentication.views import registration_complete, registration_closed,\
     activation_complete, resend_activation_email, register, activate
 from authentication.backends import RegistrationBackend
+from authentication.forms import CheckActiveAuthenticationForm
 
 urlpatterns = patterns('',
     
@@ -22,7 +23,8 @@ urlpatterns = patterns('',
         name='registration_activate'),
     
     # Login urls
-    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'authentication/login.html'}),
+    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'authentication/login.html',
+                                                         'authentication_form': CheckActiveAuthenticationForm}),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
     url(r'^password_reset/$', 'django.contrib.auth.views.password_reset', 
         {'template_name':'authentication/password_reset_form.html',
