@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% load registration_filters %}
+
+{% block extrahead %}
+    <link href="{{ STATIC_URL }}css/accounts.css" rel="stylesheet" type="text/css" media="screen" />
+    <script src="{{ STATIC_URL }}js/register.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+
+<h1>Registreren bij Seasoning.be</h1>
+
+<form action="/register/" method="post" class="account-form">
+	{% csrf_token %}
+  	
+	{{ form.non_field_errors }}
+	
+	<div class="field-wrapper">
+        {{ form.username.label_tag }}
+        {{ form.username|tabindex:1 }}
+        
+        {% if form.username.errors %}        
+			{{ form.username.errors }}
+        {% else %}
+        	<ul class="errorlist"><li></li></ul>	
+        {% endif %}
+	</div>
+	
+	<div class="field-wrapper">
+        {{ form.email.label_tag }}
+        {{ form.email|tabindex:2 }}
+        
+        {% if form.email.errors %}        
+			{{ form.email.errors }}
+        {% else %}
+        	<ul class="errorlist"><li></li></ul>	
+        {% endif %}
+	</div>
+	
+	<div class="field-wrapper">
+        {{ form.password1.label_tag }}
+        {{ form.password1|tabindex:3 }}
+        
+        {% if form.password1.errors %}        
+			{{ form.password1.errors }}
+        {% else %}
+        	<ul class="errorlist"><li></li></ul>	
+        {% endif %}
+	</div>
+	
+	<div class="field-wrapper">
+        {{ form.password2.label_tag }}
+        {{ form.password2|tabindex:4 }}
+        
+        {% if form.password2.errors %}        
+			{{ form.password2.errors }}
+        {% else %}
+        	<ul class="errorlist"><li></li></ul>	
+        {% endif %}
+	</div>
+	
+	<div class="field-wrapper" id="captcha-wrapper">
+		{{ form.captcha.errors }}
+        {{ form.captcha }}
+	</div>
+	
+	<div class="field-wrapper" id="terms-wrapper">
+        {% if form.terms.errors %}        
+			{{ form.terms.errors }}
+        {% else %}
+        	<ul class="errorlist"><li></li></ul>	
+        {% endif %}
+        
+        {{ form.terms }}
+        <span id="termslabel">Ik ga akkoord met de <a href="/terms/" target="_blank">voorwaarden</a> en het <a href="/privacypolicy/" target="_blank">privacybeleid</a></span>
+	</div>
+  
+	<input type="submit" value="Registreer" id="account-submit" tabindex=5/>
+</form>
+
+<script type="text/javascript">
+document.getElementById('username').focus()
+</script>
+
+{% endblock %}

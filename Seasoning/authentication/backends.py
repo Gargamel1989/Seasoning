@@ -136,7 +136,6 @@ class DefaultBackend(object):
         
         """
         return ('activation_complete', (), {})
-    
 
 class EmailAuthBackend(ModelBackend):
     """
