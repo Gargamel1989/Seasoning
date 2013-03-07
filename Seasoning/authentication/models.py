@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import datetime
 import hashlib
 import random
@@ -263,9 +262,3 @@ class RegistrationProfile(models.Model):
                                    ctx_dict)
         
         self.user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
-    
-=======
-from django.db import models
-
-# Create your models here.
->>>>>>> a931bb8d5453a33cbddeaecba03a600bb52a0c9b
