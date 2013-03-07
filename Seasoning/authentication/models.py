@@ -2,29 +2,36 @@ import datetime
 import hashlib
 import random
 import re
+import time
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import models
 from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.core import validators
+from imagekit.models.fields import ProcessedImageField
+from imagekit.processors.resize import ResizeToFit, AddBorder
+from django.utils import timezone
+from django.core.mail import send_mail
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(self, username, email, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
         """
+        if not username:
+            raise ValueError(_('The given username must be set'))
         if not email:
             raise ValueError(_('Users must have an email address'))
 
         user = self.model(
+            username=username,
             email=UserManager.normalize_email(email),
         )
 
@@ -52,24 +59,25 @@ def get_image_filename(instance, old_filename):
 class User(AbstractBaseUser):
     
     email = models.EmailField(
-        verbose_name=_('email address'),
+        verbose_name=_(_('email address')),
         max_length=255,
         unique=True,
         db_index=True,
     )
     
-    username = models.CharField(_('username'), max_length=30
+    username = models.CharField(_('username'), max_length=30,
         help_text=_('Required. 30 characters or fewer. Letters, numbers and '
                     '@/./+/-/_ characters'),
-        validators=[
-            validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')
-        ])
+        validators=[validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')])
     
     avatar = ProcessedImageField([ResizeToFit(250, 250), AddBorder(2, 'Black')], format='PNG', \
                                   upload_to=get_image_filename, default='images/users/no_image.png')
         
     is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    
+    date_joined = models.DateTimeField(_(_('date joined')), default=timezone.now)
 
     objects = UserManager()
 
@@ -84,24 +92,24 @@ class User(AbstractBaseUser):
         # The user is identified by their email address
         return self.email
 
+    def email_user(self, subject, message, from_email=None):
+        """
+        Sends an email to this User.
+        """
+        send_mail(subject, message, from_email, [self.email])
+
     def __unicode__(self):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
+        # "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
         return True
 
     def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
+        # "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return True
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
 
 
 try:

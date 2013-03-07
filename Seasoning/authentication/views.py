@@ -1,10 +1,9 @@
 from django.template.response import TemplateResponse
 from django.contrib.sites.models import RequestSite
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, render_to_response
 from django.template.context import RequestContext
-from authentication.forms import ResendActivationEmailForm, EmailAuthenticationForm
+from authentication.forms import ResendActivationEmailForm
 
 
 def register(request, backend, success_url=None, form_class=None,

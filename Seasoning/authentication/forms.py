@@ -1,8 +1,5 @@
 from django import forms
-from django.conf import settings
-from django.contrib.auth import authenticate, get_user_model, REDIRECT_FIELD_NAME
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, get_user_model
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -54,7 +51,7 @@ class EmailUserCreationForm(forms.Form):
         in use.
         
         """
-        existing = User.objects.filter(username__iexact=self.cleaned_data['username'])
+        existing = get_user_model().objects.filter(username__iexact=self.cleaned_data['username'])
         if existing.exists():
             raise forms.ValidationError(_("A user with that username already exists."))
         else:
@@ -83,7 +80,7 @@ class ResendActivationEmailForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data["email"]
         try:
-            user = User.objects.get(email=email)
+            user = get_user_model().objects.get(email=email)
             profiles = user.registrationprofile_set.all()
             
             if len(profiles) <= 0 or user.is_active:
@@ -94,7 +91,7 @@ class ResendActivationEmailForm(forms.Form):
             
             return profiles[0]
         
-        except User.DoesNotExist:
+        except get_user_model().DoesNotExist:
             raise forms.ValidationError(_("The given email address was not found"))
     
 
