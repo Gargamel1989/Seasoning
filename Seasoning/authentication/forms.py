@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from captcha.fields import ReCaptchaField
+from django.contrib.auth.forms import AuthenticationForm
 
 
 attrs_dict = {'class': 'required'}
@@ -95,55 +96,10 @@ class ResendActivationEmailForm(forms.Form):
             raise forms.ValidationError(_("The given email address was not found"))
     
 
-class EmailAuthenticationForm(forms.Form):
-    """
-    Form class for authenticating users with an email and a password.
-    """
-    email = forms.EmailField(label=_("E-mail"), max_length=75)
-    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
-
-    error_messages = {
-        'invalid_login': _("Please enter a correct email and password. "
-                           "Note that both fields may be case-sensitive."),
-        'no_cookies': _("Your Web browser doesn't appear to have cookies "
-                        "enabled. Cookies are required for logging in."),
-        'inactive': mark_safe(_("This account has not been activated yet, so you may not log in at this time. If you haven't received an activation email for 15 \
-                      minutes after registering, you can use <a href=\"/activate/resend/\">this form</a> to resend an activation email.")),
-    }
-
-    def __init__(self, request=None, *args, **kwargs):
-        """
-        If request is passed in, the form will validate that cookies are
-        enabled. Note that the request (a HttpRequest object) must have set a
-        cookie with the key TEST_COOKIE_NAME and value TEST_COOKIE_VALUE before
-        running this validation.
-        """
-        self.request = request
-        self.user_cache = None
-        super(EmailAuthenticationForm, self).__init__(*args, **kwargs)
-
-    def clean(self):
-        email = self.cleaned_data.get('email')
-        password = self.cleaned_data.get('password')
-
-        if email and password:
-            self.user_cache = authenticate(email=email,
-                                           password=password)
-            if self.user_cache is None:
-                raise forms.ValidationError(self.error_messages['invalid_login'])
-            elif not self.user_cache.is_active:
-                raise forms.ValidationError(self.error_messages['inactive'])
-        self.check_for_test_cookie()
-        return self.cleaned_data
-
-    def check_for_test_cookie(self):
-        if self.request and not self.request.session.test_cookie_worked():
-            raise forms.ValidationError(self.error_messages['no_cookies'])
-
-    def get_user_id(self):
-        if self.user_cache:
-            return self.user_cache.id
-        return None
-
-    def get_user(self):
-        return self.user_cache
+class CheckActiveAuthenticationForm(AuthenticationForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(CheckActiveAuthenticationForm, self).__init__(*args, **kwargs)
+        self.error_messages['inactive'] = mark_safe(_("This account has not been activated yet, so you may not log in at \
+            this time. If you haven't received an activation email for 15 minutes after registering, you can use \
+            <a href=\"/activate/resend/\">this form</a> to resend an activation email."))
