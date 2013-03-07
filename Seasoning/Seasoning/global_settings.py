@@ -99,6 +99,7 @@ INSTALLED_APPS = (
     # Custom applications:
 )
 
+AUTH_USER_MODEL = 'authentication.models.User'
 AUTHENTICATION_BACKENDS = (
     'authentication.backends.EmailAuthBackend',
 )
