@@ -90,42 +90,33 @@ def register(request, backend, success_url=None, form_class=None,
     argument.
     
     """
-    if request.is_ajax():
-        if request.method == 'POST':
-            form = EmailAuthenticationForm(data=request.POST)
-            form.is_valid()
-            
-            if request.POST['field'] == 'username':
-                #print form.username.errors
-                return HttpResponse(None,'application/javascript')
+    backend = backend()
+    if not backend.registration_allowed(request):
+        return redirect(disallowed_url)
+    if form_class is None:
+        form_class = backend.get_form_class(request)
+    
+    if request.method == 'POST':
+        form = form_class(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            new_user = backend.register(request, **form.cleaned_data)
+            if success_url is None:
+                to, args, kwargs = backend.post_registration_redirect(request, new_user)
+                return redirect(to, *args, **kwargs)
+            else:
+                return redirect(success_url)
     else:
-        backend = backend()
-        if not backend.registration_allowed(request):
-            return redirect(disallowed_url)
-        if form_class is None:
-            form_class = backend.get_form_class(request)
-    
-        if request.method == 'POST':
-            form = form_class(data=request.POST, files=request.FILES)
-            if form.is_valid():
-                new_user = backend.register(request, **form.cleaned_data)
-                if success_url is None:
-                    to, args, kwargs = backend.post_registration_redirect(request, new_user)
-                    return redirect(to, *args, **kwargs)
-                else:
-                    return redirect(success_url)
-        else:
-            form = form_class()
+        form = form_class()
         
-        if extra_context is None:
-            extra_context = {}
-        context = RequestContext(request)
-        for key, value in extra_context.items():
-            context[key] = callable(value) and value() or value
+    if extra_context is None:
+        extra_context = {}
+    context = RequestContext(request)
+    for key, value in extra_context.items():
+        context[key] = callable(value) and value() or value
     
-        return render_to_response(template_name,
-                                  {'form': form},
-                                  context_instance=context)
+    return render_to_response(template_name,
+                              {'form': form},
+                              context_instance=context)
 
 def registration_closed(request):
     return render(request, 'authentication/registration_closed.html')
