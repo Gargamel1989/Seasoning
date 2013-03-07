@@ -58,7 +58,7 @@ class User(AbstractBaseUser):
         db_index=True,
     )
     
-    username = models.CharField(_('username'), max_length=30,
+    username = models.CharField(_('username'), max_length=30
         help_text=_('Required. 30 characters or fewer. Letters, numbers and '
                     '@/./+/-/_ characters'),
         validators=[
@@ -74,7 +74,7 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     def get_full_name(self):
         # The user is identified by their email address
