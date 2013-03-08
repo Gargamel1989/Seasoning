@@ -12,6 +12,10 @@
 
 <a href="/password/change/">Verander wachtwoord</a>
 
-<a href="/password/broken/">Verander Avatar</a>
+<form action="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+{{ avatar_form.as_p }}
+<input type="submit" value="Wijzig Avatar" />
+</form>
 
 {% endblock %}

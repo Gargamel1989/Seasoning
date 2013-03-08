@@ -1,10 +1,12 @@
 from django import forms
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.forms import AuthenticationForm
+from django.forms.models import ModelForm
+from authentication.models import User
 
 
 attrs_dict = {'class': 'required'}
@@ -103,3 +105,9 @@ class CheckActiveAuthenticationForm(AuthenticationForm):
         self.error_messages['inactive'] = mark_safe(_("This account has not been activated yet, so you may not log in at \
             this time. If you haven't received an activation email for 15 minutes after registering, you can use \
             <a href=\"/activate/resend/\">this form</a> to resend an activation email."))
+        
+class ChangeAvatarForm(ModelForm):
+    
+    class Meta:
+        model = get_user_model()
+        fields = ['avatar']

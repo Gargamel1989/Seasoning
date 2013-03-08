@@ -3,7 +3,7 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, render_to_response
 from django.template.context import RequestContext
-from authentication.forms import ResendActivationEmailForm
+from authentication.forms import ResendActivationEmailForm, ChangeAvatarForm
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -238,4 +238,14 @@ def activation_complete(request):
 
 @login_required
 def account_settings(request):
-    return render(request, 'authentication/account_settings.html')
+    if request.method == "POST":
+        
+        form = ChangeAvatarForm(data=request.POST)
+        
+        if form.is_valid():            
+            form.save()
+            form = ChangeAvatarForm()        
+    else:
+        form = ChangeAvatarForm()
+    
+    return render(request, 'authentication/account_settings.html', {'avatar_form': form})
