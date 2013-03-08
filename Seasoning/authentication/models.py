@@ -16,7 +16,7 @@ from django.core import validators
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFit, AddBorder
 from django.utils import timezone
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 
 
 class UserManager(BaseUserManager):
@@ -360,7 +360,11 @@ class RegistrationProfile(models.Model):
         # Email subject *must not* contain newlines
         subject = ''.join(subject.splitlines())
         
-        message = render_to_string('authentication/activation_email.txt',
-                                   ctx_dict)
-        
-        self.user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
+        message_text = render_to_string('authentication/activation_email.txt',
+                                        ctx_dict)
+        message_html = render_to_string('authentication/activation_email.html',
+                                        ctx_dict)
+
+        msg = EmailMultiAlternatives(subject, message_text, settings.DEFAULT_FROM_EMAIL, [self.user.email])
+        msg.attach_alternative(message_html, "text/html")
+        msg.send()
