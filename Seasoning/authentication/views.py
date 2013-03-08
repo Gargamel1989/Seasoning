@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, render_to_response
 from django.template.context import RequestContext
 from authentication.forms import ResendActivationEmailForm, ChangeAvatarForm
+from Seasoning import settings
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -238,9 +239,9 @@ def activation_complete(request):
 
 @login_required
 def account_settings(request):
+    print settings.MEDIA_ROOT
     if request.method == "POST":
-        
-        form = ChangeAvatarForm(data=request.POST)
+        form = ChangeAvatarForm(request.POST, request.FILES, instance=request.user)
         
         if form.is_valid():            
             form.save()
