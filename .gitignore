@@ -6,3 +6,4 @@
 dev_secrets.py
 .settings
 *.json
+media/*
