@@ -16,7 +16,7 @@ from django.core import validators
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFit, AddBorder
 from django.utils import timezone
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail, EmailMultiAlternatives
 
 
 class UserManager(BaseUserManager):
