@@ -6,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms.models import ModelForm
-from authentication.models import User
 
 
 attrs_dict = {'class': 'required'}
@@ -106,8 +105,8 @@ class CheckActiveAuthenticationForm(AuthenticationForm):
             this time. If you haven't received an activation email for 15 minutes after registering, you can use \
             <a href=\"/activate/resend/\">this form</a> to resend an activation email."))
         
-class ChangeAvatarForm(ModelForm):
+class AccountSettingsForm(ModelForm):
     
     class Meta:
         model = get_user_model()
-        fields = ['avatar']
+        fields = ['email', 'avatar']

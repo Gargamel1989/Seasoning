@@ -3,7 +3,7 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, render_to_response
 from django.template.context import RequestContext
-from authentication.forms import ResendActivationEmailForm, ChangeAvatarForm
+from authentication.forms import ResendActivationEmailForm, AccountSettingsForm
 from Seasoning import settings
 
 
@@ -241,12 +241,12 @@ def activation_complete(request):
 def account_settings(request):
     print settings.MEDIA_ROOT
     if request.method == "POST":
-        form = ChangeAvatarForm(request.POST, request.FILES, instance=request.user)
+        form = AccountSettingsForm(request.POST, request.FILES, instance=request.user)
         
         if form.is_valid():            
             form.save()
-            form = ChangeAvatarForm()        
+            form = AccountSettingsForm()        
     else:
-        form = ChangeAvatarForm()
+        form = AccountSettingsForm()
     
     return render(request, 'authentication/account_settings.html', {'avatar_form': form})
