@@ -43,7 +43,7 @@ urlpatterns = patterns('',
         name='password_reset_complete'),
     
     # Profile urls
-    url(r'^profile/account/$', 'authentication.views.account_settings'),
+    url(r'^settings/$', 'authentication.views.account_settings'),
     url(r'^password_change/$', 'django.contrib.auth.views.password_change', 
         {'template_name':'authentication/password_change_form.html'},
         name='password_change'),
