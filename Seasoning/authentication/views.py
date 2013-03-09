@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, render_to_response
 from django.template.context import RequestContext
 from authentication.forms import ResendActivationEmailForm, AccountSettingsForm
-from Seasoning import settings
+from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -242,9 +243,15 @@ def account_settings(request):
     if request.method == "POST":
         form = AccountSettingsForm(request.POST, request.FILES, instance=request.user)
         
-        if form.is_valid():            
+        if form.is_valid():
+            context = {}
+            old_email = get_user_model().objects.get(id=request.user.id).email
+            if not form.cleaned_data['email'] == old_email:
+                # TODO: mail users new email adres
+                context['email_message'] = _('An email has been sent to the new email address provided by you. Please follow the instructions \
+                                              in this email to complete the changing of your email address.')
             form.save()
-            form = AccountSettingsForm(instance=request.user)        
+            return render(request, 'authentication/account_change_done.html', context)
     else:
         form = AccountSettingsForm(instance=request.user)
     
