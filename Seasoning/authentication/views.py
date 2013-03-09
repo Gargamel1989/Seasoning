@@ -239,14 +239,13 @@ def activation_complete(request):
 
 @login_required
 def account_settings(request):
-    print settings.MEDIA_ROOT
     if request.method == "POST":
         form = AccountSettingsForm(request.POST, request.FILES, instance=request.user)
         
         if form.is_valid():            
             form.save()
-            form = AccountSettingsForm()        
+            form = AccountSettingsForm(instance=request.user)        
     else:
-        form = AccountSettingsForm()
+        form = AccountSettingsForm(instance=request.user)
     
-    return render(request, 'authentication/account_settings.html', {'avatar_form': form})
+    return render(request, 'authentication/account_settings.html', {'form': form})

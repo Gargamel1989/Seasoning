@@ -6,7 +6,33 @@ from django.utils.translation import ugettext_lazy as _
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms.models import ModelForm
+from django.forms.widgets import ClearableFileInput
+from django.utils.html import format_html
 
+
+        
+class ShownImageInput(ClearableFileInput):
+    
+    initial_text = _('Avatar')
+    
+    def render(self, name, value, attrs=None):
+        substitutions = {
+            'initial_text': self.initial_text,
+            'input_text': self.input_text,
+            'clear_template': '',
+            'clear_checkbox_label': self.clear_checkbox_label,
+        }
+        template = '%(input)s'
+        substitutions['input'] = super(ClearableFileInput, self).render(name, value, attrs)
+
+        if value and hasattr(value, "url"):
+            template = self.template_with_initial
+            substitutions['initial'] = format_html('<img src="{0}">',
+                                                   value.url)
+
+        return mark_safe(template % substitutions)
+    
+    
 
 attrs_dict = {'class': 'required'}
 
@@ -110,3 +136,7 @@ class AccountSettingsForm(ModelForm):
     class Meta:
         model = get_user_model()
         fields = ['email', 'avatar']
+        widgets = {
+            'avatar': ShownImageInput,
+        }
+        

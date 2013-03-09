@@ -8,15 +8,21 @@
 
 <h2>Account Instellingen</h2>
 
-<p>E-mail adres: {{ user.email }} <a href="/password/broken/">(Wijzig)</a></p>
-
-<p>Wachtwoord: **** <a href="/password/change/">(Wijzig)</a></p>
-
-<p>Avatar: <img src="{{ user.avatar.url }}">
 <form action="" method="post" enctype="multipart/form-data">
 {% csrf_token %}
-{{ avatar_form.avatar }}<br>
-<input type="submit" value="Wijzig Avatar" />
+<p>
+Gebruikersnaam: {{ user.username }}
+</p>
+<p>
+{{ form.email.label }}: {{ form.email }}
+</p>
+<p>
+	Wachtwoord: *** <a href="/password/change/">(Wijzig)</a>
+</p>
+<p>
+	{{ form.avatar }}
+</p>
+<input type="submit" value="Wijzig Account" />
 </form>
 </p>
 
