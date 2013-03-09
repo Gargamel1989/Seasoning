@@ -14,12 +14,14 @@
 Gebruikersnaam: {{ user.username }}
 </p>
 <p>
-{{ form.email.label }}: {{ form.email }}
+	{{ form.email.errors }}
+	{{ form.email.label }}: {{ form.email }}
 </p>
 <p>
 	Wachtwoord: *** <a href="/password/change/">(Wijzig)</a>
 </p>
 <p>
+	{{ form.avatar.errors }}
 	{{ form.avatar }}
 </p>
 <input type="submit" value="Wijzig Account" />
