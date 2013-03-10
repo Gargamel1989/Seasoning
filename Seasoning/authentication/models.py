@@ -109,8 +109,7 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         # "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
-        return True
-
+        return True    
 
 try:
     from django.utils.timezone import now as datetime_now
@@ -119,6 +118,71 @@ except ImportError:
 
 
 SHA1_RE = re.compile('^[a-f0-9]{40}$')
+
+
+class NewEmailManager(models.Manager):
+    
+    def activate_email(self, user, activation_key):
+        if SHA1_RE.search(activation_key):
+            try:
+                new_email = self.get(user=user)
+            except self.model.DoesNotExist:
+                return False
+            if activation_key == new_email.activation_key:
+                user = new_email.user
+                user.email = new_email.email
+                user.save()
+                new_email.delete()
+                return user
+        return False
+    
+    def create_inactive_email(self, user, new_email, site, send_email=True):
+        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+        try:
+            old_new_email = self.get(user=user)
+            old_new_email.delete()
+        except self.model.DoesNotExist:
+            pass
+        username = user.username
+        if isinstance(username, unicode):
+            username = username.encode('utf-8')
+        activation_key = hashlib.sha1(salt+username).hexdigest()
+        inactive_email = self.create(user=user,
+                                     activation_key=activation_key,
+                                     email=new_email)
+        
+        if send_email:
+            inactive_email.send_new_email_email(site)
+
+        return inactive_email
+
+class NewEmail(models.Model):
+    
+    user = models.ForeignKey(User, primary_key=True)
+    activation_key = models.CharField(_('activation key'), unique=True, max_length=40)
+    email = models.EmailField(
+        max_length=255,
+        unique=True
+    )
+    
+    objects = NewEmailManager()
+    
+    def send_new_email_email(self, site):
+        ctx_dict = {'activation_key': self.activation_key,
+                    'site': site}
+        subject = render_to_string('authentication/change_email_email_subject.txt',
+                                   ctx_dict)
+        # Email subject *must not* contain newlines
+        subject = ''.join(subject.splitlines())
+        
+        message_text = render_to_string('authentication/change_email_email.txt',
+                                        ctx_dict)
+        message_html = render_to_string('authentication/change_email_email.html',
+                                        ctx_dict)
+
+        msg = EmailMultiAlternatives(subject, message_text, settings.DEFAULT_FROM_EMAIL, [self.email])
+        msg.attach_alternative(message_html, "text/html")
+        msg.send()
 
 
 class RegistrationManager(models.Manager):

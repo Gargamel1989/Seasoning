@@ -16,6 +16,9 @@ Gebruikersnaam: {{ user.username }}
 <p>
 	{{ form.email.errors }}
 	{{ form.email.label }}: {{ form.email }}
+	{% if new_email %}
+	<br>Nieuw e-mail adres dat nog niet geactiveerd werd: {{ new_email }}
+	{% endif %}
 </p>
 <p>
 	Wachtwoord: *** <a href="/password/change/">(Wijzig)</a>
