@@ -1,0 +1,10 @@
+{% load humanize %}
+Enkele ogenblikken geleden werd geprobeerd dit e-mail adres aan het account met gebruikersnaam {{ username }} te koppelen op
+<a href="{{ site }}">{{ site }}</a>. Indien u, de eigenaar van dit e-mail adres, dit gedaan hebt, kan u onderstaande 
+link gebruiken om het account te activeren:
+
+
+<a href="{{ site }}/email/change/{{ activation_key }}/">{{ site }}/email/change/{{ activation_key }}/</a>
+
+Indien u dit niet gedaan hebt, kan u deze e-mail gewoon negeren. Het account zal dan met het oorspronkelijke e-mail adres
+gekoppeld blijven.

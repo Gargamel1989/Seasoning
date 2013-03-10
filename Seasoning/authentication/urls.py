@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, url
 from authentication.views import registration_complete, registration_closed,\
-    activation_complete, resend_activation_email, register, activate
+    activation_complete, resend_activation_email, register, activate, change_email
 from authentication.backends import RegistrationBackend
 from authentication.forms import CheckActiveAuthenticationForm
 
@@ -50,4 +50,5 @@ urlpatterns = patterns('',
     url(r'^password/changed/$', 'django.contrib.auth.views.password_change_done', 
         {'template_name':'authentication/password_change_done.html'},
         name='password_change_done'),
+    url(r'^email/change/(?P<activation_key>\w+)/$', change_email)
 )

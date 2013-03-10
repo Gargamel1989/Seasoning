@@ -8,6 +8,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.forms.models import ModelForm
 from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
+from authentication.models import NewEmail
 
 
         
@@ -139,4 +140,11 @@ class AccountSettingsForm(ModelForm):
         widgets = {
             'avatar': ShownImageInput,
         }
+    
+    def clean_email(self):
+        user = self.instance
+        new_email = self.cleaned_data['email']
+        if not user.email == new_email:
+            self.new_email = new_email
+        return user.email
         

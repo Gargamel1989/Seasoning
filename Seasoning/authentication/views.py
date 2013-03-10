@@ -6,6 +6,9 @@ from django.template.context import RequestContext
 from authentication.forms import ResendActivationEmailForm, AccountSettingsForm
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
+from authentication.models import NewEmail
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -134,7 +137,7 @@ def resend_activation_email(request):
         
         form = ResendActivationEmailForm(data=request.POST)
         
-        if form.is_valid():            
+        if form.is_valid():
             site = RequestSite(request)
                     
             form.cleaned_data['email'].send_activation_email(site)
@@ -240,19 +243,34 @@ def activation_complete(request):
 
 @login_required
 def account_settings(request):
+    context = {}
     if request.method == "POST":
-        form = AccountSettingsForm(request.POST, request.FILES, instance=request.user)
+        user = get_user_model().objects.get(id=request.user.id)
+        form = AccountSettingsForm(request.POST, request.FILES, instance=user)
         
         if form.is_valid():
-            context = {}
-            old_email = get_user_model().objects.get(id=request.user.id).email
-            if not form.cleaned_data['email'] == old_email:
-                # TODO: mail users new email adres
+            if hasattr(form, 'new_email'):
+                NewEmail.objects.create_inactive_email(user, form.new_email, RequestSite(request))
                 context['email_message'] = _('An email has been sent to the new email address provided by you. Please follow the instructions \
                                               in this email to complete the changing of your email address.')
+            # New email address has been replaced by old email address in the form, so it will not be saved until activated
             form.save()
             return render(request, 'authentication/account_change_done.html', context)
     else:
         form = AccountSettingsForm(instance=request.user)
     
-    return render(request, 'authentication/account_settings.html', {'form': form})
+    try:
+        new_email = NewEmail.objects.get(user=request.user)
+        context['new_email'] = new_email.email
+    except ObjectDoesNotExist:
+        pass
+    
+    context['form'] = form
+    return render(request, 'authentication/account_settings.html', context)
+
+@login_required
+def change_email(request, activation_key):
+    activated = NewEmail.objects.activate_email(request.user, activation_key)
+    if activated:
+        return render(request, 'authentication/change_email_complete.html')
+    raise Http404
