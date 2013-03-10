@@ -16,6 +16,8 @@ fi
 
 git checkout -q $SEASONING_VERSION
 
+$SEASONING_HOME/seasoning_env/bin/pip install -r seasoning_website/requirements/virtualenv_requirements.txt | grep -v "Requirement already satisfied"
+
 sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_source.sh
 
 # Collect static files
