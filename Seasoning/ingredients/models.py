@@ -1,5 +1,11 @@
 from django.db import models
+import time
+from imagekit.models.fields import ProcessedImageField
 
+
+def get_image_filename(instance, old_filename):
+    filename = str(time.time()) + '.png'
+    return 'images/ingredients/' + filename
 
 class Ingredient(models.Model):
     '''
@@ -7,7 +13,39 @@ class Ingredient(models.Model):
     Ingredients can be represented by it. This includes meat, which is not 
     dependent on time and has no special attributes
     '''
-    pass
+    
+    CATEGORIES = ((u'GO',u'Groenten'),
+                     (u'FR',u'Fruit'),
+                     (u'KN',u'Knollen'),
+                     (u'NZ',u'Noten en Zaden'),
+                     (u'GA',u'Graanproducten'),
+                     (u'KR',u'Kruiden'),
+                     (u'SP',u'Specerijen'),
+                     (u'OA',u'Olies en Azijnen'),
+                     (u'VL',u'Vlees'),
+                     (u'VI',u'Vis'),
+                     (u'ZU',u'Zuivelproducten'),
+                     (u'DR',u'Dranken'))
+    VEGANISMS = ((u'VN',u'Veganistisch'),
+                 (u'VG',u'Vegetarisch'),
+                 (u'NV',u'Niet-Vegetarisch'))
+    
+    type = models.CharField(10)
+    
+    category = models.CharField(max_length=2, choices=CATEGORIES)
+    veganism = models.CharField(max_length=2, choices=VEGANISMS)
+    
+    description = models.TextField()
+    conservation_tip = models.TextField()
+    preperation_tip = models.TextField()
+    properties = models.TextField()
+    source = models.TextField()
+    
+    base_footprint = models.FloatField()
+    
+    image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
+    
+    accepted = models.BooleanField(default=False)
 
 class Synonym(models.Model):
     
@@ -39,6 +77,8 @@ class VegetalIngredient(models.Model):
     '''
     
     ingredient = models.ForeignKey(Ingredient, primary_key=True)
+    preservability = models.PositiveIntegerField()
+    preservation_footprint = models.FloatField()
 
 class Country(models.Model):
     '''
@@ -62,14 +102,9 @@ class AvailableInCountry(models.Model):
     country = models.ForeignKey(Country)
     transport_method = models.ForeignKey(TransportMethod)
     
-    jan, feb, mar = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
-    apr, may, jun = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
-    jul, aug, sep = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
-    okt, nov, dec = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
+    date_from = models.DateField()
+    date_until = models.DateField()
     
-    MONTH_FIELDS = {'Januari': 'jan', 'Februari': 'feb', 'Maart': 'mar', 'April': 'apr', 'Mei': 'may', 'Juni': 'jun',
-                    'Juli': 'jul', 'Augustus': 'aug', 'September': 'sep', 'Oktober': 'okt', 'November': 'nov', 'December': 'dec'}
-
 
 
 class FishIngredient(models.Model):
@@ -90,13 +125,6 @@ class AvailableInSea(models.Model):
     sea = models.ForeignKey(Sea)
     transport_method = models.ForeignKey(TransportMethod)
     
-    jan, feb, mar = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
-    apr, may, jun = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
-    jul, aug, sep = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
-    okt, nov, dec = models.BooleanField(default=False), models.BooleanField(default=False), models.BooleanField(default=False)
-    
-    MONTH_FIELDS = {'Januari': 'jan', 'Februari': 'feb', 'Maart': 'mar', 'April': 'apr', 'Mei': 'may', 'Juni': 'jun',
-                    'Juli': 'jul', 'Augustus': 'aug', 'September': 'sep', 'Oktober': 'okt', 'November': 'nov', 'December': 'dec'}
-
-
+    date_from = models.DateField()
+    date_until = models.DateField()
 
