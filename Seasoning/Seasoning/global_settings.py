@@ -93,7 +93,10 @@ INSTALLED_APPS = (
     # Authentication:
     'django.contrib.auth',
     'authentication',
-    'captcha'
+    'captcha',
+    
+    # Ingredients
+    'ingredients',
     
     
     # Custom applications:
