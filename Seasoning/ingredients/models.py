@@ -30,7 +30,7 @@ class Ingredient(models.Model):
                  (u'VG',u'Vegetarisch'),
                  (u'NV',u'Niet-Vegetarisch'))
     
-    type = models.CharField(10)
+    type = models.CharField(max_length=10)
     
     category = models.CharField(max_length=2, choices=CATEGORIES)
     veganism = models.CharField(max_length=2, choices=VEGANISMS)
@@ -101,6 +101,7 @@ class AvailableInCountry(models.Model):
     ingredient = models.ForeignKey(VegetalIngredient)
     country = models.ForeignKey(Country)
     transport_method = models.ForeignKey(TransportMethod)
+    production_type  = models.CharField(max_length=10)
     
     date_from = models.DateField()
     date_until = models.DateField()
