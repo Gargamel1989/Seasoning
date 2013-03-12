@@ -25,9 +25,6 @@ sed "s#\*RECAPTCHA_PRIVATE_KEY\*#$RECAPTCHA_PRIVATE_KEY#g" > seasoning_website/S
 # Add Seasoning commands to path
 
   # Check if bin directory is present
-  if [ ! -d ~/bin ]; then
-    mkdir ~/bin
-  fi
   chmod -R 774 seasoning_website/bin
   sudo cp -p seasoning_website/bin/* /usr/local/bin
 
