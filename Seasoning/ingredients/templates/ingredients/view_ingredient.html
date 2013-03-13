@@ -8,7 +8,7 @@
 
 Namen: {% for syn in ingredient.synonyms %}{{ syn.name }} ({{ syn.plural_name }}){% if not forloop.last %}, {% endif %}{% endfor %}
 <br>
-Thumbnail: <img src="{{ ingredient.thumbnail.url }}">
+Thumbnail: <img src="{{ ingredient.image.url }}">
 <br>
 Beschrijving: {{ ingredient.description }}
 <br>
@@ -31,21 +31,21 @@ Bronnen: {{ ingredient.source }}
 Geaccepteerd: {{ ingredient.accepted }}
 <br>
 Bruikbare eenheden: <br>
-{% for can_use_unit in ingredient.canuseunits %}
+{% for can_use_unit in ingredient.units %}
 ---{{ can_use_unit.unit.name }}: Conversiefactor={{ can_use_unit.conversion_factor }}<br>
 {% endfor %}
 <br>
-{% if ingredient.type == 'Veggetal' %}
-Bijkomende informatie voor Vegetal en Fish ingredienten:
+{% if ingredient.type == 'Veggie' %}
+Bijkomende informatie voor Veggie ingredienten:
 <br>
 <br>
-Bewaarbaarheid: {{ ingredient.preservability }}
+Bewaarbaarheid: {{ ingredient.veg.preservability }}
 <br>
-Uitstoot tijdens bewaring: {{ ingredient.preservation_footprint }}
+Uitstoot tijdens bewaring: {{ ingredient.veg.preservation_footprint }}
 <br>
 Beschikbaar in: <br>
 {% for available_in in ingredient.available_in %}
----{{ available_in.country.name }} via {{ available_in.transport_method.name }} (Distance: {{ available_in.country.distance }}) 
+---{{ available_in.country_name }} via {{ available_in.transport_name }} (Distance: {{ available_in.distance }}) 
 van {{ available_in.date_from }} tot {{ available_in.date_until }} (Productiemethode: {{ available_in.production_type }})
 {% endfor %}
 <br>

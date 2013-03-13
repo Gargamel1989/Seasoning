@@ -1,7 +1,33 @@
-from django.db import models
+from django.db import models, connection
 import time
 from imagekit.models.fields import ProcessedImageField
 
+
+class IngredientManager(models.Manager):
+    
+    # Doe een join met vegetalingredient en steek dan in een dummy class
+    
+    def all_info(self, pk):
+        ingredient = self.get(pk=pk)
+        ingredient.synonyms = Synonym.objects.filter(ingredient=ingredient)
+        ingredient.units = CanUseUnit.objects.filter(ingredient=ingredient)
+        ingredient.veg = VegetalIngredient.objects.get(ingredient=ingredient)
+        ingredient.available_in = AvailableInCountry.objects.all_info(ingredient=ingredient)
+        return ingredient
+    
+class AvailableInCountryManager(models.Manager):
+    
+    def all_info(self, ingredient):
+        cursor = connection.cursor()
+        cursor.execute('SELECT avail.production_type, avail.date_from, avail.date_until, ' + \
+                       'country.name as country_name, country.distance, ' + \
+                       'transportmethod.name as transport_name, transportmethod.emission_per_km ' + \
+                       'FROM availableincountry AS avail ' + \
+                       'LEFT JOIN country ON avail.country = country.id ' + \
+                       'LEFT JOIN transportmethod ON avail.transport_method = transportmethod.id ' + \
+                       'WHERE avail.ingredient = %s' % ingredient.id)
+        results = [ dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
+        return results
 
 def get_image_filename(instance, old_filename):
     filename = str(time.time()) + '.png'
@@ -14,22 +40,24 @@ class Ingredient(models.Model):
     dependent on time and has no special attributes
     '''
     
+    objects = IngredientManager()
+    
     class Meta:
         managed = False
         db_table = 'ingredient'
     
     CATEGORIES = ((u'GO',u'Groenten'),
-                     (u'FR',u'Fruit'),
-                     (u'KN',u'Knollen'),
-                     (u'NZ',u'Noten en Zaden'),
-                     (u'GA',u'Graanproducten'),
-                     (u'KR',u'Kruiden'),
-                     (u'SP',u'Specerijen'),
-                     (u'OA',u'Olies en Azijnen'),
-                     (u'VL',u'Vlees'),
-                     (u'VI',u'Vis'),
-                     (u'ZU',u'Zuivelproducten'),
-                     (u'DR',u'Dranken'))
+                  (u'FR',u'Fruit'),
+                  (u'KN',u'Knollen'),
+                  (u'NZ',u'Noten en Zaden'),
+                  (u'GA',u'Graanproducten'),
+                  (u'KR',u'Kruiden'),
+                  (u'SP',u'Specerijen'),
+                  (u'OA',u'Olies en Azijnen'),
+                  (u'VL',u'Vlees'),
+                  (u'VI',u'Vis'),
+                  (u'ZU',u'Zuivelproducten'),
+                  (u'DR',u'Dranken'))
     VEGANISMS = ((u'VN',u'Veganistisch'),
                  (u'VG',u'Vegetarisch'),
                  (u'NV',u'Niet-Vegetarisch'))
@@ -132,6 +160,8 @@ class TransportMethod(models.Model):
     emission_per_km = models.FloatField()
     
 class AvailableInCountry(models.Model):
+    
+    objects = AvailableInCountryManager()
     
     class Meta:
         managed = False
