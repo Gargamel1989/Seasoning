@@ -23,4 +23,4 @@ sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_s
 # Collect static files
 $SEASONING_HOME/seasoning_env/bin/python $SEASONING_HOME/seasoning_website/Seasoning/manage.py collectstatic
 
-export $SEASONING_VERSION
+export SEASONING_VERSION
