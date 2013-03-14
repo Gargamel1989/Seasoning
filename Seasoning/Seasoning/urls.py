@@ -10,8 +10,9 @@ urlpatterns = patterns('',
     url(r'^support/$', 'Seasoning.views.support'),
     url(r'^terms/$', 'Seasoning.views.terms'),
 
-    # Ingredient pages
+    # Core pages
     url(r'^ingredients/', include('ingredients.urls')),
+    url(r'^recipes/', include('recipes.urls')),
     
     # Registration pages
     url(r'^', include('authentication.urls')),
