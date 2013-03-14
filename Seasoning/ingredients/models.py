@@ -93,7 +93,12 @@ class Unit(models.Model):
         
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30L, unique=True)
-    short_name = models.CharField(max_length=10L)
+    short_name = models.CharField(max_length=10L, blank=True)
+    
+    def short(self):
+        if self.short_name:
+            return self.short_name
+        return self.name
     
 class CanUseUnit(models.Model):
     
@@ -186,4 +191,3 @@ class AvailableInSea(models.Model):
     
     date_from = models.DateField()
     date_until = models.DateField()
-    
