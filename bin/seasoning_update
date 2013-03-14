@@ -12,6 +12,8 @@ if [ -n "$1" ]; then
   else
     echo "Requested version does not exist, using version $SEASONING_VERSION"
   fi
+else
+  . /etc/profile.d/seasoning.sh
 fi
 
 git checkout -q $SEASONING_VERSION
@@ -22,5 +24,3 @@ sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_s
 
 # Collect static files
 $SEASONING_HOME/seasoning_env/bin/python $SEASONING_HOME/seasoning_website/Seasoning/manage.py collectstatic
-
-export SEASONING_VERSION
