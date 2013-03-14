@@ -39,7 +39,6 @@ class Ingredient(models.Model):
     objects = IngredientManager()
     
     class Meta:
-        managed = False
         db_table = 'ingredient'
     
     CATEGORIES = ((u'GO',u'Groenten'),
@@ -78,7 +77,6 @@ class Ingredient(models.Model):
 class Synonym(models.Model):
     
     class Meta:
-        managed = False
         db_table = 'synonym'
     
     id = models.IntegerField(primary_key=True)
@@ -91,7 +89,6 @@ class Synonym(models.Model):
 class Unit(models.Model):
     
     class Meta:
-        managed = False
         db_table = 'unit'
         
     id = models.IntegerField(primary_key=True)
@@ -101,7 +98,6 @@ class Unit(models.Model):
 class CanUseUnit(models.Model):
     
     class Meta:
-        managed = False
         db_table = 'canuseunit'
         
     id = models.IntegerField(primary_key=True)
@@ -121,7 +117,6 @@ class VegetalIngredient(models.Model):
     '''
     
     class Meta:
-        managed = False
         db_table = 'vegetalingredient'
     
     ingredient = models.OneToOneField(Ingredient, primary_key=True, db_column='ingredient', related_name='vegetal_ingredient')
@@ -134,7 +129,6 @@ class Country(models.Model):
     '''
     
     class Meta:
-        managed = False
         db_table = 'country'
     
     id = models.IntegerField(primary_key=True)
@@ -148,7 +142,6 @@ class TransportMethod(models.Model):
     '''
     
     class Meta:
-        managed = False
         db_table = 'transportmethod'
         
     id = models.IntegerField(primary_key=True)
@@ -158,7 +151,6 @@ class TransportMethod(models.Model):
 class AvailableInCountry(models.Model):
     
     class Meta:
-        managed = False
         db_table = 'availableincountry'
     
     id = models.IntegerField(primary_key=True)
@@ -176,7 +168,6 @@ class AvailableInCountry(models.Model):
 class Sea(models.Model):
     
     class Meta:
-        managed = False
         db_table = 'Sea'
     
     id = models.IntegerField(primary_key=True)
@@ -186,7 +177,6 @@ class Sea(models.Model):
 class AvailableInSea(models.Model):
     
     class Meta:
-        managed = False
         db_table = 'availableinsea'
     
     id = models.IntegerField(primary_key=True)
