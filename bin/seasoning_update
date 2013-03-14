@@ -18,7 +18,7 @@ git checkout -q $SEASONING_VERSION
 
 $SEASONING_HOME/seasoning_env/bin/pip install -r $SEASONING_HOME/seasoning_website/requirements/virtualenv_requirements.txt | grep -v "Requirement already satisfied"
 
-sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_source.sh
+sh $SEASONING_HOME/seasoning_website/environment/prepare_and_install_seasoning_source.sh $SEASONING_VERSION
 
 # Collect static files
 $SEASONING_HOME/seasoning_env/bin/python $SEASONING_HOME/seasoning_website/Seasoning/manage.py collectstatic

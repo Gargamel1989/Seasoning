@@ -29,7 +29,7 @@ sed "s#\*RECAPTCHA_PRIVATE_KEY\*#$RECAPTCHA_PRIVATE_KEY#g" > seasoning_website/S
   sudo cp -p seasoning_website/bin/* /usr/local/bin
   
   # Always use current version
-  sed "s/SEASONING_VERSION=.*/SEASONING_VERSION=$SEASONING_VERSION/" /etc/profile.d/seasoning.sh > /tmp/seasoning.sh
+  sed "s/SEASONING_VERSION=.*/SEASONING_VERSION=$1/" /etc/profile.d/seasoning.sh > /tmp/seasoning.sh
   sudo mv /tmp/seasoning.sh /etc/profile.d/seasoning.sh
 
 
