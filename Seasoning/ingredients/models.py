@@ -1,33 +1,29 @@
-from django.db import models, connection
+from django.db import models
 import time
 from imagekit.models.fields import ProcessedImageField
 
 
 class IngredientManager(models.Manager):
     
-    # Doe een join met vegetalingredient en steek dan in een dummy class
-    
     def all_info(self, pk):
-        ingredient = self.get(pk=pk)
+        '''
+        This function fetches the required ingredient, and all related models. The various
+        related models are put into the following fields (if they exist):
+            - VegetalIngredient:  vegetal_ingredient
+            - Synonym:            synonyms
+            - CanUseUnit:         units
+            - AvailableInCountry: available_in_c
+            - AvailableInSea:     available_in_s
+        '''
+        ingredient = self.select_related('vegetal_ingredient').get(pk=pk)
         ingredient.synonyms = Synonym.objects.filter(ingredient=ingredient)
-        ingredient.units = CanUseUnit.objects.filter(ingredient=ingredient)
-        ingredient.veg = VegetalIngredient.objects.get(ingredient=ingredient)
-        ingredient.available_in = AvailableInCountry.objects.all_info(ingredient=ingredient)
+        ingredient.units = CanUseUnit.objects.select_related('unit').filter(ingredient=ingredient)
+        if ingredient.type == 'Veggie':
+            ingredient.available_in_c = AvailableInCountry.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
+        elif ingredient.type == 'Fish':
+            ingredient.available_in_s = AvailableInSea.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
+        
         return ingredient
-    
-class AvailableInCountryManager(models.Manager):
-    
-    def all_info(self, ingredient):
-        cursor = connection.cursor()
-        cursor.execute('SELECT avail.production_type, avail.date_from, avail.date_until, ' + \
-                       'country.name as country_name, country.distance, ' + \
-                       'transportmethod.name as transport_name, transportmethod.emission_per_km ' + \
-                       'FROM availableincountry AS avail ' + \
-                       'LEFT JOIN country ON avail.country = country.id ' + \
-                       'LEFT JOIN transportmethod ON avail.transport_method = transportmethod.id ' + \
-                       'WHERE avail.ingredient = %s' % ingredient.id)
-        results = [ dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
-        return results
 
 def get_image_filename(instance, old_filename):
     filename = str(time.time()) + '.png'
@@ -109,7 +105,7 @@ class CanUseUnit(models.Model):
         db_table = 'canuseunit'
         
     id = models.IntegerField(primary_key=True)
-    ingredient = models.ForeignKey('Ingredient', db_column='ingredient')
+    ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='can_use_unit')
     unit = models.ForeignKey('Unit', db_column='unit')
     
     conversion_factor = models.FloatField()
@@ -128,7 +124,7 @@ class VegetalIngredient(models.Model):
         managed = False
         db_table = 'vegetalingredient'
     
-    ingredient = models.ForeignKey(Ingredient, primary_key=True, db_column='ingredient')
+    ingredient = models.OneToOneField(Ingredient, primary_key=True, db_column='ingredient', related_name='vegetal_ingredient')
     preservability = models.IntegerField()
     preservation_footprint = models.FloatField(null=True)
 
@@ -160,8 +156,6 @@ class TransportMethod(models.Model):
     emission_per_km = models.FloatField()
     
 class AvailableInCountry(models.Model):
-    
-    objects = AvailableInCountryManager()
     
     class Meta:
         managed = False
