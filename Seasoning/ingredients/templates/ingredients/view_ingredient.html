@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    <link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block content %}
+
+Namen: {% for syn in ingredient.synonyms %}{{ syn.name }} ({{ syn.plural_name }}){% if not forloop.last %}, {% endif %}{% endfor %}
+<br>
+Thumbnail: <img src="{{ ingredient.image.url }}">
+<br>
+Beschrijving: {{ ingredient.description }}
+<br>
+Categorie: {{ ingredient.get_category_display }}
+<br>
+Veganisme: {{ ingredient.get_veganism_display }}
+<br>
+Beschrijving: {{ ingredient.description }}
+<br>
+Bewaringstip: {{ ingredient.conservation_tip }}
+<br>
+Bereidingstip: {{ ingredient.preparation_tip }}
+<br>
+Speciale Eigenschappen: {{ ingredient.properties }}
+<br>
+Basis voetafdruk: {{ ingredient.base_footprint }}
+<br>
+Bronnen: {{ ingredient.source }}
+<br>
+Geaccepteerd: {{ ingredient.accepted }}
+<br>
+Bruikbare eenheden: <br>
+{% for can_use_unit in ingredient.units.all %}
+---{{ can_use_unit.unit.name }}: Conversiefactor={{ can_use_unit.conversion_factor }}<br>
+{% endfor %}
+<br>
+{% if ingredient.type == 'Veggie' %}
+Bijkomende informatie voor Veggie ingredienten:
+<br>
+Bewaarbaarheid: {{ ingredient.vegetal_ingredient.preservability }}
+<br>
+Uitstoot tijdens bewaring: {{ ingredient.vegetal_ingredient.preservation_footprint }}
+<br>
+<br>
+Beschikbaar in: <br>
+{% for available_in in ingredient.available_in_c %}
+---{{ available_in.country.name }} via {{ available_in.transport_method.name }} (Distance: {{ available_in.country.distance }}) 
+van {{ available_in.date_from }} tot {{ available_in.date_until }} (Productiemethode: {{ available_in.production_type }})
+{% endfor %}
+<br>
+
+{% endif %}
+
+{% endblock %}

@@ -9,10 +9,13 @@ urlpatterns = patterns('',
     url(r'^sitemap/$', 'Seasoning.views.sitemap'),
     url(r'^support/$', 'Seasoning.views.support'),
     url(r'^terms/$', 'Seasoning.views.terms'),
+
+    # Ingredient pages
+    url(r'^ingredients/', include('ingredients.urls')),
     
     # Registration pages
     url(r'^', include('authentication.urls')),
-
+    
 )
 
 from django.conf import settings
