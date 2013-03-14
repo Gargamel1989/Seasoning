@@ -27,6 +27,10 @@ sed "s#\*RECAPTCHA_PRIVATE_KEY\*#$RECAPTCHA_PRIVATE_KEY#g" > seasoning_website/S
   # Check if bin directory is present
   chmod -R 774 seasoning_website/bin
   sudo cp -p seasoning_website/bin/* /usr/local/bin
+  
+  # Always use current version
+  sed "s/SEASONING_VERSION=.*/SEASONING_VERSION=$SEASONING_VERSION/" /etc/profile.d/seasoning.sh > /tmp/seasoning.sh
+  sudo mv /tmp/seasoning.sh /etc/profile.d/seasoning.sh
 
 
 # Move Apache config
