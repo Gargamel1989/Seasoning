@@ -95,11 +95,9 @@ INSTALLED_APPS = (
     'authentication',
     'captcha',
     
-    # Ingredients
+    # Core functionality
     'ingredients',
-    
-    
-    # Custom applications:
+    'recipes',
 )
 
 AUTH_USER_MODEL = 'authentication.User'
