@@ -47,12 +47,18 @@ def get_image_filename(instance, old_filename):
 
 class Cuisine(models.Model):
     
+    class Meta:
+        db_table = 'cuisine'
+    
     name = models.CharField(max_length=50)
     
     def __unicode__(self):
         return self.name
 
 class Recipe(models.Model):
+    
+    class Meta:
+        db_table = 'recipe'
     
     COURSES = ((u'VO',u'Voorgerecht'),
                (u'BR',u'Brood'),
@@ -70,40 +76,45 @@ class Recipe(models.Model):
     time_added = models.DateTimeField(auto_now_add=True)
     
     course = models.CharField(max_length=2, choices=COURSES)
-    cuisine = models.ForeignKey(Cuisine)
+    cuisine = models.ForeignKey(Cuisine, db_column='cuisine')
     description = models.TextField()
-    portions = models.IntegerField()
+    portions = models.PositiveIntegerField()
     active_time = models.IntegerField()
     passive_time = models.IntegerField()
     ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient')
     recipe_ingredients = models.ManyToManyField('self', through='UsesRecipe', symmetrical=False, related_name='r_ingredients')
-    extra_info = models.TextField()
+    extra_info = models.TextField(default='')
     instructions = models.TextField()
-    rating = models.FloatField()
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     thumbnail = ImageSpecField([ResizeToFit(250, 250), AddBorder(2, 'Black')], image_field='image', format='PNG')
     
-    accepted = models.BooleanField()
+    accepted = models.BooleanField(default=False)
     
 
 
 class UsesIngredient(models.Model):
     
-    recipe = models.ForeignKey(Recipe)
-    ingredient = models.ForeignKey(ingredients.models.Ingredient)
+    class Meta:
+        db_table = 'usesingredient'
+    
+    recipe = models.ForeignKey(Recipe, db_column='recipe')
+    ingredient = models.ForeignKey(ingredients.models.Ingredient, db_column='ingredient')
     
     group = models.CharField(max_length=100, blank=True)
     amount = models.FloatField()
-    unit = models.ForeignKey(ingredients.models.Unit)
+    unit = models.ForeignKey(ingredients.models.Unit, db_column='unit')
     
     # TODO: Build in check that every instance of this model can only have units that the ingredient 
     # can use
 
 class UsesRecipe(models.Model):
     
-    recipe = models.ForeignKey(Recipe, related_name='recipe')
-    recipe_used = models.ForeignKey(Recipe, related_name='ingredient')
+    class Meta:
+        db_table = 'usesrecipe'
+    
+    recipe = models.ForeignKey(Recipe, db_column='recipe', related_name='recipe')
+    recipe_used = models.ForeignKey(Recipe, db_column='ingredient', related_name='ingredient')
     
     group = models.CharField(max_length=100, blank=True)
     portions = models.IntegerField()
