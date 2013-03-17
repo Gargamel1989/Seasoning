@@ -29,9 +29,9 @@ class RecipeManager(models.Manager):
     # Get all the recipes used by the recipe
     # Returns a list of UsesRecipe objects!
     def get_recipe_ingredients(self, recipe):
-        recipe_ingredients = UsesRecipe.objects.select_related('ingredient').filter(recipe=recipe)
+        recipe_ingredients = UsesRecipe.objects.select_related('recipe_used').filter(recipe=recipe)
         for recipe_ingredient in recipe_ingredients:
-            recipe_ingredient.ingredients = self.get_ingredients(recipe_ingredient)
+            recipe_ingredient.recipe_used.ingredients = self.get_ingredients(recipe_ingredient)
         return recipe_ingredients
     
     # Get all the ingredients used by the recipe
@@ -180,7 +180,7 @@ class Recipe(models.Model):
                 uses.ingredient.total_footprint = uses.ingredient.total_footprint * portions / self.portions
                 uses.amount = uses.amount * portions / self.portions
             else:
-                uses.recipe.recalculate_footprints(portions)
+                uses.recipe_used.recalculate_footprints(portions)
         self.current_portions = portions
     
 
@@ -211,6 +211,7 @@ class UsesRecipe(models.Model):
     group = models.CharField(max_length=100, blank=True)
     portions = models.IntegerField()
     
+    @property
     def ingredient(self):
         return self.recipe_used
     

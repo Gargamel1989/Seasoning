@@ -33,7 +33,11 @@
 <p>
 	Ingredienten:<br>
 	{% for uses in recipe.ingredients %}
+	{% if uses.ingredient.ingredients %}
+	<a href="/recipes/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.portions }} porties ({{ uses.ingredient.total_footprint_pp }} kgCO2/portie)<br>
+	{% else %}
 	<a href="/ingredients/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.amount }} {{ uses.unit.short_name}} ({{ uses.ingredient.total_footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short }})<br>
+	{% endif %}
 		{% for avail in uses.ingredient.available_ins %}
 		--- Komt van {{ avail.country.name }} met transportmethode: {{ avail.transport_method.name }} tussen {{ avail.month_from }} en {{ avail.month_until }} (Totale uitstoot van deze optie: {{ avail.total_footprint }})<br>
 		{% endfor %}
