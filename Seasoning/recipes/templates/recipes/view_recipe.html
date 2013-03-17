@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load comments %}
 
 {% block extrahead %}
     <link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
@@ -7,8 +6,33 @@
 
 {% block content %}
 
-<h1>Recept</h1>
+<h1>{{ recipe.name }}</h1>
 
+<p>Auteur: {{ recipe.author.username }}</p>
+<p>Tijdstip toegevoegd: {{ recipe.time_added }}</p>
+<p><img src="{{ MEDIA_URL }}{{ recipe.image }}"/></p>
+<p>Soort maaltijd: {{ recipe.get_course_display }}</p>
+<p>Keuken: {{ recipe.cuisine }}</p>
+<p>Beschrijving: {{ recipe.description }}</p>
+<p>Porties: {{ recipe.portions }}</p>
+<p>Actieve tijd: {{ recipe.active_time }}</p>
+<p>Passieve tijd: {{ recipe.passive_time }}</p>
+<p>Extra Info: {{ recipe.extra_info }}</p>
+<p>Totale voetafdruk: {{ recipe.total_footprint }} kgCO2</p>
 
+<p>
+	Ingredienten:<br>
+	{% for uses in recipe.ingredients %}
+	<a href="/ingredients/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.amount }} {{ uses.unit.short_name}} ({{ uses.ingredient.total_footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short }})<br>
+		{% for avail in uses.ingredient.available_ins %}
+		--- Komt van {{ avail.country.name }} met transportmethode: {{ avail.transport_method.name }} tussen {{ avail.month_from }} en {{ avail.month_until }} (Totale uitstoot van deze optie: {{ avail.total_footprint }})<br>
+		{% endfor %}
+	{% endfor %}
+</p>
+
+<p>Bereidingswijze:
+	<br>
+	{{ recipe.instructions }}	
+</p>
 
 {% endblock %}
