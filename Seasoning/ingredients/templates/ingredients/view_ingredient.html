@@ -6,7 +6,7 @@
 
 {% block content %}
 
-Namen: {% for syn in ingredient.synonyms %}{{ syn.name }} ({{ syn.plural_name }}){% if not forloop.last %}, {% endif %}{% endfor %}
+Namen: {{ ingredient.name }}{% if ingredient.plural_name %} ({{ ingredient.plural_name }}){% endif %}{% for syn in ingredient.synonyms %}, {{ syn.name }} ({{ syn.plural_name }}){% endfor %}
 <br>
 Thumbnail: <img src="{{ ingredient.image.url }}">
 <br>

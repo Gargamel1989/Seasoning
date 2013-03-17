@@ -58,6 +58,8 @@ class Ingredient(models.Model):
                  (u'NV',u'Niet-Vegetarisch'))
     
     id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50L, unique=True)
+    plural_name = models.CharField(max_length=50L, blank=True)
     type = models.CharField(max_length=10L)
     
     category = models.CharField(max_length=2L, choices=CATEGORIES)
