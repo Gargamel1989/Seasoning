@@ -18,7 +18,16 @@
 <p>Actieve tijd: {{ recipe.active_time }}</p>
 <p>Passieve tijd: {{ recipe.passive_time }}</p>
 <p>Extra Info: {{ recipe.extra_info }}</p>
-<p>Totale voetafdruk: {{ recipe.total_footprint }} kgCO2</p>
+<p>Totale voetafdruk: {{ recipe.total_footprint }} kgCO2 ({{ recipe.total_footprint_pp }} pp.)</p>
+<p>
+	<form action="/recipes/{{ recipe.id }}/" method="get">
+        <label for="portions">
+            Gewenst aantal porties:
+            <input type="text" name="portions" id="portions" value="{{ recipe.current_portions }}">
+            <input type="submit" value="bereken" >
+        </label>
+    </form>
+</p>
 
 <p>
 	Ingredienten:<br>

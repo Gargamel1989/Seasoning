@@ -19,4 +19,11 @@ def search_recipes(request):
 def view_recipe(request, recipe_id):
     recipe = Recipe.objects.get_everything(recipe_id=recipe_id)
     
+    try:
+        portions = int(request.GET.get('portions', recipe.portions))
+    except ValueError:
+        portions = recipe.portions
+    recipe.recalculate_footprints(portions)
+    
+    
     return render(request, 'recipes/view_recipe.html', {'recipe': recipe})
