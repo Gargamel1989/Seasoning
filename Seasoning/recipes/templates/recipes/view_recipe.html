@@ -14,20 +14,21 @@
 <p>Soort maaltijd: {{ recipe.get_course_display }}</p>
 <p>Keuken: {{ recipe.cuisine }}</p>
 <p>Beschrijving: {{ recipe.description }}</p>
-<p>Porties: {{ recipe.portions }}</p>
-<p>Actieve tijd: {{ recipe.active_time }}</p>
-<p>Passieve tijd: {{ recipe.passive_time }}</p>
-<p>Extra Info: {{ recipe.extra_info }}</p>
-<p>Totale voetafdruk: {{ recipe.total_footprint }} kgCO2 ({{ recipe.total_footprint_pp }} pp.)</p>
+
 <p>
 	<form action="/recipes/{{ recipe.id }}/" method="get">
         <label for="portions">
-            Gewenst aantal porties:
+            Porties:
             <input type="text" name="portions" id="portions" value="{{ recipe.current_portions }}">
             <input type="submit" value="bereken" >
         </label>
     </form>
 </p>
+<p>Standaardporties: {{ recipe.portions }}</p>
+<p>Actieve tijd: {{ recipe.active_time }}</p>
+<p>Passieve tijd: {{ recipe.passive_time }}</p>
+<p>Extra Info: {{ recipe.extra_info }}</p>
+<p>Totale voetafdruk: {{ recipe.total_footprint }} kgCO2 ({{ recipe.total_footprint_pp }} pp.)</p>
 
 <p>
 	Ingredienten:<br>
