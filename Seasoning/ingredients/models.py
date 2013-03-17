@@ -1,6 +1,7 @@
 from django.db import models
 import time
 from imagekit.models.fields import ProcessedImageField
+from django.db.models.fields.related import OneToOneField
 
 
 class IngredientManager(models.Manager):
@@ -24,6 +25,7 @@ class IngredientManager(models.Manager):
             ingredient.available_in_s = AvailableInSea.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
         
         return ingredient
+    
 
 def get_image_filename(instance, old_filename):
     filename = str(time.time()) + '.png'
@@ -72,6 +74,8 @@ class Ingredient(models.Model):
     source = models.TextField(blank=True)
     
     base_footprint = models.FloatField()
+    
+    primary_unit = OneToOneField('CanUseUnit', related_name='primary_unit')
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     accepted = models.BooleanField(default=False)
@@ -161,15 +165,21 @@ class AvailableInCountry(models.Model):
         db_table = 'availableincountry'
     
     id = models.IntegerField(primary_key=True)
-    ingredient = models.ForeignKey('Vegetalingredient', db_column='ingredient')
+    ingredient = models.ForeignKey(Ingredient, related_name='available_in_country', db_column='ingredient')
     country = models.ForeignKey('Country', db_column='country')
     transport_method = models.ForeignKey('Transportmethod', db_column='transport_method')
     
     production_type  = models.CharField(max_length=10, blank=True)
+    extra_production_footprint = models.FloatField(default=0)
     
     date_from = models.DateField()
     date_until = models.DateField()
     
+    def month_from(self):
+        return self.date_from.strftime('%B')
+    
+    def month_until(self):
+        return self.date_until.strftime('%B')
 
 
 class Sea(models.Model):
@@ -187,7 +197,7 @@ class AvailableInSea(models.Model):
         db_table = 'availableinsea'
     
     id = models.IntegerField(primary_key=True)
-    ingredient = models.ForeignKey('Ingredient', db_column='ingredient')
+    ingredient = models.ForeignKey(Ingredient, related_name='available_in_sea', db_column='ingredient')
     sea = models.ForeignKey('Sea', db_column='sea')
     transport_method = models.ForeignKey('Transportmethod', db_column='transport_method')
     
