@@ -35,7 +35,7 @@ Bruikbare eenheden: <br>
 ---{{ can_use_unit.unit.name }}: Conversiefactor={{ can_use_unit.conversion_factor }}<br>
 {% endfor %}
 <br>
-{% if ingredient.type == 'Veggie' %}
+{% if ingredient.type == 'Veggie' or ingredient.type == 'Fish' %}
 Bijkomende informatie voor Veggie ingredienten:
 <br>
 Bewaarbaarheid: {{ ingredient.vegetal_ingredient.preservability }}
@@ -45,8 +45,10 @@ Uitstoot tijdens bewaring: {{ ingredient.vegetal_ingredient.preservation_footpri
 <br>
 Beschikbaar in: <br>
 {% for available_in in ingredient.available_in_c %}
----{{ available_in.country.name }} via {{ available_in.transport_method.name }} (Distance: {{ available_in.country.distance }}) 
-van {{ available_in.date_from }} tot {{ available_in.date_until }} (Productiemethode: {{ available_in.production_type }})
+&nbsp;-&nbsp;Dit ingredient is beschikbaar in {{ available_in.country.name }} ({{ available_in.country.distance }} km van Belgie) tussen {{ available_in.month_from }} en {{ available_in.month_until }}<br>
+&nbsp;&nbsp;&nbsp;Het wordt vervoerd via {{ available_in.transport_method.name }}<br>
+&nbsp;{% if available_in.production_type %}Het wordt geproduceerd adhv. {{ available_in.production_type }}<br>{% endif %}
+&nbsp;Een ingredient van deze optie heeft een extra uitstoot van {{ available_in.extra_footprint }}<br>
 {% endfor %}
 <br>
 

@@ -79,6 +79,11 @@ class Ingredient(models.Model):
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     accepted = models.BooleanField(default=False)
+    
+    #####
+    # To be populated when queried
+    #####
+    
 
 class Synonym(models.Model):
     
@@ -180,6 +185,9 @@ class AvailableInCountry(models.Model):
     
     def month_until(self):
         return self.date_until.strftime('%B')
+    
+    def extra_footprint(self):
+        return self.extra_production_footprint + self.country.distance*self.transport_method.emission_per_km
 
 
 class Sea(models.Model):
@@ -203,3 +211,12 @@ class AvailableInSea(models.Model):
     
     date_from = models.DateField()
     date_until = models.DateField()
+    
+    def month_from(self):
+        return self.date_from.strftime('%B')
+    
+    def month_until(self):
+        return self.date_until.strftime('%B')
+    
+    def extra_footprint(self):
+        return self.extra_production_footprint + self.sea.distance*self.transport_method.emission_per_km
