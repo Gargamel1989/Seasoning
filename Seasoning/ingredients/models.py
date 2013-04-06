@@ -19,6 +19,11 @@ class IngredientManager(models.Manager):
         ingredient = self.select_related('vegetal_ingredient').get(pk=pk)
         ingredient.synonyms = Synonym.objects.filter(ingredient=ingredient)
         ingredient.units = CanUseUnit.objects.select_related('unit').filter(ingredient=ingredient)
+        for unit in ingredient.units:
+            if unit.id == ingredient.primary_unit_id:
+                ingredient.primary_unit = unit
+                break
+            raise Exception('No Primary Unit for Ingredient: %s' % ingredient.name)
         if ingredient.type == 'Veggie':
             ingredient.available_in_c = AvailableInCountry.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
         elif ingredient.type == 'Fish':
@@ -80,10 +85,25 @@ class Ingredient(models.Model):
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     accepted = models.BooleanField(default=False)
     
-    #####
-    # To be populated when queried
-    #####
-    
+    def normalized_footprint(self):
+        '''
+        This method return the current mimimal available footprint if the
+        ingredient in kgCO2/self.primary_unit
+        '''
+        normalized_footprint = self.base_footprint
+        if self.type == 'Veggie':
+            try:
+                avails = sorted(self.available_ins, key=lambda avail: avail.extra_footprint)
+            except AttributeError:
+                print 'Warning: Doing more queries than supposed to methinks'
+                avails = sorted(self.available_in_country, key=lambda avail: avail.extra_footprint)
+                       
+            normalized_footprint += avails[0]
+        elif self.type == 'Fish':
+            avails = sorted(self.available_in_sea, key=lambda avail: avail.extra_footprint)
+            normalized_footprint += avails[0]
+        
+        return normalized_footprint
 
 class Synonym(models.Model):
     
@@ -188,6 +208,9 @@ class AvailableInCountry(models.Model):
     
     def extra_footprint(self):
         return self.extra_production_footprint + self.country.distance*self.transport_method.emission_per_km
+    
+    def total_footprint(self):
+        return self.ingredient.base_footprint + self.extra_footprint()
 
 
 class Sea(models.Model):
@@ -220,3 +243,6 @@ class AvailableInSea(models.Model):
     
     def extra_footprint(self):
         return self.extra_production_footprint + self.sea.distance*self.transport_method.emission_per_km
+    
+    def total_footprint(self):
+        return self.ingredient.base_footprint + self.extra_footprint()
