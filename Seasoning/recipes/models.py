@@ -37,7 +37,7 @@ class RecipeManager(models.Manager):
     # Get all the ingredients used by the recipe
     # Returns a list of UsesIngredient objects!
     def get_ingredient_ingredients(self, recipe):
-        uses = UsesIngredient.objects.select_related('ingredient__primary_unit__unit', 'unit').filter(recipe=recipe)
+        uses = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
         ings = {}
         # Build a dictionary of ingredients, mapping ids to the ingredient objects
         for use in uses:
@@ -49,12 +49,10 @@ class RecipeManager(models.Manager):
         avails_in_c = AvailableInCountry.objects.select_related('country', 'transport_method').filter(date_filter, ingredient__in=ings.keys())
         avails_in_s = AvailableInSea.objects.select_related('sea', 'transport_method').filter(ingredient__in=ings.keys())
         
-        # Map available_in objects to their ingredients and calculate the total_footprint of each available_in
+        # Map available_in objects to their ingredients
         for avail in avails_in_c:
             ingredient = ings[avail.ingredient_id][0]
-            avail.total_footprint = ingredient.base_footprint + \
-                                    avail.extra_production_footprint + \
-                                    avail.country.distance * avail.transport_method.emission_per_km
+            avail.ingredient = ingredient
             if hasattr(ingredient, 'available_ins'):
                 ingredient.available_ins.append(avail)
             else:
@@ -62,9 +60,7 @@ class RecipeManager(models.Manager):
         
         for avail in avails_in_s:
             ingredient = ings[avail.ingredient_id][0]
-            avail.total_footprint = ingredient.base_footprint + \
-                                    avail.extra_production_footprint + \
-                                    avail.sea.distance * avail.transport_method.emission_per_km
+            avail.ingredient = ingredient
             if hasattr(ingredient, 'available_ins'):
                 ingredient.available_ins.append(avail)
             else:
@@ -77,11 +73,12 @@ class RecipeManager(models.Manager):
         for unit in units:
             ingredient, use = ings[unit.ingredient_id]
             if ingredient.type == 'Veggie' or ingredient.type == 'Fish':
-                ingredient.available_ins = sorted(ingredient.available_ins, key=lambda avail: avail.total_footprint)
-                unweighted_footprint = ingredient.available_ins[0].total_footprint
+                ingredient.available_ins = sorted(ingredient.available_ins, key=lambda avail: avail.total_footprint())
+                unweighted_footprint = ingredient.available_ins[0].total_footprint()
             else:
                 unweighted_footprint = ingredient.base_footprint
-            ingredient.total_footprint = unweighted_footprint * use.amount * unit.conversion_factor
+            ingredient.unit_footprint = unweighted_footprint * unit.conversion_factor
+            ingredient.total_footprint = ingredient.unit_footprint * use.amount
             
         return uses
     
@@ -190,7 +187,7 @@ class UsesIngredient(models.Model):
     class Meta:
         db_table = 'usesingredient'
     
-    recipe = models.ForeignKey(Recipe, db_column='recipe')
+    recipe = models.ForeignKey(Recipe, related_name='uses_ingredient', db_column='recipe')
     ingredient = models.ForeignKey(ingredients.models.Ingredient, db_column='ingredient')
     
     group = models.CharField(max_length=100, blank=True)
