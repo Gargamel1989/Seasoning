@@ -57,6 +57,10 @@ a:hover {
 	height: 10px;
 }
 
+#id_honeypot {
+	display: none;
+}
+
 #container {
    min-width: 1000px;
    min-height:100%;

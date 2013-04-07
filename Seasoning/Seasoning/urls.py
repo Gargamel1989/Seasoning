@@ -17,6 +17,9 @@ urlpatterns = patterns('',
     # Registration pages
     url(r'^', include('authentication.urls')),
     
+     # Comments
+    (r'^comments/', include('django.contrib.comments.urls')),
+    
 )
 
 from django.conf import settings
