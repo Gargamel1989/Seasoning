@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load comments %}
 
 {% block extrahead %}
     <link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
@@ -47,6 +48,40 @@
 <p>Bereidingswijze:
 	<br>
 	{{ recipe.instructions }}	
+</p>
+
+<p>Geef een reactie op dit recept:
+	<br>
+	{% if user.is_authenticated %}
+	    {% get_comment_form for recipe as form %}
+	    <form action="{% comment_form_target %}" method="POST">
+		    {% csrf_token %}
+		    {{ form.comment }}
+		    {{ form.honeypot }}
+		    {{ form.content_type }}
+		    {{ form.object_pk }}
+		    {{ form.timestamp }}
+		    {{ form.security_hash }}
+		    <input type="hidden" name="next" value="{{ request.path }}" />
+		    <br><input type="submit" value="Add comment" id="id_submit" />
+	    </form>
+	{% else %}
+	    <p><a href="{% url 'auth_login' %}?next={{ request.path  }}">Meld je aan</a> om een reactie te geven.</p>
+	{% endif %}
+</p>
+<p>
+	{% get_comment_count for recipe as comment_count  %}
+	{% ifequal comment_count 0 %}
+	Er zijn nog geen reacties op dit recept... Wees de eerste!
+	{% else %}
+		{% ifequal comment_count 1 %}
+		Er is 1 reactie op dit recept:
+		{% else %}
+		Er zijn {{ comment_count }} reacties op dit recept:
+		{% endifequal %}
+	{% endifequal %}
+	<br>
+	{% render_comment_list for recipe %}
 </p>
 
 {% endblock %}
