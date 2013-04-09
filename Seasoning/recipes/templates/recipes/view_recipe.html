@@ -25,6 +25,21 @@
         </label>
     </form>
 </p>
+<p>
+	Rating: {% if recipe.rating %}{{ recipe.rating }} ({{ recipe.number_of_votes }} stem{% if recipe.number_of_votes > 1 %}men{% endif %}){% else %}Dit recept heeft nog geen rating{% endif %}<br>
+	Jouw Rating: 
+	{% if not user.is_authenticated %}
+		<a href="{% url 'auth_login' %}?next={{ request.path  }}">Meld je aan</a> om een rating te geven aan dit recept
+	{% else %}
+		<a href="/recipes/vote/{{ recipe.id }}/0/" {% ifequal user_vote.score 0 %}class="current-vote" style="font-weight: bold"{% endifequal %}>0</a>
+		<a href="/recipes/vote/{{ recipe.id }}/1/" {% ifequal user_vote.score 1 %}class="current-vote" style="font-weight: bold"{% endifequal %}>1</a>
+		<a href="/recipes/vote/{{ recipe.id }}/2/" {% ifequal user_vote.score 2 %}class="current-vote" style="font-weight: bold"{% endifequal %}>2</a>
+		<a href="/recipes/vote/{{ recipe.id }}/3/" {% ifequal user_vote.score 3 %}class="current-vote" style="font-weight: bold"{% endifequal %}>3</a>
+		<a href="/recipes/vote/{{ recipe.id }}/4/" {% ifequal user_vote.score 4 %}class="current-vote" style="font-weight: bold"{% endifequal %}>4</a>
+		<a href="/recipes/vote/{{ recipe.id }}/5/" {% ifequal user_vote.score 5 %}class="current-vote" style="font-weight: bold"{% endifequal %}>5</a>
+		{% if user_vote %}<a href="/recipes/removevote/{{ recipe.id }}/">Remove your vote</a>{% endif %}
+{% endif %}
+</p>
 <p>Standaardporties: {{ recipe.portions }}</p>
 <p>Actieve tijd: {{ recipe.active_time }}</p>
 <p>Passieve tijd: {{ recipe.passive_time }}</p>
