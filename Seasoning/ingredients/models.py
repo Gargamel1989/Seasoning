@@ -2,6 +2,7 @@ from django.db import models
 import time
 from imagekit.models.fields import ProcessedImageField
 from django.db.models.fields.related import OneToOneField
+from imagekit.processors.resize import ResizeToFill
 
 
 class IngredientManager(models.Manager):
@@ -82,7 +83,7 @@ class Ingredient(models.Model):
     
     primary_unit = OneToOneField('CanUseUnit', related_name='primary_unit')
     
-    image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
+    image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     accepted = models.BooleanField(default=False)
     
     def normalized_footprint(self):
