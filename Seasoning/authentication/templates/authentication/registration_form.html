@@ -60,9 +60,31 @@
         {% endif %}
 	</div>
 	
+	<div class="field-wrapper">
+        {{ form.gender.label_tag }}
+        {{ form.gender|tabindex:5 }}
+        
+        {% if form.gender.errors %}        
+			{{ form.gender.errors }}
+        {% else %}
+        	<ul class="errorlist"><li></li></ul>	
+        {% endif %}
+	</div>
+	
+	<div class="field-wrapper">
+        {{ form.date_of_birth.label_tag }}
+        {{ form.date_of_birth|tabindex:6 }}
+        
+        {% if form.date_of_birth.errors %}        
+			{{ form.date_of_birth.errors }}
+        {% else %}
+        	<ul class="errorlist"><li></li></ul>	
+        {% endif %}
+	</div>
+	
 	<div class="field-wrapper" id="captcha-wrapper">
 		{{ form.captcha.errors }}
-        {{ form.captcha|tabindex:5 }}
+        {{ form.captcha|tabindex:7 }}
 	</div>
 	
 	<div class="field-wrapper" id="terms-wrapper">
@@ -72,7 +94,7 @@
         	<ul class="errorlist"><li></li></ul>	
         {% endif %}
         
-        {{ form.tos|tabindex:6 }}
+        {{ form.tos|tabindex:8 }}
         {{ form.tos.label_tag}}
 	</div>
   
