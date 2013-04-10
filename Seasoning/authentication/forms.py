@@ -6,9 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms.models import ModelForm
-from django.forms.widgets import ClearableFileInput
+from django.forms.widgets import ClearableFileInput, DateInput
 from django.utils.html import format_html
-from authentication.models import NewEmail
+from authentication.models import NewEmail, User
 
 
         
@@ -65,6 +65,10 @@ class EmailUserCreationForm(forms.Form):
                                 label=_("Password"))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
                                 label=_("Password (again)"))
+    
+    gender = forms.ChoiceField(choices=User.GENDER_CHOICES, label=_("Gender"))
+    
+    date_of_birth = forms.DateField(label=_("Date of Birth"))
     
     tos = forms.BooleanField(widget=forms.CheckboxInput(attrs=attrs_dict),
                              label=_(u'I have read and agree to the Terms of Service'),

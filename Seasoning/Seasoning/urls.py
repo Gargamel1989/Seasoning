@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
     # General Pages
@@ -11,11 +11,11 @@ urlpatterns = patterns('',
     url(r'^terms/$', 'Seasoning.views.terms'),
 
     # Core pages
-    url(r'^ingredients/', include('ingredients.urls')),
-    url(r'^recipes/', include('recipes.urls')),
+    (r'^ingredients/', include('ingredients.urls')),
+    (r'^recipes/', include('recipes.urls')),
     
     # Registration pages
-    url(r'^', include('authentication.urls')),
+    (r'^', include('authentication.urls')),
     
      # Comments
     (r'^comments/', include('django.contrib.comments.urls')),
