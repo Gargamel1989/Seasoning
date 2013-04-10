@@ -70,11 +70,12 @@ class RegistrationBackend(object):
         class of this backend as the sender.
 
         """
-        username, email, password = kwargs['username'], kwargs['email'], kwargs['password1']
+        username, email, password, gender, date_of_birth = kwargs['username'], kwargs['email'], kwargs['password1'], kwargs['gender'], kwargs['date_of_birth']
         
         site = RequestSite(request)
         new_user = RegistrationProfile.objects.create_inactive_user(username, email,
-                                                                    password, site)
+                                                                    password, gender, date_of_birth, 
+                                                                    site)
         signals.user_registered.send(sender=self.__class__,
                                      user=new_user,
                                      request=request)
