@@ -20,7 +20,8 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, password=None):
+    
+    def create_user(self, username, email, gender, date_of_birth, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -33,21 +34,24 @@ class UserManager(BaseUserManager):
         user = self.model(
             username=username,
             email=UserManager.normalize_email(email),
+            gender=gender,
+            date_of_birth=date_of_birth
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth, password):
+    def create_superuser(self, username, email, gender, date_of_birth, password):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
-        user = self.create_user(email,
-            password=password,
-            date_of_birth=date_of_birth
-        )
+        user = self.create_user(username,
+                                email,
+                                password=password,
+                                gender=gender,
+                                date_of_birth=date_of_birth)
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -57,6 +61,11 @@ def get_image_filename(instance, old_filename):
     return 'images/users/' + filename
 
 class User(AbstractBaseUser):
+    
+    GENDER_CHOICES = (
+        ('M', _('Male')),
+        ('F', _('Female')),
+    )
     
     email = models.EmailField(
         verbose_name=_(_('email address')),
@@ -72,6 +81,10 @@ class User(AbstractBaseUser):
     
     avatar = ProcessedImageField([ResizeToFit(250, 250), AddBorder(2, 'Black')], format='PNG', \
                                   upload_to=get_image_filename, default='images/users/no_image.png')
+    
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    
+    date_of_birth = models.DateField()
         
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -230,7 +243,7 @@ class RegistrationManager(models.Manager):
                 return user
         return False
     
-    def create_inactive_user(self, username, email, password,
+    def create_inactive_user(self, username, email, password, gender, date_of_birth,
                              site, send_email=True):
         """
         Create a new, inactive ``User``, generate a
@@ -241,7 +254,7 @@ class RegistrationManager(models.Manager):
         user. To disable this, pass ``send_email=False``.
         
         """
-        new_user = User.objects.create_user(username, email, password)
+        new_user = User.objects.create_user(username, email, gender, date_of_birth, password=password)
         new_user.is_active = False
         new_user.save()
 
