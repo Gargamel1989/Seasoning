@@ -2,7 +2,7 @@
 Dit e-mail adres is enkele ogenblikken geleden gebruikt om een account te registreren bij {{ site }}. Indien u, de eigenaar van dit e-mail adres, dit gedaan hebt, kan u onderstaande url gebruiken om het account te activeren:
 
 
-{{ site }}/accounts/activate/{{ activation_key }}/
+{{ site }}/activate/{{ activation_key }}/
 
 Indien u geen account geregistreerd hebt bij {{ site }}, kan u deze e-mail gewoon negeren. Het 
 account zal dan na {{ expiration_days|apnumber }} dagen verwijderd worden.
