@@ -50,6 +50,9 @@
 		    	
                     <div id="navigation">
                         <a href="/recipes/search/">Recepten</a>
+                        {% if user.is_staff %}
+                        <a href="/backup/">Backup Database</a>
+                        {% endif %}
                     </div>
 		    	
 		    </div>
