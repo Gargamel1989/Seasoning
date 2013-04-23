@@ -20,6 +20,9 @@ urlpatterns = patterns('',
      # Comments
     (r'^comments/', include('django.contrib.comments.urls')),
     
+    # Backup Database
+    (r'^backup/$', 'Seasoning.views.backup_db'),
+    
 )
 
 from django.conf import settings
