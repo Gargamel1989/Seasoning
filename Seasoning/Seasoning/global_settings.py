@@ -2,6 +2,7 @@
 import os
 
 SETTINGS_DIR = os.path.dirname(__file__)
+DB_BACKUP_FILE = os.path.join(os.path.dirname(SETTINGS_DIR), '../../seasoning_db.bak')
 
 ADMINS = (
     ('Joep Driesen', 'joeper_100@hotmail.com'),
