@@ -6,9 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 from captcha.fields import ReCaptchaField
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms.models import ModelForm
-from django.forms.widgets import ClearableFileInput, DateInput
+from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
-from authentication.models import NewEmail, User
+from authentication.models import User
 
 
         
