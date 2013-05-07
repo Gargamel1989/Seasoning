@@ -9,9 +9,12 @@
 {% block content %}
 
 <form action="" method="POST">
-	{{ form.as_p }}
+	{% csrf_token %}
+	{{ ingredient_form.as_p }}
 
-	{{ synonym_formset }}
+	{{ synonym_formset.as_p }}
+	
+	<input type="submit" value="Volgende" />
 </form>
 
 {% endblock %}

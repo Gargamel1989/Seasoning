@@ -25,9 +25,9 @@ class IngredientManager(models.Manager):
                 ingredient.primary_unit = unit
                 break
             raise Exception('No Primary Unit for Ingredient: %s' % ingredient.name)
-        if ingredient.type == 'Veggie':
+        if ingredient.type == 'VE':
             ingredient.available_in_c = AvailableInCountry.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
-        elif ingredient.type == 'Fish':
+        elif ingredient.type == 'VI':
             ingredient.available_in_s = AvailableInSea.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
         
         return ingredient
@@ -64,9 +64,14 @@ class Ingredient(models.Model):
     VEGANISMS = ((u'VN',u'Veganistisch'),
                  (u'VG',u'Vegetarisch'),
                  (u'NV',u'Niet-Vegetarisch'))
+    TYPES = ((u'BA', u'Basis'),
+             (u'VE', u'Seizoensgebonden'),
+             (u'FI', u'Seizoensgebonden Zee'))
     
     name = models.CharField(max_length=50L, unique=True)
     plural_name = models.CharField(max_length=50L, blank=True)
+    
+    type = models.CharField(max_length=2L, choices=TYPES)
     
     category = models.CharField(max_length=2L, choices=CATEGORIES)
     veganism = models.CharField(max_length=2L, choices=VEGANISMS)
@@ -79,7 +84,10 @@ class Ingredient(models.Model):
     
     base_footprint = models.FloatField()
     
-    primary_unit = OneToOneField('CanUseUnit', related_name='primary_unit')
+    primary_unit = OneToOneField('CanUseUnit', 
+                                 blank=True, null=True, 
+                                 on_delete=models.SET_NULL,
+                                 related_name='primary_unit')
     
     image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     accepted = models.BooleanField(default=False)
@@ -90,7 +98,7 @@ class Ingredient(models.Model):
         ingredient in kgCO2/self.primary_unit
         '''
         normalized_footprint = self.base_footprint
-        if self.type == 'Veggie':
+        if self.type == 'VE':
             try:
                 avails = sorted(self.available_ins, key=lambda avail: avail.extra_footprint)
             except AttributeError:
@@ -98,7 +106,7 @@ class Ingredient(models.Model):
                 avails = sorted(self.available_in_country, key=lambda avail: avail.extra_footprint)
                        
             normalized_footprint += avails[0]
-        elif self.type == 'Fish':
+        elif self.type == 'FI':
             avails = sorted(self.available_in_sea, key=lambda avail: avail.extra_footprint)
             normalized_footprint += avails[0]
         
@@ -109,7 +117,6 @@ class Synonym(models.Model):
     class Meta:
         db_table = 'synonym'
     
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50L, unique=True)
     plural_name = models.CharField(max_length=50L, blank=True)
     
@@ -125,6 +132,9 @@ class Unit(models.Model):
     name = models.CharField(max_length=30L, unique=True)
     short_name = models.CharField(max_length=10L, blank=True)
     
+    def __unicode__(self):
+        return self.name
+        
     def short(self):
         if self.short_name:
             return self.short_name
@@ -140,6 +150,9 @@ class CanUseUnit(models.Model):
     unit = models.ForeignKey('Unit', db_column='unit')
     
     conversion_factor = models.FloatField()
+    
+    def __unicode__(self):
+        return self.ingredient.name + ' can use ' + self.unit.name
 
 
 class VegetalIngredient(models.Model):
