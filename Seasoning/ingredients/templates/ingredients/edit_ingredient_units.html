@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    <link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
+    {{ form.media }}
+    {{ synonym_formset.media }}
+{% endblock %}
+
+{% block content %}
+
+<form action="" method="POST">
+	{% csrf_token %}
+	{{ units_form.as_p }}
+	
+	<input type="submit" value="Volgende" />
+</form>
+
+{% endblock %}

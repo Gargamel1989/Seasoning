@@ -73,7 +73,7 @@ class RecipeManager(models.Manager):
         # Each unit in this list corresponds to an ingredient
         for unit in units:
             ingredient, use = ings[unit.ingredient_id]
-            if ingredient.type == 'Veggie' or ingredient.type == 'Fish':
+            if ingredient.type == 'VE' or ingredient.type == 'FI':
                 ingredient.available_ins = sorted(ingredient.available_ins, key=lambda avail: avail.total_footprint())
                 unweighted_footprint = ingredient.available_ins[0].total_footprint()
             else:
