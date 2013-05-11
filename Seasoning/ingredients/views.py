@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect
 from ingredients.models import Ingredient, Synonym, CanUseUnit,\
     VegetalIngredient, AvailableInCountry, AvailableInSea
