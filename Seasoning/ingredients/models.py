@@ -84,13 +84,12 @@ class Ingredient(models.Model):
     
     base_footprint = models.FloatField()
     
-    primary_unit = OneToOneField('CanUseUnit', 
-                                 blank=True, null=True, 
-                                 on_delete=models.SET_NULL,
-                                 related_name='primary_unit')
-    
     image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     accepted = models.BooleanField(default=False)
+    
+    @property
+    def primary_unit(self):
+        return CanUseUnit.objects.get(ingredient=self, is_primary_unit=True)
     
     def normalized_footprint(self):
         '''
@@ -145,9 +144,10 @@ class CanUseUnit(models.Model):
     class Meta:
         db_table = 'canuseunit'
         
-    id = models.IntegerField(primary_key=True)
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='can_use_unit')
     unit = models.ForeignKey('Unit', db_column='unit')
+    
+    is_primary_unit = models.BooleanField()
     
     conversion_factor = models.FloatField()
     
@@ -183,6 +183,9 @@ class Country(models.Model):
     name = models.CharField(max_length=50L)
     distance = models.IntegerField()
     
+    def __unicode__(self):
+        return self.name
+    
 class TransportMethod(models.Model):
     '''
     This class represents a transport method. A transport method has a mean carbon emission
@@ -196,12 +199,14 @@ class TransportMethod(models.Model):
     name = models.CharField(max_length=20L)
     emission_per_km = models.FloatField()
     
+    def __unicode__(self):
+        return self.name
+    
 class AvailableInCountry(models.Model):
     
     class Meta:
         db_table = 'availableincountry'
     
-    id = models.IntegerField(primary_key=True)
     ingredient = models.ForeignKey(Ingredient, related_name='available_in_country', db_column='ingredient')
     country = models.ForeignKey('Country', db_column='country')
     transport_method = models.ForeignKey('Transportmethod', db_column='transport_method')
@@ -239,7 +244,6 @@ class AvailableInSea(models.Model):
     class Meta:
         db_table = 'availableinsea'
     
-    id = models.IntegerField(primary_key=True)
     ingredient = models.ForeignKey(Ingredient, related_name='available_in_sea', db_column='ingredient')
     sea = models.ForeignKey('Sea', db_column='sea')
     transport_method = models.ForeignKey('Transportmethod', db_column='transport_method')
