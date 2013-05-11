@@ -28,7 +28,7 @@ def terms(request):
 def backup_db(request):
     db = settings.DATABASES['default']
     cmd = 'mysqldump --opt -u %s -p%s %s | bzip2 -c > %s' % (db['USER'], db['PASSWORD'], db['NAME'], "/tmp/db_backup.sql")
-    stdin, stdout = os.popen2(cmd)
+    stdin, stdout = os.popen(cmd)
     stdin.close()
     stdout.close()
     
