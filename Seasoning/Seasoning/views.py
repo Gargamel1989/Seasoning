@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 import subprocess
+import time
+import os
 
 def home(request):
     return render(request, 'seasoning/homepage.html')
@@ -27,7 +29,8 @@ def terms(request):
 @staff_member_required
 def backup_db(request):
     db = settings.DATABASES['default']
-    cmd = 'mysqldump --opt -u %s -p%s %s | bzip2 -c > %s' % (db['USER'], db['PASSWORD'], db['NAME'], "/tmp/db_backup.sql")
-    subprocess.call(cmd)
+    filename = "/tmp/backups/mysql/%s-%s.sql" % (db['NAME'], time.strftime('%Y-%m-%d'))
+    cmd = 'mysqldump --opt -u %s -p%s -e -c %s | bzip2 -c > %s' % (db['USER'], db['PASSWORD'], db['NAME'], filename)
+    os.popen(cmd)
     
     return render(request, 'seasoning/homepage.html')
