@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    <link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block content %}
+
+<a href="/ingredients/add/">Nieuw Ingredient</a><br/><br/><br/>
+
+{% for ingredient in ingredients %}
+
+	<a href="/ingredients/{{ ingredient.id }}/">{{ ingredient.name }}</a><br/>
+
+{% endfor %}
+
+{% endblock %}

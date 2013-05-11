@@ -1,15 +1,16 @@
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from ingredients.models import Ingredient, Synonym, CanUseUnit,\
     VegetalIngredient, AvailableInCountry, AvailableInSea
 from django.forms.models import inlineformset_factory, modelform_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import permission_required
 
-def view_ingredient(request, ingredient_id):
-    ingredient = Ingredient.objects.all_info(ingredient_id)
-
-    return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient})
+def list_ingredients(request):
+    
+    ingredients = Ingredient.objects.all()
+    
+    return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients})
 
 @permission_required('is_superuser')
 def edit_ingredient(request, ingredient_id=None):
@@ -50,6 +51,7 @@ def edit_ingredient(request, ingredient_id=None):
         
         if models_valid and ingredient_form.cleaned_data['type'] == 'VE':
             models_valid = models_valid and veg_ingredient_form.is_valid() and availinc_formset.is_valid()
+            veg_ingredient_form.ingredient = ingredient
         
         if models_valid and ingredient_form.cleaned_data['type'] == 'FI':
             models_valid = models_valid and availins_formset.is_valid()
@@ -59,10 +61,14 @@ def edit_ingredient(request, ingredient_id=None):
             synonym_formset.save()
             canuseunit_formset.save()
             if ingredient_form.cleaned_data['type'] == 'VE':
-                veg_ingredient_form.save()
+                veg_ing_temp = veg_ingredient_form.save(commit=False)
+                veg_ing_temp.ingredient = ingredient
+                veg_ing_temp.save()
                 availinc_formset.save()
             if ingredient_form.cleaned_data['type'] == 'FI':
                 availins_formset.save()
+            
+            return redirect(list_ingredients)
         
     else:
         ingredient_form = IngredientForm(instance=ingredient)

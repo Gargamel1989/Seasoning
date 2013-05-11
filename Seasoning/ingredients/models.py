@@ -1,37 +1,8 @@
 from django.db import models
 import time
 from imagekit.models.fields import ProcessedImageField
-from django.db.models.fields.related import OneToOneField
 from imagekit.processors.resize import ResizeToFill
 
-
-class IngredientManager(models.Manager):
-    
-    def all_info(self, pk):
-        '''
-        This function fetches the required ingredient, and all related models. The various
-        related models are put into the following fields (if they exist):
-            - VegetalIngredient:  vegetal_ingredient
-            - Synonym:            synonyms
-            - CanUseUnit:         units
-            - AvailableInCountry: available_in_c
-            - AvailableInSea:     available_in_s
-        '''
-        ingredient = self.select_related('vegetal_ingredient').get(pk=pk)
-        ingredient.synonyms = Synonym.objects.filter(ingredient=ingredient)
-        ingredient.units = CanUseUnit.objects.select_related('unit').filter(ingredient=ingredient)
-        for unit in ingredient.units:
-            if unit.id == ingredient.primary_unit_id:
-                ingredient.primary_unit = unit
-                break
-            raise Exception('No Primary Unit for Ingredient: %s' % ingredient.name)
-        if ingredient.type == 'VE':
-            ingredient.available_in_c = AvailableInCountry.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
-        elif ingredient.type == 'VI':
-            ingredient.available_in_s = AvailableInSea.objects.select_related('country', 'transport_method').filter(ingredient=ingredient)
-        
-        return ingredient
-    
 
 def get_image_filename(instance, old_filename):
     filename = str(time.time()) + '.png'
@@ -43,8 +14,6 @@ class Ingredient(models.Model):
     Ingredients can be represented by it. This includes meat, which is not 
     dependent on time and has no special attributes
     '''
-    
-    objects = IngredientManager()
     
     class Meta:
         db_table = 'ingredient'
