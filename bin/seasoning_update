@@ -16,7 +16,7 @@ else
   . /etc/profile.d/seasoning.sh
 fi
 
-git checkout -q $SEASONING_VERSION
+git checkout -qf $SEASONING_VERSION
 
 $SEASONING_HOME/seasoning_env/bin/pip install -r $SEASONING_HOME/seasoning_website/requirements/virtualenv_requirements.txt | grep -v "Requirement already satisfied"
 
