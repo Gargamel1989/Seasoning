@@ -29,7 +29,7 @@ def terms(request):
 @staff_member_required
 def backup_db(request):
     db = settings.DATABASES['default']
-    filename = "/tmp/backups/mysql/%s-%s.sql" % (db['NAME'], time.strftime('%Y-%m-%d'))
+    filename = "/backups/mysql/%s-%s.sql" % (db['NAME'], time.strftime('%Y-%m-%d'))
     cmd = 'mysqldump --opt -u %s -p%s -e -c %s | bzip2 -c > %s' % (db['USER'], db['PASSWORD'], db['NAME'], filename)
     os.popen(cmd)
     
