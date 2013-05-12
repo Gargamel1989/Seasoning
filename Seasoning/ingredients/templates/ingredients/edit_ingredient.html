@@ -9,7 +9,7 @@
 {% block content %}
 <h1>Ingredient {% if ingredient %}Aanpassen{% else %}Toevoegen{% endif %}</h1>
 
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
 	{% csrf_token %}
 	{{ ingredient_form.non_field_errors }}
 	{{ synonym_formset.non_field_errors }}
