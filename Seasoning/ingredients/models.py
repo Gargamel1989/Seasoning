@@ -99,6 +99,9 @@ class Unit(models.Model):
     name = models.CharField(max_length=30L, unique=True)
     short_name = models.CharField(max_length=10L, blank=True)
     
+    parent_unit = models.ForeignKey('self', related_name="base_unit", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
+    ratio = models.FloatField(null=True, blank=True)
+    
     def __unicode__(self):
         return self.name
         
@@ -113,7 +116,7 @@ class CanUseUnit(models.Model):
         db_table = 'canuseunit'
         
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='can_use_unit')
-    unit = models.ForeignKey('Unit', db_column='unit')
+    unit = models.ForeignKey('Unit', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
     is_primary_unit = models.BooleanField()
     
