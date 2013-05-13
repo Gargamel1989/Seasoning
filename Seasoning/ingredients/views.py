@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from ingredients.models import Ingredient, Synonym, CanUseUnit,\
-    VegetalIngredient, AvailableInCountry, AvailableInSea
+    VegetalIngredient, AvailableInCountry, AvailableInSea, Unit
 from django.forms.models import inlineformset_factory, modelform_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import permission_required
@@ -88,3 +88,29 @@ def edit_ingredient(request, ingredient_id=None):
                                                                 'vegingredient_form': veg_ingredient_form,
                                                                 'availinc_formset': availinc_formset,
                                                                 'availins_formset': availins_formset})
+
+def list_units(request):
+    
+    units = Unit.objects.all()
+    
+    return render(request, 'ingredients/list_units.html', {'units': units})
+
+def edit_unit(request, unit_id=None):
+    
+    if unit_id:
+        unit = Unit.objects.get(pk=unit_id)
+    else:
+        unit = Unit()
+    
+    UnitForm = modelform_factory(Unit)
+    
+    if request.method == 'POST':
+        unit_form = UnitForm(request.POST, instance=unit)
+        
+        if unit_form.is_valid():
+            unit_form.save()
+            return redirect(list_units)
+    else:
+        unit_form = UnitForm(instance=unit)
+    
+    return render(request, 'ingredients/edit_unit.html', {'unit_form': unit_form})

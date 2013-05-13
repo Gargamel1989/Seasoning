@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<h1>Ingredient {% if ingredient %}Aanpassen{% else %}Toevoegen{% endif %}</h1>
+<h1>Ingredient {% if new %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
 
 <form action="" method="post" enctype="multipart/form-data">
 	{% csrf_token %}
@@ -337,7 +337,7 @@
 		</div>
 	</fieldset>
 	
-	<input id="submit-btn" type="submit" value="{% if ingredient %}Aanpassen{% else %}Toevoegen{% endif %}" />
+	<input id="submit-btn" type="submit" value="{% if new %}Toevoegen{% else %}Aanpassen{% endif %}" />
 </form>
 
 {% endblock %}
