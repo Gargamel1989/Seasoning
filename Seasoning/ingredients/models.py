@@ -96,7 +96,6 @@ class Unit(models.Model):
     class Meta:
         db_table = 'unit'
         
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30L, unique=True)
     short_name = models.CharField(max_length=10L, blank=True)
     

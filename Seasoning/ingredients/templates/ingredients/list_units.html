@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    <link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block content %}
+
+<a href="/ingredients/units/add/">Nieuwe Eenheid</a><br/><br/><br/>
+
+{% for unit in units %}
+
+	<a href="/ingredients/units/{{ unit.id }}/">{{ unit.name }}</a><br/>
+
+{% endfor %}
+
+{% endblock %}
