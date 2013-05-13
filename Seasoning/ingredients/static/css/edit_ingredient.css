@@ -94,6 +94,12 @@ textarea {
 	height: 3.5em;
 }
 
+#image-source textarea {
+	width: 350px;
+	height: 3.5em;
+	margin-left: 20px;
+}
+
 select {
 	float: left;
 	margin-left: 20px;

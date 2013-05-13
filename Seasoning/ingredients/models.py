@@ -54,6 +54,7 @@ class Ingredient(models.Model):
     base_footprint = models.FloatField()
     
     image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
+    image_source = models.TextField()
     accepted = models.BooleanField(default=False)
     
     @property
