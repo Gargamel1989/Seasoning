@@ -174,7 +174,7 @@ class TransportMethod(models.Model):
         return self.name
     
 class AvailableInCountry(models.Model):
-    
+
     class Meta:
         db_table = 'availableincountry'
     

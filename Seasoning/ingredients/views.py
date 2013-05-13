@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
 from ingredients.models import Ingredient, Synonym, CanUseUnit,\
     VegetalIngredient, AvailableInCountry, AvailableInSea, Unit
-from django.forms.models import inlineformset_factory, modelform_factory
+from django.forms.models import inlineformset_factory, modelform_factory,\
+    ModelForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import permission_required
+from django.utils.safestring import mark_safe
+from django.forms.widgets import Select, Widget
 
 def list_ingredients(request):
     
@@ -13,6 +16,57 @@ def list_ingredients(request):
 
 @permission_required('is_superuser')
 def edit_ingredient(request, ingredient_id=None):
+    
+    
+    
+    # This is temporary because it makes ingredient input easier
+    class MonthWidget(Widget):
+        
+        month_field = '%s_month'
+        
+        def render(self, name, value, attrs=None):
+            try:
+                month_val = value.month
+            except AttributeError:
+                month_val = None
+            
+            output = []
+
+            if 'id' in self.attrs:
+                id_ = self.attrs['id']
+            else:
+                id_ = 'id_%s' % name
+    
+            month_choices = ((0, '---'),
+                             (1, 'Januari'), (2, 'Februari'), (3, 'Maart'), (4, 'April'), (5, 'Mei'), (6, 'Juni'),
+                             (7, 'Juli'), (8, 'Augustus'), (9, 'September'), (10, 'Oktober'), (11, 'November'), (12, 'December'))
+            local_attrs = self.build_attrs(id=self.month_field % id_)
+            s = Select(choices=month_choices)
+            select_html = s.render(self.month_field % name, month_val, local_attrs)
+            output.append(select_html)
+            
+            return mark_safe(u'\n'.join(output))
+    
+        def id_for_label(self, id_):
+            return '%s_month' % id_
+        id_for_label = classmethod(id_for_label)
+    
+        def value_from_datadict(self, data, files, name):
+            m = data.get(self.month_field % name)
+            if m == "0":
+                return None
+            if m:
+                return '%s-%s-%s' % (2000, m, 1)
+            return data.get(name, None)
+    
+    class AvailableInCountryForm(ModelForm):
+        class Meta:
+            model = AvailableInCountry
+            widgets= {'date_from': MonthWidget,
+                      'date_until': MonthWidget}
+        
+    #############################################################
+        
     
     if ingredient_id:
         ingredient = Ingredient.objects.get(pk=ingredient_id)
@@ -32,7 +86,9 @@ def edit_ingredient(request, ingredient_id=None):
     CanUseUnitInlineFormset = inlineformset_factory(Ingredient, CanUseUnit, extra=1)
     
     VegetalIngredientForm = modelform_factory(VegetalIngredient, exclude=("ingredient"))
-    AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1)
+    # FIXME: remove form argument when no longer needed
+    AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1,
+                                                     form=AvailableInCountryForm)
     
     AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1)
     
