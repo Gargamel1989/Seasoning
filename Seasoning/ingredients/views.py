@@ -10,8 +10,8 @@ from django.forms.widgets import Select, Widget
 import calendar
 
 def list_ingredients(request):
-    
-    ingredients = Ingredient.objects.all()
+   
+    ingredients = Ingredient.objects.all().order_by('accepted', 'name')
     
     return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients})
 
