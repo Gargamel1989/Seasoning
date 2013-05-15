@@ -1,5 +1,8 @@
 .meter {
 	height: 20px;  /* Can be anything */
+	width: 500px;
+	margin-left: 30px;
+	margin-bottom: 50px;
 	position: relative;
 	background: #555;
 	-moz-border-radius: 25px;
