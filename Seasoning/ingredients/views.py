@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import permission_required
 from django.utils.safestring import mark_safe
 from django.forms.widgets import Select, Widget
+import calendar
 
 def list_ingredients(request):
     
@@ -59,11 +60,20 @@ def edit_ingredient(request, ingredient_id=None):
                 return '%s-%s-%s' % (2000, m, 1)
             return data.get(name, None)
     
+    class LastOfMonthWidget(MonthWidget):
+        def value_from_datadict(self, data, files, name):
+            m = data.get(self.month_field % name)
+            if m == "0":
+                return None
+            if m:
+                return '%s-%s-%s' % (2000, m, calendar.monthrange(2000, int(m))[1])
+            return data.get(name, None)
+    
     class AvailableInCountryForm(ModelForm):
         class Meta:
             model = AvailableInCountry
             widgets= {'date_from': MonthWidget,
-                      'date_until': MonthWidget}
+                      'date_until': LastOfMonthWidget}
         
     #############################################################
         
