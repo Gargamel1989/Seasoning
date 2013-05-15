@@ -15,7 +15,7 @@ def list_ingredients(request):
     perc_done = int(len(ingredients)/5)
     
     return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients,
-                                                                 'perc_don': perc_done})
+                                                                 'perc_done': perc_done})
 
 @permission_required('is_superuser')
 def edit_ingredient(request, ingredient_id=None):
