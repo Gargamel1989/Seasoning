@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 from django.forms.widgets import Select, Widget
 import calendar
 
+@permission_required('is_superuser')
 def list_ingredients(request):
    
     ingredients = Ingredient.objects.all().order_by('accepted', 'name')
@@ -162,12 +163,14 @@ def edit_ingredient(request, ingredient_id=None):
                                                                 'availinc_formset': availinc_formset,
                                                                 'availins_formset': availins_formset})
 
+@permission_required('is_superuser')
 def list_units(request):
     
     units = Unit.objects.all()
     
     return render(request, 'ingredients/list_units.html', {'units': units})
 
+@permission_required('is_superuser')
 def edit_unit(request, unit_id=None):
     
     if unit_id:
