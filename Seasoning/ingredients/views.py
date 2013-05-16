@@ -76,6 +76,12 @@ def edit_ingredient(request, ingredient_id=None):
             model = AvailableInCountry
             widgets= {'date_from': MonthWidget,
                       'date_until': LastOfMonthWidget}
+    
+    class AvailableInSeaForm(ModelForm):
+        class Meta:
+            model = AvailableInSea
+            widgets= {'date_from': MonthWidget,
+                      'date_until': LastOfMonthWidget}
         
     #############################################################
         
@@ -100,9 +106,10 @@ def edit_ingredient(request, ingredient_id=None):
     VegetalIngredientForm = modelform_factory(VegetalIngredient, exclude=("ingredient"))
     # FIXME: remove form argument when no longer needed
     AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1,
-                                                     form=AvailableInCountryForm)
+                                                            form=AvailableInCountryForm)
     
-    AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1)
+    AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1,
+                                                        form=AvailableInSeaForm)
     
     if request.method == 'POST':
         ingredient_form = IngredientForm(request.POST, request.FILES, instance=ingredient)
