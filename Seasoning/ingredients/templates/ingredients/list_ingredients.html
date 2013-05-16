@@ -11,7 +11,7 @@
 {% for ingredient in ingredients %}
 	
 	{% if ingredient.accepted %}<img src="http://suvendugiri.files.wordpress.com/2012/02/checkbox.png" width="10px" height="10px" />{% endif %}
-	<a href="/ingredients/{{ ingredient.id }}/">{{ ingredient.name }}</a><br/>
+	<a href="/ingredients/edit/{{ ingredient.id }}/">{{ ingredient.name }}</a><br/>
 
 {% endfor %}
 

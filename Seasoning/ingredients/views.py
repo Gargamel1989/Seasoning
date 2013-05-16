@@ -16,6 +16,11 @@ def list_ingredients(request):
     
     return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients})
 
+def view_ingredient(request, ingredient_id):
+    ingredient = Ingredient.objects.get(pk=ingredient_id)
+    
+    return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient})
+
 @permission_required('is_superuser')
 def edit_ingredient(request, ingredient_id=None):
     
