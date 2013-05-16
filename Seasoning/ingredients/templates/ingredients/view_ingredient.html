@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+{% if user.is_superuser %}<p><a href="/ingredients/edit/{{ ingredient.pk }}/">Ingredient Aanpassen</a><br/>{% endif %}
 
 Namen: {{ ingredient.name }}{% if ingredient.plural_name %} ({{ ingredient.plural_name }}){% endif %}{% for syn in ingredient.synonyms %}, {{ syn.name }} ({{ syn.plural_name }}){% endfor %}
 <br>
