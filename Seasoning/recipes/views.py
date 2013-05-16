@@ -4,6 +4,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.forms.models import modelform_factory
 
 def search_recipes(request):
     recipes_list = Recipe.objects.all()
@@ -59,3 +60,29 @@ def remove_vote(request, recipe_id):
         return redirect(view_recipe, recipe_id)
     except ObjectDoesNotExist:
         raise Http404()
+
+def edit_recipe(request, recipe_id=None):
+    if recipe_id:
+        recipe = Recipe.objects.get(pk=recipe_id)
+        new = False
+    else:
+        recipe = Recipe()
+        new = True
+    
+    RecipeForm = modelform_factory(Recipe)
+    
+    if request.method == 'POST':
+        recipe_form = RecipeForm(request.POST, instance=recipe)
+        
+        if recipe_form.is_valid():
+            recipe_form.save()
+            redirect(edit_recipe_succes, recipe, new)
+    else:
+        recipe_form = RecipeForm(instance=recipe)
+    
+    return render(request, 'recipes/edit_recipe.html', {'new': new,
+                                                        'recipe_form': recipe_form})
+
+def edit_recipe_succes(request, recipe, new=False):
+    return render(request, 'recipes/edit_recipe_succes.html', {'new': new,
+                                                               'recipe': recipe})
