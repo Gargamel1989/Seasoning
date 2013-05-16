@@ -211,6 +211,9 @@ class Sea(models.Model):
     name = models.CharField(max_length=50L)
     distance = models.IntegerField()
     
+    def __unicode__(self):
+        return self.name
+    
 class AvailableInSea(models.Model):
     
     class Meta:
