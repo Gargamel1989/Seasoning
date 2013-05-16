@@ -10,10 +10,12 @@ from django.forms.widgets import Select, Widget
 import calendar
 
 def list_ingredients(request):
+   
+    ingredients = Ingredient.objects.all().order_by('accepted', 'name')
+    perc_done = int(len(ingredients)/5)
     
-    ingredients = Ingredient.objects.all()
-    
-    return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients})
+    return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients,
+                                                                 'perc_done': perc_done})
 
 @permission_required('is_superuser')
 def edit_ingredient(request, ingredient_id=None):
@@ -74,6 +76,12 @@ def edit_ingredient(request, ingredient_id=None):
             model = AvailableInCountry
             widgets= {'date_from': MonthWidget,
                       'date_until': LastOfMonthWidget}
+    
+    class AvailableInSeaForm(ModelForm):
+        class Meta:
+            model = AvailableInSea
+            widgets= {'date_from': MonthWidget,
+                      'date_until': LastOfMonthWidget}
         
     #############################################################
         
@@ -98,9 +106,10 @@ def edit_ingredient(request, ingredient_id=None):
     VegetalIngredientForm = modelform_factory(VegetalIngredient, exclude=("ingredient"))
     # FIXME: remove form argument when no longer needed
     AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1,
-                                                     form=AvailableInCountryForm)
+                                                            form=AvailableInCountryForm)
     
-    AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1)
+    AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1,
+                                                        form=AvailableInSeaForm)
     
     if request.method == 'POST':
         ingredient_form = IngredientForm(request.POST, request.FILES, instance=ingredient)
