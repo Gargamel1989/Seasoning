@@ -9,4 +9,7 @@ urlpatterns = patterns('',
     url(r'^(\d*)/$', 'recipes.views.view_recipe', name='recipe_view'),
     url(r'^vote/(\d*)/(\d*)/$', 'recipes.views.vote'),
     url(r'^removevote/(\d*)/$', 'recipes.views.remove_vote'),
+    
+    url(r'^add/$', 'recipes.views.edit_recipe'),
+    url(r'^edit/(\d*)/$', 'recipes.view.edit_recipe')
 )
