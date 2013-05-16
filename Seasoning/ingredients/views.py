@@ -10,10 +10,12 @@ from django.forms.widgets import Select, Widget
 import calendar
 
 def list_ingredients(request):
+   
+    ingredients = Ingredient.objects.all().order_by('accepted', 'name')
+    perc_done = int(len(ingredients)/5)
     
-    ingredients = Ingredient.objects.all()
-    
-    return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients})
+    return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients,
+                                                                 'perc_done': perc_done})
 
 @permission_required('is_superuser')
 def edit_ingredient(request, ingredient_id=None):
