@@ -7,5 +7,5 @@ class AddRecipeForm(forms.ModelForm):
         model = Recipe
         fields = ['name', 'course', 'cuisine',
                   'description', 'portions', 'active_time',
-                  'passive_time', 'extr_info',  'instructions',
+                  'passive_time', 'extra_info',  'instructions',
                   'image']
