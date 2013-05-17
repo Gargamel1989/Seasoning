@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from recipes.models import Recipe, Vote
+from recipes.froms import AddRecipeForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -69,16 +70,14 @@ def edit_recipe(request, recipe_id=None):
         recipe = Recipe()
         new = True
     
-    RecipeForm = modelform_factory(Recipe)
-    
     if request.method == 'POST':
-        recipe_form = RecipeForm(request.POST, instance=recipe)
+        recipe_form = AddRecipeForm(request.POST, instance=recipe)
         
         if recipe_form.is_valid():
             recipe_form.save()
             redirect(edit_recipe_succes, recipe, new)
     else:
-        recipe_form = RecipeForm(instance=recipe)
+        recipe_form = AddRecipeForm(instance=recipe)
     
     return render(request, 'recipes/edit_recipe.html', {'new': new,
                                                         'recipe_form': recipe_form})
