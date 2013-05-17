@@ -11,5 +11,5 @@ urlpatterns = patterns('',
     url(r'^removevote/(\d*)/$', 'recipes.views.remove_vote'),
     
     url(r'^add/$', 'recipes.views.edit_recipe'),
-    url(r'^edit/(\d*)/$', 'recipes.view.edit_recipe')
+    url(r'^edit/(\d*)/$', 'recipes.views.edit_recipe')
 )
