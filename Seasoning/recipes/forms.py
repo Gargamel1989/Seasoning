@@ -5,7 +5,15 @@ class AddRecipeForm(forms.ModelForm):
     
     class Meta:
         model = Recipe
-        fields = ['name', 'course', 'cuisine',
-                  'description', 'portions', 'active_time',
-                  'passive_time', 'extra_info',  'instructions',
-                  'image']
+        exclude = ['author', 'time_added',
+                   'rating', 'number_of_votes',
+                   'ingredient_ingredients', 'recipe_ingredients',
+                   'thumbnail', 'accepted']
+        
+    def save(*args, **kwargs):
+        author = kwargs.pop('author', None)
+        kwargs['commit'] = False
+        recipe = super(AddRecipeForm, self).save(*args, **kwargs)
+        recipe.author = author
+        return recipe.save()
+        
