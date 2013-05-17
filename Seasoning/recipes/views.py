@@ -74,7 +74,7 @@ def edit_recipe(request, recipe_id=None):
         recipe_form = AddRecipeForm(request.POST, instance=recipe)
         
         if recipe_form.is_valid():
-            recipe_form.save()
+            recipe_form.save(author=request.user)
             redirect(edit_recipe_succes, recipe, new)
     else:
         recipe_form = AddRecipeForm(instance=recipe)
