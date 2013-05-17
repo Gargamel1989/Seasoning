@@ -10,7 +10,7 @@ class AddRecipeForm(forms.ModelForm):
                    'ingredient_ingredients', 'recipe_ingredients',
                    'thumbnail', 'accepted']
         
-    def save(*args, **kwargs):
+    def save(self, *args, **kwargs):
         author = kwargs.pop('author', None)
         kwargs['commit'] = False
         recipe = super(AddRecipeForm, self).save(*args, **kwargs)
