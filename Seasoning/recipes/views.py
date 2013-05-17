@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from recipes.models import Recipe, Vote
-from recipes.froms import AddRecipeForm
+from recipes.forms import AddRecipeForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
