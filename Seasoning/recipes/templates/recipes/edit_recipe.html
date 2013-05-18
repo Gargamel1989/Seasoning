@@ -6,6 +6,10 @@
 <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {{ recipe_form.as_p }}
+  
+  {{ usesingredient_formset.as_p }}
+  
+  {{ usesrecipe_formset.as_p }}
 
   <input id="submit-btn" type="submit" value="{% if new %}Toevoegen{% else %}Aanpassen{% endif %}" />
 </form>

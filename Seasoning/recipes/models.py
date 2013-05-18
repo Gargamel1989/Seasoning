@@ -27,14 +27,6 @@ class RecipeManager(models.Manager):
         ingredients_list = sorted(ingredients_list, key=lambda ingredient: ingredient.group + ingredient.ingredient.name)
         return ingredients_list
     
-    # Get all the recipes used by the recipe
-    # Returns a list of UsesRecipe objects!
-    def get_recipe_ingredients(self, recipe):
-        recipe_ingredients = UsesRecipe.objects.select_related('recipe_used').filter(recipe=recipe)
-        for recipe_ingredient in recipe_ingredients:
-            recipe_ingredient.recipe_used.ingredients = self.get_ingredients(recipe_ingredient)
-        return recipe_ingredients
-    
     # Get all the ingredients used by the recipe
     # Returns a list of UsesIngredient objects!
     def get_ingredient_ingredients(self, recipe):
@@ -131,7 +123,6 @@ class Recipe(models.Model):
     number_of_votes = models.PositiveIntegerField(default=0)
     
     ingredient_ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient')
-    recipe_ingredients = models.ManyToManyField('self', through='UsesRecipe', symmetrical=False, related_name='r_ingredients')
     extra_info = models.TextField(default='')
     instructions = models.TextField()
     
@@ -196,25 +187,7 @@ class UsesIngredient(models.Model):
     unit = models.ForeignKey(ingredients.models.Unit, db_column='unit')
     
     # TODO: Build in check that every instance of this model can only have units that the ingredient 
-    # can use
-
-class UsesRecipe(models.Model):
-    
-    class Meta:
-        db_table = 'usesrecipe'
-    
-    recipe = models.ForeignKey(Recipe, db_column='recipe', related_name='recipe')
-    recipe_used = models.ForeignKey(Recipe, db_column='ingredient', related_name='ingredient')
-    
-    group = models.CharField(max_length=100, blank=True)
-    portions = models.IntegerField()
-    
-    @property
-    def ingredient(self):
-        return self.recipe_used
-    
-    # TODO: Build in check that when an instance of this is saved, no circular dependencies exist
-    
+    # can use    
 
 class Vote(models.Model):
     
