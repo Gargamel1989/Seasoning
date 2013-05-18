@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from recipes.models import Recipe, Vote
+from recipes.models import Recipe, Vote, UsesIngredient, UsesRecipe
 from recipes.forms import AddRecipeForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.forms.models import modelform_factory
+from django.forms.models import modelform_factory, inlineformset_factory
 
 def search_recipes(request):
     recipes_list = Recipe.objects.all()
@@ -70,17 +70,22 @@ def edit_recipe(request, recipe_id=None):
         recipe = Recipe()
         new = True
     
+    UsesIngredientInlineFormSet = inlineformset_factory(Recipe, UsesIngredient, extra=1)
+    
     if request.method == 'POST':
         recipe_form = AddRecipeForm(request.POST, instance=recipe)
+        usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe)
         
         if recipe_form.is_valid():
             recipe_form.save(author=request.user)
             redirect(edit_recipe_succes, recipe, new)
     else:
         recipe_form = AddRecipeForm(instance=recipe)
+        usesingredient_formset = UsesIngredientInlineFormSet(instance=recipe)
     
     return render(request, 'recipes/edit_recipe.html', {'new': new,
-                                                        'recipe_form': recipe_form})
+                                                        'recipe_form': recipe_form,
+                                                        'usesingredient_formset': usesingredient_formset})
 
 def edit_recipe_succes(request, recipe, new=False):
     return render(request, 'recipes/edit_recipe_succes.html', {'new': new,

@@ -7,7 +7,7 @@ class AddRecipeForm(forms.ModelForm):
         model = Recipe
         exclude = ['author', 'time_added',
                    'rating', 'number_of_votes',
-                   'ingredient_ingredients', 'recipe_ingredients',
+                   'ingredient_ingredients',
                    'thumbnail', 'accepted']
         
     def save(self, *args, **kwargs):
@@ -16,4 +16,6 @@ class AddRecipeForm(forms.ModelForm):
         recipe = super(AddRecipeForm, self).save(*args, **kwargs)
         recipe.author = author
         return recipe.save()
+
+
         
