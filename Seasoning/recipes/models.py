@@ -4,7 +4,6 @@ from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
 from imagekit.processors.resize import ResizeToFit, AddBorder
 import ingredients
-import itertools
 from ingredients.models import AvailableInCountry, AvailableInSea, CanUseUnit
 import datetime
 from django.db.models import Q
@@ -22,8 +21,7 @@ class RecipeManager(models.Manager):
     # Returns a list of UsesIngredient and UsesRecipe objects!
     def get_ingredients(self, recipe):
         ingredients = self.get_ingredient_ingredients(recipe)
-        recipes = self.get_recipe_ingredients(recipe)
-        ingredients_list = list(itertools.chain(ingredients, recipes))
+        ingredients_list = list(ingredients)
         ingredients_list = sorted(ingredients_list, key=lambda ingredient: ingredient.group + ingredient.ingredient.name)
         return ingredients_list
     

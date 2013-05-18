@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from recipes.models import Recipe, Vote, UsesIngredient, UsesRecipe
-from recipes.forms import AddRecipeForm
+from recipes.models import Recipe, Vote, UsesIngredient
+from recipes.forms import AddRecipeForm, UsesIngredientForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.forms.models import modelform_factory, inlineformset_factory
+from django.forms.models import inlineformset_factory
 
 def search_recipes(request):
     recipes_list = Recipe.objects.all()
@@ -70,7 +70,8 @@ def edit_recipe(request, recipe_id=None):
         recipe = Recipe()
         new = True
     
-    UsesIngredientInlineFormSet = inlineformset_factory(Recipe, UsesIngredient, extra=1)
+    UsesIngredientInlineFormSet = inlineformset_factory(Recipe, UsesIngredient, extra=1,
+                                                        form=UsesIngredientForm)
     
     if request.method == 'POST':
         recipe_form = AddRecipeForm(request.POST, instance=recipe)
