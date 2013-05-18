@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from authentication.views import registration_complete, registration_closed,\
     activation_complete, resend_activation_email, register, activate, change_email
 from authentication.backends import RegistrationBackend
