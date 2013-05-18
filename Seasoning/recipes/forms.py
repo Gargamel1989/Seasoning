@@ -1,5 +1,6 @@
 from django import forms
-from recipes.models import Recipe
+from recipes.models import Recipe, UsesIngredient
+from django.forms import widgets
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -17,5 +18,8 @@ class AddRecipeForm(forms.ModelForm):
         recipe.author = author
         return recipe.save()
 
-
-        
+class UsesIngredientForm(forms.ModelForm):
+    
+    class Meta:
+        model = UsesIngredient
+        widgets = {'ingredient': widgets.TextInput}
