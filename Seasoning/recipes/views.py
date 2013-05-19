@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from recipes.models import Recipe, Vote, UsesIngredient
 from recipes.forms import AddRecipeForm, UsesIngredientForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.forms.models import inlineformset_factory
@@ -62,9 +62,12 @@ def remove_vote(request, recipe_id):
     except ObjectDoesNotExist:
         raise Http404()
 
+@login_required
 def edit_recipe(request, recipe_id=None):
     if recipe_id:
         recipe = Recipe.objects.get(pk=recipe_id)
+        if (not request.user == recipe.author) and not request.user.is_staff:
+            raise PermissionDenied
         new = False
     else:
         recipe = Recipe()

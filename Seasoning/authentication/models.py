@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
-)
+, PermissionsMixin)
 from django.core import validators
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFit, AddBorder
@@ -112,17 +112,7 @@ class User(AbstractBaseUser):
         send_mail(subject, message, from_email, [self.email])
 
     def __unicode__(self):
-        return self.email
-
-    def has_perm(self, perm, obj=None):
-        # "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    def has_module_perms(self, app_label):
-        # "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True    
+        return self.email   
 
 try:
     from django.utils.timezone import now as datetime_now

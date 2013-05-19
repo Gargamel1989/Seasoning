@@ -3,13 +3,18 @@ from ingredients.models import Ingredient, Synonym, CanUseUnit,\
     VegetalIngredient, AvailableInCountry, AvailableInSea, Unit
 from django.forms.models import inlineformset_factory, modelform_factory,\
     ModelForm
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.decorators import permission_required
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.utils.safestring import mark_safe
 from django.forms.widgets import Select, Widget
 import calendar
+from django.db import connection
+import json
+from django.http.response import HttpResponse
 
 def list_ingredients(request):
+    
+    if not request.user.is_superuser:
+        raise PermissionDenied
    
     ingredients = Ingredient.objects.all().order_by('accepted', 'name')
     perc_done = int(len(ingredients)/5)
@@ -17,9 +22,37 @@ def list_ingredients(request):
     return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients,
                                                                  'perc_done': perc_done})
 
-@permission_required('is_superuser')
-def edit_ingredient(request, ingredient_id=None):
+def ajax_ingredient_list(request, query=""):
     
+    if request.is_ajax(): 
+        
+        # Query the database for ingredients with a name of synonym like the query
+        cursor = connection.cursor()
+        cursor.execute('SELECT name '
+                       'FROM ingredient '
+                       'WHERE name LIKE %s '
+                       'UNION '
+                       'SELECT name '
+                       'FROM synonym '
+                       'WHERE name LIKE %s', ['%%%s%%' % query, '%%%s%%' % query])
+        ingredients = [x[0] for x in cursor.fetchall()]
+        
+        print ingredients
+        
+        # Serialize ingredient list to json
+        ingredients_json = json.dumps(ingredients)
+  
+        # Return the response  
+        return HttpResponse(ingredients_json, mimetype='application/javascript')
+    
+    # If this is not an ajax request, deny permission to anyone
+    raise PermissionDenied 
+    
+    
+def edit_ingredient(request, ingredient_id=None):
+
+    if not request.user.is_superuser:
+        raise PermissionDenied
     
     
     # This is temporary because it makes ingredient input easier
@@ -165,12 +198,18 @@ def edit_ingredient(request, ingredient_id=None):
                                                                 'availins_formset': availins_formset})
 
 def list_units(request):
+
+    if not request.user.is_superuser:
+        raise PermissionDenied
     
     units = Unit.objects.all()
     
     return render(request, 'ingredients/list_units.html', {'units': units})
 
 def edit_unit(request, unit_id=None):
+
+    if not request.user.is_superuser:
+        raise PermissionDenied
     
     if unit_id:
         unit = Unit.objects.get(pk=unit_id)
