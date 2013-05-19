@@ -8,4 +8,7 @@ urlpatterns = patterns('',
     url(r'^units/$', 'ingredients.views.list_units'),
     url(r'^units/(\d*)/$', 'ingredients.views.edit_unit'),
     url(r'^units/add/$', 'ingredients.views.edit_unit'),
+    
+    # AJAX Calls
+    url(r'^ing_list/(.*)/$', 'ingredients.views.ajax_ingredient_list')
 )
