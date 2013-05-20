@@ -2,6 +2,8 @@ from django.db import models
 import time
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
+from django.dispatch.dispatcher import receiver
+from django.db.models.signals import pre_save
 
 
 def get_image_filename(instance, old_filename):
@@ -189,17 +191,21 @@ class AvailableInCountry(models.Model):
     date_from = models.DateField()
     date_until = models.DateField()
     
+    # This field will contain the amount of CO2 per primary unit of this ingredient when it
+    # is available under the parameters of this object.
+    footprint = models.FloatField(editable=False)
+    
     def month_from(self):
         return self.date_from.strftime('%B')
     
     def month_until(self):
         return self.date_until.strftime('%B')
     
-    def extra_footprint(self):
-        return self.extra_production_footprint + self.country.distance*self.transport_method.emission_per_km
+    def save(self, *args, **kwargs):
+        self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.country.distance*self.transport_method.emission_per_km
+        
+        models.Model.save(self, *args, **kwargs)
     
-    def total_footprint(self):
-        return self.ingredient.base_footprint + self.extra_footprint()
 
 
 class Sea(models.Model):
@@ -226,14 +232,17 @@ class AvailableInSea(models.Model):
     date_from = models.DateField()
     date_until = models.DateField()
     
+    # This field will contain the amount of CO2 per primary unit of this ingredient when it
+    # is available under the parameters of this object.
+    footprint = models.FloatField(editable=False)
+    
     def month_from(self):
         return self.date_from.strftime('%B')
     
     def month_until(self):
         return self.date_until.strftime('%B')
     
-    def extra_footprint(self):
-        return self.extra_production_footprint + self.sea.distance*self.transport_method.emission_per_km
-    
-    def total_footprint(self):
-        return self.ingredient.base_footprint + self.extra_footprint()
+    def save(self, *args, **kwargs):
+        self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.sea.distance*self.transport_method.emission_per_km
+        
+        models.Model.save(self, *args, **kwargs)
