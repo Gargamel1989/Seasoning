@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.forms.models import inlineformset_factory
+from django.contrib import messages
 
 def search_recipes(request):
     recipes_list = Recipe.objects.all()
@@ -82,7 +83,11 @@ def edit_recipe(request, recipe_id=None):
         
         if recipe_form.is_valid():
             recipe_form.save(author=request.user)
-            redirect(edit_recipe_succes, recipe, new)
+            if new:
+                messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
+            else:
+                messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast')
+            return redirect('/recipes/' + str(recipe.id) + '/')
     else:
         recipe_form = AddRecipeForm(instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(instance=recipe)
@@ -90,7 +95,3 @@ def edit_recipe(request, recipe_id=None):
     return render(request, 'recipes/edit_recipe.html', {'new': new,
                                                         'recipe_form': recipe_form,
                                                         'usesingredient_formset': usesingredient_formset})
-
-def edit_recipe_succes(request, recipe, new=False):
-    return render(request, 'recipes/edit_recipe_succes.html', {'new': new,
-                                                               'recipe': recipe})
