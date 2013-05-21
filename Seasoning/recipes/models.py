@@ -198,7 +198,12 @@ class UsesIngredient(models.Model):
     unit = models.ForeignKey(ingredients.models.Unit, db_column='unit')
     
     # TODO: Build in check that every instance of this model can only have units that the ingredient 
-    # can use    
+    # can use
+
+    def footprint(self):
+        return 1
+        unit_properties = CanUseUnit.objects.get(ingredient=self.ingredient, unit=self.unit)
+        return self.amount * unit_properties.conversion_factor * self.ingredient.footprint()
 
 class Vote(models.Model):
     
