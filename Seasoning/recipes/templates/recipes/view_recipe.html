@@ -57,7 +57,7 @@
 
 <p>
 	Ingredienten:<br>
-	{% for uses in recipe.ingredients %}
+	{% for uses in recipe.ingredients.all %}
 		{% if uses.ingredient.ingredients %}
 		<a href="/recipes/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.portions }} porties ({{ uses.ingredient.total_footprint_pp }} kgCO2/portie)<br>
 		{% else %}

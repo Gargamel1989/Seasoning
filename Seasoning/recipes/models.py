@@ -8,13 +8,13 @@ from ingredients.models import AvailableInCountry, AvailableInSea, CanUseUnit
 import datetime
 from django.db.models import Q
 from django.core.validators import MaxValueValidator
+from django.db.models.fields import FloatField
 
 
 class RecipeManager(models.Manager):
     
     def get_everything(self, recipe_id):
         recipe = self.select_related().get(pk=recipe_id)
-        recipe.ingredients = self.get_ingredients(recipe)
         return recipe
     
     # Get everything used by the recipe
@@ -120,12 +120,14 @@ class Recipe(models.Model):
     rating = models.FloatField(null=True, blank=True, default=None)
     number_of_votes = models.PositiveIntegerField(default=0)
     
-    ingredient_ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient')
+    ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient')
     extra_info = models.TextField(default='')
     instructions = models.TextField()
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     thumbnail = ImageSpecField([ResizeToFit(250, 250), AddBorder(2, 'Black')], image_field='image', format='PNG')
+    
+    footprint = FloatField(null=True)
     
     accepted = models.BooleanField(default=False)
     
@@ -134,20 +136,31 @@ class Recipe(models.Model):
         self._current_portions = self.portions
         self._total_footprint_cache = None
     
-    # Make sure the 'ingredient' property is set! This should be a list containing all usesIngredients and usesRecipes
-    # of the recipe (including the recipes)
-    @property
-    def total_footprint(self):
-        if not self._total_footprint_cache:
-            total_footprint = 0
-            for uses in self.ingredients:
-                total_footprint += uses.ingredient.total_footprint
-            self._total_footprint_cache = total_footprint
-            return total_footprint
-        return self._total_footprint_cache
-    
+    def save(self, *args, **kwargs):
+        self.footprint = 0
+        for uses in self.uses.all():
+            used_unit = uses.unit
+            used_ingredient = uses.ingredient
+            useable_units = uses.ingredient.can_use_units
+            primary_unit = None
+            used_unit_properties = None
+            for useable_unit in useable_units.all():
+                if useable_unit.is_primary_unit:
+                    primary_unit = useable_unit
+                if used_unit.pk == useable_unit.unit.pk:
+                    used_unit_properties = useable_unit
+                if primary_unit and used_unit_properties:
+                    break
+            if not primary_unit:
+                raise Exception('No primary unit found for ingredient: ' + used_ingredient.name)
+            if not used_unit_properties:
+                raise Exception('Unit ' + used_unit.name + ' is not useable for ingredient ' + used_ingredient.name)
+            
+            self.footprint += uses.amount * used_unit_properties.conversion_factor * used_ingredient.footprint()
+        super(Recipe, self).save(*args, **kwargs)
+        
     def total_footprint_pp(self):
-        return self.total_footprint / self.current_portions
+        return self.footprint / self.current_portions
     
     @property
     def current_portions(self):
@@ -177,7 +190,7 @@ class UsesIngredient(models.Model):
     class Meta:
         db_table = 'usesingredient'
     
-    recipe = models.ForeignKey(Recipe, related_name='uses_ingredient', db_column='recipe')
+    recipe = models.ForeignKey(Recipe, related_name='uses', db_column='recipe')
     ingredient = models.ForeignKey(ingredients.models.Ingredient, db_column='ingredient')
     
     group = models.CharField(max_length=100, blank=True)

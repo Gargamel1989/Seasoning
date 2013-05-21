@@ -2,8 +2,7 @@ from django.db import models
 import time
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
-from django.dispatch.dispatcher import receiver
-from django.db.models.signals import pre_save
+import datetime
 
 
 def get_image_filename(instance, old_filename):
@@ -63,26 +62,29 @@ class Ingredient(models.Model):
     def primary_unit(self):
         return CanUseUnit.objects.get(ingredient=self, is_primary_unit=True)
     
-    def normalized_footprint(self):
-        '''
-        This method return the current mimimal available footprint if the
-        ingredient in kgCO2/self.primary_unit
-        '''
-        normalized_footprint = self.base_footprint
-        if self.type == 'VE':
-            try:
-                avails = sorted(self.available_ins, key=lambda avail: avail.extra_footprint)
-            except AttributeError:
-                print 'Warning: Doing more queries than supposed to methinks'
-                avails = sorted(self.available_in_country, key=lambda avail: avail.extra_footprint)
-                       
-            normalized_footprint += avails[0]
+    def footprint(self):
+        """
+        Return the current (minimal available) footprint of this ingredient
+        """
+        if self.type == 'BA':
+            return self.base_footprint
+        elif self.type == 'VE':
+            today = datetime.date.today()
+            available_in_countrys = AvailableInCountry.objects.filter(ingredient=self,
+                                                                      date_from__lte=datetime.date(2000, today.month, today.day),
+                                                                      date_until__gte=datetime.date(2000, today.month, today.day))
+            min_availinc = available_in_countrys.order_by('footprint')[0]
+            return min_availinc.footprint
         elif self.type == 'FI':
-            avails = sorted(self.available_in_sea, key=lambda avail: avail.extra_footprint)
-            normalized_footprint += avails[0]
+            today = datetime.date.today()
+            available_in_seas = AvailableInSea.objects.filter(ingredient=self,
+                                                              date_from__lte=datetime.date(2000, today.month, today.day),
+                                                              date_until__gte=datetime.date(2000, today.month, today.day))
+            min_availins = available_in_seas.order_by('footprint')[0]
+            return min_availins.footprint
         
-        return normalized_footprint
-
+        raise Exception('Unknown ingredient type: ' + self.type)
+    
 class Synonym(models.Model):
     
     class Meta:
@@ -118,7 +120,7 @@ class CanUseUnit(models.Model):
     class Meta:
         db_table = 'canuseunit'
         
-    ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='can_use_unit')
+    ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='can_use_units')
     unit = models.ForeignKey('Unit', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
     is_primary_unit = models.BooleanField()
