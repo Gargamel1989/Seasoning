@@ -8,3 +8,5 @@ dev_secrets.py
 *.json
 media/*
 *~
+\#*\#
+.\#*
