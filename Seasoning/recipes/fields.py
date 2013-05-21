@@ -1,6 +1,6 @@
 # Based on django-ajax-selects from crucialfelix
 from django import forms
-from django.core.exceptions import MultipleObjectsReturned, DoesNotExist
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 class AutoCompleteSelectIngredientField(forms.fields.Charfield):
 
@@ -14,7 +14,7 @@ class AutoCompleteSelectIngredientField(forms.fields.Charfield):
                 ingredient = Ingredient.objects.get(name__exact=value)
             except MultipleObjectsReturned:
                 raise forms.ValidationError(u"Multiple result returned for ingredient name: %s" % value)
-            except DoesNotExist:
+            except ObjectDoesNotExist:
                 raise forms.ValidationError(u"No ingredient found with name: %s" % value)
             return ingredient
         else:
