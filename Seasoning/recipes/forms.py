@@ -2,6 +2,7 @@ from django import forms
 from recipes.models import Recipe, UsesIngredient
 from django.forms import widgets
 from recipes.fields import AutoCompleteSelectIngredientField
+from ingredients.models import Unit
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -25,3 +26,14 @@ class UsesIngredientForm(forms.ModelForm):
     
     class Meta:
         model = UsesIngredient
+
+    def clean(self):
+        cleaned_data = super(UsesIngredientForm, self).clean()
+        ingredient = cleaned_data.get('ingredient')
+        unit = cleaned_data.get('unit')
+
+        if not CanUseUnit.objects.filter(ingredient=ingredient, unit=unit).exists():
+            self._errors['unit'] = self.error_class(['Deze eenheid kan niet gebruikt worden voor het gekozen ingredient...'])
+            del cleaned_data['unit']
+        return cleaned_data
+
