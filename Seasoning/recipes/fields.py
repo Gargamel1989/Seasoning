@@ -2,7 +2,7 @@
 from django import forms
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
-class AutoCompleteSelectIngredientField(forms.fields.Charfield):
+class AutoCompleteSelectIngredientField(forms.fields.CharField):
 
     """
     Form field to select a model for a ForeignKey db field
