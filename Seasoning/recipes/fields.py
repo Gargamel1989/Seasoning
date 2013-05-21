@@ -39,6 +39,3 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
             if self.required:
                 raise forms.ValidationError(self.error_message['required'])
             return None
-
-    def bound_data(self, data, initial):
-        return Ingredient.objects.get(pk=data).name
