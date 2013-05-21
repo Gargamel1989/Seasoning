@@ -58,7 +58,7 @@
 <p>
 	Ingredienten:<br>
 	{% for uses in recipe.uses.all %}
-		<a href="/ingredients/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.amount }} {{ uses.unit.short_name}} ({{ uses.ingredient.unit_footprint }} kgCO2/{{ uses.unit.short }} -> {{ uses.ingredient.total_footprint }} kgCO2)<br>
+		<a href="/ingredients/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.amount }} {{ uses.unit.short_name}} ({{ uses.ingredient.footprint }} kgCO2/{{ uses.ingredient.primary_unit.short_name }} -> {{ uses.footprint }} kgCO2)<br>
 		{% for avail in uses.ingredient.available_ins %}
 		--- Komt van {{ avail.country.name }} met transportmethode: {{ avail.transport_method.name }} tussen {{ avail.month_from }} en {{ avail.month_until }} (Extra uitstoot van deze optie: {{ avail.extra_footprint }})<br>
 		{% endfor %}
