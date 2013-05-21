@@ -155,7 +155,7 @@ class Recipe(models.Model):
         super(Recipe, self).save(*args, **kwargs)
         
     def footprint_pp(self):
-        return self.footprint / self.current_portions
+        return self.footprint / self.portions
     
 
 class UsesIngredient(models.Model):
