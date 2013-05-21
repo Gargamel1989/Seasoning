@@ -9,7 +9,12 @@ class AutoCompleteSelectIngredientWidget(forms.widgets.TextInput):
         value = value or ''
         if value:
             try:
-                value = Ingredient.objects.get(pk=value).name
+                ingredient_pk = int(value)
+                value = Ingredient.objects.get(pk=ingredient_pk).name
+            except ValueError:
+                # If we cannot cast the value into an int, it's probably the name of
+                # the ingredient already, so we don't need to do anything
+                pass
             except ObjectDoesNotExist:
                 raise Exception("Cannot find ingredient with id: %s" % value)
         return super(AutoCompleteSelectIngredientWidget, self).render(name, value, attrs)
