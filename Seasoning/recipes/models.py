@@ -186,28 +186,14 @@ class Vote(models.Model):
     date_changed = models.DateTimeField(default=datetime.datetime.now, editable=False)
     
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            # This is a new vote
-            if self.recipe.rating:
-                old_rating = self.recipe.rating
-            else:
-                old_rating = 0
-            self.recipe.rating = (old_rating * self.recipe.number_of_votes) + self.score / (self.recipe.number_of_votes + 1)
-            self.recipe.number_of_votes = self.recipe.number_of_votes + 1
-        else:
-            # This is an existing vote getting updated
-            # Get the old score
-            old_score = Vote.objects.get(pk=self.pk).score
-            self.recipe.rating = (self.recipe.rating * self.recipe.number_of_votes) - old_score + self.score / self.recipe.number_of_votes
-            self.date_changed = datetime.datetime.now()
-        self.recipe.save()
         super(Vote, self).save(*args, **kwargs)
+        self.calculate_new_rating_for_recipe()
     
     def delete(self, *args, **kwargs):
-        if self.recipe.number_of_votes <= 1:
-            self.recipe.rating = None
-        else:
-            self.recipe.rating = (self.recipe.rating * self.recipe.number_of_votes) - self.score / (self.recipe.number_of_votes - 1)
-        self.recipe.number_of_votes = max(0, self.recipe.number_of_votes - 1)
-        self.recipe.save()
         super(Vote, self).delete(*args, **kwargs)
+        self.calculate_new_rating_for_recipe()
+
+    def calculate_new_rating_for_recipe(self):
+        new_rating = Vote.objects.all().aggregate(Avg('score'))
+        self.recipe.rating = new_rating
+        self.recipe.save()
