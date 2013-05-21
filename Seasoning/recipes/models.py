@@ -131,11 +131,6 @@ class Recipe(models.Model):
     
     accepted = models.BooleanField(default=False)
     
-    def __init__(self, *args, **kwargs):
-        super(Recipe, self).__init__(*args, **kwargs)
-        self._current_portions = self.portions
-        self._total_footprint_cache = None
-    
     def save(self, *args, **kwargs):
         self.footprint = 0
         for uses in self.uses.all():
@@ -159,31 +154,9 @@ class Recipe(models.Model):
             self.footprint += uses.amount * used_unit_properties.conversion_factor * used_ingredient.footprint()
         super(Recipe, self).save(*args, **kwargs)
         
-    def total_footprint_pp(self):
+    def footprint_pp(self):
         return self.footprint / self.current_portions
     
-    @property
-    def current_portions(self):
-        return self._current_portions
-    
-    @current_portions.setter
-    def current_portions(self, value):
-        self._current_portions = value
-        self._total_footprint_cache = None
-    
-    # Make sure the 'ingredient' property is set! This should be a list containing all usesIngredients and usesRecipes
-    # of the recipe (including the recipes)
-    def recalculate_footprints(self, portions):
-        if self.current_portions == portions:
-            return
-        for uses in self.ingredients:
-            if isinstance(uses, UsesIngredient):
-                uses.ingredient.total_footprint = uses.ingredient.total_footprint * portions / self.portions
-                uses.amount = uses.amount * portions / self.portions
-            else:
-                uses.recipe_used.recalculate_footprints(portions)
-        self.current_portions = portions
-
 
 class UsesIngredient(models.Model):
     
