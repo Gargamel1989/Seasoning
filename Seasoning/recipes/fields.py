@@ -1,6 +1,7 @@
 # Based on django-ajax-selects from crucialfelix
 from django import forms
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from ingredients.models import Ingredient
 
 class AutoCompleteSelectIngredientField(forms.fields.CharField):
 
