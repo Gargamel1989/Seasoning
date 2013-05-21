@@ -120,14 +120,14 @@ class Recipe(models.Model):
     rating = models.FloatField(null=True, blank=True, default=None)
     number_of_votes = models.PositiveIntegerField(default=0)
     
-    ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient')
+    ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient', editable=False)
     extra_info = models.TextField(default='')
     instructions = models.TextField()
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     thumbnail = ImageSpecField([ResizeToFit(250, 250), AddBorder(2, 'Black')], image_field='image', format='PNG')
     
-    footprint = FloatField(null=True)
+    footprint = FloatField(null=True, editable=False)
     
     accepted = models.BooleanField(default=False)
     
