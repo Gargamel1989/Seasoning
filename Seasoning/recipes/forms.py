@@ -2,7 +2,7 @@ from django import forms
 from recipes.models import Recipe, UsesIngredient
 from django.forms import widgets
 from recipes.fields import AutoCompleteSelectIngredientField
-from ingredients.models import Unit
+from ingredients.models import Unit, CanUseUnit
 
 class AddRecipeForm(forms.ModelForm):
     
