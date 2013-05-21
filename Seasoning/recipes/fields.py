@@ -9,11 +9,10 @@ class AutoCompleteSelectIngredientWidget(forms.widgets.TextInput):
         value = value or ''
         if value:
             try:
-                ingredient = Ingredient.objects.get(pk=value)
+                value = Ingredient.objects.get(pk=value).name
             except ObjectDoesNotExist:
                 raise Exception("Cannot find ingredient with id: %s" % value)
-            return ingredient.name
-        return value
+        return super(AutoCompleteSelectIngredientWidget, self).render(name, value, attrs)
     
 class AutoCompleteSelectIngredientField(forms.fields.CharField):
 
