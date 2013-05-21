@@ -81,8 +81,9 @@ def edit_recipe(request, recipe_id=None):
         recipe_form = AddRecipeForm(request.POST, instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe)
         
-        if recipe_form.is_valid():
+        if recipe_form.is_valid() and usesingredient_formset.is_valid():
             recipe_form.save(author=request.user)
+            usesingredient_formset.save()
             if new:
                 messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
             else:
