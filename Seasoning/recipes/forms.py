@@ -1,7 +1,7 @@
 from django import forms
 from recipes.models import Recipe, UsesIngredient
 from django.forms import widgets
-from recipe.fields import AutoCompleteSelectIngredientForm
+from recipes.fields import AutoCompleteSelectIngredientForm
 
 class AddRecipeForm(forms.ModelForm):
     
