@@ -194,5 +194,5 @@ class Vote(models.Model):
 
     def calculate_new_rating_for_recipe(self):
         new_rating = Vote.objects.all().aggregate(models.Avg('score'))
-        self.recipe.rating = new_rating
+        self.recipe.rating = new_rating['score__avg']
         self.recipe.save()
