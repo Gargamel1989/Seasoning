@@ -201,8 +201,8 @@ class UsesIngredient(models.Model):
     # can use
 
     def footprint(self):
-        return 1
         unit_properties = CanUseUnit.objects.get(ingredient=self.ingredient, unit=self.unit)
+        return 2
         return self.amount * unit_properties.conversion_factor * self.ingredient.footprint()
 
 class Vote(models.Model):
