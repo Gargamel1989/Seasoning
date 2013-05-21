@@ -10,7 +10,6 @@ from django.db.models import Q
 from django.core.validators import MaxValueValidator
 from django.db.models.fields import FloatField
 
-
 class RecipeManager(models.Manager):
     
     def get_everything(self, recipe_id):
@@ -194,6 +193,6 @@ class Vote(models.Model):
         self.calculate_new_rating_for_recipe()
 
     def calculate_new_rating_for_recipe(self):
-        new_rating = Vote.objects.all().aggregate(Avg('score'))
+        new_rating = Vote.objects.all().aggregate(models.Avg('score'))
         self.recipe.rating = new_rating
         self.recipe.save()
