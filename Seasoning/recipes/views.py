@@ -27,7 +27,7 @@ def view_recipe(request, recipe_id, portions=None):
     usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
 
     if portions:
-        ratio = portions/recipe.portions
+        ratio = portions/int(recipe.portions)
         recipe.footprint = ratio * recipe.footprint
         for uses in usess:
             uses.amount = ratio * uses.amount
