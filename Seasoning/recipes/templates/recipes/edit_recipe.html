@@ -10,11 +10,70 @@
 
 <form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  {{ recipe_form.as_p }}
-  
-  {{ usesingredient_formset.management_form }}
-  {{ usesingredient_formset.as_p }}
+  {{ recipe_form.non_field_errors }}
+  {{ usesingredient_formset.non_field_errors }}
 
+  <p>
+    <label>{{ recipe_form.name.label }}</label>{{ recipe_form.name }}
+  </p>
+  <br/>
+  <p>
+    <label>{{ recipe_form.course.label }}</label>{{ recipe_form.course }}
+  </p>
+  <p>
+    <label>{{ recipe_form.cuisine.label }}</label>{{ recipe_form.cuisine }}
+  </p>
+  <p>
+    <label>{{ recipe_form.description.label }}</label>{{ recipe_form.description }}
+  </p>
+  <br/>
+  <p>
+    <label>{{ recipe_form.portions.label }}</label>{{ recipe_form.portions }}
+  </p>
+  {{ usesingredient_formset.management_form }}
+  <table>
+    {% for form in usesingredient_formset %}
+    {% if forloop.first %}
+    <tr>
+      <td><label>{{ form.ingredient.label }}</label></td>
+      <td><label>{{ form.amount.label }}</label></td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>
+	{{ form.group.as_hidden }}
+	{{ form.ingredient }}
+      </td>
+      <td>
+	{{ form.amount }} {{ form.unit }}
+      </td>
+    </tr>
+    {% endfor %}
+    <tr class="empty">
+      <td>
+	{{ usesingredient_formset.empty_form.group.as_hidden }}
+	{{ usesingredient_formset.empty_form.ingredient }}
+      </td>
+      <td>
+	{{ usesingredient_formset.empty_form.amount }} {{ usesingredient_formset.empty_form.unit }}
+      </td>
+    </tr>
+  </table>
+  <p>
+    <label>{{ recipe_form.extra_info.label }}</label>{{ recipe_form.extra_info }}
+  </p>
+  <br/><br/>
+
+  <p>
+    <label>{{ recipe_form.active_time.label }}</label>{{ recipe_form.active_time }}
+  </p>
+  <p>
+    <label>{{ recipe_form.passive_time.label }}</label>{{ recipe_form.passive_time }}
+  </p>
+  <p>
+    <label>{{ recipe_form.instructions.label }}</label>{{ recipe_form.instructions }}
+  </p>
+  
   <input id="submit-btn" type="submit" value="{% if new %}Toevoegen{% else %}Aanpassen{% endif %}" />
 </form>
 
