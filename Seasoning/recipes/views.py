@@ -9,16 +9,21 @@ from django.forms.models import inlineformset_factory
 from django.contrib import messages
 
 def search_recipes(request):
-    recipes_list = Recipe.objects.all()
-    paginator = Paginator(recipes_list, 10)
+    if request.method == 'POST':
+        recipe_name_search_string = request.POST['recipe_name']
+        recipes = Recipe.objects.filter(name__contains=recipe_name_search_string)
+
+    else:
+        recipes_list = Recipe.objects.all()
+        paginator = Paginator(recipes_list, 10)
     
-    page = request.GET.get('page')
-    try:
-        recipes = paginator.page(page)
-    except PageNotAnInteger:
-        recipes = paginator.page(1)
-    except EmptyPage:
-        recipes = paginator.page(paginator.num_pages)
+        page = request.GET.get('page')
+        try:
+            recipes = paginator.page(page)
+        except PageNotAnInteger:
+            recipes = paginator.page(1)
+        except EmptyPage:
+            recipes = paginator.page(paginator.num_pages)
         
     return render(request, 'recipes/search_recipes.html', {'recipes': recipes})
 

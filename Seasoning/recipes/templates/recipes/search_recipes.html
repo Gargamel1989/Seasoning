@@ -10,6 +10,11 @@
 
 <a href="/recipes/add/">Nieuw Recept</a><br/><br/><br/>
 
+<form action="" method="POST">
+  <input type="text" name="recipe_name" />
+  <input type="submit" value="Zoeken" />
+</form>
+
 {% for recipe in recipes %}
     <a href="/recipes/{{ recipe.id }}/">{{ recipe.name }}</a><br />
 {% endfor %}
