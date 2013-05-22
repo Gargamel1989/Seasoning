@@ -26,13 +26,14 @@
 <p>Beschrijving: {{ recipe.description }}</p>
 
 <p>
-	<form action="/recipes/{{ recipe.id }}/" method="get">
-        <label for="portions">
-            Porties:
-            <input type="text" name="portions" id="portions" value="{{ recipe.current_portions }}">
-            <input type="submit" value="bereken" >
-        </label>
-    </form>
+  <a href="/recipes/{{ recipe.id }}/portions/1/">1</a> | 
+1  <a href="/recipes/{{ recipe.id }}/portions/2/">2</a> | 
+  <a href="/recipes/{{ recipe.id }}/portions/3/">3</a> | 
+  <a href="/recipes/{{ recipe.id }}/portions/4/">4</a> | 
+  <a href="/recipes/{{ recipe.id }}/portions/5/">5</a> | 
+  <a href="/recipes/{{ recipe.id }}/portions/6/">6</a> | 
+  <a href="/recipes/{{ recipe.id }}/portions/7/">7</a> | 
+  <a href="/recipes/{{ recipe.id }}/portions/8/">8</a>
 </p>
 <p>
 	Rating: {% if recipe.rating %}{{ recipe.rating }} ({{ recipe.number_of_votes }} stem{% if recipe.number_of_votes > 1 %}men{% endif %}){% else %}Dit recept heeft nog geen rating{% endif %}<br>
