@@ -22,10 +22,16 @@ def search_recipes(request):
         
     return render(request, 'recipes/search_recipes.html', {'recipes': recipes})
 
-def view_recipe(request, recipe_id):
+def view_recipe(request, recipe_id, portions=None):
     recipe = Recipe.objects.select_related().get(pk=recipe_id)
     usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
-    
+
+    if portions:
+        ratio = portions/recipe.portions
+        recipe.footprint = ratio * recipe.footprint
+        for uses in usess:
+            uses.amount = ratio * uses.amount
+        
     user_vote = None
     if request.user.is_authenticated():
         try:
