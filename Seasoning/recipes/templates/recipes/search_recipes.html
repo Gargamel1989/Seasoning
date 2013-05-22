@@ -11,6 +11,7 @@
 <a href="/recipes/add/">Nieuw Recept</a><br/><br/><br/>
 
 <form action="" method="POST">
+  {% csrf_token %}
   <input type="text" name="recipe_name" />
   <input type="submit" value="Zoeken" />
 </form>
