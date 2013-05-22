@@ -106,8 +106,8 @@ class Recipe(models.Model):
                (u'MA',u'Marinades en Sauzen'))
     
     name = models.CharField(max_length=100)
-    author = models.ForeignKey(User)
-    time_added = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, editable=False)
+    time_added = models.DateTimeField(auto_now_add=True, editable=False)
     
     course = models.CharField(max_length=2, choices=COURSES)
     cuisine = models.ForeignKey(Cuisine, db_column='cuisine')
@@ -116,8 +116,8 @@ class Recipe(models.Model):
     active_time = models.IntegerField()
     passive_time = models.IntegerField()
     
-    rating = models.FloatField(null=True, blank=True, default=None)
-    number_of_votes = models.PositiveIntegerField(default=0)
+    rating = models.FloatField(null=True, blank=True, default=None, editable=False)
+    number_of_votes = models.PositiveIntegerField(default=0, editable=False)
     
     ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient', editable=False)
     extra_info = models.TextField(default='')
