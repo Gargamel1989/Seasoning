@@ -23,7 +23,8 @@ def search_recipes(request):
     return render(request, 'recipes/search_recipes.html', {'recipes': recipes})
 
 def view_recipe(request, recipe_id):
-    recipe = Recipe.objects.get_everything(recipe_id=recipe_id)
+    recipe = Recipe.objects.select_related().get(pk=recipe_id)
+    usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
     
     user_vote = None
     if request.user.is_authenticated():
@@ -33,6 +34,7 @@ def view_recipe(request, recipe_id):
             pass
     
     return render(request, 'recipes/view_recipe.html', {'recipe': recipe,
+                                                        'usess': usess,
                                                         'user_vote': user_vote})
 
 @login_required
