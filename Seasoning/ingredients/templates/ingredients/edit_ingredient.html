@@ -3,6 +3,20 @@
 {% block extrahead %}
     <link href="{{ STATIC_URL }}css/edit_ingredient.css" rel="stylesheet" type="text/css" media="screen" />
     <script src="{{ STATIC_URL }}js/formset.js" type="text/javascript"></script>
+    <script type="text/javascript">
+		$(document).ready(function() {
+			$('#synonym_set-addbtn').click(function() {
+				return addForm(this, "synonym_set");
+			});
+		
+			$('#can_use_unit-addbtn').click(function() {
+				return addForm(this, "can_use_unit");
+			});
+		
+			$('#available_in_country-addbtn').click(function() {
+				return addForm(this, "available_in_country");
+			})});
+	</script>
     <script src="{{ STATIC_URL }}js/veg_ingredients.js" type="text/javascript"></script>
 {% endblock %}
 
