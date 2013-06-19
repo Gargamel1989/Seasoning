@@ -14,15 +14,22 @@
   {% csrf_token %}
   {{ search_form.non_field_errors }}
   {{ include_ingredients_formset.non_field_errors }}
+  {{ exclude_ingredients_formset.non_field_errors }}
   {{ search_form.as_p }}
   {{ include_ingredients_formset.management_form }}
   <div>
   	Ingredienten die in het gerecht moeten zitten:
-  	
+	{% for form in include_ingredients_formset %}
+  	  {{ form.as_p }}
+	{% endfor %}
   </div>
-  {% for form in include_ingredients_formset %}
-  	{{ form.as_p }}
-  {% endfor %}
+  {{ exclude_ingredients_formset.management_form }}
+  <div>
+  	Ingredienten die niet in het gerecht mogen zitten:
+	{% for form in exclude_ingredients_formset %}
+  	  {{ form.as_p }}
+	{% endfor %}
+  </div>
   <br />
   <input type="submit" value="Zoeken" />
 </form>

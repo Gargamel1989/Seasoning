@@ -16,8 +16,9 @@ def search_recipes(request, sort_field=None):
     IngredientInRecipeFormset = formset_factory(IngredientInRecipeSearchForm, extra=2)
     if request.method == 'POST':
         search_form = SearchRecipeForm(request.POST)
-        include_ingredients_formset = IngredientInRecipeFormset(request.POST)
-        if search_form.is_valid() and include_ingredients_formset.is_valid():
+        include_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='include')
+        exclude_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='exclude')
+        if search_form.is_valid() and include_ingredients_formset.is_valid() and exclude_ingredients_formset.is_valid():
             search_string = search_form.cleaned_data['search_string']
             ven, veg, nveg = search_form.cleaned_data['ven'], search_form.cleaned_data['veg'], search_form.cleaned_data['nveg']
             course = search_form.cleaned_data['course']
@@ -55,13 +56,19 @@ def search_recipes(request, sort_field=None):
                     q = q | Q(ingredients__name__icontains=ingredient_form.cleaned_data['name'])
                 recipes_list = recipes_list.filter(q)
             
+            for ingredient_form in exclude_ingredients_formset:
+                if not 'name' in ingredient_form.cleaned_data:
+                    continue
+                recipes_list = recipes_list.exclude(ingredients__name__icontains=ingredient_form.cleaned_data['name'])
+            
             recipes_list = recipes_list.distinct().order_by(sort_field)
             
         else:
             recipes_list = []
     else:
         search_form = SearchRecipeForm()
-        include_ingredients_formset = IngredientInRecipeFormset()
+        include_ingredients_formset = IngredientInRecipeFormset(prefix='include')
+        exclude_ingredients_formset = IngredientInRecipeFormset(prefix='exclude')
         recipes_list = Recipe.objects.all()
     
     paginator = Paginator(recipes_list, 10)
@@ -76,6 +83,7 @@ def search_recipes(request, sort_field=None):
         
     return render(request, 'recipes/search_recipes.html', {'search_form': search_form,
                                                            'include_ingredients_formset': include_ingredients_formset,
+                                                           'exclude_ingredients_formset': exclude_ingredients_formset,
                                                            'recipes': recipes})
 
 def view_recipe(request, recipe_id, portions=None):
