@@ -19,32 +19,35 @@ class Ingredient(models.Model):
     class Meta:
         db_table = 'ingredient'
     
-    CATEGORIES = ((u'GO',u'Groenten'),
-                  (u'FR',u'Fruit'),
-                  (u'KN',u'Knollen'),
-                  (u'NZ',u'Noten en Zaden'),
-                  (u'GA',u'Graanproducten'),
-                  (u'KR',u'Kruiden'),
-                  (u'SP',u'Specerijen'),
-                  (u'OA',u'Olies en Azijnen'),
-                  (u'VL',u'Vlees'),
-                  (u'VI',u'Vis'),
-                  (u'ZU',u'Zuivelproducten'),
-                  (u'DR',u'Dranken'))
-    VEGANISMS = ((u'VN',u'Veganistisch'),
-                 (u'VG',u'Vegetarisch'),
-                 (u'NV',u'Niet-Vegetarisch'))
-    TYPES = ((u'BA', u'Basis'),
-             (u'VE', u'Seizoensgebonden'),
-             (u'FI', u'Seizoensgebonden Zee'))
+    VEGETABLES, FRUIT, TUBERS, NUTS_AND_SEEDS, CEREAL_PRODUCTS, HERBS, SPICES, OILS_AND_VINEGARS, MEAT, FISH, DAIRY_PRODUCTS, DRINKS = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+    CATEGORIES = ((VEGETABLES,u'Groenten'),
+                  (FRUIT,u'Fruit'),
+                  (TUBERS,u'Knollen'),
+                  (NUTS_AND_SEEDS,u'Noten en Zaden'),
+                  (CEREAL_PRODUCTS,u'Graanproducten'),
+                  (HERBS,u'Kruiden'),
+                  (SPICES,u'Specerijen'),
+                  (OILS_AND_VINEGARS,u'Olies en Azijnen'),
+                  (MEAT,u'Vlees'),
+                  (FISH,u'Vis'),
+                  (DAIRY_PRODUCTS,u'Zuivelproducten'),
+                  (DRINKS,u'Dranken'))
+    NON_VEGETARIAN, VEGETARIAN, VEGAN  = 0, 1, 2
+    VEGANISMS = ((VEGAN,u'Veganistisch'),
+                 (VEGETARIAN,u'Vegetarisch'),
+                 (NON_VEGETARIAN,u'Niet-Vegetarisch'))
+    BASIC, SEASONAL, SEASONAL_SEA = 0, 1, 2
+    TYPES = ((BASIC, u'Basis'),
+             (SEASONAL, u'Seizoensgebonden'),
+             (SEASONAL_SEA,  u'Seizoensgebonden Zee'))
     
     name = models.CharField(max_length=50L, unique=True)
     plural_name = models.CharField(max_length=50L, blank=True)
     
-    type = models.CharField(max_length=2L, choices=TYPES)
+    type = models.PositiveSmallIntegerField(choices=TYPES, default=BASIC)
     
-    category = models.CharField(max_length=2L, choices=CATEGORIES)
-    veganism = models.CharField(max_length=2L, choices=VEGANISMS)
+    category = models.PositiveSmallIntegerField(choices=CATEGORIES)
+    veganism = models.PositiveSmallIntegerField(choices=VEGANISMS, default=VEGAN)
     
     description = models.TextField(blank=True)
     conservation_tip = models.TextField(blank=True)
@@ -66,16 +69,16 @@ class Ingredient(models.Model):
         """
         Return the current (minimal available) footprint of this ingredient
         """
-        if self.type == 'BA':
+        if self.type == Ingredient.BASIC:
             return self.base_footprint
-        elif self.type == 'VE':
+        elif self.type == Ingredient.SEASONAL:
             today = datetime.date.today()
             available_in_countrys = AvailableInCountry.objects.filter(ingredient=self,
                                                                       date_from__lte=datetime.date(2000, today.month, today.day),
                                                                       date_until__gte=datetime.date(2000, today.month, today.day))
             min_availinc = available_in_countrys.order_by('footprint')[0]
             return min_availinc.footprint
-        elif self.type == 'FI':
+        elif self.type == Ingredient.SEASONAL_SEA:
             today = datetime.date.today()
             available_in_seas = AvailableInSea.objects.filter(ingredient=self,
                                                               date_from__lte=datetime.date(2000, today.month, today.day),
@@ -93,7 +96,7 @@ class Synonym(models.Model):
     name = models.CharField(max_length=50L, unique=True)
     plural_name = models.CharField(max_length=50L, blank=True)
     
-    ingredient = models.ForeignKey(Ingredient, null=True, db_column='ingredient', blank=True)
+    ingredient = models.ForeignKey(Ingredient, related_name='synonym', null=True, db_column='ingredient', blank=True)
     
     
 class Unit(models.Model):

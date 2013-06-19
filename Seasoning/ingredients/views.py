@@ -156,23 +156,23 @@ def edit_ingredient(request, ingredient_id=None):
             
         models_valid = ingredient_form.is_valid() and synonym_formset.is_valid() and canuseunit_formset.is_valid()
         
-        if models_valid and ingredient_form.cleaned_data['type'] == 'VE':
+        if models_valid and ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL:
             models_valid = models_valid and veg_ingredient_form.is_valid() and availinc_formset.is_valid()
             veg_ingredient_form.ingredient = ingredient
         
-        if models_valid and ingredient_form.cleaned_data['type'] == 'FI':
+        if models_valid and ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL_SEA:
             models_valid = models_valid and availins_formset.is_valid()
         
         if models_valid:
             ingredient_form.save()
             synonym_formset.save()
             canuseunit_formset.save()
-            if ingredient_form.cleaned_data['type'] == 'VE':
+            if ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL:
                 veg_ing_temp = veg_ingredient_form.save(commit=False)
                 veg_ing_temp.ingredient = ingredient
                 veg_ing_temp.save()
                 availinc_formset.save()
-            if ingredient_form.cleaned_data['type'] == 'FI':
+            if ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL_SEA:
                 availins_formset.save()
             
             return redirect(list_ingredients)
