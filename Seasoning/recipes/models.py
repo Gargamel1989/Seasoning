@@ -4,7 +4,8 @@ from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
 from imagekit.processors.resize import ResizeToFit, AddBorder
 import ingredients
-from ingredients.models import AvailableInCountry, AvailableInSea, CanUseUnit
+from ingredients.models import AvailableInCountry, AvailableInSea, CanUseUnit,\
+    Ingredient
 import datetime
 from django.db.models import Q
 from django.core.validators import MaxValueValidator
@@ -94,22 +95,23 @@ class Recipe(models.Model):
     class Meta:
         db_table = 'recipe'
     
-    COURSES = ((u'VO',u'Voorgerecht'),
-               (u'BR',u'Brood'),
-               (u'ON',u'Ontbijt'),
-               (u'DE',u'Dessert'),
-               (u'DR',u'Drank'),
-               (u'HO',u'Hoofdgerecht'),
-               (u'SA',u'Salade'),
-               (u'BI',u'Bijgerecht'),
-               (u'SO',u'Soep'),
-               (u'MA',u'Marinades en Sauzen'))
+    ENTRY, BREAD, BREAKFAST, DESERT, DRINK, MAIN_COURSE, SALAD, SIDE_DISH, SOUP, MARINADE_AND_SAUCE = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    COURSES = ((ENTRY,u'Voorgerecht'),
+               (BREAD,u'Brood'),
+               (BREAKFAST,u'Ontbijt'),
+               (DESERT,u'Dessert'),
+               (DRINK,u'Drank'),
+               (MAIN_COURSE,u'Hoofdgerecht'),
+               (SALAD,u'Salade'),
+               (SIDE_DISH,u'Bijgerecht'),
+               (SOUP,u'Soep'),
+               (MARINADE_AND_SAUCE,u'Marinades en Sauzen'))
     
     name = models.CharField(max_length=100)
     author = models.ForeignKey(User, editable=False)
     time_added = models.DateTimeField(auto_now_add=True, editable=False)
     
-    course = models.CharField(max_length=2, choices=COURSES)
+    course = models.PositiveSmallIntegerField(choices=COURSES)
     cuisine = models.ForeignKey(Cuisine, db_column='cuisine')
     description = models.TextField()
     portions = models.PositiveIntegerField()
@@ -126,12 +128,17 @@ class Recipe(models.Model):
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     thumbnail = ImageSpecField([ResizeToFit(250, 250), AddBorder(2, 'Black')], image_field='image', format='PNG')
     
+    # Derived Parameters
     footprint = FloatField(null=True, editable=False)
+    veganism = models.CharField(max_length=2L, choices=Ingredient.VEGANISMS, editable=False)
     
     accepted = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
+        # Calculate and set the recipes footprint
         self.footprint = 0
+        # And find an set the recipes veganism
+        veganism = Ingredient.VEGAN
         for uses in self.uses.all():
             used_unit = uses.unit
             used_ingredient = uses.ingredient
@@ -149,8 +156,11 @@ class Recipe(models.Model):
                 raise Exception('No primary unit found for ingredient: ' + used_ingredient.name)
             if not used_unit_properties:
                 raise Exception('Unit ' + used_unit.name + ' is not useable for ingredient ' + used_ingredient.name)
+            if used_ingredient.veganism < veganism:
+                veganism = used_ingredient.veganism
             
             self.footprint += uses.amount * used_unit_properties.conversion_factor * used_ingredient.footprint()
+        self.veganism = veganism
         super(Recipe, self).save(*args, **kwargs)
         
     def footprint_pp(self):
