@@ -19,24 +19,7 @@
   {% csrf_token %}
   {{ recipe_form.non_field_errors }}
   {{ usesingredient_formset.non_field_errors }}
-
-  <p>
-    <label>{{ recipe_form.name.label }}</label>{{ recipe_form.name }}
-  </p>
-  <br/>
-  <p>
-    <label>{{ recipe_form.course.label }}</label>{{ recipe_form.course }}
-  </p>
-  <p>
-    <label>{{ recipe_form.cuisine.label }}</label>{{ recipe_form.cuisine }}
-  </p>
-  <p>
-    <label>{{ recipe_form.description.label }}</label>{{ recipe_form.description }}
-  </p>
-  <br/>
-  <p>
-    <label>{{ recipe_form.portions.label }}</label>{{ recipe_form.portions }}
-  </p>
+  {{ recipe_form.as_p }}
   {{ usesingredient_formset.management_form }}
   <table>
     {% for form in usesingredient_formset %}
@@ -47,6 +30,8 @@
     </tr>
     {% endif %}
     <tr class="uses-form">
+    {{ form.id }}
+    {{ form.errors }}
       <td>
 	{{ form.group.as_hidden }}
 	{{ form.ingredient }}
@@ -69,20 +54,6 @@
 		<td><a href="#" id="uses-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
 	</tr>
   </table>
-  <p>
-    <label>{{ recipe_form.extra_info.label }}</label>{{ recipe_form.extra_info }}
-  </p>
-  <br/><br/>
-
-  <p>
-    <label>{{ recipe_form.active_time.label }}</label>{{ recipe_form.active_time }}
-  </p>
-  <p>
-    <label>{{ recipe_form.passive_time.label }}</label>{{ recipe_form.passive_time }}
-  </p>
-  <p>
-    <label>{{ recipe_form.instructions.label }}</label>{{ recipe_form.instructions }}
-  </p>
   
   <input id="submit-btn" type="submit" value="{% if new %}Toevoegen{% else %}Aanpassen{% endif %}" />
 </form>

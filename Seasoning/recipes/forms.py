@@ -1,8 +1,9 @@
 from django import forms
-from recipes.models import Recipe, UsesIngredient
-from django.forms import widgets
+from recipes.models import Recipe, UsesIngredient, Cuisine
 from recipes.fields import AutoCompleteSelectIngredientField
-from ingredients.models import Unit, CanUseUnit
+from ingredients.models import CanUseUnit
+import recipes
+from django.forms.widgets import RadioSelect
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -10,7 +11,6 @@ class AddRecipeForm(forms.ModelForm):
         model = Recipe
         exclude = ['author', 'time_added',
                    'rating', 'number_of_votes',
-                   'ingredient_ingredients',
                    'thumbnail', 'accepted']
         
     def save(self, *args, **kwargs):
@@ -36,4 +36,32 @@ class UsesIngredientForm(forms.ModelForm):
             self._errors['unit'] = self.error_class(['Deze eenheid kan niet gebruikt worden voor het gekozen ingredient...'])
             del cleaned_data['unit']
         return cleaned_data
+
+class SearchRecipeForm(forms.Form):
+    
+    SORT_CHOICES = (('name', 'Naam'), ('footprint', 'Voetafdruk'),
+                    ('active_time', 'Actieve Kooktijd'), ('tot_time', 'Totale Kooktijd'))
+    SORT_ORDER_CHOICES = (('', 'Van Laag naar Hoog'), ('-', 'Van Hoog naar Laag'))
+    OPERATOR_CHOICES = (('and', 'Allemaal'), ('or', 'Minstens 1'))
+    
+    search_string = forms.CharField(required=False, label='Zoektermen')
+    
+    sort_field = forms.ChoiceField(choices=SORT_CHOICES)
+    sort_order = forms.ChoiceField(widget=RadioSelect, choices=SORT_ORDER_CHOICES, required=False)
+    
+    ven = forms.BooleanField(initial=True, required=False, label='Veganistisch')
+    veg = forms.BooleanField(initial=True, required=False, label='Vegetarisch')
+    nveg = forms.BooleanField(initial=True, required=False, label='Niet-Vegetarisch')
+    
+    cuisine = forms.ModelMultipleChoiceField(queryset=Cuisine.objects.all(), required=False, label='Keuken')
+    
+    course = forms.ChoiceField(required=False, choices=(((u'', u'Maakt niet uit'),) + recipes.models.Recipe.COURSES), label='Maaltijd')
+    
+    include_ingredients_operator = forms.ChoiceField(widget=RadioSelect, choices=OPERATOR_CHOICES, label='')
+
+class IngredientInRecipeSearchForm(forms.Form):
+    
+    name = forms.CharField()
+    
+    
 

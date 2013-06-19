@@ -23,6 +23,7 @@
 <p><img src="{{ MEDIA_URL }}{{ recipe.image }}"/></p>
 <p>Soort maaltijd: {{ recipe.get_course_display }}</p>
 <p>Keuken: {{ recipe.cuisine }}</p>
+<p>Veganisme: {{ recipe.get_veganism_display }}</p>
 <p>Beschrijving: {{ recipe.description }}</p>
 
 <p>

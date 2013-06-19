@@ -12,7 +12,18 @@
 
 <form action="" method="POST">
   {% csrf_token %}
-  <input type="text" name="recipe_name" />
+  {{ search_form.non_field_errors }}
+  {{ include_ingredients_formset.non_field_errors }}
+  {{ search_form.as_p }}
+  {{ include_ingredients_formset.management_form }}
+  <div>
+  	Ingredienten die in het gerecht moeten zitten:
+  	
+  </div>
+  {% for form in include_ingredients_formset %}
+  	{{ form.as_p }}
+  {% endfor %}
+  <br />
   <input type="submit" value="Zoeken" />
 </form>
 

@@ -1,31 +1,82 @@
 from django.shortcuts import render, redirect
 from recipes.models import Recipe, Vote, UsesIngredient
-from recipes.forms import AddRecipeForm, UsesIngredientForm
+from recipes.forms import AddRecipeForm, UsesIngredientForm, SearchRecipeForm,\
+    IngredientInRecipeSearchForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.forms.models import inlineformset_factory
 from django.contrib import messages
+from django.db.models import Q
+from ingredients.models import Ingredient
+from django.forms.formsets import formset_factory
 
-def search_recipes(request):
+def search_recipes(request, sort_field=None):
+    IngredientInRecipeFormset = formset_factory(IngredientInRecipeSearchForm, extra=2)
     if request.method == 'POST':
-        recipe_name_search_string = request.POST['recipe_name']
-        recipes = Recipe.objects.filter(name__contains=recipe_name_search_string)
-
-    else:
-        recipes_list = Recipe.objects.all()
-        paginator = Paginator(recipes_list, 10)
-    
-        page = request.GET.get('page')
-        try:
-            recipes = paginator.page(page)
-        except PageNotAnInteger:
-            recipes = paginator.page(1)
-        except EmptyPage:
-            recipes = paginator.page(paginator.num_pages)
+        search_form = SearchRecipeForm(request.POST)
+        include_ingredients_formset = IngredientInRecipeFormset(request.POST)
+        if search_form.is_valid() and include_ingredients_formset.is_valid():
+            search_string = search_form.cleaned_data['search_string']
+            ven, veg, nveg = search_form.cleaned_data['ven'], search_form.cleaned_data['veg'], search_form.cleaned_data['nveg']
+            course = search_form.cleaned_data['course']
+            sort_field = search_form.cleaned_data['sort_order'] + search_form.cleaned_data['sort_field']
         
-    return render(request, 'recipes/search_recipes.html', {'recipes': recipes})
+            recipe_name = Q(name__icontains=search_string)
+            
+            veg_filter = Q()
+            if ven:
+                veg_filter = veg_filter | Q(veganism=Ingredient.VEGAN)
+            if veg:
+                veg_filter = veg_filter | Q(veganism=Ingredient.VEGETARIAN)
+            if nveg:
+                veg_filter = veg_filter | Q(veganism=Ingredient.NON_VEGETARIAN)
+            
+            additional_filters = Q()
+            if course:
+                additional_filters = additional_filters & Q(course=course)
+            
+            recipes_list = Recipe.objects.filter((recipe_name) & veg_filter & additional_filters)
+            
+            if 'tot_time' in sort_field:
+                recipes_list = recipes_list.extra(select={'tot_time': 'active_time + passive_time'})
+            
+            if search_form.cleaned_data['include_ingredients_operator'] == 'and':
+                for ingredient_form in include_ingredients_formset:
+                    if not 'name' in ingredient_form.cleaned_data:
+                        continue
+                    recipes_list = recipes_list.filter(ingredients__name__icontains=ingredient_form.cleaned_data['name'])
+            elif search_form.cleaned_data['include_ingredients_operator'] == 'or':
+                q = Q()
+                for ingredient_form in include_ingredients_formset:
+                    if not 'name' in ingredient_form.cleaned_data:
+                        continue
+                    q = q | Q(ingredients__name__icontains=ingredient_form.cleaned_data['name'])
+                recipes_list = recipes_list.filter(q)
+            
+            recipes_list = recipes_list.distinct().order_by(sort_field)
+            
+        else:
+            recipes_list = []
+    else:
+        search_form = SearchRecipeForm()
+        include_ingredients_formset = IngredientInRecipeFormset()
+        recipes_list = Recipe.objects.all()
+    
+    paginator = Paginator(recipes_list, 10)
+    
+    page = request.GET.get('page')
+    try:
+        recipes = paginator.page(page)
+    except PageNotAnInteger:
+        recipes = paginator.page(1)
+    except EmptyPage:
+        recipes = paginator.page(paginator.num_pages)
+        
+    return render(request, 'recipes/search_recipes.html', {'search_form': search_form,
+                                                           'include_ingredients_formset': include_ingredients_formset,
+                                                           'recipes': recipes})
 
 def view_recipe(request, recipe_id, portions=None):
     recipe = Recipe.objects.select_related().get(pk=recipe_id)
