@@ -26,7 +26,7 @@ urlpatterns = patterns('',
 )
 
 from django.conf import settings
-## debug stuff to serve static media
+# debug stuff to serve static media
 if settings.DEBUG:
     urlpatterns += patterns('',
         (r'^media/(?P<path>.*)$', 'django.views.static.serve', 

@@ -1,11 +1,15 @@
 # Django settings for Seasoning project.
 import os
 
-SETTINGS_DIR = os.path.dirname(__file__)
-DB_BACKUP_FILE = os.path.join(os.path.dirname(SETTINGS_DIR), '../../seasoning_db.bak')
+# The directory containing this file
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+# The file to which the database backed up should be written
+DB_BACKUP_FILE = os.path.join(BASE_DIR, '../../seasoning_db.bak')
 
 ADMINS = (
     ('Joep Driesen', 'joeper_100@hotmail.com'),
+    ('Bram Somers', 'somersbram@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -17,7 +21,7 @@ MANAGERS = ADMINS
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Brussels'
+TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -47,7 +51,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(SETTINGS_DIR), 'Seasoning/static'),
+    BASE_DIR + 'Seasoning/static',
 )
 
 # List of finder classes that know how to find static files in
@@ -55,16 +59,17 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
 )
 
+# A tuple of callables that are used to populate the context in RequestContext. 
+# These callables take a request object as their argument and return a dictionary 
+# of items to be merged into the context.
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
@@ -87,11 +92,11 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'Seasoning.urls'
 
+# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+# Always use forward slashes, even on Windows.
+# Don't forget to use absolute paths, not relative paths.
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(SETTINGS_DIR), 'Seasoning/templates'),
+    BASE_DIR + 'Seasoning/templates',
 )
 
 INSTALLED_APPS = (
@@ -152,9 +157,11 @@ LOGGING = {
     }
 }
 
-# AUTH_PROFILE_MODULE = 'Seasoning.social.UserProfile'
+# The URL where requests are redirected for login, especially when using the login_required() decorator.
 LOGIN_URL = '/login/'
+
+# The URL where requests are redirected after login when the contrib.auth.login view gets no next parameter.
 LOGIN_REDIRECT_URL = '/'
 
-# Django-registration:
+# Used by the authentication. Defines how many days an unactivated accounts will be stored in the database at the least.
 ACCOUNT_ACTIVATION_DAYS = 7

@@ -1,7 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
-import subprocess
 import time
 import os
 
@@ -28,9 +27,12 @@ def terms(request):
 
 @staff_member_required
 def backup_db(request):
+    '''
+    Backup the Seasoning Database to disk
+    '''
     db = settings.DATABASES['default']
     filename = "/backups/mysql/%s-%s.sql" % (db['NAME'], time.strftime('%Y-%m-%d'))
     cmd = 'mysqldump --opt -u %s -p%s -e -c %s | bzip2 -c > %s' % (db['USER'], db['PASSWORD'], db['NAME'], filename)
     os.popen(cmd)
     
-    return render(request, 'seasoning/homepage.html')
+    return redirect(home)
