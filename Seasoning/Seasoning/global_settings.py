@@ -165,3 +165,6 @@ LOGIN_REDIRECT_URL = '/'
 
 # Used by the authentication. Defines how many days an unactivated accounts will be stored in the database at the least.
 ACCOUNT_ACTIVATION_DAYS = 7
+
+# Registration is closed during development
+REGISTRATION_OPEN = False
