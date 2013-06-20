@@ -9,6 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from authentication.models import NewEmail
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
+from Seasoning.views import home
+from django.contrib import messages
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -130,32 +132,34 @@ def registration_complete(request):
     
 
 def resend_activation_email(request):
+    """
+    Allow a registered, non-activated user to resend an activation email.
     
-    errormessage = None
+    The user will be required to provide the non-activated email address. After
+    checking if this email address indeed corresponds to a non-activated account,
+    an email will be sent to it. 
     
+    """
     if request.method == "POST":
         
         form = ResendActivationEmailForm(data=request.POST)
         
         if form.is_valid():
             site = RequestSite(request)
-                    
-            form.cleaned_data['email'].send_activation_email(site)
-                    
-            context = {'done': True}
             
-            return TemplateResponse(request, 'authentication/resend_activation_email.html', context)
+            # Send an activation email to the registration profile corresponding to the
+            # given email
+            form.cleaned_data['email'].send_activation_email(site)
+            
+            messages.add_message(request, messages.INFO, _('A new activation email has been sent to %s. This email should '
+                                                           'arrive within 15 minutes. Please be sure to check your Spam/Junk '
+                                                           'folder.'))            
+            return redirect(home)
         
     else:
         form = ResendActivationEmailForm()
         
-    context = {
-        'done': False,
-        'form': form,
-        'error': errormessage
-    }
-        
-    return TemplateResponse(request, 'authentication/resend_activation_email.html', context)
+    return render(request, 'authentication/resend_activation_email.html', {'form': form})
 
 
 def activate(request, backend,
@@ -238,24 +242,36 @@ def activate(request, backend,
                               context_instance=context)
 
 def activation_complete(request):
-    return render(request, 'authentication/activation_complete.html')
+    messages.add_message(request, messages.INFO, _('Your account has been successfully activated. Have fun!'))            
+    return redirect(home)
     
 
 @login_required
 def account_settings(request):
+    """
+    Allow a user to change his account settings
+    
+    If the user has changed his email address, an activation email will be sent to this new
+    address. The new address will not be activated until the link in this email has been
+    clicked.
+    
+    If the user has an alternate email that should be activated, this will also be displayed
+    on this page.
+    
+    """
     context = {}
     if request.method == "POST":
         user = get_user_model().objects.get(id=request.user.id)
         form = AccountSettingsForm(request.POST, request.FILES, instance=user)
         
         if form.is_valid():
-            if hasattr(form, 'new_email'):
+            if form.new_email:
+                # Send an activation email to the new email
                 NewEmail.objects.create_inactive_email(user, form.new_email, RequestSite(request))
-                context['email_message'] = _('An email has been sent to the new email address provided by you. Please follow the instructions \
-                                              in this email to complete the changing of your email address.')
+                messages.add_message(request, messages.INFO, _('An email has been sent to the new email address provided by you. Please follow the instructions '
+                                                               'in this email to complete the changing of your email address.'))
             # New email address has been replaced by old email address in the form, so it will not be saved until activated
             form.save()
-            return render(request, 'authentication/account_change_done.html', context)
     else:
         form = AccountSettingsForm(instance=request.user)
     
@@ -270,6 +286,7 @@ def account_settings(request):
 
 @login_required
 def change_email(request, activation_key):
+    # TODO: if user not logged in, send to login
     activated = NewEmail.objects.activate_email(request.user, activation_key)
     if activated:
         return render(request, 'authentication/change_email_complete.html')

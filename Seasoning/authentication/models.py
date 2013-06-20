@@ -75,9 +75,10 @@ class User(AbstractBaseUser):
     )
     
     username = models.CharField(_('username'), max_length=30,
-        help_text=_('Required. 30 characters or fewer. Letters, numbers and '
-                    '@/./+/-/_ characters'),
-        validators=[validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')])
+                                help_text=_('Required. 30 characters or fewer. Letters, numbers and '
+                                            '@/./+/-/_ characters'),
+                                validators=[validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')],
+                                unique=True)
     
     avatar = ProcessedImageField([ResizeToFit(250, 250), AddBorder(2, 'Black')], format='PNG', \
                                   upload_to=get_image_filename, default='images/users/no_image.png')
@@ -124,8 +125,13 @@ SHA1_RE = re.compile('^[a-f0-9]{40}$')
 
 
 class NewEmailManager(models.Manager):
+    """
+    Custom manager for the ``NewEmail`` model
+    
+    """
     
     def activate_email(self, user, activation_key):
+        # TODO: commentate
         if SHA1_RE.search(activation_key):
             try:
                 new_email = self.get(user=user)
@@ -140,6 +146,7 @@ class NewEmailManager(models.Manager):
         return False
     
     def create_inactive_email(self, user, new_email, site, send_email=True):
+        # TODO: commentate
         salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
         try:
             old_new_email = self.get(user=user)
@@ -160,6 +167,10 @@ class NewEmailManager(models.Manager):
         return inactive_email
 
 class NewEmail(models.Model):
+    """
+    This model stores a new email of an acounnt while it has not been activated
+    
+    """
     
     user = models.ForeignKey(User, primary_key=True)
     activation_key = models.CharField(_('activation key'), unique=True, max_length=40)
@@ -171,6 +182,10 @@ class NewEmail(models.Model):
     objects = NewEmailManager()
     
     def send_new_email_email(self, site):
+        """
+        Send an email containing an activation link to this objects email.
+        
+        """
         ctx_dict = {'activation_key': self.activation_key,
                     'site': site}
         subject = render_to_string('authentication/change_email_email_subject.txt',
@@ -342,7 +357,7 @@ class RegistrationProfile(models.Model):
     """
     ACTIVATED = u"ALREADY_ACTIVATED"
     
-    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
+    user = models.OneToOneField(User)
     activation_key = models.CharField(_('activation key'), max_length=40)
     
     objects = RegistrationManager()

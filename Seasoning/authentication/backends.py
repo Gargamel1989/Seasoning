@@ -48,8 +48,8 @@ class RegistrationBackend(object):
     """
     def register(self, request, **kwargs):
         """
-        Given a username, email address and password, register a new
-        user account, which will initially be inactive.
+        Given a username, email address, password, gender and date of
+        birth, register a new user account, which will initially be inactive.
 
         Along with the new ``User`` object, a new
         ``registration.models.RegistrationProfile`` will be created,
@@ -134,7 +134,7 @@ class RegistrationBackend(object):
         """
         Return the name of the URL to redirect to after successful
         account activation.
-        
+
         """
         return ('activation_complete', (), {})
     

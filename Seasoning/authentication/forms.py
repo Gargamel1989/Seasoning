@@ -9,11 +9,16 @@ from django.forms.models import ModelForm
 from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
 from authentication.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 
         
 class ShownImageInput(ClearableFileInput):
+    """
+    This is a custom Form field that shows a thumbnail of the current image above
+    the file input field
     
+    """
     initial_text = _('Avatar')
     
     def render(self, name, value, attrs=None):
@@ -32,8 +37,6 @@ class ShownImageInput(ClearableFileInput):
                                                    value.url)
 
         return mark_safe(template % substitutions)
-    
-    
 
 attrs_dict = {'class': 'required'}
 
@@ -105,7 +108,16 @@ class EmailUserCreationForm(forms.Form):
 
     
 class ResendActivationEmailForm(forms.Form):
+    """
+    Form for resending an activation email to a user.
     
+    The user must enter an email address to which he would like to have a
+    new activation email sent. If the email address does not correspond to
+    an inactive account, and error is returned
+    
+    If the given email address does correspond to an inactive account, the 
+    cleaned email field will contain the registration profile of the account.
+    """    
     email = forms.EmailField(label="E-mail", max_length=75,
                              error_messages = {'invalid': _("Please enter a valid email address"),
                                                'required': _("Please enter a valid email address")})
@@ -114,18 +126,22 @@ class ResendActivationEmailForm(forms.Form):
         email = self.cleaned_data["email"]
         try:
             user = get_user_model().objects.get(email=email)
-            profiles = user.registrationprofile_set.all()
-            
-            if len(profiles) <= 0 or user.is_active:
-                raise forms.ValidationError(_("The account corresponding to this email address has already been activated"))
-            
-            if profiles[0].activation_key_expired():
-                raise forms.ValidationError(_("The account corresponding to this email address has expired due to prolonged inactivity"))
-            
-            return profiles[0]
-        
         except get_user_model().DoesNotExist:
             raise forms.ValidationError(_("The given email address was not found"))
+        
+        try:
+            profile = user.registrationprofile
+        except ObjectDoesNotExist:
+            if user.is_active:
+                raise forms.ValidationError(_("The account corresponding to this email address has already been activated"))
+        
+            raise forms.ValidationError(_("The account corresponding to this email address has already been activated"))
+        
+        if profile.activation_key_expired():
+            raise forms.ValidationError(_("The account corresponding to this email address has expired due to prolonged inactivity"))
+            
+        return profile
+        
     
 
 class CheckActiveAuthenticationForm(AuthenticationForm):
@@ -137,6 +153,16 @@ class CheckActiveAuthenticationForm(AuthenticationForm):
             <a href=\"/activate/resend/\">this form</a> to resend an activation email."))
         
 class AccountSettingsForm(ModelForm):
+    """
+    This form allows a user to change his account settings
+    
+    If the user enters a new email address, the form will get an attribute 'new_email'
+    with the new email address as its value. Otherwise this attribute will be None.
+    
+    The cleaned email will revert to the old email address of the user because the new
+    email address must be activated before it is saved.
+    
+    """
     
     class Meta:
         model = get_user_model()
@@ -150,5 +176,8 @@ class AccountSettingsForm(ModelForm):
         new_email = self.cleaned_data['email']
         if not user.email == new_email:
             self.new_email = new_email
+        else:
+            self.new_email = None
+        self.cleaned_data['email'] = user.email
         return user.email
         
