@@ -6,19 +6,24 @@ import datetime
 
 
 def get_image_filename(instance, old_filename):
+    """
+    Return a new unique filename for an ingredient image
+    
+    """
     filename = str(time.time()) + '.png'
     return 'images/ingredients/' + filename
 
 class Ingredient(models.Model):
-    '''
+    """
     This is the base class for ingredients. It is not an abstract class, as simple
     Ingredients can be represented by it. This includes meat, which is not 
     dependent on time and has no special attributes
-    '''
     
+    """    
     class Meta:
         db_table = 'ingredient'
     
+    # Choices
     VEGETABLES, FRUIT, TUBERS, NUTS_AND_SEEDS, CEREAL_PRODUCTS, HERBS, SPICES, OILS_AND_VINEGARS, MEAT, FISH, DAIRY_PRODUCTS, DRINKS = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
     CATEGORIES = ((VEGETABLES,u'Groenten'),
                   (FRUIT,u'Fruit'),
@@ -68,6 +73,13 @@ class Ingredient(models.Model):
     def footprint(self):
         """
         Return the current (minimal available) footprint of this ingredient
+        
+        If this is a basic ingredient, the footprint is just the base_footprint of the
+        object
+        
+        If this is a Seasonal ingredient, the footprint is the base_footprint of the
+        object, plus the minimal of the currently available AvailableIn* objects.
+        
         """
         if self.type == Ingredient.BASIC:
             return self.base_footprint
@@ -88,8 +100,15 @@ class Ingredient(models.Model):
         
         raise Exception('Unknown ingredient type: ' + self.type)
     
-class Synonym(models.Model):
+    def __unicode__(self):
+        return self.name
     
+class Synonym(models.Model):
+    """
+    Represents a synonym for an ingredient, these will be displayed when viewing
+    ingredients, and can be searched for.
+    
+    """    
     class Meta:
         db_table = 'synonym'
     
@@ -98,9 +117,14 @@ class Synonym(models.Model):
     
     ingredient = models.ForeignKey(Ingredient, related_name='synonym', null=True, db_column='ingredient', blank=True)
     
+    def __unicode__(self):
+        return self.name    
     
 class Unit(models.Model):
+    """
+    Represent a unit
     
+    """    
     class Meta:
         db_table = 'unit'
         
@@ -119,7 +143,15 @@ class Unit(models.Model):
         return self.name
     
 class CanUseUnit(models.Model):
+    """
+    Relates a unit to an ingredient.
     
+    The conversion factor defines how this unit relates to the ingredients primary unit in
+    the following way:
+    
+    x this_unit = x*conversion_factor primary_unit
+    
+    """    
     class Meta:
         db_table = 'canuseunit'
         
@@ -135,26 +167,28 @@ class CanUseUnit(models.Model):
 
 
 class VegetalIngredient(models.Model):
-    '''
-    This class represents vegetal ingredients. Their sustainability factor depends
-    on the current date and thus they require a more complicated model.
-    These ingredients are available in certain countries during certain time periods.
-    Each country uses a certain transportation method to get the ingredient to belgium,
-    and is a certain distance from Belgium.
-    '''
+    """
+    This class represents vegetal ingredients. They have some extra properties.
     
+    A vegetal ingredient can be preserved for a certain number of months. During
+    this preservation period, they produce an additional footprint every month.
+    
+    """    
     class Meta:
         db_table = 'vegetalingredient'
     
     ingredient = models.OneToOneField(Ingredient, primary_key=True, db_column='ingredient', related_name='vegetal_ingredient')
     preservability = models.IntegerField()
     preservation_footprint = models.FloatField(null=True)
+    
+    def __unicode__(self):
+        return self.ingredient.name
 
 class Country(models.Model):
-    '''
+    """
     This class represent countries. Each country is a certain distance away from Belgium
-    '''
     
+    """
     class Meta:
         db_table = 'country'
     
@@ -164,57 +198,13 @@ class Country(models.Model):
     
     def __unicode__(self):
         return self.name
-    
-class TransportMethod(models.Model):
-    '''
-    This class represents a transport method. A transport method has a mean carbon emission
-    per km
-    '''
-    
-    class Meta:
-        db_table = 'transportmethod'
-        
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=20L)
-    emission_per_km = models.FloatField()
-    
-    def __unicode__(self):
-        return self.name
-    
-class AvailableInCountry(models.Model):
-
-    class Meta:
-        db_table = 'availableincountry'
-    
-    ingredient = models.ForeignKey(Ingredient, related_name='available_in_country', db_column='ingredient')
-    country = models.ForeignKey('Country', db_column='country')
-    transport_method = models.ForeignKey('Transportmethod', db_column='transport_method')
-    
-    production_type  = models.CharField(max_length=10, blank=True)
-    extra_production_footprint = models.FloatField(default=0)
-    
-    date_from = models.DateField()
-    date_until = models.DateField()
-    
-    # This field will contain the amount of CO2 per primary unit of this ingredient when it
-    # is available under the parameters of this object.
-    footprint = models.FloatField(editable=False)
-    
-    def month_from(self):
-        return self.date_from.strftime('%B')
-    
-    def month_until(self):
-        return self.date_until.strftime('%B')
-    
-    def save(self, *args, **kwargs):
-        self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.country.distance*self.transport_method.emission_per_km
-        
-        models.Model.save(self, *args, **kwargs)
-    
 
 
 class Sea(models.Model):
+    """
+    Same as the ``Country`` model, but for fish ingredients
     
+    """    
     class Meta:
         db_table = 'Sea'
     
@@ -225,20 +215,49 @@ class Sea(models.Model):
     def __unicode__(self):
         return self.name
     
-class AvailableInSea(models.Model):
+class TransportMethod(models.Model):
+    """
+    This class represents a transport method. A transport method has a mean carbon emission
+    per km
     
+    """
     class Meta:
-        db_table = 'availableinsea'
+        db_table = 'transportmethod'
+        
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=20L)
+    emission_per_km = models.FloatField()
     
-    ingredient = models.ForeignKey(Ingredient, related_name='available_in_sea', db_column='ingredient')
-    sea = models.ForeignKey('Sea', db_column='sea')
+    def __unicode__(self):
+        return self.name
+    
+class AvailableIn(models.Model):
+    """
+    Seasonal ingredients are available in different parts of the world at
+    different time. Their footprint depends on where they come from.
+    
+    This model expresses where a seasonal ingredient can come from between
+    certain times of the year, how it is transported to Belgium and what the
+    additional footprint is during the production in this location (eg. because of
+    greenhouse production)
+    
+    """
+    class Meta:
+        abstract = True
+    
+    # This field must be overriden by implementing models
+    location = None
+    
     transport_method = models.ForeignKey('Transportmethod', db_column='transport_method')
+    
+    production_type  = models.CharField(max_length=10, blank=True)
+    extra_production_footprint = models.FloatField(default=0)
     
     date_from = models.DateField()
     date_until = models.DateField()
     
-    # This field will contain the amount of CO2 per primary unit of this ingredient when it
-    # is available under the parameters of this object.
+    # This is the added footprint when an ingredient is available with this AvailableIn object,
+    # it is calculated when the model is saved
     footprint = models.FloatField(editable=False)
     
     def month_from(self):
@@ -248,6 +267,36 @@ class AvailableInSea(models.Model):
         return self.date_until.strftime('%B')
     
     def save(self, *args, **kwargs):
-        self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.sea.distance*self.transport_method.emission_per_km
+        self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.location.distance*self.transport_method.emission_per_km
         
         models.Model.save(self, *args, **kwargs)
+    
+
+    
+class AvailableInCountry(AvailableIn):
+    """
+    An implementation of the AvailableIn model for vegetal ingredients
+    
+    """
+    class Meta:
+        db_table = 'availableincountry'
+    
+    ingredient = models.ForeignKey(Ingredient, related_name='available_in_country', db_column='ingredient')
+    location = models.ForeignKey('Country', db_column='country')
+    
+    def country(self):
+        return self.location
+    
+class AvailableInSea(AvailableIn):
+    """
+    An implementation of the AvailableIn model for fish ingredients
+    
+    """    
+    class Meta:
+        db_table = 'availableinsea'
+    
+    ingredient = models.ForeignKey(Ingredient, related_name='available_in_sea', db_column='ingredient')
+    location = models.ForeignKey('Sea', db_column='sea')
+    
+    def sea(self):
+        return self.location
