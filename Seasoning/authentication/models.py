@@ -57,6 +57,10 @@ class UserManager(BaseUserManager):
         return user
 
 def get_image_filename(instance, old_filename):
+    """
+    Get a new filename for a user image
+    
+    """
     filename = str(time.time()) + '.png'
     return 'images/users/' + filename
 
@@ -131,22 +135,40 @@ class NewEmailManager(models.Manager):
     """
     
     def activate_email(self, user, activation_key):
-        # TODO: commentate
+        """
+        Validate an activation key corresponding to a given user
+        
+        If the key is valid, return the new email addres after activating, and
+        delete the ``NewEmail`` object in the database
+        
+        If the key is not valid, return ``False``.
+        
+        """
         if SHA1_RE.search(activation_key):
             try:
-                new_email = self.get(user=user)
+                new_email = self.get(user=user, activation_key=activation_key)
             except self.model.DoesNotExist:
                 return False
-            if activation_key == new_email.activation_key:
-                user = new_email.user
-                user.email = new_email.email
-                user.save()
-                new_email.delete()
-                return user
+            user = new_email.user
+            user.email = new_email.email
+            user.save()
+            new_email.delete()
+            return user.email
         return False
     
     def create_inactive_email(self, user, new_email, site, send_email=True):
-        # TODO: commentate
+        """
+        Create a new, inactive email for a given user, generate a
+        ``NewEmail`` and email its activation key to the
+        ``User``, returning the new ``NewEmail`` object.
+
+        By default, an activation email will be sent to the new
+        user. To disable this, pass ``send_email=False``.
+        
+        If the user already had a ``NewEmail`` waiting to be activated, this
+        object will be replaced by the new ``NewEmail``.
+        
+        """
         salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
         try:
             old_new_email = self.get(user=user)

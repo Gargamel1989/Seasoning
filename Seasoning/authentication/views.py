@@ -11,6 +11,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from Seasoning.views import home
 from django.contrib import messages
+from django.views.decorators.debug import sensitive_post_parameters
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -164,7 +166,7 @@ def resend_activation_email(request):
 
 def activate(request, backend,
              template_name='authentication/activate.html',
-             success_url=None, extra_context=None, **kwargs):
+             extra_context=None, **kwargs):
     """
     Activate a user's account.
 
@@ -175,11 +177,8 @@ def activate(request, backend,
     return a ``User`` if activation was successful, or a value which
     evaluates to ``False`` in boolean context if not.
 
-    Upon successful activation, the backend's
-    ``post_activation_redirect()`` method will be called, passing the
-    ``HttpRequest`` and the activated ``User`` to determine the URL to
-    redirect the user to. To override this, pass the argument
-    ``success_url`` (see below).
+    Upon successful activation, the user will be redirected to the home
+    page and displayed a message that the activation was succesfull.
 
     On unsuccessful activation, will render the template
     ``authentication/activate.html`` to display an error message; to
@@ -194,12 +193,6 @@ def activate(request, backend,
         A dictionary of variables to add to the template context. Any
         callable object in this dictionary will be called to produce
         the end result which appears in the context. Optional.
-
-    ``success_url``
-        The name of a URL pattern to redirect to on successful
-        acivation. This is optional; if not specified, this will be
-        obtained by calling the backend's
-        ``post_activation_redirect()`` method.
     
     ``template_name``
         A custom template to use. This is optional; if not specified,
@@ -225,11 +218,8 @@ def activate(request, backend,
     account = backend.activate(request, **kwargs)
 
     if account:
-        if success_url is None:
-            to, args, kwargs = backend.post_activation_redirect(request, account)
-            return redirect(to, *args, **kwargs)
-        else:
-            return redirect(success_url)
+        messages.add_message(request, messages.INFO, _('Your account has been successfully activated. Have fun!'))            
+        return redirect(home)
 
     if extra_context is None:
         extra_context = {}
@@ -239,12 +229,7 @@ def activate(request, backend,
 
     return render_to_response(template_name,
                               kwargs,
-                              context_instance=context)
-
-def activation_complete(request):
-    messages.add_message(request, messages.INFO, _('Your account has been successfully activated. Have fun!'))            
-    return redirect(home)
-    
+                              context_instance=context)    
 
 @login_required
 def account_settings(request):
@@ -286,8 +271,40 @@ def account_settings(request):
 
 @login_required
 def change_email(request, activation_key):
-    # TODO: if user not logged in, send to login
+    """
+    This checks if the given activation key belongs to the current users new,
+    inactive email address. If so, this new email address is activated, and
+    the users old email address is deleted.
+    
+    """
     activated = NewEmail.objects.activate_email(request.user, activation_key)
     if activated:
-        return render(request, 'authentication/change_email_complete.html')
+        messages.add_message(request, messages.INFO, _('Your email address has been successfully changed.'))
+        return redirect(account_settings)
     raise Http404
+
+@sensitive_post_parameters()
+@login_required
+def change_password(request,
+                    template_name='registration/password_change_form.html',
+                    password_change_form=PasswordChangeForm,
+                    current_app=None, extra_context=None):
+    """
+    Provides a form where the users password can be changed.
+    
+    """
+    if request.method == "POST":
+        form = password_change_form(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.INFO, _('Your password has been successfully changed.'))
+            return redirect(account_settings)
+    
+    form = password_change_form(user=request.user)
+    context = {
+        'form': form,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+    return TemplateResponse(request, template_name, context,
+                            current_app=current_app)

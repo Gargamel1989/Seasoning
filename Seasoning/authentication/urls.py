@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 from authentication.views import registration_complete, registration_closed,\
-    activation_complete, resend_activation_email, register, activate, change_email
+    resend_activation_email, register, activate, change_email,\
+    change_password
 from authentication.backends import RegistrationBackend
 from authentication.forms import CheckActiveAuthenticationForm
 
@@ -17,8 +18,6 @@ urlpatterns = patterns('',
     # Activation urls
     url(r'^activate/resend/$', resend_activation_email,
         name='resend_activation_email'),
-    url(r'^activate/complete/$', activation_complete, 
-        name='activation_complete'),
     url(r'^activate/(?P<activation_key>\w+)/$', activate, {'backend': RegistrationBackend},
         name='registration_activate'),
     
@@ -44,11 +43,7 @@ urlpatterns = patterns('',
     
     # Profile urls
     url(r'^settings/$', 'authentication.views.account_settings'),
-    url(r'^password/change/$', 'django.contrib.auth.views.password_change', 
-        {'template_name':'authentication/password_change_form.html'},
+    url(r'^password/change/$', change_password,
         name='password_change'),
-    url(r'^password/changed/$', 'django.contrib.auth.views.password_change_done', 
-        {'template_name':'authentication/password_change_done.html'},
-        name='password_change_done'),
     url(r'^email/change/(?P<activation_key>\w+)/$', change_email)
 )

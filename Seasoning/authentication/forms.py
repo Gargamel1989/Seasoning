@@ -9,8 +9,6 @@ from django.forms.models import ModelForm
 from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
 from authentication.models import User
-from django.core.exceptions import ObjectDoesNotExist
-
 
         
 class ShownImageInput(ClearableFileInput):
@@ -129,14 +127,10 @@ class ResendActivationEmailForm(forms.Form):
         except get_user_model().DoesNotExist:
             raise forms.ValidationError(_("The given email address was not found"))
         
-        try:
-            profile = user.registrationprofile
-        except ObjectDoesNotExist:
-            if user.is_active:
-                raise forms.ValidationError(_("The account corresponding to this email address has already been activated"))
-        
+        if user.is_active:
             raise forms.ValidationError(_("The account corresponding to this email address has already been activated"))
         
+        profile = user.registrationprofile
         if profile.activation_key_expired():
             raise forms.ValidationError(_("The account corresponding to this email address has expired due to prolonged inactivity"))
             
@@ -145,12 +139,17 @@ class ResendActivationEmailForm(forms.Form):
     
 
 class CheckActiveAuthenticationForm(AuthenticationForm):
+    """
+    This form is used instead of the standard authentication form. It customizes
+    the error message returned when the used has not been ativated yet.
     
+    """    
     def __init__(self, *args, **kwargs):
         super(CheckActiveAuthenticationForm, self).__init__(*args, **kwargs)
-        self.error_messages['inactive'] = mark_safe(_("This account has not been activated yet, so you may not log in at \
-            this time. If you haven't received an activation email for 15 minutes after registering, you can use \
-            <a href=\"/activate/resend/\">this form</a> to resend an activation email."))
+        self.error_messages['inactive'] = mark_safe(_('This account has not been activated yet, so you may not log in at '
+                                                      'this time. If you haven\'t received an activation email for 15 minutes '
+                                                      'after registering, you can use <a href=\"/activate/resend/\">this form</a> '
+                                                      'to resend an activation email.'))
         
 class AccountSettingsForm(ModelForm):
     """
@@ -162,8 +161,7 @@ class AccountSettingsForm(ModelForm):
     The cleaned email will revert to the old email address of the user because the new
     email address must be activated before it is saved.
     
-    """
-    
+    """    
     class Meta:
         model = get_user_model()
         fields = ['email', 'avatar']
@@ -179,5 +177,4 @@ class AccountSettingsForm(ModelForm):
         else:
             self.new_email = None
         self.cleaned_data['email'] = user.email
-        return user.email
-        
+        return user.email        
