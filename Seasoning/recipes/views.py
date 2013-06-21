@@ -13,8 +13,16 @@ from ingredients.models import Ingredient
 from django.forms.formsets import formset_factory
 
 def search_recipes(request, sort_field=None):
+    """"
+    Enables searching for recipes
+    
+    """
+    # This is a formset for inputting ingredients to be included in the recipe search
     IngredientInRecipeFormset = formset_factory(IngredientInRecipeSearchForm, extra=2)
+    
     if request.method == 'POST':
+        # Process the search
+        
         search_form = SearchRecipeForm(request.POST)
         include_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='include')
         exclude_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='exclude')
@@ -66,11 +74,13 @@ def search_recipes(request, sort_field=None):
         else:
             recipes_list = []
     else:
+        # Create a new search form
         search_form = SearchRecipeForm()
         include_ingredients_formset = IngredientInRecipeFormset(prefix='include')
         exclude_ingredients_formset = IngredientInRecipeFormset(prefix='exclude')
         recipes_list = Recipe.objects.all()
     
+    # Split the result by 10
     paginator = Paginator(recipes_list, 10)
     
     page = request.GET.get('page')
