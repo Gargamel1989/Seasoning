@@ -9,9 +9,7 @@ from django.db import models
 from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-, PermissionsMixin)
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.core import validators
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFit, AddBorder
@@ -223,6 +221,9 @@ class NewEmail(models.Model):
         msg = EmailMultiAlternatives(subject, message_text, settings.DEFAULT_FROM_EMAIL, [self.email])
         msg.attach_alternative(message_html, "text/html")
         msg.send()
+    
+    def __unicode__(self):
+        return self.email
 
 
 class RegistrationManager(models.Manager):
