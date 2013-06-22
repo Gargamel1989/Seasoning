@@ -51,7 +51,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    BASE_DIR + 'Seasoning/static',
+    BASE_DIR + '/Seasoning/static',
 )
 
 # List of finder classes that know how to find static files in
@@ -96,7 +96,7 @@ ROOT_URLCONF = 'Seasoning.urls'
 # Always use forward slashes, even on Windows.
 # Don't forget to use absolute paths, not relative paths.
 TEMPLATE_DIRS = (
-    BASE_DIR + 'Seasoning/templates',
+    BASE_DIR + '/Seasoning/templates',
 )
 
 INSTALLED_APPS = (

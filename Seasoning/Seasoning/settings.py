@@ -15,7 +15,7 @@ DATABASES = {
     }
 }
 
-MEDIA_ROOT = os.path.dirname(os.path.dirname(SETTINGS_DIR)) + '/media/'
+MEDIA_ROOT = os.path.dirname(BASE_DIR) + '/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'devkey123123'
