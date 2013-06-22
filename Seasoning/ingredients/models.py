@@ -298,5 +298,8 @@ class AvailableInSea(AvailableIn):
     ingredient = models.ForeignKey(Ingredient, related_name='available_in_sea', db_column='ingredient')
     location = models.ForeignKey('Sea', db_column='sea')
     
+    endangered = models.BooleanField()
+    
     def sea(self):
         return self.location
+    

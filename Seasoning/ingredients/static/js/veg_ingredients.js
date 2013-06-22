@@ -1,13 +1,13 @@
 function check_ing_type() {
 	sel = $('#id_type');
 	
-	if (sel.val() == 'VE') {
+	if (sel.val() == 1) {
 		$('.VE-fieldset').show();
 	} else {
 		$('.VE-fieldset').hide();
 	}
 	
-	if (sel.val() == 'FI') {
+	if (sel.val() == 2) {
 		$('.FI-fieldset').show();
 	} else {
 		$('.FI-fieldset').hide();
