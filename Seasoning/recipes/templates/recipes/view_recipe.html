@@ -95,7 +95,10 @@
 		{% endifequal %}
 	{% endifequal %}
 	<br>
-	{% render_comment_list for recipe %}
+	{% get_comment_list for recipe as comment_list %}
+	{% for comment in comment_list %}
+    {% if comment.user == user %}<a href="/recipes/deletecomment/{{ recipe.id }}/{{ comment.id }}">delete</a> You said: {% else %}{{ comment.user }} says: {% endif %}{{ comment.comment }}
+	{% endfor %}
 </p>
 
 {% endblock %}

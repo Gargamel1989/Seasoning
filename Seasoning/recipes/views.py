@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from recipes.models import Recipe, Vote, UsesIngredient
 from recipes.forms import AddRecipeForm, UsesIngredientForm, SearchRecipeForm,\
     IngredientInRecipeSearchForm
@@ -7,10 +7,11 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.forms.models import inlineformset_factory
-from django.contrib import messages
+from django.contrib import messages, comments
 from django.db.models import Q
 from ingredients.models import Ingredient
 from django.forms.formsets import formset_factory
+from django.contrib.comments.views.moderation import perform_delete
 
 def search_recipes(request, sort_field=None):
     """"
@@ -172,3 +173,12 @@ def edit_recipe(request, recipe_id=None):
     return render(request, 'recipes/edit_recipe.html', {'new': new,
                                                         'recipe_form': recipe_form,
                                                         'usesingredient_formset': usesingredient_formset})
+
+@login_required
+def delete_recipe_comment(request, recipe_id, comment_id):
+    comment = get_object_or_404(comments.get_model(), pk=comment_id)
+    if comment.user == request.user:
+        perform_delete(request, comment)
+        return redirect(view_recipe, recipe_id)
+    else:
+        raise Http404
