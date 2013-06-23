@@ -1,6 +1,6 @@
 # Django settings for Seasoning project.
 import os
-from Seasoning.Seasoning import secrets
+from Seasoning import secrets
 
 # Debug settings
 DEBUG = True
