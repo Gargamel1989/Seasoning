@@ -286,7 +286,7 @@ def change_email(request, activation_key):
 @sensitive_post_parameters()
 @login_required
 def change_password(request,
-                    template_name='registration/password_change_form.html',
+                    template_name='authentication/password_change_form.html',
                     password_change_form=PasswordChangeForm,
                     current_app=None, extra_context=None):
     """
