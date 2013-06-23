@@ -3,10 +3,11 @@
 *.pyc
 .project
 .pydevproject
-dev_secrets.py
 .settings
 *.json
 media/*
 *~
 \#*\#
 .\#*
+
+secrets.py
