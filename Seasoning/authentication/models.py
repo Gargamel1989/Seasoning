@@ -83,9 +83,12 @@ def get_image_filename(instance, old_filename):
 
 class User(AbstractBaseUser):
     
+    objects = UserManager()
+    
+    MALE, FEMALE = 'M', 'F'
     GENDER_CHOICES = (
-        ('M', _('Male')),
-        ('F', _('Female')),
+        (MALE, _('Male')),
+        (FEMALE, _('Female')),
     )
     
     email = models.EmailField(
@@ -113,8 +116,6 @@ class User(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     
     date_joined = models.DateTimeField(_(_('date joined')), default=timezone.now)
-
-    objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

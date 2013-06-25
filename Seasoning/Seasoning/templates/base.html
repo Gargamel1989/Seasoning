@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load home_extras %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   
 <head>
@@ -9,115 +9,99 @@
     <meta name="ROBOTS" content="ALL" />
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="MSSmartTagsPreventParsing" content="true" />
-    <meta name="Copyright" content="De Gilde der Feesters" />
+    <meta name="Copyright" content="Seasoning" />
     <meta name="keywords" content="Duurzaam, Eten, Koken" />
     <meta name="description" content="Seasoning is een online applicatie die u helpt bij het duurzamer maken van uw dagelijkse leven." />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link href="{{ STATIC_URL }}css/{% block cssid %}base{% endblock %}.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css" media="screen" />
 	<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>
-	<script src="{{ STATIC_URL }}js/jquery-ui.min.js" type="text/javascript"></script>
+	<script>
+			$(function() {
+				$("#main-navigation-recipes").hover(function() {
+					$("#sub-navigation-information").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-recipes").stop().animate({
+						left : "4px",
+						opacity : 1
+					}, 300);
+				});
+				$("#main-navigation-information").hover(function() {
+					$("#sub-navigation-recipes").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-information").stop().animate({
+						left : "4px",
+						opacity : 1
+					}, 300);
+				});
+			});
+        </script>
     {% block extrahead %}{% endblock %}
-</head>
+	</head>
   
-<body>
-    <div id="container">	
-	  	<!--  BEGIN Header -->
-	  	<div id="header-container">
-		    
-		    <!-- BEGIN Top Header -->
-		    <div id="header-top">
-		    	
-		    	<div id="headerlogo">
-		    		<a href="/"><img src="{{ STATIC_URL }}img/logo.png" /></a>
-		    	</div>
-		    	
-		    	{% if user.is_authenticated %}
-		    	<a href="/settings">{{ user.username }}</a> - 
-		    	<a href="/logout/">Logout</a>
-		    	{% else %}
-		    	<a href="/register/">Registreer</a> of 
-		    	<a href="/login/">Login</a>
-		    	{% endif %}
-				
-				<div class="clear"></div>
-			</div>
-		    <!-- END Top Header -->
-				
-		    <!-- BEGIN Bottom Header -->
-		    <div id="header-bottom">
-		    	
-                    <div id="navigation">
-                        <a href="/recipes/search/">Recepten</a> | 
-                        {% if user.is_staff %}
-                        <a href="/ingredients/">Ingredienten</a> | 
-                        {% endif %}
-                        {% if user.is_staff %}
-                        <a href="/ingredients/units/">Eenheden</a> | 
-                        {% endif %}
-                        {% if user.is_staff %}
-                        <a href="/backup/">Backup Database</a>
-                        {% endif %}
+	<body>
+        <div id="body-container">
+            <div id="header">
+                <div id="header-main">
+                    <div id="header-main-background"></div>
+                    <div id="header-main-container">
+                        <div id="header-main-left">
+                            <div id="header-logo-container">
+                                <a id="header-logo" href="/" title="Seasoning"> <img width="148" height="32" src="http://res2.windows.microsoft.com/resbox/en/windows/main/4300ae64-546c-4bbe-9026-6779b3684fb9_18.png" alt="Seasoning"> </a>
+                            </div>
+                            <div id="header-main-navigation">
+                                <a id="main-navigation-recipes" class="main-navigation-link {{ request.path|active:"RECEPTEN" }}" href="/recipes/">RECEPTEN</a>
+                                <a id="main-navigation-information" class="main-navigation-link {{ request.path|active:"INFORMATIE" }}" href="/information/">INFORMATIE</a>
+                            </div>
+                        </div>
+                        <div id="header-main-right">
+                            <div id="header-sign-in">
+                                {% if user.is_authenticated %}
+                                <a id="header-username" href="/settings/">{{ user.username }}</a>
+                                <a href="/logout/">Afmelden</a>
+                                {% else %}
+                                <a href="/register/">Registreren</a>
+                                <a href="/login/">Aanmelden</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="clear:both"></div>
                     </div>
-		    	
-		    </div>
-            <!-- END Bottom Header -->
-	    </div>
-		<!-- END Header -->
-	    	
-	    <!-- BEGIN Content -->    
-	    <div id="columnwrap">
-	    	<div id="content-main">
-	    		{% if messages %}
-				<ul class="messages">
-    				{% for message in messages %}
-    				<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    				{% endfor %}
-				</ul>
-				{% endif %}
-	        	{% block content %}
-	        	{% endblock %}
-	        </div>
-		</div>
-	    <!-- END Content -->
-	    
-	    <!-- BEGIN Footer -->
-	    <div id="footer">
-	    	<div id="footer-container">
-		    	<div id="fleft">
-		    		<h1>Seasoning</h1>
-		    		<p id="slogan">
-			    		Geef smaak aan de seizoenen<br/>
-		    		</p>
-		    		<p id="ccl">
-		    			De inhoud en alle bestanddelen van Seasoning vallen onder de
-		    			<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl">
-		    				Creative Commons licentie
-		    			</a> <br/>
-		    		</p>
-		    		
-		    		<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl">
-		    			<img alt="Creative Commons Licentie" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" />
-		    		</a>
-		    	</div>
-		    	<div class="flinks">
-		    		<h1>Over Ons</h1>
-		    		<p>
-			    		<a href="/motifs/">Motivering</a>
-			    		<a href="/support/">Ondersteuning</a><br/>
-		    			<a href="/contact/">Contact</a><br/>
-		    		</p>
-		    	</div>
-		    	<div class="flinks">
-		    		<h1>Algemeen</h1>
-		    		<p>
-			    		<a href="/terms/">Voorwaarden</a><br/>
-			    		<a href="/privacypolicy/">Privacybeleid</a><br/>
-			    		<a href="/sitemap/">Sitemap</a><br/>
-		    		</p>
-		    	</div>
-	    	</div>
-	    </div>
-	    <!-- END Footer -->
-    </div>
-</body>
+                </div>
+                <div id="header-sub">
+                    <div id="header-sub-background"></div>
+                    <div id="header-sub-container">
+                        <div id="sub-navigation-recipes" class="header-sub-navigation">
+                            <a class="sub-navigation-link {{ request.path|active:"ReceptenZoeken" }}" href="/recipes/search/" >Recepten Zoeken</a>
+                            <a class="sub-navigation-link {{ request.path|active:"ReceptToevoegen" }}" href="/recipes/add/" >Recept Toevoegen</a>
+                            <a class="sub-navigation-link {{ request.path|active:"MijnRecepten" }}" href="/account/recipes/" >Mijn Recepten</a>
+                        </div>
+                        <div id="sub-navigation-information" class="header-sub-navigation">
+                            <a class="sub-navigation-link {{ request.path|active:"Ingredienten" }}" href="" >Ingredienten</a>
+                            <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="" >Nieuws</a>
+                            <a class="sub-navigation-link {{ request.path|active:"OverSeasoning" }}" href="" >Over Seasoning</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="content">
+                <div id="content-container">
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li class="{{ message.tags }}">
+                            {{ message }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

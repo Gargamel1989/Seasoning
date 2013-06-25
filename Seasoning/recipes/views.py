@@ -32,6 +32,13 @@ from ingredients.models import Ingredient
 from django.forms.formsets import formset_factory
 from django.contrib.comments.views.moderation import perform_delete
 
+def browse_recipes(request):
+    """
+    Browse through recipes
+    
+    """
+    return render(request, 'recipes/browse_recipes.html')
+
 def search_recipes(request, sort_field=None):
     """"
     Enables searching for recipes

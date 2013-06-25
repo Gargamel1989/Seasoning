@@ -184,7 +184,7 @@ def resend_activation_email(request):
 
 
 def activate(request, backend,
-             template_name='authentication/activate.html',
+             template_name='authentication/activate_unsuccessfull.html',
              extra_context=None, **kwargs):
     """
     Activate a user's account.
@@ -201,7 +201,7 @@ def activate(request, backend,
 
     On unsuccessful activation, will render the template
     ``authentication/activate.html`` to display an error message; to
-    override thise, pass the argument ``template_name`` (see below).
+    override this, pass the argument ``template_name`` (see below).
 
     **Arguments**
 

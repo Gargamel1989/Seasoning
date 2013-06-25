@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block extrahead %}
-    <link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
-{% endblock %}
-
 {% block content %}
 
 Namen: {{ ingredient.name }}{% if ingredient.plural_name %} ({{ ingredient.plural_name }}){% endif %}{% for syn in ingredient.synonyms %}, {{ syn.name }} ({{ syn.plural_name }}){% endfor %}

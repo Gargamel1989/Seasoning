@@ -18,11 +18,45 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
 from django.test import TestCase
+from authentication.models import User, RegistrationProfile
+import datetime
+import re
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
+class UserModelTestCase(TestCase):
+    
+    def test_user_creation(self):
+        User.objects.create_user("testuser", "testuser@test.be", 
+                                 User.MALE, datetime.date.today(), "haha")
+        new_user = User.objects.get(email="testuser@test.be")
+        self.assertEqual(new_user.username, 'testuser')
+        self.assertEqual(new_user.gender, User.MALE)
+        self.assertEqual(new_user.date_of_birth, datetime.date.today())
+        self.assertEqual(new_user.avatar.url, '/media/images/users/no_image.png')
+        self.assertEqual(new_user.is_active, True)
+        self.assertEqual(new_user.is_staff, False)
+        self.assertEqual(new_user.is_superuser, False)
+        self.assertEqual(new_user.date_joined, datetime.date.today())
+        User.objects.create_superuser("testsuperuser", "testsuperuser@test.be", 
+                                      User.MALE, datetime.date.today(), "haha")
+        new_superuser = User.objects.get(email="testsuperuser@test.be")
+        self.assertEqual(new_superuser.is_superuser, True)
+    
+    def test_profile_creation(self):
         """
-        Tests that 1 + 1 always equals 2.
+        Creating a registration profile for a user populates the
+        profile with the correct user and a SHA1 hash to use as
+        activation key.
+        
         """
-        self.assertEqual(1 + 1, 2)
+        new_user = User.objects.create_user(**self.user_info)
+        profile = RegistrationProfile.objects.create_profile(new_user)
+
+        self.assertEqual(RegistrationProfile.objects.count(), 1)
+        self.assertEqual(profile.user.id, new_user.id)
+        self.failUnless(re.match('^[a-f0-9]{40}$', profile.activation_key))
+        self.assertEqual(unicode(profile),
+                         "Registration information for alice")
+
+        
+    
