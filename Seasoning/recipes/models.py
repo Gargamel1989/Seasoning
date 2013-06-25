@@ -29,6 +29,7 @@ import datetime
 from django.db.models import Q
 from django.core.validators import MaxValueValidator
 from django.db.models.fields import FloatField
+from django.core.exceptions import ValidationError
 
 class RecipeManager(models.Manager):
     
@@ -161,7 +162,7 @@ class Recipe(models.Model):
         for uses in self.uses.all():
             used_unit = uses.unit
             used_ingredient = uses.ingredient
-            useable_units = uses.ingredient.can_use_units
+            useable_units = uses.ingredient.useable_units
             primary_unit = None
             used_unit_properties = None
             for useable_unit in useable_units.all():
@@ -198,12 +199,13 @@ class UsesIngredient(models.Model):
     amount = models.FloatField(default=0)
     unit = models.ForeignKey(ingredients.models.Unit, db_column='unit')
     
-    # TODO: Build in check that every instance of this model can only have units that the ingredient 
-    # can use
-
     def footprint(self):
         unit_properties = CanUseUnit.objects.get(ingredient=self.ingredient, unit=self.unit)
         return (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
+    
+    def clean(self):
+        if not self.unit in [useable_unit.unit for useable_unit in self.ingredient.useable_units.all()]:
+            raise ValidationError('This unit cannot be used for measuring this Ingredient.')
 
 class Vote(models.Model):
     

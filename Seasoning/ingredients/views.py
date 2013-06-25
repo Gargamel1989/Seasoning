@@ -167,7 +167,6 @@ def edit_ingredient(request, ingredient_id=None):
     CanUseUnitInlineFormset = inlineformset_factory(Ingredient, CanUseUnit, extra=1)
     
     VegetalIngredientForm = modelform_factory(VegetalIngredient, exclude=("ingredient"))
-    # FIXME: remove form argument when no longer needed
     AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1,
                                                             form=AvailableInCountryForm)
     

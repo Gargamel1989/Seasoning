@@ -174,7 +174,7 @@ class CanUseUnit(models.Model):
     class Meta:
         db_table = 'canuseunit'
         
-    ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='can_use_units')
+    ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='useable_units')
     unit = models.ForeignKey('Unit', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
     is_primary_unit = models.BooleanField()

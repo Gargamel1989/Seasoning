@@ -46,15 +46,15 @@ class UsesIngredientForm(forms.ModelForm):
     class Meta:
         model = UsesIngredient
 
-    def clean(self):
-        cleaned_data = super(UsesIngredientForm, self).clean()
-        ingredient_obj = cleaned_data.get('ingredient')
-        unit_obj = cleaned_data.get('unit')
-
-        if not CanUseUnit.objects.filter(ingredient=ingredient_obj, unit=unit_obj).exists():
-            self._errors['unit'] = self.error_class(['Deze eenheid kan niet gebruikt worden voor het gekozen ingredient...'])
-            del cleaned_data['unit']
-        return cleaned_data
+#     def clean(self):
+#         cleaned_data = super(UsesIngredientForm, self).clean()
+#         ingredient_obj = cleaned_data.get('ingredient')
+#         unit_obj = cleaned_data.get('unit')
+# 
+#         if not CanUseUnit.objects.filter(ingredient=ingredient_obj, unit=unit_obj).exists():
+#             self._errors['unit'] = self.error_class(['Deze eenheid kan niet gebruikt worden voor het gekozen ingredient...'])
+#             del cleaned_data['unit']
+#         return cleaned_data
 
 class SearchRecipeForm(forms.Form):
     
