@@ -4,10 +4,10 @@
 .project
 .pydevproject
 .settings
-*.json
 media/*
 *~
 \#*\#
 .\#*
 
 secrets.py
+initial_data.json
