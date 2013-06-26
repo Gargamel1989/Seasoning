@@ -23,8 +23,8 @@ import datetime
 import re
 from django.contrib.sites.models import Site
 from django.core import mail, management
-from Seasoning import settings
 from django.utils.hashcompat import sha_constructor
+from django.conf import settings
 
 
 class AuthenticationModelsTestCase(TestCase):

@@ -1,11 +1,13 @@
 from django.test import TestCase
 from django.conf import settings
-from authentication.forms import EmailUserCreationForm, ResendActivationEmailForm
-from authentication.models import User, RegistrationProfile
+from authentication.forms import EmailUserCreationForm, ResendActivationEmailForm,\
+    AccountSettingsForm
+from authentication.models import User, RegistrationProfile, NewEmail
 import datetime
 import os
 from django.core import mail
 from django.contrib.sites.models import Site
+from django.contrib.auth.forms import PasswordChangeForm
 
 class AuthenticationViewsTestCase(TestCase):
     
@@ -86,8 +88,8 @@ class AuthenticationViewsTestCase(TestCase):
         registration_profile = RegistrationProfile.objects.get(user=user)
         
         # Bad activation key
-        resp = self.client.get('/activate/' + registration_profile.activation_key + 'wrong' + '/')
-        self.assertEqual(resp.status_code, 200)
+        resp = self.client.get('/activate/wrongactivationcode/')
+        self.assertEqual(resp.status_code, 404)
         self.failIf(User.objects.get(email='testuser@test.be').is_active)
         
         # Correct activation key
@@ -103,4 +105,57 @@ class AuthenticationViewsTestCase(TestCase):
                                                                    'date_of_birth': datetime.date.today(),
                                                                    'site': Site.objects.get_current()})
         RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
+        
+        resp = self.client.get('/settings/')
+        self.assertRedirects(resp, '/login/?next=/settings/', 302, 200)
+        
+        self.client.login(username='testuser@test.be', password='haha')
+        resp = self.client.get('/settings/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue('form' in resp.context)
+        self.failIf('new_email' in resp.context)
+        self.assertEqual(resp.context['form'].__class__, AccountSettingsForm)
+        
+        resp = self.client.post('/settings/', {'email': 'othertestuser@test.be'})
+        self.assertEqual(resp.status_code, 200)
+        NewEmail.objects.get(user=user)
+        self.assertTrue('new_email' in resp.context)
+        
+    def test_change_email_view(self):
+        user = RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
+                                                                   'password': 'haha',
+                                                                   'email': 'testuser@test.be',
+                                                                   'gender': User.MALE,
+                                                                   'date_of_birth': datetime.date.today(),
+                                                                   'site': Site.objects.get_current()})
+        RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
+        
+        self.client.login(username='testuser@test.be', password='haha')
+        self.client.post('/settings/', {'email': 'othertestuser@test.be'})
+        resp = self.client.get('/email/change/wrongactivationcode/')
+        self.assertEqual(resp.status_code, 404)
+        new_email = NewEmail.objects.get(user=user)
+        resp = self.client.get('/email/change/' + new_email.activation_key + '/')
+        self.assertRedirects(resp, '/settings/', 302, 200)
+        
+    def test_change_password_view(self):
+        user = RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
+                                                                   'password': 'haha',
+                                                                   'email': 'testuser@test.be',
+                                                                   'gender': User.MALE,
+                                                                   'date_of_birth': datetime.date.today(),
+                                                                   'site': Site.objects.get_current()})
+        RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
+        
+        self.client.login(username='testuser@test.be', password='haha')
+        resp = self.client.get('/password/change/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue('form' in resp.context)
+        self.assertEqual(resp.context['form'].__class__, PasswordChangeForm)
+        
+        resp = self.client.post('/password/change/', {'old_password': 'haha',
+                                                      'new_password1': 'haha1',
+                                                      'new_password2': 'haha1'})
+        self.assertRedirects(resp, '/settings/', 302, 200)
+        self.assertTrue(User.objects.get(email='testuser@test.be').check_password('haha1'))
         

@@ -183,9 +183,7 @@ def resend_activation_email(request):
     return render(request, 'authentication/resend_activation_email.html', {'form': form})
 
 
-def activate(request, backend,
-             template_name='authentication/activate_unsuccessfull.html',
-             extra_context=None, **kwargs):
+def activate(request, backend, **kwargs):
     """
     Activate a user's account.
 
@@ -199,38 +197,15 @@ def activate(request, backend,
     Upon successful activation, the user will be redirected to the home
     page and displayed a message that the activation was succesfull.
 
-    On unsuccessful activation, will render the template
-    ``authentication/activate.html`` to display an error message; to
-    override this, pass the argument ``template_name`` (see below).
-
     **Arguments**
 
     ``backend``
         The backend class to use. Required.
 
-    ``extra_context``
-        A dictionary of variables to add to the template context. Any
-        callable object in this dictionary will be called to produce
-        the end result which appears in the context. Optional.
-    
-    ``template_name``
-        A custom template to use. This is optional; if not specified,
-        this will default to ``authentication/activate.html``.
-
-    ``\*\*kwargs``
+    ``**kwargs``
         Any keyword arguments captured from the URL, such as an
         activation key, which will be passed to the backend's
         ``activate()`` method.
-    
-    **Context:**
-    
-    The context will be populated from the keyword arguments captured
-    in the URL, and any extra variables supplied in the
-    ``extra_context`` argument (see above).
-    
-    **Template:**
-    
-    authentication/activate.html or ``template_name`` keyword argument.
     
     """
     backend = backend()
@@ -239,16 +214,7 @@ def activate(request, backend,
     if account:
         messages.add_message(request, messages.INFO, _('Your account has been successfully activated. Have fun!'))            
         return redirect(home)
-
-    if extra_context is None:
-        extra_context = {}
-    context = RequestContext(request)
-    for key, value in extra_context.items():
-        context[key] = callable(value) and value() or value
-
-    return render_to_response(template_name,
-                              kwargs,
-                              context_instance=context)    
+    raise Http404
 
 @login_required
 def account_settings(request):
