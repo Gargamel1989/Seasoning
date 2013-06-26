@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'captcha',
     
     # Core functionality
+    'general',
     'ingredients',
     'recipes',
 )
