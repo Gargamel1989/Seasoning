@@ -69,7 +69,7 @@ class UserManager(BaseUserManager):
                                 password=password,
                                 gender=gender,
                                 date_of_birth=date_of_birth)
-        user.is_admin = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
