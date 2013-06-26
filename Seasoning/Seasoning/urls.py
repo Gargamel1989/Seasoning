@@ -18,16 +18,17 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
 from django.conf.urls import patterns, include, url
+from general.views import home, contact, motifs, privacypolicy, sitemap, support, terms, backup_db
 
 urlpatterns = patterns('',
     # General Pages
-    url(r'^$', 'Seasoning.views.home', name='home'),
-    url(r'^contact/$', 'Seasoning.views.contact'),
-    url(r'^motifs/$', 'Seasoning.views.motifs'),
-    url(r'^privacypolicy/$', 'Seasoning.views.privacypolicy'),
-    url(r'^sitemap/$', 'Seasoning.views.sitemap'),
-    url(r'^support/$', 'Seasoning.views.support'),
-    url(r'^terms/$', 'Seasoning.views.terms'),
+    url(r'^$', home, name='home'),
+    url(r'^contact/$', contact),
+    url(r'^motifs/$', motifs),
+    url(r'^privacypolicy/$', privacypolicy),
+    url(r'^sitemap/$', sitemap),
+    url(r'^support/$', support),
+    url(r'^terms/$', terms),
 
     # Core pages
     (r'^ingredients/', include('ingredients.urls')),
@@ -40,7 +41,7 @@ urlpatterns = patterns('',
     (r'^comments/', include('django.contrib.comments.urls')),
     
     # Backup Database
-    (r'^backup/$', 'Seasoning.views.backup_db'),
+    (r'^backup/$', backup_db),
     
 )
 

@@ -28,7 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from authentication.models import NewEmail
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-from Seasoning.views import home
+from general.views import home
 from django.contrib import messages
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.forms import PasswordChangeForm
