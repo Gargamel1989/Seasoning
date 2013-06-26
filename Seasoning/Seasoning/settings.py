@@ -41,7 +41,7 @@ MANAGERS = ADMINS
 # Database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': secrets.DATABASE_ENGINE, # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': secrets.DATABASE_NAME,                      # Or path to database file if using sqlite3.
         'USER': secrets.DATABASE_USER,                      # Not used with sqlite3.
         'PASSWORD': secrets.DATABASE_PASSWORD,                  # Not used with sqlite3.
