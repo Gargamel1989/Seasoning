@@ -146,106 +146,6 @@ except ImportError:
 SHA1_RE = re.compile('^[a-f0-9]{40}$')
 
 
-class NewEmailManager(models.Manager):
-    """
-    Custom manager for the ``NewEmail`` model
-    
-    """
-    
-    def activate_email(self, user, activation_key):
-        """
-        Validate an activation key corresponding to a given user
-        
-        If the key is valid, return the new email addres after activating, and
-        delete the ``NewEmail`` object in the database
-        
-        If the key is not valid, return ``False``.
-        
-        """
-        if SHA1_RE.search(activation_key):
-            try:
-                new_email = self.get(user=user, activation_key=activation_key)
-            except self.model.DoesNotExist:
-                return False
-            user = new_email.user
-            user.email = new_email.email
-            user.save()
-            new_email.delete()
-            return user.email
-        return False
-    
-    def create_inactive_email(self, user, new_email, site, send_email=True):
-        """
-        Create a new, inactive email for a given user, generate a
-        ``NewEmail`` and email its activation key to the
-        ``User``, returning the new ``NewEmail`` object.
-
-        By default, an activation email will be sent to the new
-        user. To disable this, pass ``send_email=False``.
-        
-        If the user already had a ``NewEmail`` waiting to be activated, this
-        object will be replaced by the new ``NewEmail``.
-        
-        """
-        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
-        try:
-            old_new_email = self.get(user=user)
-            old_new_email.delete()
-        except self.model.DoesNotExist:
-            pass
-        username = user.username
-        if isinstance(username, unicode):
-            username = username.encode('utf-8')
-        activation_key = hashlib.sha1(salt+username).hexdigest()
-        inactive_email = self.create(user=user,
-                                     activation_key=activation_key,
-                                     email=new_email)
-        
-        if send_email:
-            inactive_email.send_new_email_email(site)
-
-        return inactive_email
-
-class NewEmail(models.Model):
-    """
-    This model stores a new email of an acounnt while it has not been activated
-    
-    """
-    
-    user = models.ForeignKey(User, primary_key=True)
-    activation_key = models.CharField(_('activation key'), unique=True, max_length=40)
-    email = models.EmailField(
-        max_length=255,
-        unique=True
-    )
-    
-    objects = NewEmailManager()
-    
-    def send_new_email_email(self, site):
-        """
-        Send an email containing an activation link to this objects email.
-        
-        """
-        ctx_dict = {'activation_key': self.activation_key,
-                    'site': site}
-        subject = render_to_string('authentication/change_email_email_subject.txt',
-                                   ctx_dict)
-        # Email subject *must not* contain newlines
-        subject = ''.join(subject.splitlines())
-        
-        message_text = render_to_string('authentication/change_email_email.txt',
-                                        ctx_dict)
-        message_html = render_to_string('authentication/change_email_email.html',
-                                        ctx_dict)
-
-        msg = EmailMultiAlternatives(subject, message_text, settings.DEFAULT_FROM_EMAIL, [self.email])
-        msg.attach_alternative(message_html, "text/html")
-        msg.send()
-    
-    def __unicode__(self):
-        return self.email
-
-
 class RegistrationManager(models.Manager):
     """
     Custom manager for the ``RegistrationProfile`` model.
@@ -493,3 +393,101 @@ class RegistrationProfile(models.Model):
         msg = EmailMultiAlternatives(subject, message_text, settings.DEFAULT_FROM_EMAIL, [self.user.email])
         msg.attach_alternative(message_html, "text/html")
         msg.send()
+
+class NewEmailManager(models.Manager):
+    """
+    Custom manager for the ``NewEmail`` model
+    
+    """    
+    def activate_email(self, user, activation_key):
+        """
+        Validate an activation key corresponding to a given user
+        
+        If the key is valid, return the new email addres after activating, and
+        delete the ``NewEmail`` object in the database and return the updated
+        ``User`` object.
+        
+        If the key is not valid, return ``False``.
+        
+        """
+        if SHA1_RE.search(activation_key):
+            try:
+                new_email = self.get(user=user, activation_key=activation_key)
+            except self.model.DoesNotExist:
+                return False
+            user = new_email.user
+            user.email = new_email.email
+            user.save()
+            new_email.delete()
+            return user
+        return False
+    
+    def create_inactive_email(self, user, new_email, site, send_email=True):
+        """
+        Create a new, inactive email for a given user, generate a
+        ``NewEmail`` and email its activation key to the
+        ``User``, returning the new ``NewEmail`` object.
+
+        By default, an activation email will be sent to the new
+        user. To disable this, pass ``send_email=False``.
+        
+        If the user already had a ``NewEmail`` waiting to be activated, this
+        object will be replaced by the new ``NewEmail``.
+        
+        """
+        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+        try:
+            old_new_email = self.get(user=user)
+            old_new_email.delete()
+        except self.model.DoesNotExist:
+            pass
+        username = user.username
+        if isinstance(username, unicode):
+            username = username.encode('utf-8')
+        activation_key = hashlib.sha1(salt+username).hexdigest()
+        inactive_email = self.create(user=user,
+                                     activation_key=activation_key,
+                                     email=new_email)
+        
+        if send_email:
+            inactive_email.send_new_email_email(site)
+
+        return inactive_email
+
+class NewEmail(models.Model):
+    """
+    This model stores a new email of an account while it has not been activated
+    
+    """    
+    user = models.ForeignKey(User, primary_key=True)
+    activation_key = models.CharField(_('activation key'), unique=True, max_length=40)
+    email = models.EmailField(
+        max_length=255,
+        unique=True
+    )
+    
+    objects = NewEmailManager()
+    
+    def send_new_email_email(self, site):
+        """
+        Send an email containing an activation link to this objects email.
+        
+        """
+        ctx_dict = {'activation_key': self.activation_key,
+                    'site': site}
+        subject = render_to_string('authentication/change_email_email_subject.txt',
+                                   ctx_dict)
+        # Email subject *must not* contain newlines
+        subject = ''.join(subject.splitlines())
+        
+        message_text = render_to_string('authentication/change_email_email.txt',
+                                        ctx_dict)
+        message_html = render_to_string('authentication/change_email_email.html',
+                                        ctx_dict)
+
+        msg = EmailMultiAlternatives(subject, message_text, settings.DEFAULT_FROM_EMAIL, [self.email])
+        msg.attach_alternative(message_html, "text/html")
+        msg.send()
+    
+    def __unicode__(self):
+        return self.email

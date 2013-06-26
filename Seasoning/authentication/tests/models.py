@@ -18,7 +18,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
 from django.test import TestCase
-from authentication.models import User, RegistrationProfile
+from authentication.models import User, RegistrationProfile, NewEmail
 import datetime
 import re
 from django.contrib.sites.models import Site
@@ -249,5 +249,44 @@ class UserModelTestCase(TestCase):
 
         management.call_command('cleanupregistration')
         self.assertEqual(RegistrationProfile.objects.count(), 1)
-        self.assertRaises(User.DoesNotExist, User.objects.get, username='bob')    
+        self.assertRaises(User.DoesNotExist, User.objects.get, username='bob')
     
+    def test_new_email(self):
+        new_user = RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
+                                                                    **self.user_info)
+        
+        profile = RegistrationProfile.objects.get(user=new_user)
+        RegistrationProfile.objects.activate_user(profile.activation_key)
+        
+        new_email = NewEmail.objects.create_inactive_email(user=new_user, 
+                                                           new_email='bob@example.com', 
+                                                           site=Site.objects.get_current(), 
+                                                           send_email=False)
+        self.assertEqual(new_email.user, new_user)
+        self.assertEqual(new_email.email, 'bob@example.com')
+        self.failUnless(re.match('^[a-f0-9]{40}$', new_email.activation_key))
+        
+        new_email.send_new_email_email(Site.objects.get_current())
+        
+        # One for registration, one for new email
+        self.assertEqual(len(mail.outbox), 2)
+    
+    def test_new_email_activation(self):
+        new_user = RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
+                                                                    **self.user_info)
+        
+        profile = RegistrationProfile.objects.get(user=new_user)
+        RegistrationProfile.objects.activate_user(profile.activation_key)
+        
+        new_email = NewEmail.objects.create_inactive_email(user=new_user, 
+                                                           new_email='bob@example.com', 
+                                                           site=Site.objects.get_current())
+        
+        
+        # One for registration, one for new email
+        self.assertEqual(len(mail.outbox), 2)
+        
+        updated_user = NewEmail.objects.activate_email(new_user, new_email.activation_key)
+        self.assertEqual(updated_user.email, new_email.email)
+        self.assertEqual(User.objects.get(pk=new_user.pk).email, new_email.email)
+        self.assertRaises(NewEmail.DoesNotExist, NewEmail.objects.get, user=new_user)
