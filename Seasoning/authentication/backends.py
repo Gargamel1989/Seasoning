@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.contrib.auth import login
+from django.contrib.auth import login, load_backend
 from django.conf import settings
 from django.contrib.sites.models import RequestSite
 
@@ -89,7 +89,7 @@ class RegistrationBackend(object):
         class of this backend as the sender.
 
         """
-        username, email, password, gender, date_of_birth = kwargs['username'], kwargs['email'], kwargs['password1'], kwargs['gender'], kwargs['date_of_birth']
+        username, email, password, gender, date_of_birth = kwargs['username'], kwargs['email'], kwargs['password'], kwargs['gender'], kwargs['date_of_birth']
         
         site = RequestSite(request)
         new_user = RegistrationProfile.objects.create_inactive_user(username, email,
@@ -116,6 +116,9 @@ class RegistrationBackend(object):
             signals.user_activated.send(sender=self.__class__,
                                         user=activated,
                                         request=request)
+            # Bit of an ugly hack to get around authentication
+            backend = load_backend(settings.AUTHENTICATION_BACKENDS[0])
+            activated.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
             login(request, activated)
         return activated
 

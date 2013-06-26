@@ -57,7 +57,7 @@ class ShownImageInput(ClearableFileInput):
 
 attrs_dict = {'class': 'required'}
 
-class EmailUserCreationForm(forms.Form):
+class EmailUserCreationForm(forms.ModelForm):
     """
     Form for registering a new user account.
     
@@ -73,22 +73,12 @@ class EmailUserCreationForm(forms.Form):
     registration backend.
     
     """
-    username = forms.RegexField(regex=r'^[\w.@+-]+$',
-                                max_length=30,
-                                widget=forms.TextInput(attrs=attrs_dict),
-                                label=_("Username"),
-                                error_messages={'invalid': _("This value may contain only letters, numbers and @/./+/-/_ characters.")})
-    email = forms.EmailField(widget=forms.TextInput(attrs=dict(attrs_dict,
-                                                               maxlength=75)),
-                             label=_("E-mail"))
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
-                                label=_("Password"))
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email', 'gender', 'date_of_birth']
+    
     password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
                                 label=_("Password (again)"))
-    
-    gender = forms.ChoiceField(choices=User.GENDER_CHOICES, label=_("Gender"))
-    
-    date_of_birth = forms.DateField(label=_("Date of Birth"))
     
     tos = forms.BooleanField(widget=forms.CheckboxInput(attrs=attrs_dict),
                              label=_(u'I have read and agree to the Terms of Service'),
@@ -98,18 +88,6 @@ class EmailUserCreationForm(forms.Form):
                                     'tabindex': 5},
                              error_messages = {'required': _("You must enter the correct ReCaptcha characters")})
     
-    def clean_username(self):
-        """
-        Validate that the username is alphanumeric and is not already
-        in use.
-        
-        """
-        existing = get_user_model().objects.filter(username__iexact=self.cleaned_data['username'])
-        if existing.exists():
-            raise forms.ValidationError(_("A user with that username already exists."))
-        else:
-            return self.cleaned_data['username']
-
     def clean(self):
         """
         Verifiy that the values entered into the two password fields
@@ -118,8 +96,9 @@ class EmailUserCreationForm(forms.Form):
         field.
         
         """
-        if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data:
-            if self.cleaned_data['password1'] != self.cleaned_data['password2']:
+        super(EmailUserCreationForm, self).clean()
+        if 'password' in self.cleaned_data and 'password2' in self.cleaned_data:
+            if self.cleaned_data['password'] != self.cleaned_data['password2']:
                 raise forms.ValidationError(_("The two password fields didn't match."))
         return self.cleaned_data
 
@@ -196,4 +175,4 @@ class AccountSettingsForm(ModelForm):
         else:
             self.new_email = None
         self.cleaned_data['email'] = user.email
-        return user.email        
+        return user.email

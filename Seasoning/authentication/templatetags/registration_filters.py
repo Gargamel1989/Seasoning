@@ -26,5 +26,6 @@ def tabindex(value, index):
     """
     Add a tabindex attribute to the widget for a bound field.
     """
+    print value
     value.field.widget.attrs['tabindex'] = index
     return value

@@ -27,11 +27,16 @@ from Seasoning import settings
 from django.utils.hashcompat import sha_constructor
 
 
-class UserModelTestCase(TestCase):
+class AuthenticationModelsTestCase(TestCase):
+    
+    user_info = {'username': 'testuser',
+                 'password': 'haha',
+                 'email': 'testuser@test.be',
+                 'gender': User.MALE,
+                 'date_of_birth': datetime.date.today()}
     
     def test_user_creation(self):
-        User.objects.create_user("testuser", "testuser@test.be", 
-                                 User.MALE, datetime.date.today(), "haha")
+        User.objects.create_user(**self.user_info)
         new_user = User.objects.get(email="testuser@test.be")
         self.assertEqual(new_user.username, 'testuser')
         self.assertEqual(new_user.gender, User.MALE)
@@ -44,12 +49,6 @@ class UserModelTestCase(TestCase):
                                       User.MALE, datetime.date.today(), "haha")
         new_superuser = User.objects.get(email="testsuperuser@test.be")
         self.assertEqual(new_superuser.is_superuser, True)
-    
-    user_info = {'username': 'testuser',
-                 'password': 'haha',
-                 'email': 'testuser@test.be',
-                 'gender': User.MALE,
-                 'date_of_birth': datetime.date.today()}
     
     def test_profile_creation(self):
         """
