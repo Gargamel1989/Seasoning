@@ -2,6 +2,7 @@ from django.test import TestCase
 from ingredients.models import Unit, Country, Ingredient, AvailableInCountry, TransportMethod
 import datetime
 from django.conf import settings
+from Seasoning.ingredients.models import AvailableIn
 
 class IngredientModelsTestCase(TestCase):
     fixtures = ['ingredients.json']
@@ -10,6 +11,8 @@ class IngredientModelsTestCase(TestCase):
         if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
             raise Exception('Please use a MySQL Database for this test')
         TestCase.setUp(self)
+        # TODO: add tests for get_smallest_available_in
+        raise NotImplementedError
         
     def test_unit_model(self):
         unit = Unit.objects.get(pk=3)
@@ -96,7 +99,7 @@ class IngredientModelsTestCase(TestCase):
         seasonal_ing = Ingredient.objects.get(pk=1)
         self.assertEqual(len(seasonal_ing.get_available_ins()), 2)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 0)
-        self.assertRaises(IndexError, seasonal_ing.footprint)
+        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.footprint)
         
     def test_seasonal_ingredient_active_availin(self):
         """

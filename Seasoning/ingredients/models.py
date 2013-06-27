@@ -126,6 +126,33 @@ class Ingredient(models.Model):
                                                            date_from__lte=datetime.date(2000, today.month, today.day))
         return before_filtered.extra(where={'"extended_date_until" >= ' + today.strftime('2000-%m-%d')})
     
+    def get_available_in_with_smallest_footprint(self):
+        """
+        Return the AvailableIn with the smallest footprint of the currently active
+        AvailableIn objects beloning to this ingredient
+        
+        If this is a basic ingredient, the footprint is just the base_footprint of the
+        object
+        
+        If this is a Seasonal ingredient, the footprint is the base_footprint of the
+        object, plus the minimal of the currently available AvailableIn* objects.
+        
+        """
+        smallest_footprint = None
+        for available_in in self.get_active_available_ins():
+            today_normalized = datetime.date.today().replace(year=2000)
+            if today_normalized > available_in:
+                # This means this available in is currently under preservation
+                footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
+            else:
+                footprint = available_in.footprint
+            if not footprint or smallest_footprint > footprint:
+                smallest_footprint = footprint
+                smallest_available_in = available_in
+        if not smallest_footprint:
+            raise AvailableIn.DoesNotExist('No active AvailableIn object was found for ingredient ' + self)
+        return smallest_available_in
+        
     def footprint(self):
         """
         Return the current (minimal available) footprint of this ingredient
@@ -137,22 +164,15 @@ class Ingredient(models.Model):
         object, plus the minimal of the currently available AvailableIn* objects.
         
         """
-        # TODO: maybe move the smallest availablein searching to its own function, and
-        # make this just self.get_smallest_footprint_availablein().footprint
-        # Neen, want dan moet ge weer de preservation footprint erbij tellen... Iets zoeken
-        # om die informatie mee in het model te krijgen
         try:
-            smallest_footprint = None
-            for available_in in self.get_active_available_ins():
-                today_normalized = datetime.date.today().replace(year=2000)
-                if today_normalized > available_in:
-                    # This means this available in is currently under preservation
-                    footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
-                else:
-                    footprint = available_in.footprint
-                if not footprint or smallest_footprint > footprint:
-                    smallest_footprint = footprint
-            return smallest_footprint
+            today_normalized = datetime.date.today().replace(year=2000)
+            available_in = self.get_available_in_with_smallest_footprint()
+            if today_normalized > available_in:
+                # This means this available in is currently under preservation
+                footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
+            else:
+                footprint = available_in.footprint
+            return footprint
         except self.BasicIngredientException:
             return self.base_footprint
     
