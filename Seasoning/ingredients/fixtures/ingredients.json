@@ -47,24 +47,16 @@
 	{"pk": 1,
 	 "model": "ingredients.Country",
 	 "fields":
-		{"name": "Afghanistan",
-		 "distance": 5350.0
+		{"name": "Country1",
+		 "distance": 0.0
 		}
 	},
 
 	{"pk": 2,
 	 "model": "ingredients.Country",
 	 "fields":
-		{"name": "België",
-		 "distance": 0.0
-		}
-	},
-
-	{"pk": 3,
-	 "model": "ingredients.Country",
-	 "fields":
-		{"name": "Duitsland",
-		 "distance": 543.0
+		{"name": "Country2",
+		 "distance": 1000.0
 		}
 	},
 	
@@ -77,32 +69,16 @@
 	{"pk": 1,
 	 "model": "ingredients.TransportMethod",
 	 "fields":
-		{"name": "Vliegtuig",
-		 "emission_per_km": 0.0008063
+		{"name": "Car",
+		 "emission_per_km": 5
 		}
 	},
 
 	{"pk": 2,
 	 "model": "ingredients.TransportMethod",
 	 "fields":
-		{"name": "Boot",
-		 "emission_per_km": 4.03e-05
-		}
-	},
-
-	{"pk": 3,
-	 "model": "ingredients.TransportMethod",
-	 "fields":
-		{"name": "Trein",
-		 "emission_per_km": 0.0001048
-		}
-	},
-	
-	{"pk": 4,
-	 "model": "ingredients.TransportMethod",
-	 "fields":
-		{"name": "Vrachtwagen",
-		 "emission_per_km": 0.0001693
+		{"name": "Boat",
+		 "emission_per_km": 1
 		}
 	},
 
@@ -148,36 +124,16 @@
   	"unit": 1,
   	"conversion_factor": 1}},
 
-	{"pk": 1,
+  {"pk": 1,
   "model": "ingredients.AvailableInCountry",
   "fields":
   	{"ingredient": 1,
   	"location": 2,
-  	"transport_method": 4,
-  	"date_from": "2000-06-01",
-  	"date_until": "2000-10-01",
-  	"footprint": 0.5}},
-
-	{"pk": 2,
-  "model": "ingredients.AvailableInCountry",
-  "fields":
-  	{"ingredient": 1,
-  	"location": 2,
-  	"transport_method": 4,
-  	"date_from": "2000-01-01",
-  	"date_until": "2000-04-01",
-  	"footprint": 0.5}},
-
-	{"pk": 3,
-  "model": "ingredients.AvailableInCountry",
-  "fields":
-  	{"ingredient": 1,
-  	"location": 2,
-  	"transport_method": 4,
+  	"transport_method": 1,
   	"production_type": "Broeikas",
   	"extra_production_footprint": 0.5,
   	"date_from": "2000-01-01",
-  	"date_until": "2000-12-01",
+  	"date_until": "2000-12-31",
   	"footprint": 0.5}},
   	
   	
@@ -188,6 +144,7 @@
   "fields":
   	{"name": "Ei",
     "plural_name": "Eieren",
+  	"type": 0,
   	"category": 10,
   	"veganism": 1,
   	"description": "Een ei",
@@ -202,194 +159,6 @@
   "fields": 
   	{"ingredient": 2,
   	"unit": 3,
-  	"conversion_factor": 1}},
-  	
-  	
-  	
-  	
-  	
-  {"pk": 3,
-  "model": "ingredients.Ingredient",
-  "fields":
-  	{"name": "Boter",
-  	"category": 10,
-  	"veganism": 1,
-  	"description": "Boter",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
-  	"base_footprint": 0.5,
-  	"accepted": true}},
-
-  {"pk": 3,
-  "model": "ingredients.CanUseUnit",
-  "fields": 
-  	{"ingredient": 3,
-  	"unit": 2,
-  	"conversion_factor": 1}},
-  	
-  	
-  	
-  	
-  	
-  {"pk": 4,
-  "model": "ingredients.Ingredient",
-  "fields":
-  	{"name": "Melk",
-  	"category": 10,
-  	"veganism": 1,
-  	"description": "Een witte vloeistof gewonnen uit een langwerpig, roos orgaan",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
-  	"base_footprint": 0.5,
-  	"accepted": true}},
-  	
-  {"pk": 4,
-  "model": "ingredients.CanUseUnit",
-  "fields": 
-  	{"ingredient": 4,
-  	"unit": 4,
-  	"conversion_factor": 1}},
-  	
-  	
-  	
-  	
-  	
-  {"pk": 5,
-  "model": "ingredients.Ingredient",
-  "fields":
-  	{"name": "Zout",
-  	"category": 6,
-  	"veganism": 2,
-  	"description": "Een wit poeder",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
-  	"base_footprint": 0.5,
-  	"accepted": true}},
-
-  {"pk": 6,
-  "model": "ingredients.CanUseUnit",
-  "fields": 
-  	{"ingredient": 5,
-  	"unit": 5,
-  	"conversion_factor": 1}},
-  	
-  	
-  	
-  	
-  	
-  {"pk": 6,
-  "model": "ingredients.Ingredient",
-  "fields":
-  	{"name": "Nootmuskaat",
-  	"category": 6,
-  	"veganism": 2,
-  	"description": "Bruin Poeder",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
-  	"base_footprint": 0.5,
-  	"accepted": true}},
-
-  {"pk": 5,
-  "model": "ingredients.CanUseUnit",
-  "fields": 
-  	{"ingredient": 6,
-  	"unit": 5,
-  	"conversion_factor": 1}},
-  	
-  	
-  	
-  	
-  	
-  {"pk": 7,
-  "model": "ingredients.Ingredient",
-  "fields":
-  	{"name": "Rode Kool",
-  	"type": 2,
-  	"category": 0,
-  	"veganism": 2,
-  	"description": "Rode kool in een pot",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
-  	"base_footprint": 0.5,
-  	"accepted": true}},
-  
-  {"pk": 2,
-  "model": "ingredients.VegetalIngredient",
-  "fields":
-  	{"ingredient": 7,
-  	"preservability": 1,
-  	"preservation_footprint": 2}},
-
-  {"pk": 7,
-  "model": "ingredients.CanUseUnit",
-  "fields": 
-  	{"ingredient": 7,
-  	"unit": 1,
-  	"conversion_factor": 1}},
-
-	{"pk": 4,
-  "model": "ingredients.AvailableInCountry",
-  "fields":
-  	{"ingredient": 7,
-  	"location": 2,
-  	"transport_method": 4,
-  	"date_from": "2000-02-01",
-  	"date_until": "2000-10-01",
-  	"footprint": 0.5}},
-
-	{"pk": 5,
-  "model": "ingredients.AvailableInCountry",
-  "fields":
-  	{"ingredient": 7,
-  	"location": 1,
-  	"transport_method": 1,
-  	"date_from": "2000-01-01",
-  	"date_until": "2000-04-01",
-  	"footprint": 0.5}},
-
-	{"pk": 6,
-  "model": "ingredients.AvailableInCountry",
-  "fields":
-  	{"ingredient": 7,
-  	"location": 2,
-  	"transport_method": 4,
-  	"production_type": "Broeikas",
-  	"extra_production_footprint": 0.5,
-  	"date_from": "2000-01-01",
-  	"date_until": "2000-12-01",
-  	"footprint": 0.5}},
-  	
-  	
-  {"pk": 8,
-  "model": "ingredients.Ingredient",
-  "fields":
-  	{"name": "Gehakt",
-  	"category": 8,
-  	"veganism": 0,
-  	"description": "Gemalen vlees",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
-  	"base_footprint": 5,
-  	"accepted": true}},
-
-  {"pk": 8,
-  "model": "ingredients.CanUseUnit",
-  "fields": 
-  	{"ingredient": 8,
-  	"unit": 1,
-  	"conversion_factor": 1}},
-
-  {"pk": 9,
-  "model": "ingredients.CanUseUnit",
-  "fields": 
-  	{"ingredient": 8,
-  	"unit": 2,
-  	"conversion_factor": 0.001}}
+  	"conversion_factor": 1}}
  
 ]

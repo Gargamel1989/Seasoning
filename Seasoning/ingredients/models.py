@@ -22,6 +22,8 @@ import time
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
 import datetime
+from django.db.models.query import EmptyQuerySet
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_image_filename(instance, old_filename):
@@ -89,6 +91,30 @@ class Ingredient(models.Model):
     def primary_unit(self):
         return CanUseUnit.objects.get(ingredient=self, is_primary_unit=True)
     
+    def get_available_ins(self):
+        """
+        Returns a query for all the available in objects belonging to this ingredient
+        
+        """
+        if self.type == Ingredient.BASIC:
+            return EmptyQuerySet
+        elif self.type == Ingredient.SEASONAL:
+            return self.available_in_country.all()
+        elif self.type == Ingredient.SEASONAL_SEA:
+            return self.available_in_sea.all()
+    
+    def get_active_available_ins(self):
+        """
+        Returns a queryset of the available in objects belonging to this ingredient
+        that are currently available (The current date is between the from and until
+        date)
+        
+        """
+        today = datetime.date.today()
+        return self.get_available_ins().filter(ingredient=self,
+                                               date_from__lte=datetime.date(2000, today.month, today.day),
+                                               date_until__gte=datetime.date(2000, today.month, today.day))
+    
     def footprint(self):
         """
         Return the current (minimal available) footprint of this ingredient
@@ -100,24 +126,11 @@ class Ingredient(models.Model):
         object, plus the minimal of the currently available AvailableIn* objects.
         
         """
-        if self.type == Ingredient.BASIC:
+        try:
+            minimal_footprint_availablein = self.get_active_available_ins().order_by('footprint')[0]
+            return minimal_footprint_availablein.footprint
+        except AttributeError:
             return self.base_footprint
-        elif self.type == Ingredient.SEASONAL:
-            today = datetime.date.today()
-            available_in_countrys = AvailableInCountry.objects.filter(ingredient=self,
-                                                                      date_from__lte=datetime.date(2000, today.month, today.day),
-                                                                      date_until__gte=datetime.date(2000, today.month, today.day))
-            min_availinc = available_in_countrys.order_by('footprint')[0]
-            return min_availinc.footprint
-        elif self.type == Ingredient.SEASONAL_SEA:
-            today = datetime.date.today()
-            available_in_seas = AvailableInSea.objects.filter(ingredient=self,
-                                                              date_from__lte=datetime.date(2000, today.month, today.day),
-                                                              date_until__gte=datetime.date(2000, today.month, today.day))
-            min_availins = available_in_seas.order_by('footprint')[0]
-            return min_availins.footprint
-        
-        raise Exception('Unknown ingredient type: ' + self.type)
     
     def __unicode__(self):
         return self.name
@@ -202,6 +215,20 @@ class VegetalIngredient(models.Model):
     
     def __unicode__(self):
         return self.ingredient.name
+    
+    def get_active_available_ins(self):
+        """
+        Returns a queryset of the available in objects belonging to this ingredient
+        that are currently available (The current date is between the from and until
+        date)
+        
+        """
+        # TODO: add preservability to the filter. Do this with a custom query and an `extra` function
+        #       on the queryset: http://stackoverflow.com/questions/7824864/query-expired-time-difference-in-django-orm
+        today = datetime.date.today()
+        return self.get_available_ins().filter(ingredient=self,
+                                               date_from__lte=datetime.date(2000, today.month, today.day),
+                                               date_until__gte=datetime.date(2000, today.month, today.day))
 
 class Country(models.Model):
     """
