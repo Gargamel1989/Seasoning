@@ -22,8 +22,6 @@ import time
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
 import datetime
-from django.db.models.query import EmptyQuerySet
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_image_filename(instance, old_filename):
@@ -43,6 +41,9 @@ class Ingredient(models.Model):
     """    
     class Meta:
         db_table = 'ingredient'
+    
+    class BasicIngredientException(Exception):
+        pass
     
     # Choices
     VEGETABLES, FRUIT, TUBERS, NUTS_AND_SEEDS, CEREAL_PRODUCTS, HERBS, SPICES, OILS_AND_VINEGARS, MEAT, FISH, DAIRY_PRODUCTS, DRINKS = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
@@ -81,6 +82,11 @@ class Ingredient(models.Model):
     properties = models.TextField(blank=True)
     source = models.TextField(blank=True)
     
+    # Following ingredients are only used for Seasonal Ingredients
+    # The amount of days an ingredient can be preserved
+    preservability = models.IntegerField(default=0)
+    preservation_footprint = models.FloatField(default=0)
+    
     base_footprint = models.FloatField()
     
     image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
@@ -93,11 +99,11 @@ class Ingredient(models.Model):
     
     def get_available_ins(self):
         """
-        Returns a query for all the available in objects belonging to this ingredient
+        Returns a queryset for all the available in objects belonging to this ingredient
         
         """
         if self.type == Ingredient.BASIC:
-            return EmptyQuerySet
+            raise self.BasicIngredientException
         elif self.type == Ingredient.SEASONAL:
             return self.available_in_country.all()
         elif self.type == Ingredient.SEASONAL_SEA:
@@ -109,11 +115,16 @@ class Ingredient(models.Model):
         that are currently available (The current date is between the from and until
         date)
         
+        The until date is extended with the preservability of the ingredient
+        
         """
+        extended_date_sql = 'DATE_ADD(date_until,INTERVAL ' + str(self.preservability) + ' DAY)'
+        extended_until_date_added = self.get_available_ins().extra(select={'extended_date_until': extended_date_sql})
+        
         today = datetime.date.today()
-        return self.get_available_ins().filter(ingredient=self,
-                                               date_from__lte=datetime.date(2000, today.month, today.day),
-                                               date_until__gte=datetime.date(2000, today.month, today.day))
+        before_filtered = extended_until_date_added.filter(ingredient=self,
+                                                           date_from__lte=datetime.date(2000, today.month, today.day))
+        return before_filtered.extra(where={'"extended_date_until" >= ' + today.strftime('2000-%m-%d')})
     
     def footprint(self):
         """
@@ -126,10 +137,23 @@ class Ingredient(models.Model):
         object, plus the minimal of the currently available AvailableIn* objects.
         
         """
+        # TODO: maybe move the smallest availablein searching to its own function, and
+        # make this just self.get_smallest_footprint_availablein().footprint
+        # Neen, want dan moet ge weer de preservation footprint erbij tellen... Iets zoeken
+        # om die informatie mee in het model te krijgen
         try:
-            minimal_footprint_availablein = self.get_active_available_ins().order_by('footprint')[0]
-            return minimal_footprint_availablein.footprint
-        except AttributeError:
+            smallest_footprint = None
+            for available_in in self.get_active_available_ins():
+                today_normalized = datetime.date.today().replace(year=2000)
+                if today_normalized > available_in:
+                    # This means this available in is currently under preservation
+                    footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
+                else:
+                    footprint = available_in.footprint
+                if not footprint or smallest_footprint > footprint:
+                    smallest_footprint = footprint
+            return smallest_footprint
+        except self.BasicIngredientException:
             return self.base_footprint
     
     def __unicode__(self):
@@ -150,13 +174,26 @@ class Synonym(models.Model):
     ingredient = models.ForeignKey(Ingredient, related_name='synonym', null=True, db_column='ingredient', blank=True)
     
     def __unicode__(self):
-        return self.name    
+        return self.name
     
 class Unit(models.Model):
     """
     Represent a unit
     
-    """    
+    A unit can be dependent on a parent unit. This means that the
+    ratio between these units is independent of the ingredient.
+    
+    If a unit does has a parent unit, it cannot be selected as a
+    unit useable by any ingredient. It will, however, automatically
+    be available to any ingredient that can use its parent unit
+    
+    A unit with a parent unit can itself not be used as a parent unit,
+    to prevent infinite recursion and other nasty stuff
+    
+    The ratio is defined as follows:
+        1 this_unit = ratio parent_unit
+        
+    """
     class Meta:
         db_table = 'unit'
         
@@ -180,8 +217,7 @@ class CanUseUnit(models.Model):
     
     The conversion factor defines how this unit relates to the ingredients primary unit in
     the following way:
-    
-    x this_unit = x*conversion_factor primary_unit
+        1 this_unit = conversion_factor primary_unit
     
     """    
     class Meta:
@@ -197,38 +233,6 @@ class CanUseUnit(models.Model):
     def __unicode__(self):
         return self.ingredient.name + ' can use ' + self.unit.name
 
-
-class VegetalIngredient(models.Model):
-    """
-    This class represents vegetal ingredients. They have some extra properties.
-    
-    A vegetal ingredient can be preserved for a certain number of months. During
-    this preservation period, they produce an additional footprint every month.
-    
-    """    
-    class Meta:
-        db_table = 'vegetalingredient'
-    
-    ingredient = models.OneToOneField(Ingredient, primary_key=True, db_column='ingredient', related_name='vegetal_ingredient')
-    preservability = models.IntegerField()
-    preservation_footprint = models.FloatField(null=True)
-    
-    def __unicode__(self):
-        return self.ingredient.name
-    
-    def get_active_available_ins(self):
-        """
-        Returns a queryset of the available in objects belonging to this ingredient
-        that are currently available (The current date is between the from and until
-        date)
-        
-        """
-        # TODO: add preservability to the filter. Do this with a custom query and an `extra` function
-        #       on the queryset: http://stackoverflow.com/questions/7824864/query-expired-time-difference-in-django-orm
-        today = datetime.date.today()
-        return self.get_available_ins().filter(ingredient=self,
-                                               date_from__lte=datetime.date(2000, today.month, today.day),
-                                               date_until__gte=datetime.date(2000, today.month, today.day))
 
 class Country(models.Model):
     """
@@ -314,6 +318,9 @@ class AvailableIn(models.Model):
     
     def save(self, *args, **kwargs):
         self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.location.distance*self.transport_method.emission_per_km
+        
+        self.date_from = self.date_from.replace(year=2000)
+        self.date_until = self.date_until.replace(year=2000)
         
         models.Model.save(self, *args, **kwargs)
     
