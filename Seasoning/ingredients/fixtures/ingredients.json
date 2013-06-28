@@ -2,16 +2,18 @@
   {"pk": 1,
 	 "model": "ingredients.Unit",
 	 "fields":
-		{"name": "kilogram",
-		 "short_name": "kg"
+		{"name": "gram",
+		 "short_name": "g"
 		}
 	},
     
   {"pk": 2,
 	 "model": "ingredients.Unit",
 	 "fields":
-		{"name": "gram",
-		 "short_name": "g"
+		{"name": "kilogram",
+		 "short_name": "kg",
+		 "parent_unit": 1,
+		 "ratio": 1000
 		}
 	},
     
@@ -20,22 +22,6 @@
 	 "fields":
 		{"name": "aantal",
 		 "short_name": ""
-		}
-	},
-    
-  {"pk": 4,
-	 "model": "ingredients.Unit",
-	 "fields":
-		{"name": "deciliter",
-		 "short_name": "dl"
-		}
-	},
-    
-  {"pk": 5,
-	 "model": "ingredients.Unit",
-	 "fields":
-		{"name": "snuifje",
-		"short_name": "snuifje"
 		}
 	},
 	
@@ -91,30 +77,25 @@
   {"pk": 1,
   "model": "ingredients.Ingredient",
   "fields":
-  	{"name": "Aardappel",
-  	"plural_name": "Aardappellen",
+  	{"name": "Potato",
+  	"plural_name": "Potatoes",
   	"type": 1,
   	"category": 2,
   	"veganism": 2,
-  	"description": "Een stoeme patat",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
-  	"base_footprint": 0.5,
-  	"accepted": true}},
-  
-  {"pk": 1,
-  "model": "ingredients.VegetalIngredient",
-  "fields":
-  	{"ingredient": 1,
+  	"description": "A simple potato",
+  	"conservation_tip": "Put them in dirt",
+  	"properties": "Has a lot of starch",
+  	"source": "somewhere",
+  	"base_footprint": 10,
   	"preservability": 5,
-  	"preservation_footprint": 0}},
+  	"preservation_footprint": 0,
+  	"accepted": true}},
   
   {"pk": 2,
   "model": "ingredients.Synonym",
   "fields":
-    {"name": "Patat",
-    "plural_name": "Patatten",
+    {"name": "Spud",
+    "plural_name": "Spuds",
     "ingredient": 1}},
 
   {"pk": 1,
@@ -124,33 +105,28 @@
   	"unit": 1,
   	"conversion_factor": 1}},
 
-  {"pk": 1,
-  "model": "ingredients.AvailableInCountry",
-  "fields":
+  {"pk": 2,
+  "model": "ingredients.CanUseUnit",
+  "fields": 
   	{"ingredient": 1,
-  	"location": 2,
-  	"transport_method": 1,
-  	"production_type": "Broeikas",
-  	"extra_production_footprint": 0.5,
-  	"date_from": "2000-01-01",
-  	"date_until": "2000-12-31",
-  	"footprint": 0.5}},
-  	
-  	
+  	"unit": 2,
+  	"conversion_factor": 1}},
+
+
   	
   	
   {"pk": 2,
   "model": "ingredients.Ingredient",
   "fields":
-  	{"name": "Ei",
-    "plural_name": "Eieren",
+  	{"name": "Egg",
+    "plural_name": "Eggs",
   	"type": 0,
   	"category": 10,
   	"veganism": 1,
-  	"description": "Een ei",
-  	"conservation_tip": "Steek ze onder de grond",
-  	"properties": "Rijk aan vitamine C",
-  	"source": "Vanalles",
+  	"description": "An egg",
+  	"conservation_tip": "Put them in the freezer",
+  	"properties": "It has yolk",
+  	"source": "somewhere",
   	"base_footprint": 0.5,
   	"accepted": true}},
 
