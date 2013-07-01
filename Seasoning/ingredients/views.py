@@ -19,16 +19,16 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django.shortcuts import render, redirect
 from ingredients.models import Ingredient, Synonym, CanUseUnit,\
-    VegetalIngredient, AvailableInCountry, AvailableInSea, Unit
+    AvailableInCountry, AvailableInSea, Unit
 from django.forms.models import inlineformset_factory, modelform_factory,\
     ModelForm
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.utils.safestring import mark_safe
 from django.forms.widgets import Select, Widget
 import calendar
 from django.db import connection
 import json
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, Http404
 
 def ajax_ingredient_name_list(request, query=""):
     """
@@ -37,26 +37,26 @@ def ajax_ingredient_name_list(request, query=""):
     
     """    
     if request.is_ajax(): 
-        
         # Query the database for ingredients with a name of synonym like the query
         cursor = connection.cursor()
-        cursor.execute('SELECT name '
-                       'FROM ingredient '
-                       'WHERE name LIKE %s '
+        cursor.execute('SELECT * FROM ('
+                       '    (SELECT id, name '
+                       '     FROM ingredient '
+                       '     WHERE name LIKE %s) '
                        'UNION '
-                       'SELECT name '
-                       'FROM synonym '
-                       'WHERE name LIKE %s', ['%%%s%%' % query, '%%%s%%' % query])
-        ingredients = [x[0] for x in cursor.fetchall()]
+                       '    (SELECT ingredient, name '
+                       '     FROM synonym '
+                       '     WHERE name LIKE %s)) '
+                       'ORDER BY name', ['%%%s%%' % query, '%%%s%%' % query])
         
-        # Serialize ingredient list to json
-        ingredients_json = json.dumps(ingredients)
+        # Serialize to json
+        ingredients_json = json.dumps(cursor.fetchall())
   
         # Return the response  
         return HttpResponse(ingredients_json, mimetype='application/javascript')
     
-    # If this is not an ajax request, deny permission to anyone
-    raise PermissionDenied 
+    # If this is not an ajax request, 404
+    raise Http404
     
 """
 Administrative Functions only below this comment
@@ -156,17 +156,10 @@ def edit_ingredient(request, ingredient_id=None):
         new =True
         ingredient = Ingredient()
     
-    try:
-        veg_ingredient = VegetalIngredient.objects.get(ingredient=ingredient)
-    except ObjectDoesNotExist:
-        veg_ingredient = VegetalIngredient()
-        veg_ingredient.ingredient = ingredient
-    
     IngredientForm = modelform_factory(Ingredient)
     SynonymInlineFormSet = inlineformset_factory(Ingredient, Synonym, extra=1)
     CanUseUnitInlineFormset = inlineformset_factory(Ingredient, CanUseUnit, extra=1)
     
-    VegetalIngredientForm = modelform_factory(VegetalIngredient, exclude=("ingredient"))
     AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1,
                                                             form=AvailableInCountryForm)
     
@@ -178,7 +171,6 @@ def edit_ingredient(request, ingredient_id=None):
         synonym_formset = SynonymInlineFormSet(request.POST, instance=ingredient)
         canuseunit_formset = CanUseUnitInlineFormset(request.POST, instance=ingredient)
         
-        veg_ingredient_form = VegetalIngredientForm(request.POST, instance=veg_ingredient)
         availinc_formset = AvailableInCountryInlineFormset(request.POST, instance=ingredient)
         
         availins_formset = AvailableInSeaInlineFormset(request.POST, instance=ingredient)
@@ -186,8 +178,7 @@ def edit_ingredient(request, ingredient_id=None):
         models_valid = ingredient_form.is_valid() and synonym_formset.is_valid() and canuseunit_formset.is_valid()
         
         if models_valid and ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL:
-            models_valid = models_valid and veg_ingredient_form.is_valid() and availinc_formset.is_valid()
-            veg_ingredient_form.ingredient = ingredient
+            models_valid = models_valid and availinc_formset.is_valid()
         
         if models_valid and ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL_SEA:
             models_valid = models_valid and availins_formset.is_valid()
@@ -197,9 +188,6 @@ def edit_ingredient(request, ingredient_id=None):
             synonym_formset.save()
             canuseunit_formset.save()
             if ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL:
-                veg_ing_temp = veg_ingredient_form.save(commit=False)
-                veg_ing_temp.ingredient = ingredient
-                veg_ing_temp.save()
                 availinc_formset.save()
             if ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL_SEA:
                 availins_formset.save()
@@ -211,7 +199,6 @@ def edit_ingredient(request, ingredient_id=None):
         synonym_formset = SynonymInlineFormSet(instance=ingredient)
         canuseunit_formset = CanUseUnitInlineFormset(instance=ingredient)
         
-        veg_ingredient_form = VegetalIngredientForm(instance=veg_ingredient)
         availinc_formset = AvailableInCountryInlineFormset(instance=ingredient)
         
         availins_formset = AvailableInSeaInlineFormset(instance=ingredient)
@@ -222,7 +209,6 @@ def edit_ingredient(request, ingredient_id=None):
                                                                 'ingredient_form': ingredient_form,
                                                                 'synonym_formset': synonym_formset,
                                                                 'canuseunit_formset': canuseunit_formset,
-                                                                'vegingredient_form': veg_ingredient_form,
                                                                 'availinc_formset': availinc_formset,
                                                                 'availins_formset': availins_formset})
 

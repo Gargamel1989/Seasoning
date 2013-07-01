@@ -91,7 +91,7 @@
   	"preservation_footprint": 0,
   	"accepted": true}},
   
-  {"pk": 2,
+  {"pk": 1,
   "model": "ingredients.Synonym",
   "fields":
     {"name": "Spud",
@@ -129,6 +129,13 @@
   	"source": "somewhere",
   	"base_footprint": 0.5,
   	"accepted": true}},
+  
+  {"pk": 2,
+  "model": "ingredients.Synonym",
+  "fields":
+    {"name": "aTest",
+    "plural_name": "aTests",
+    "ingredient": 2}},
 
   {"pk": 2,
   "model": "ingredients.CanUseUnit",

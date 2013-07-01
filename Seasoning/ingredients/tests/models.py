@@ -1,18 +1,15 @@
 from django.test import TestCase
-from ingredients.models import Unit, Country, Ingredient, AvailableInCountry, TransportMethod
+from ingredients.models import Unit, Country, Ingredient, AvailableInCountry, TransportMethod, AvailableIn
 import datetime
 from django.conf import settings
-from Seasoning.ingredients.models import AvailableIn
 
 class IngredientModelsTestCase(TestCase):
     fixtures = ['ingredients.json']
     
     def setUp(self):
-        if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+        if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.mysql':
             raise Exception('Please use a MySQL Database for this test')
         TestCase.setUp(self)
-        # TODO: add tests for get_smallest_available_in
-        raise NotImplementedError
         
     def test_unit_model(self):
         unit = Unit.objects.get(pk=3)
@@ -61,7 +58,8 @@ class IngredientModelsTestCase(TestCase):
         avail_in.save()
         self.assertRaises(Ingredient.BasicIngredientException, basic_ing.get_available_ins)
         self.assertRaises(Ingredient.BasicIngredientException, basic_ing.get_active_available_ins)
-        self.assertEqual(basic_ing.footprint(), basic_ing.base_footprint)
+        self.assertRaises(Ingredient.BasicIngredientException, basic_ing.get_available_in_with_smallest_footprint)
+        self.assertEqual(basic_ing.base_footprint, basic_ing.footprint())
         
     def test_seasonal_ingredient_no_availins(self):
         """
@@ -73,7 +71,8 @@ class IngredientModelsTestCase(TestCase):
         seasonal_ing = Ingredient.objects.get(pk=1)
         self.assertEqual(len(seasonal_ing.get_available_ins()), 0)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 0)
-        self.assertRaises(IndexError, seasonal_ing.footprint)
+        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.get_available_in_with_smallest_footprint)
+        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.footprint)
         
     def test_seasonal_ingredient_no_active_availins(self):
         """
@@ -99,6 +98,7 @@ class IngredientModelsTestCase(TestCase):
         seasonal_ing = Ingredient.objects.get(pk=1)
         self.assertEqual(len(seasonal_ing.get_available_ins()), 2)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 0)
+        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.get_available_in_with_smallest_footprint)
         self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.footprint)
         
     def test_seasonal_ingredient_active_availin(self):
@@ -128,6 +128,7 @@ class IngredientModelsTestCase(TestCase):
         self.assertEqual(len(seasonal_ing.get_available_ins()), 2)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 1)
         self.assertEqual(seasonal_ing.get_active_available_ins()[0].pk, avail_in_1.pk)
+        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_1.pk)
         self.assertEqual(seasonal_ing.footprint(), 12)
         
     def test_seasonal_ingredient_active_availin_outer_date_interval(self):
@@ -137,7 +138,7 @@ class IngredientModelsTestCase(TestCase):
         This should be used to calculate footprint
         
         If this test fails, make sure today is not an edge date of the year (What the
-        hell are you doing testing a django app during the Holiday of Parties?!?),
+        hell are you doing testing a django app during the Holidays?!?),
         because this will make the outer dates generation fail. This is a feature.
         
         """
@@ -158,6 +159,7 @@ class IngredientModelsTestCase(TestCase):
         avail_in.date_from = datetime.date.today() + 2
         avail_in.date_until = datetime.date.today()
         avail_in.save()
+        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in.pk)
         self.assertEqual(seasonal_ing.footprint(), 12)
         
     def test_seasonal_ingredient_multiple_availins(self):
@@ -187,11 +189,13 @@ class IngredientModelsTestCase(TestCase):
         avail_in_2.save()
         self.assertEqual(len(seasonal_ing.get_available_ins()), 2)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 2)
+        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_1.pk)
         self.assertEqual(seasonal_ing.footprint(), 12)
         
         # Test with other available in being the lowest
         avail_in_2.location=Country.objects.get(pk=1)
         avail_in_2.save()
+        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_2.pk)
         self.assertEqual(seasonal_ing.footprint(), 10)
         
     def test_seasonal_ingredient_with_preservation(self):
@@ -222,10 +226,11 @@ class IngredientModelsTestCase(TestCase):
         has an outer date interval. Make sure the footprint holds the preservation footprint in account.
         
         If this test fails, make sure today is not an edge date of the year (What the
-        hell are you doing testing a django app during the Holiday of Parties?!?),
+        hell are you doing testing a django app during the Holidays?!?),
         because this will make the outer dates generation fail. This is a feature.
         
         """
+        # TODO:
         raise NotImplementedError
         seasonal_ing = Ingredient.objects.get(pk=1)
         seasonal_ing.preservability = 20
