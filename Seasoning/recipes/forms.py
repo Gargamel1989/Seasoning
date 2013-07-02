@@ -20,7 +20,6 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from recipes.models import Recipe, UsesIngredient, Cuisine
 from recipes.fields import AutoCompleteSelectIngredientField
-from ingredients.models import CanUseUnit
 import recipes
 from django.forms.widgets import RadioSelect
 
@@ -32,12 +31,10 @@ class AddRecipeForm(forms.ModelForm):
                    'rating', 'number_of_votes',
                    'thumbnail', 'accepted']
         
-    def save(self, *args, **kwargs):
-        author = kwargs.pop('author', None)
-        kwargs['commit'] = False
-        recipe = super(AddRecipeForm, self).save(*args, **kwargs)
+    def save(self, author, commit=True):
+        recipe = super(AddRecipeForm, self).save(commit=False)
         recipe.author = author
-        return recipe.save()
+        return recipe.save(commit=commit)
 
 class UsesIngredientForm(forms.ModelForm):
 
@@ -45,16 +42,6 @@ class UsesIngredientForm(forms.ModelForm):
     
     class Meta:
         model = UsesIngredient
-
-#     def clean(self):
-#         cleaned_data = super(UsesIngredientForm, self).clean()
-#         ingredient_obj = cleaned_data.get('ingredient')
-#         unit_obj = cleaned_data.get('unit')
-# 
-#         if not CanUseUnit.objects.filter(ingredient=ingredient_obj, unit=unit_obj).exists():
-#             self._errors['unit'] = self.error_class(['Deze eenheid kan niet gebruikt worden voor het gekozen ingredient...'])
-#             del cleaned_data['unit']
-#         return cleaned_data
 
 class SearchRecipeForm(forms.Form):
     
