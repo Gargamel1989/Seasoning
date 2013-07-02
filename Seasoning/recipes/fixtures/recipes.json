@@ -1,0 +1,25 @@
+[ 
+  {"pk": 1,
+  	"model": "recipes.Cuisine",
+  	"fields":
+  		{"name": "testcuisine"
+  		}
+  },
+  
+  {"pk": 1,
+	 "model": "recipes.Recipe",
+	 "fields":
+		{"name": "testrecipe",
+		 "author": 1,
+		 "time_added": "2013-01-01",
+		 "course": 1,
+		 "cuisine": 1,
+		 "description": "test",
+		 "portions": 4,
+		 "active_time": 20,
+		 "passive_time": 15,
+		 "instructions": "Do Something"
+		}
+	}
+ 
+]

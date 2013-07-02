@@ -103,14 +103,16 @@
   "fields": 
   	{"ingredient": 1,
   	"unit": 1,
-  	"conversion_factor": 1}},
+  	"conversion_factor": 1,
+  	"is_primary_unit": 1}},
 
   {"pk": 2,
   "model": "ingredients.CanUseUnit",
   "fields": 
   	{"ingredient": 1,
-  	"unit": 2,
-  	"conversion_factor": 1}},
+  	"unit": 3,
+  	"conversion_factor": 1,
+  	"is_primary_unit": 0}},
 
 
   	
@@ -142,6 +144,7 @@
   "fields": 
   	{"ingredient": 2,
   	"unit": 3,
-  	"conversion_factor": 1}}
+  	"conversion_factor": 1,
+  	"is_primary_unit": 1}}
  
 ]

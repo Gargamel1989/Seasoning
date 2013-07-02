@@ -186,6 +186,26 @@ class Recipe(models.Model):
     def footprint_pp(self):
         return self.footprint / self.portions
     
+    def vote(self, user, score):
+        try:
+            # Check if the user already voted on this recipe
+            vote = self.votes.get(user=user)
+            vote.score = score
+        except Vote.DoesNotExist:
+            # The given user has not voted on this recipe yet
+            vote = Vote(recipe=self, user=user, score=score)
+        vote.save()
+    
+    def unvote(self, user):
+        vote = self.votes.get(user=user)
+        vote.delete()
+    
+    def calculate_and_set_rating(self):
+        new_rating = self.votes.all().aggregate(models.Avg('score'))
+        self.rating = new_rating['score__avg']
+        self.save()
+        
+    
 
 class UsesIngredient(models.Model):
     
@@ -206,24 +226,27 @@ class UsesIngredient(models.Model):
     def clean(self):
         if not self.unit in [useable_unit.unit for useable_unit in self.ingredient.useable_units.all()]:
             raise ValidationError('This unit cannot be used for measuring this Ingredient.')
+    
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(UsesIngredient, self).save(*args, **kwargs)
 
 class Vote(models.Model):
+    class Meta:
+        unique_together = (("recipe", "user"),)
     
-    recipe = models.ForeignKey(Recipe)
+    recipe = models.ForeignKey(Recipe, related_name='votes')
     user = models.ForeignKey(User)
     score = models.PositiveIntegerField(validators=[MaxValueValidator(5)])
     date_added = models.DateTimeField(default=datetime.datetime.now, editable=False)
     date_changed = models.DateTimeField(default=datetime.datetime.now, editable=False)
     
     def save(self, *args, **kwargs):
+        self.date_changed = datetime.datetime.now()
         super(Vote, self).save(*args, **kwargs)
-        self.calculate_new_rating_for_recipe()
+        self.recipe.calculate_and_set_rating()
     
     def delete(self, *args, **kwargs):
         super(Vote, self).delete(*args, **kwargs)
-        self.calculate_new_rating_for_recipe()
-
-    def calculate_new_rating_for_recipe(self):
-        new_rating = Vote.objects.all().aggregate(models.Avg('score'))
-        self.recipe.rating = new_rating['score__avg']
-        self.recipe.save()
+        self.recipe.calculate_and_set_rating()
+    
