@@ -53,4 +53,31 @@ class RecipeModelsTestCase(TestCase):
         usesing = UsesIngredient(recipe=recipe, ingredient=ing, amount=10, unit=unit)
         usesing.save()
         self.assertEqual(usesing.footprint(), 2.5)
+    
+    def test_recipe(self):
+        recipe = Recipe.objects.get(pk=1)
         
+        # Check recipe with no ingredients
+        recipe.save()
+        self.assertEqual(recipe.footprint, 0)
+        self.assertEqual(recipe.veganism, Ingredient.VEGAN)
+        
+        # Check recipe with one Vegetarian ingredient
+        ing = Ingredient.objects.get(pk=2)
+        unit = Unit.objects.get(pk=3)
+        UsesIngredient(recipe=recipe, ingredient=ing, amount=10, unit=unit).save()
+        recipe.save()
+        self.assertEqual(recipe.footprint, 5)
+        self.assertEqual(recipe.veganism, Ingredient.VEGETARIAN)
+        
+        # Check recipe with Vegetarian and non-vegetarian ingredient
+        ing.pk = 3
+        ing.name = ing.name + '2'
+        ing.veganism = Ingredient.NON_VEGETARIAN
+        ing.base_footprint = 2
+        ing.save()
+        CanUseUnit(ingredient=ing, unit=unit, conversion_factor=1, is_primary_unit=True).save()
+        UsesIngredient(recipe=recipe, ingredient=ing, amount=10, unit=unit).save()
+        recipe.save()
+        self.assertEqual(recipe.footprint, 25)
+        self.assertEqual(recipe.veganism, Ingredient.NON_VEGETARIAN)

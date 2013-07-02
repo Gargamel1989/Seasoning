@@ -155,32 +155,23 @@ class Recipe(models.Model):
     accepted = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
-        # Calculate and set the recipes footprint
+        """
+        Calculate the recipes footprint by adding the footprint
+        of every used ingredient
+        Calculate the recipes veganism by searching for the ingredient
+        with the lowest veganism.
+        
+        """
         self.footprint = 0
-        # And find an set the recipes veganism
-        veganism = Ingredient.VEGAN
+        self.veganism = Ingredient.VEGAN
+        
         for uses in self.uses.all():
-            used_unit = uses.unit
-            used_ingredient = uses.ingredient
-            useable_units = uses.ingredient.useable_units
-            primary_unit = None
-            used_unit_properties = None
-            for useable_unit in useable_units.all():
-                if useable_unit.is_primary_unit:
-                    primary_unit = useable_unit
-                if used_unit.pk == useable_unit.unit.pk:
-                    used_unit_properties = useable_unit
-                if primary_unit and used_unit_properties:
-                    break
-            if not primary_unit:
-                raise Exception('No primary unit found for ingredient: ' + used_ingredient.name)
-            if not used_unit_properties:
-                raise Exception('Unit ' + used_unit.name + ' is not useable for ingredient ' + used_ingredient.name)
-            if used_ingredient.veganism < veganism:
-                veganism = used_ingredient.veganism
+            # Add the footprint for this used ingredient to the total
+            self.footprint += uses.footprint()
             
-            self.footprint += uses.amount * used_unit_properties.conversion_factor * used_ingredient.footprint()
-        self.veganism = veganism
+            # Check the veganism of this ingredient
+            if uses.ingredient.veganism < self.veganism:
+                self.veganism = uses.ingredient.veganism
         super(Recipe, self).save(*args, **kwargs)
         
     def footprint_pp(self):
@@ -204,8 +195,6 @@ class Recipe(models.Model):
         new_rating = self.votes.all().aggregate(models.Avg('score'))
         self.rating = new_rating['score__avg']
         self.save()
-        
-    
 
 class UsesIngredient(models.Model):
     
