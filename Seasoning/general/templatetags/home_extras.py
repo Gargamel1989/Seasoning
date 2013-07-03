@@ -23,6 +23,7 @@ register = template.Library()
 
 paths = {'RECEPTEN': ['/recipes/'],
          'INFORMATIE': ['/ingredients/', '/information/'],
+         'ADMIN': [],
          'ReceptenZoeken': ['/recipes/search/'],
          'ReceptToevoegen': ['/recipes/add/'],
          'MijnRecepten': ['/accounts/recipes/'],
