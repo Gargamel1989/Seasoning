@@ -300,11 +300,14 @@
 							<label>{{ form.transport_method.label }}</label>
 						</td>
 						<td class="date">
-							<label>{{ form.date_from.label }} (2000-mm-dd)</label>
+							<label>{{ form.date_from.label }}</label>
 						</td>
 						<td class="date">
-							<label>{{ form.date_until.label }} (2000-mm-dd)</label>
+							<label>{{ form.date_until.label }}</label>
 						</td>
+                        <td>
+                            <label>{{ form.endangered.label }}</label>
+                        </td>
 						<td>
 							Verwijderen
 						</td>
@@ -318,8 +321,10 @@
 						{{ form.transport_method }}</td>
 					<td class="date">{{ form.date_from.errors }}
 						{{ form.date_from }}</td>
-					<td class="date">{{ form.date_until.errors }}
-						{{ form.date_until }}</td>
+                    <td class="date">{{ form.date_until.errors }}
+                        {{ form.date_until }}</td>
+                    <td class="delete">{{ form.endangered.errors }}
+                        {{ form.endangered }}</td>
 					<td class="delete">{{ form.DELETE }}</td>
 				</tr>
 			{% endfor %}
@@ -335,6 +340,9 @@
 					</td>
 					<td class="date">
 						{{ availins_formset.empty_form.date_until }}
+					</td>
+					<td class="delete">
+					    {{ availins_formset.empty_form.endangered }}
 					</td>
 					<td class="delete">
 						{{ availins_formset.empty_form.DELETE }}
