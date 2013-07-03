@@ -22,10 +22,11 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, render_to_response
 from django.template.context import RequestContext
-from authentication.forms import ResendActivationEmailForm, AccountSettingsForm
-from django.contrib.auth import get_user_model
+from authentication.forms import ResendActivationEmailForm, AccountSettingsForm,\
+    DeleteAccountForm
+from django.contrib.auth import get_user_model, logout
 from django.utils.translation import ugettext_lazy as _
-from authentication.models import NewEmail
+from authentication.models import NewEmail, User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from general.views import home
@@ -293,3 +294,21 @@ def change_password(request,
         context.update(extra_context)
     return TemplateResponse(request, template_name, context,
                             current_app=current_app)
+
+@login_required
+def account_delete(request):
+    """
+    Provides a method for deleting the users account
+    
+    """
+    # TODO: test
+    if request.method == 'POST':
+        form = DeleteAccountForm(request.POST)
+        if form.is_valid():
+            user = User.objects.get(pk=request.user.id)
+            logout(request)
+            user.delete()
+            return redirect('/')
+    else:
+        form = DeleteAccountForm()
+    return render(request, 'authentication/account_delete.html', {'form': form})

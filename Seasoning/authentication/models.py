@@ -34,6 +34,7 @@ from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFit, AddBorder
 from django.utils import timezone
 from django.core.mail import send_mail, EmailMultiAlternatives
+import recipes
 
 
 class UserManager(BaseUserManager):
@@ -131,8 +132,19 @@ class User(AbstractBaseUser):
     def email_user(self, subject, message, from_email=None):
         """
         Sends an email to this User.
+        
         """
         send_mail(subject, message, from_email, [self.email])
+    
+    def delete(self, delete_recipes, *args, **kwargs):
+        """
+        Delete this user and the recipes added by this user 
+        if this is wanted
+        
+        """
+        if not delete_recipes:
+            recipes.models.Recipe.objects.filter(author=self).update(author=0)
+        super(User, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return self.email   

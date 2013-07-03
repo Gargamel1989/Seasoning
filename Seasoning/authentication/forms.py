@@ -176,3 +176,21 @@ class AccountSettingsForm(ModelForm):
             self.new_email = None
         self.cleaned_data['email'] = user.email
         return user.email
+
+class DeleteAccountForm(forms.Form):
+    """
+    This form provides a fail-safe when a user tries to delete his account. The user
+    will have to provide a string 'DELETEME' if he really wants to delete his account.
+    Additionally the user will have to check if he would like to delete all his
+    added recipes.
+    
+    """
+    # TODO: Test
+    checkstring = forms.CharField()
+    delete_recipes = forms.BooleanField()
+    
+    def clean_checkstring(self):
+        checkstring = self.cleaned_data['checkstring']
+        if not checkstring == 'DELETEME':
+            raise forms.ValidationError('You must provide the string \'DELETEME\' if you would like to delete your account')
+        return checkstring

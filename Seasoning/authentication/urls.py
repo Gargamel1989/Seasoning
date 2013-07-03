@@ -61,7 +61,8 @@ urlpatterns = patterns('',
         name='password_reset_complete'),
     
     # Profile urls
-    url(r'^settings/$', 'authentication.views.account_settings'),
+    url(r'^account/settings/$', 'authentication.views.account_settings'),
+    url(r'^account/delete/$', 'authentication.views.account_delete'),
     url(r'^password/change/$', change_password,
         name='password_change'),
     url(r'^email/change/(?P<activation_key>\w+)/$', change_email)
