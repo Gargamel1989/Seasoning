@@ -144,27 +144,6 @@ def view_recipe(request, recipe_id, portions=None):
                                                         'usess': usess,
                                                         'user_vote': user_vote})
 
-@login_required
-def vote(request, recipe_id, new_score):
-    new_score = int(new_score)
-    try:
-        vote = Vote.objects.get(recipe_id=recipe_id, user=request.user)
-        # This user has already voted in the past
-        vote.score = new_score
-    except ObjectDoesNotExist:
-        # This user has not voted on this recipe yet
-        vote = Vote(recipe_id=recipe_id, user=request.user, score=new_score)
-    vote.save()
-    return redirect(view_recipe, recipe_id)
-
-@login_required
-def remove_vote(request, recipe_id):
-    try:
-        vote = Vote.objects.get(recipe_id=recipe_id, user=request.user)
-        vote.delete()
-        return redirect(view_recipe, recipe_id)
-    except ObjectDoesNotExist:
-        raise Http404()
 
 @login_required
 def edit_recipe(request, recipe_id=None):
@@ -200,6 +179,18 @@ def edit_recipe(request, recipe_id=None):
                                                         'recipe_form': recipe_form,
                                                         'usesingredient_formset': usesingredient_formset})
 
+
+@login_required
+def vote(request, recipe_id, score):
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    recipe.vote(user=request.user, score=int(score))
+    return redirect(view_recipe, recipe_id)
+
+@login_required
+def remove_vote(request, recipe_id):
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    recipe.unvote(user=request.user)
+
 @login_required
 def delete_recipe_comment(request, recipe_id, comment_id):
     comment = get_object_or_404(comments.get_model(), pk=comment_id)
@@ -207,4 +198,4 @@ def delete_recipe_comment(request, recipe_id, comment_id):
         perform_delete(request, comment)
         return redirect(view_recipe, recipe_id)
     else:
-        raise Http404
+        raise PermissionDenied
