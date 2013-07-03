@@ -179,6 +179,12 @@ class Ingredient(models.Model):
     def __unicode__(self):
         return self.name
     
+    def save(self):
+        if not self.type == 1:
+            self.preservability = 0
+            self.preservation_footprint = 0 
+        super(Ingredient, self).save()
+    
 class Synonym(models.Model):
     """
     Represents a synonym for an ingredient, these will be displayed when viewing

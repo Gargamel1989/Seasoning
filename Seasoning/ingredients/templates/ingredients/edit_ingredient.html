@@ -197,12 +197,12 @@
 		<legend>Eigenschappen voor Seizoensgebonden Ingredienten</legend>
 		<div class="field-group">
 			<div class="field">
-				{{ vegingredient_form.preservability.errors }}
-				<label>{{ vegingredient_form.preservability.label }}</label> {{ vegingredient_form.preservability }} maanden
+				{{ ingredient_form.preservability.errors }}
+				<label>{{ ingredient_form.preservability.label }}</label> {{ ingredient_form.preservability }} maanden
 			</div>
 			<div class="field">
-				{{ vegingredient_form.preservation_footprint.errors }}
-				<label>{{ vegingredient_form.preservation_footprint.label }}</label> {{ vegingredient_form.preservation_footprint }} kgCO2/primaire_eenheid
+				{{ ingredient_form.preservation_footprint.errors }}
+				<label>{{ ingredient_form.preservation_footprint.label }}</label> {{ ingredient_form.preservation_footprint }} kgCO2/primaire_eenheid
 			</div>
 		</div>
 	</fieldset>
@@ -216,7 +216,7 @@
 				{% if forloop.first %}
 					<tr>
 						<td>
-							<label>{{ form.country.label }}</label>
+							<label>{{ form.location.label }}</label>
 						</td>
 						<td>
 							<label>{{ form.transport_method.label }}</label>
@@ -240,8 +240,8 @@
 				{% endif %}
 				<tr class="available_in_country-form">
 					{{ form.id }}
-					<td>{{ form.country.errors }}
-						{{ form.country }}</td>
+					<td>{{ form.location.errors }}
+						{{ form.location }}</td>
 					<td>{{ form.transport_method.errors }}
 						{{ form.transport_method }}</td>
 					<td>{{ form.production_type.errors }}
@@ -257,7 +257,7 @@
 			{% endfor %}
 				<tr class="empty available_in_country-form">
 					<td>
-						{{ availinc_formset.empty_form.country }}
+						{{ availinc_formset.empty_form.location }}
 					</td>
 					<td>
 						{{ availinc_formset.empty_form.transport_method }}
@@ -294,7 +294,7 @@
 				{% if forloop.first %}
 					<tr>
 						<td>
-							<label>{{ form.sea.label }}</label>
+							<label>{{ form.location.label }}</label>
 						</td>
 						<td>
 							<label>{{ form.transport_method.label }}</label>
@@ -312,8 +312,8 @@
 				{% endif %}
 				<tr class="available_in_sea-form">
 					{{ form.id }}
-					<td>{{ form.sea.errors }}
-						{{ form.sea }}</td>
+					<td>{{ form.location.errors }}
+						{{ form.location }}</td>
 					<td>{{ form.transport_method.errors }}
 						{{ form.transport_method }}</td>
 					<td class="date">{{ form.date_from.errors }}
@@ -325,7 +325,7 @@
 			{% endfor %}
 				<tr class="empty available_in_sea-form">
 					<td>
-						{{ availins_formset.empty_form.sea }}
+						{{ availins_formset.empty_form.location }}
 					</td>
 					<td>
 						{{ availins_formset.empty_form.transport_method }}

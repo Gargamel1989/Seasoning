@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from ingredients.models import Ingredient, Synonym, CanUseUnit,\
     AvailableInCountry, AvailableInSea, Unit
 from django.forms.models import inlineformset_factory, modelform_factory,\
@@ -30,6 +30,11 @@ from django.db import connection
 import json
 from django.http.response import HttpResponse, Http404
 
+def view_ingredient(request, ingredient_id):
+    ingredient = get_object_or_404(Ingredient, pk=ingredient_id)
+    
+    return render('ingredients/view_ingredient.html', {ingredient: ingredient})
+    
 def ajax_ingredient_name_list(request, query=""):
     """
     An ajax call that returns a json list with every ingredient 
