@@ -15,7 +15,12 @@
 		
 			$('#available_in_country-addbtn').click(function() {
 				return addForm(this, "available_in_country");
-			})});
+			});
+		
+			$('#available_in_sea-addbtn').click(function() {
+				return addForm(this, "available_in_sea");
+			});
+		});
 	</script>
     <script src="{{ STATIC_URL }}js/veg_ingredients.js" type="text/javascript"></script>
 {% endblock %}
