@@ -22,6 +22,10 @@
 						left : "650px",
 						opacity : 0
 					}, 200);
+					$("#sub-navigation-admin").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
 					$("#sub-navigation-recipes").stop().animate({
 						left : "4px",
 						opacity : 1
@@ -32,7 +36,25 @@
 						left : "650px",
 						opacity : 0
 					}, 200);
+					$("#sub-navigation-admin").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
 					$("#sub-navigation-information").stop().animate({
+						left : "4px",
+						opacity : 1
+					}, 300);
+				});
+				$("#main-navigation-admin").hover(function() {
+					$("#sub-navigation-recipes").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-information").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-admin").stop().animate({
 						left : "4px",
 						opacity : 1
 					}, 300);
@@ -55,6 +77,9 @@
                             <div id="header-main-navigation">
                                 <a id="main-navigation-recipes" class="main-navigation-link {{ request.path|active:"RECEPTEN" }}" href="/recipes/">RECEPTEN</a>
                                 <a id="main-navigation-information" class="main-navigation-link {{ request.path|active:"INFORMATIE" }}" href="/information/">INFORMATIE</a>
+                                {% if user.is_superuser %}
+                                <a id="main-navigation-admin" class="main-navigation-link {{ request.path|active:"ADMIN" }}" href="/">ADMIN</a>
+                                {% endif %}
                             </div>
                         </div>
                         <div id="header-main-right">
@@ -84,6 +109,12 @@
                             <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="" >Nieuws</a>
                             <a class="sub-navigation-link {{ request.path|active:"OverSeasoning" }}" href="" >Over Seasoning</a>
                         </div>
+                        {% if user.is_superuser %}
+                        <div id="sub-navigation-admin" class="header-sub-navigation">
+                            <a class="sub-navigation-link {{ request.path|active:"Ingredienten" }}" href="/ingredients/add/" >Ingredient Toevoegen</a>
+                            <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="" >Eenheden</a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
