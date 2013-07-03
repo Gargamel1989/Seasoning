@@ -29,7 +29,12 @@ import calendar
 from django.db import connection
 import json
 from django.http.response import HttpResponse, Http404
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 
+def view_ingredients(request):
+    return render('ingredients/view_ingredients.html')
+    
 def view_ingredient(request, ingredient_id):
     ingredient = get_object_or_404(Ingredient, pk=ingredient_id)
     
@@ -61,6 +66,32 @@ def ajax_ingredient_name_list(request, query=""):
         return HttpResponse(ingredients_json, mimetype='application/javascript')
     
     # If this is not an ajax request, 404
+    raise Http404
+
+def ajax_ingredients_page(request):
+    """
+    An ajax call that returns a certain page of the ingredient
+    list resulting from a given query string filter.
+    
+    """
+    if request.is_ajax() and request.method == 'POST':
+        query = request.POST.get('query', '')
+        name = Q(name__icontains=query)
+        synonym = Q(synonym__icontains=query)
+        ingredient_list = Ingredient.objects.filter(name | synonym).order_by('name')
+        paginator = Paginator(ingredient_list, 25)
+        
+        page = request.POST.get('page', 1)
+        try:
+            ingredients = paginator.page(page)
+        except PageNotAnInteger:
+            ingredients = paginator.page(1)
+        except EmptyPage:
+            ingredients = paginator.page(paginator.num_pages)
+        
+        ingredients_json = json.dumps(ingredients)
+        return HttpResponse(ingredients_json, mimetype='application/javascript')
+    
     raise Http404
     
 """

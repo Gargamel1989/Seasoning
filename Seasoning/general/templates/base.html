@@ -105,14 +105,14 @@
                             <a class="sub-navigation-link {{ request.path|active:"MijnRecepten" }}" href="/account/recipes/" >Mijn Recepten</a>
                         </div>
                         <div id="sub-navigation-information" class="header-sub-navigation">
-                            <a class="sub-navigation-link {{ request.path|active:"Ingredienten" }}" href="" >Ingredienten</a>
+                            <a class="sub-navigation-link {{ request.path|active:"Ingredienten" }}" href="/ingredients/" >Ingredienten</a>
                             <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="" >Nieuws</a>
                             <a class="sub-navigation-link {{ request.path|active:"OverSeasoning" }}" href="" >Over Seasoning</a>
                         </div>
                         {% if user.is_superuser %}
                         <div id="sub-navigation-admin" class="header-sub-navigation">
-                            <a class="sub-navigation-link {{ request.path|active:"Ingredienten" }}" href="/ingredients/add/" >Ingredient Toevoegen</a>
-                            <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="" >Eenheden</a>
+                            <a class="sub-navigation-link" href="/ingredients/list/" >Ingredienten</a>
+                            <a class="sub-navigation-link" href="" >Eenheden</a>
                         </div>
                         {% endif %}
                     </div>
