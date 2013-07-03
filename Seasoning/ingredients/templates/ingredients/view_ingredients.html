@@ -9,5 +9,11 @@
 {{ form.as_p }}
 
 ajax call implementeren om ingredienten te tonen
+<br />
+<br />
+
+{% for ingredient in ingredients %}
+<a href='/ingredients/{{ ingredient.pk }}/'>{{ ingredient.name }}</a><br />
+{% endfor %}
 
 {% endblock %}

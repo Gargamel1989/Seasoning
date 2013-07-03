@@ -227,7 +227,7 @@ class Unit(models.Model):
     name = models.CharField(max_length=30L, unique=True)
     short_name = models.CharField(max_length=10L, blank=True)
     
-    parent_unit = models.ForeignKey('self', related_name="derived_unit", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
+    parent_unit = models.ForeignKey('self', related_name="derived_units", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
     ratio = models.FloatField(null=True, blank=True)
     
     def __unicode__(self):
@@ -238,13 +238,26 @@ class Unit(models.Model):
             return self.short_name
         return self.name
     
-class CanUseUnitManager(models.Manager):
+class UnitManager(models.Manager):
     #TODO: test
     
     def all_useable_units(self, ingredient_id):
-        direct_units = models.Q(ingredient_id=ingredient_id)
-        derived_units = models.Q(unit___derived_unit__used_by__ingredient_id=ingredient_id)
-        return self.filter(direct_units | derived_units)
+        
+        query = ('(SELECT `canuseunit`.`id`, `canuseunit`.`ingredient`, `canuseunit`.`unit`, `canuseunit`.`is_primary_unit`, `canuseunit`.`conversion_factor`, name '
+                 ' FROM unit '
+                 ' LEFT JOIN canuseunit '
+                 ' ON unit.id=canuseunit.unit '
+                 ' WHERE ingredient=%s) '
+                 'UNION '
+                 '(SELECT 0, `canuseunit`.`ingredient`, derived_unit.id, 0, (canuseunit.conversion_factor*derived_unit.ratio) AS conversion_factor, derived_unit.name '
+                 ' FROM unit AS derived_unit '
+                 ' LEFT JOIN unit AS parent_unit '
+                 ' ON derived_unit.parent_unit_id=parent_unit.id '
+                 ' LEFT JOIN canuseunit '
+                 ' ON parent_unit.id=canuseunit.unit '
+                 ' WHERE derived_unit.parent_unit_id IS NOT NULL '
+                 ' AND ingredient=%s)')
+        return self.raw(query, [ingredient_id, ingredient_id])
         
 class CanUseUnit(models.Model):
     """
@@ -258,7 +271,7 @@ class CanUseUnit(models.Model):
     class Meta:
         db_table = 'canuseunit'
         
-    objects = CanUseUnitManager()
+    objects = UnitManager()
         
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='useable_units')
     unit = models.ForeignKey('Unit', related_name='used_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))

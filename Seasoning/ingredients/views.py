@@ -35,16 +35,23 @@ from ingredients.forms import SearchIngredientForm
 
 def view_ingredients(request):
     search_form = SearchIngredientForm()
-    return render(request, 'ingredients/view_ingredients.html', {'form': search_form})
+    ingredients = Ingredient.objects.all()
+    return render(request, 'ingredients/view_ingredients.html', {'form': search_form,
+                                                                 'ingredients': ingredients})
     
 def view_ingredient(request, ingredient_id):
     try:
         ingredient = Ingredient.objects.get(pk=ingredient_id)
         useable_units = CanUseUnit.objects.all_useable_units(ingredient_id=ingredient_id)
+        try:
+            available_ins = ingredient.get_available_ins().select_related()
+        except Ingredient.BasicIngredientException:
+            available_ins = []
     except Ingredient.DoesNotExist:
         raise Http404    
     return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient,
-                                                                'useable_units': useable_units})
+                                                                'useable_units': useable_units,
+                                                                'available_ins': available_ins})
 
 
 

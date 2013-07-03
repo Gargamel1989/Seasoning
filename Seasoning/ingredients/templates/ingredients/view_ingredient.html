@@ -16,54 +16,58 @@
 <p>
 <p>
 <strong>Beschrijving:</strong><br />
-{{ ingredient.description }}
+{{ ingredient.description|linebreaksbr }}
 </p>
 <p>
 <strong>Bewaringstip:</strong><br />
-{{ ingredient.conservation_tip }}
+{{ ingredient.conservation_tip|linebreaksbr }}
 </p>
 <p>
 <strong>Bereidingstip:</strong><br />
-{{ ingredient.preparation_tip }}
+{{ ingredient.preparation_tip|linebreaksbr }}
 </p>
 <p>
 <strong>Speciale Eigenschappen:</strong><br />
-{{ ingredient.properties }}
+{{ ingredient.properties|linebreaksbr }}
 </p>
 <p>
 <strong>Bruikbare eenheden:</strong><br>
-{% for useable_unit in useable_units %}
----{{ useable_unit.unit.name }}: Conversiefactor={{ useable_unit.conversion_factor }}<br>
-{% endfor %}
+<ul>
+    {% for useable_unit in useable_units %}
+    <li>{{ useable_unit.name }} (Conversiefactor={{ useable_unit.conversion_factor }})</li>
+    {% endfor %}
+</ul>
 </p>
-<br>
-Basis voetafdruk: {{ ingredient.base_footprint }} kgCO2/{{ ingredient.primary_unit.unit.short }}
-<br>
-Bronnen: {{ ingredient.source }}
-<br>
-Geaccepteerd: {{ ingredient.accepted }}
-<br>
-Bruikbare eenheden: <br>
-{% for can_use_unit in ingredient.units %}
----{{ can_use_unit.unit.name }}: Conversiefactor={{ can_use_unit.conversion_factor }}<br>
-{% endfor %}
-<br>
-{% if ingredient.type == 'Veggie' or ingredient.type == 'Fish' %}
-Bijkomende informatie voor Veggie ingredienten:
-<br>
-Bewaarbaarheid: {{ ingredient.vegetal_ingredient.preservability }}
-<br>
-Uitstoot tijdens bewaring: {{ ingredient.vegetal_ingredient.preservation_footprint }}
-<br>
-<br>
-Beschikbaar in: <br>
-{% for available_in in ingredient.available_in_c %}
-&nbsp;-&nbsp;Dit ingredient is beschikbaar in {{ available_in.country.name }} ({{ available_in.country.distance }} km van Belgie) tussen {{ available_in.month_from }} en {{ available_in.month_until }}<br>
-&nbsp;&nbsp;&nbsp;Het wordt vervoerd via {{ available_in.transport_method.name }}<br>
-&nbsp;{% if available_in.production_type %}Het wordt geproduceerd adhv. {{ available_in.production_type }}<br>{% endif %}
-&nbsp;Een ingredient van deze optie heeft een extra uitstoot van {{ available_in.extra_footprint }}<br>
-{% endfor %}
-<br>
+<p>
+<strong>Basis voetafdruk:</strong> {{ ingredient.base_footprint }} kgCO2/{{ ingredient.primary_unit.unit.short }}
+</p>
+{% if ingredient.type == 1 or ingredient.type == 2 %}
+<p>
+<strong>Bewaarbaarheid:</strong> {{ ingredient.preservability }} dagen
+</p>
+<p>
+<strong>Uitstoot tijdens bewaring:</strong> {{ ingredient.preservation_footprint }} kgCO2/dag
+</p>
+<p>
+<strong>Beschikbaar in:</strong> <br>
+<ul>
+    {% for available_in in available_ins %}
+    <li>
+        Dit ingredient is beschikbaar in {{ available_in.country.name }} ({{ available_in.country.distance }} km van Belgie) tussen {{ available_in.month_from }} en {{ available_in.month_until }}<br>
+        Het wordt vervoerd via {{ available_in.transport_method.name }}<br>
+        {% if available_in.production_type %}Het wordt geproduceerd adhv. {{ available_in.production_type }}<br>{% endif %}
+        Een ingredient van deze optie heeft een extra uitstoot van {{ available_in.extra_production_footprint }}<br>
+    </li>
+    {% endfor %}
+</ul>
+</p>
+<p>
+<strong>Geaccepteerd:</strong> {{ ingredient.accepted }}
+</p>
+<p>
+<strong>Bronnen:</strong><br />
+{{ ingredient.source|linebreaksbr }}
+</p>
 
 {% endif %}
 
