@@ -2,23 +2,40 @@
 
 {% block content %}
 
-Namen: {{ ingredient.name }}{% if ingredient.plural_name %} ({{ ingredient.plural_name }}){% endif %}{% for syn in ingredient.synonyms %}, {{ syn.name }} ({{ syn.plural_name }}){% endfor %}
-<br>
-Thumbnail: <img src="{{ ingredient.image.url }}">
-<br>
-Beschrijving: {{ ingredient.description }}
-<br>
-Categorie: {{ ingredient.get_category_display }}
-<br>
-Veganisme: {{ ingredient.get_veganism_display }}
-<br>
-Beschrijving: {{ ingredient.description }}
-<br>
-Bewaringstip: {{ ingredient.conservation_tip }}
-<br>
-Bereidingstip: {{ ingredient.preparation_tip }}
-<br>
-Speciale Eigenschappen: {{ ingredient.properties }}
+<p>
+    <strong>Namen:</strong> {{ ingredient.name }}{% if ingredient.plural_name %} ({{ ingredient.plural_name }}){% endif %}{% for syn in ingredient.synonyms %}, {{ syn.name }} ({{ syn.plural_name }}){% endfor %}
+</p>
+<strong>Categorie:</strong> {{ ingredient.get_category_display }}
+</p>
+<p>
+<strong>Veganisme:</strong> {{ ingredient.get_veganism_display }}
+</p>
+<p>
+    <strong>Thumbnail:</strong> <img src="{{ ingredient.image.url }}">
+</p>
+<p>
+<p>
+<strong>Beschrijving:</strong><br />
+{{ ingredient.description }}
+</p>
+<p>
+<strong>Bewaringstip:</strong><br />
+{{ ingredient.conservation_tip }}
+</p>
+<p>
+<strong>Bereidingstip:</strong><br />
+{{ ingredient.preparation_tip }}
+</p>
+<p>
+<strong>Speciale Eigenschappen:</strong><br />
+{{ ingredient.properties }}
+</p>
+<p>
+<strong>Bruikbare eenheden:</strong><br>
+{% for useable_unit in useable_units %}
+---{{ useable_unit.unit.name }}: Conversiefactor={{ useable_unit.conversion_factor }}<br>
+{% endfor %}
+</p>
 <br>
 Basis voetafdruk: {{ ingredient.base_footprint }} kgCO2/{{ ingredient.primary_unit.unit.short }}
 <br>

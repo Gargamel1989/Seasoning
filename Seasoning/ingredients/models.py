@@ -46,7 +46,7 @@ class Ingredient(models.Model):
         pass
     
     # Choices
-    VEGETABLES, FRUIT, TUBERS, NUTS_AND_SEEDS, CEREAL_PRODUCTS, HERBS, SPICES, OILS_AND_VINEGARS, MEAT, FISH, DAIRY_PRODUCTS, DRINKS = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+    VEGETABLES, FRUIT, TUBERS, NUTS_AND_SEEDS, CEREAL_PRODUCTS, HERBS, SPICES, OILS_AND_VINEGARS, MEAT, FISH, DAIRY_PRODUCTS, DRINKS, OTHER = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
     CATEGORIES = ((VEGETABLES,u'Groenten'),
                   (FRUIT,u'Fruit'),
                   (TUBERS,u'Knollen'),
@@ -58,7 +58,8 @@ class Ingredient(models.Model):
                   (MEAT,u'Vlees'),
                   (FISH,u'Vis'),
                   (DAIRY_PRODUCTS,u'Zuivelproducten'),
-                  (DRINKS,u'Dranken'))
+                  (DRINKS,u'Dranken'),
+                  (OTHER,u'Andere'))
     NON_VEGETARIAN, VEGETARIAN, VEGAN  = 0, 1, 2
     VEGANISMS = ((VEGAN,u'Veganistisch'),
                  (VEGETARIAN,u'Vegetarisch'),
@@ -226,7 +227,7 @@ class Unit(models.Model):
     name = models.CharField(max_length=30L, unique=True)
     short_name = models.CharField(max_length=10L, blank=True)
     
-    parent_unit = models.ForeignKey('self', related_name="base_unit", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
+    parent_unit = models.ForeignKey('self', related_name="derived_unit", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
     ratio = models.FloatField(null=True, blank=True)
     
     def __unicode__(self):
@@ -237,6 +238,14 @@ class Unit(models.Model):
             return self.short_name
         return self.name
     
+class CanUseUnitManager(models.Manager):
+    #TODO: test
+    
+    def all_useable_units(self, ingredient_id):
+        direct_units = models.Q(ingredient_id=ingredient_id)
+        derived_units = models.Q(unit___derived_unit__used_by__ingredient_id=ingredient_id)
+        return self.filter(direct_units | derived_units)
+        
 class CanUseUnit(models.Model):
     """
     Relates a unit to an ingredient.
@@ -249,8 +258,10 @@ class CanUseUnit(models.Model):
     class Meta:
         db_table = 'canuseunit'
         
+    objects = CanUseUnitManager()
+        
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='useable_units')
-    unit = models.ForeignKey('Unit', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
+    unit = models.ForeignKey('Unit', related_name='used_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
     is_primary_unit = models.BooleanField()
     

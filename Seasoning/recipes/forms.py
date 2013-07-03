@@ -19,9 +19,9 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django import forms
 from recipes.models import Recipe, UsesIngredient, Cuisine
-from recipes.fields import AutoCompleteSelectIngredientField
 import recipes
 from django.forms.widgets import RadioSelect
+from ingredients.fields import AutoCompleteSelectIngredientField
 
 class AddRecipeForm(forms.ModelForm):
     

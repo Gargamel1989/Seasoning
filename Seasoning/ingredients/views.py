@@ -31,15 +31,27 @@ import json
 from django.http.response import HttpResponse, Http404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
+from ingredients.forms import SearchIngredientForm
 
 def view_ingredients(request):
-    return render('ingredients/view_ingredients.html')
+    search_form = SearchIngredientForm()
+    return render(request, 'ingredients/view_ingredients.html', {'form': search_form})
     
 def view_ingredient(request, ingredient_id):
-    ingredient = get_object_or_404(Ingredient, pk=ingredient_id)
-    
-    return render('ingredients/view_ingredient.html', {ingredient: ingredient})
-    
+    try:
+        ingredient = Ingredient.objects.get(pk=ingredient_id)
+        useable_units = CanUseUnit.objects.all_useable_units(ingredient_id=ingredient_id)
+    except Ingredient.DoesNotExist:
+        raise Http404    
+    return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient,
+                                                                'useable_units': useable_units})
+
+
+
+"""
+Ajax calls
+"""
+
 def ajax_ingredient_name_list(request, query=""):
     """
     An ajax call that returns a json list with every ingredient 
@@ -93,7 +105,9 @@ def ajax_ingredients_page(request):
         return HttpResponse(ingredients_json, mimetype='application/javascript')
     
     raise Http404
-    
+
+
+
 """
 Administrative Functions only below this comment
 """
