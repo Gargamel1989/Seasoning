@@ -8,6 +8,13 @@ class IngredientsViewsTestCase(TestCase):
         if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.mysql':
             raise Exception('Please use a MySQL Database for this test')
         TestCase.setUp(self)
+    
+    def test_view_ingredient(self):
+        resp = self.client.get('/ingredients/10/')
+        self.assertEqual(resp.status_code, 404)
+        
+        resp = self.client.get('/ingredients/1/')
+        self.assertEqual(resp.status_code, 200)
         
     def test_ajax_ingredient_name_list(self):
         # get requests shouldn't be answered

@@ -2,6 +2,8 @@ from django.test import TestCase
 from ingredients.models import Unit, Country, Ingredient, AvailableInCountry, TransportMethod, AvailableIn
 import datetime
 from django.conf import settings
+from django.db import connection
+from django.core.exceptions import ObjectDoesNotExist
 
 class IngredientModelsTestCase(TestCase):
     fixtures = ['ingredients.json']
@@ -71,8 +73,8 @@ class IngredientModelsTestCase(TestCase):
         seasonal_ing = Ingredient.objects.get(pk=1)
         self.assertEqual(len(seasonal_ing.get_available_ins()), 0)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 0)
-        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.get_available_in_with_smallest_footprint)
-        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.footprint)
+        self.assertRaises(ObjectDoesNotExist, seasonal_ing.get_available_in_with_smallest_footprint)
+        self.assertRaises(ObjectDoesNotExist, seasonal_ing.footprint)
         
     def test_seasonal_ingredient_no_active_availins(self):
         """
@@ -98,8 +100,8 @@ class IngredientModelsTestCase(TestCase):
         seasonal_ing = Ingredient.objects.get(pk=1)
         self.assertEqual(len(seasonal_ing.get_available_ins()), 2)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 0)
-        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.get_available_in_with_smallest_footprint)
-        self.assertRaises(AvailableIn.DoesNotExist, seasonal_ing.footprint)
+        self.assertRaises(ObjectDoesNotExist, seasonal_ing.get_available_in_with_smallest_footprint)
+        self.assertRaises(ObjectDoesNotExist, seasonal_ing.footprint)
         
     def test_seasonal_ingredient_active_availin(self):
         """
@@ -129,7 +131,7 @@ class IngredientModelsTestCase(TestCase):
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 1)
         self.assertEqual(seasonal_ing.get_active_available_ins()[0].pk, avail_in_1.pk)
         self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_1.pk)
-        self.assertEqual(seasonal_ing.footprint(), 12)
+        self.assertEqual(seasonal_ing.footprint(), 5012)
         
     def test_seasonal_ingredient_active_availin_outer_date_interval(self):
         """
@@ -153,14 +155,14 @@ class IngredientModelsTestCase(TestCase):
                                       date_from=datetime.date.today(),
                                       date_until=datetime.date.today() - datetime.timedelta(days=2))
         avail_in.save()
-        self.assertEqual(seasonal_ing.footprint(), 12)
+        self.assertEqual(seasonal_ing.footprint(), 5012)
         
         # Test other type of outer interval
-        avail_in.date_from = datetime.date.today() + 2
+        avail_in.date_from = datetime.date.today() + datetime.timedelta(days=2)
         avail_in.date_until = datetime.date.today()
         avail_in.save()
         self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in.pk)
-        self.assertEqual(seasonal_ing.footprint(), 12)
+        self.assertEqual(seasonal_ing.footprint(), 5012)
         
     def test_seasonal_ingredient_multiple_availins(self):
         """
@@ -189,14 +191,14 @@ class IngredientModelsTestCase(TestCase):
         avail_in_2.save()
         self.assertEqual(len(seasonal_ing.get_available_ins()), 2)
         self.assertEqual(len(seasonal_ing.get_active_available_ins()), 2)
-        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_1.pk)
-        self.assertEqual(seasonal_ing.footprint(), 12)
+        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_2.pk)
+        self.assertEqual(seasonal_ing.footprint(), 5010)
         
         # Test with other available in being the lowest
-        avail_in_2.location=Country.objects.get(pk=1)
-        avail_in_2.save()
-        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_2.pk)
-        self.assertEqual(seasonal_ing.footprint(), 10)
+        avail_in_1.location=Country.objects.get(pk=1)
+        avail_in_1.save()
+        self.assertEqual(seasonal_ing.get_available_in_with_smallest_footprint().pk, avail_in_1.pk)
+        self.assertEqual(seasonal_ing.footprint(), 12)
         
     def test_seasonal_ingredient_with_preservation(self):
         """
@@ -217,7 +219,7 @@ class IngredientModelsTestCase(TestCase):
                                       date_until=datetime.date.today() - datetime.timedelta(days=10))
         avail_in.save()
         # Ingredient must be preserved for 10 days
-        self.assertEqual(seasonal_ing.footprint(), 12 + 2*10)
+        self.assertEqual(seasonal_ing.footprint(), 5012 + 2*10)
      
     def test_seasonal_ingredient_with_preservation_outer_date_interval(self):
         """

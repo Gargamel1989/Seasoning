@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.db import models
+from django.db import models, connection
 import time
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
 import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_image_filename(instance, old_filename):
@@ -119,14 +120,10 @@ class Ingredient(models.Model):
         The until date is extended with the preservability of the ingredient
         
         """
-        extended_date_sql = 'DATE_ADD(date_until,INTERVAL ' + str(self.preservability) + ' DAY)'
-        extended_until_date_added = self.get_available_ins().extra(select={'extended_date_until': extended_date_sql})
-        
         today = datetime.date.today()
-        before_filtered = extended_until_date_added.filter(ingredient=self,
-                                                           date_from__lte=datetime.date(2000, today.month, today.day))
-        return before_filtered.extra(where={'"extended_date_until" >= ' + today.strftime('2000-%m-%d')})
-    
+        return self.get_available_ins().extra(where={('(date_from <= \'' + today.strftime('2000-%m-%d') + '\' AND DATE_ADD(date_until,INTERVAL ' + str(self.preservability) + ' DAY) >= \'' + today.strftime('2000-%m-%d') + '\') OR '
+                                                       '(date_from >= date_until AND (date_from <= \'' + today.strftime('2000-%m-%d') + '\' OR DATE_ADD(date_until,INTERVAL ' + str(self.preservability) + ' DAY) >= \'' + today.strftime('2000-%m-%d') + '\'))')})
+        
     def get_available_in_with_smallest_footprint(self):
         """
         Return the AvailableIn with the smallest footprint of the currently active
@@ -142,16 +139,16 @@ class Ingredient(models.Model):
         smallest_footprint = None
         for available_in in self.get_active_available_ins():
             today_normalized = datetime.date.today().replace(year=2000)
-            if today_normalized > available_in:
+            if today_normalized > available_in.date_until:
                 # This means this available in is currently under preservation
-                footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
+                footprint = available_in.footprint + (today_normalized - available_in.date_until).days*self.preservation_footprint
             else:
                 footprint = available_in.footprint
-            if not footprint or smallest_footprint > footprint:
+            if not smallest_footprint or smallest_footprint > footprint:
                 smallest_footprint = footprint
                 smallest_available_in = available_in
         if not smallest_footprint:
-            raise AvailableIn.DoesNotExist('No active AvailableIn object was found for ingredient ' + self)
+            raise ObjectDoesNotExist('No active AvailableIn object was found for ingredient ' + str(self))
         return smallest_available_in
         
     def footprint(self):
@@ -168,9 +165,9 @@ class Ingredient(models.Model):
         try:
             today_normalized = datetime.date.today().replace(year=2000)
             available_in = self.get_available_in_with_smallest_footprint()
-            if today_normalized > available_in:
+            if today_normalized > available_in.date_until:
                 # This means this available in is currently under preservation
-                footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
+                footprint = available_in.footprint + (today_normalized - available_in.date_until).days*self.preservation_footprint
             else:
                 footprint = available_in.footprint
             return footprint
