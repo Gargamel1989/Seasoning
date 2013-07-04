@@ -215,7 +215,7 @@ LOGIN_REDIRECT_URL = '/'
 ACCOUNT_ACTIVATION_DAYS = 7
 
 # Registration is closed during development
-REGISTRATION_OPEN = False
+#REGISTRATION_OPEN = False
 
 # Django secret key
 SECRET_KEY = secrets.SECRET_KEY

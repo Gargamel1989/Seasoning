@@ -1,38 +1,104 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script>
+$(document).ready(function() {
+    
+    // FACEBOOK
+    $.ajaxSetup({ cache: true });
+    $.getScript('//connect.facebook.net/en_UK/all.js', function(){
+        FB.init({
+            appId: '337617306368900',
+            channelUrl: '/auth/fb/channel/',
+        });
+    });
+    
+    $('#fb-login-btn').click(function() {
+        
+        FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                // the user is logged in and has authenticated your
+                // app, and response.authResponse supplies
+                // the user's ID, a valid access token, a signed
+                // request, and the time the access token 
+                // and signed request each expire
+                var uid = response.authResponse.userID;
+                var accessToken = response.authResponse.accessToken;
+                // Do ajax request to server. if uid is known log the user
+                // in and redirect to the 'next' page or to homepage.
+                // if uid is not know, redirect user to registration page
+                alert('connected')
+            } else if (response.status === 'not_authorized') {
+                // the user is logged in to Facebook, 
+                // but has not authenticated your app
+                // present the user with an authorization box. After auth, 
+                // redirect to registration page or next/home according
+                // to the same rules as above
+                FB.login(function(response) {
+                    if (response.authResponse) {
+                        alert('Hoera!')
+                    } else {
+                        alert('Stommerik!')
+                    }
+                }, {scope: 'email'})
+            } else {
+                // the user isn't logged in to Facebook.
+                // make the user login to facebook. then do the same as above
+                window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=https%3A%2F%2Fwww.seasoning.be%2Fauth%2Ffacebook%2F&scope=email&client_id=337617306368900&type=web_server'
+            }
+        });
+        return false;
+    });
+});
+</script>
 
 <h1>Aanmelden bij Seasoning.be</h1>
 
-<form action="/login/" method="post" class="login-form">
-	{% csrf_token %}
-  	
-	{{ form.non_field_errors }}
-	
-	<div class="field-wrapper">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-		{{ form.username.errors }}
-	</div>
-	
-	<div class="field-wrapper">
-        {{ form.password.label_tag }}
-        {{ form.password }}
-		{{ form.password.errors }}
-	</div>
-	
-	<input type="hidden" name="next" value="{{ next }}" />
-		
-	<div id="extra-login-links">		    		
-		<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
-		<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
-	</div>
-  
-	<input type="submit" value="Aanmelden" id="login-submit"/>
-</form>
+<table>
+    <tr>
+        <td width=400px>
+            <form action="/login/" method="post" class="login-form">
+            	{% csrf_token %}
+              	
+            	{{ form.non_field_errors }}
+            	
+            	<div class="field-wrapper">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+            		{{ form.username.errors }}
+            	</div>
+            	
+            	<div class="field-wrapper">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+            		{{ form.password.errors }}
+            	</div>
+            	
+            	<input type="hidden" name="next" value="{{ next }}" />
+            		
+            	<div id="extra-login-links">		    		
+            		<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
+            		<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
+            	</div>
+              
+            	<input type="submit" value="Aanmelden" id="login-submit"/>
+            </form>
 
-<script type="text/javascript">
-document.getElementById('username').focus()
-</script>
-
+            <script type="text/javascript">
+            document.getElementById('username').focus()
+            </script>
+        </td>
+        <td>
+            <a id="fb-login-btn" href="#">
+                Login with Facebook
+            </a>
+            <a class="btn btn-google" href="/auth/google" style="display: block; margin-bottom:15px;">
+                Login with Google
+            </a>
+            <a class="btn btn-info btn-twitter" href="/auth/twitter" style="display: block; margin-bottom:15px;">
+                Login with Twitter
+            </a>
+        </td>
+    </tr>
+</table>
 {% endblock %}

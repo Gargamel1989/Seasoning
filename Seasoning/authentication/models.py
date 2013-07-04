@@ -136,14 +136,14 @@ class User(AbstractBaseUser):
         """
         send_mail(subject, message, from_email, [self.email])
     
-    def delete(self, delete_recipes, *args, **kwargs):
+    def delete(self, delete_recipes=False, *args, **kwargs):
         """
         Delete this user and the recipes added by this user 
         if this is wanted
         
         """
         if not delete_recipes:
-            recipes.models.Recipe.objects.filter(author=self).update(author=0)
+            self.recipes.all().update(author=None)
         super(User, self).delete(*args, **kwargs)
 
     def __unicode__(self):

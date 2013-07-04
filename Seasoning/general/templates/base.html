@@ -61,10 +61,10 @@
 				});
 			});
         </script>
-    {% block extrahead %}{% endblock %}
-	</head>
+    </head>
   
 	<body>
+	    {% block afterbody %}{% endblock %}
         <div id="body-container">
             <div id="header">
                 <div id="header-main">
@@ -102,12 +102,12 @@
                         <div id="sub-navigation-recipes" class="header-sub-navigation">
                             <a class="sub-navigation-link {{ request.path|active:"ReceptenZoeken" }}" href="/recipes/search/" >Recepten Zoeken</a>
                             <a class="sub-navigation-link {{ request.path|active:"ReceptToevoegen" }}" href="/recipes/add/" >Recept Toevoegen</a>
-                            <a class="sub-navigation-link {{ request.path|active:"MijnRecepten" }}" href="/account/recipes/" >Mijn Recepten</a>
+                            <a class="sub-navigation-link {{ request.path|active:"MijnRecepten" }}" href="/recipes/mine/" >Mijn Recepten</a>
                         </div>
                         <div id="sub-navigation-information" class="header-sub-navigation">
                             <a class="sub-navigation-link {{ request.path|active:"Ingredienten" }}" href="/ingredients/" >Ingredienten</a>
-                            <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="" >Nieuws</a>
-                            <a class="sub-navigation-link {{ request.path|active:"OverSeasoning" }}" href="" >Over Seasoning</a>
+                            <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="/news/" >Nieuws</a>
+                            <a class="sub-navigation-link {{ request.path|active:"OverSeasoning" }}" href="/about/" >Over Seasoning</a>
                         </div>
                         {% if user.is_superuser %}
                         <div id="sub-navigation-admin" class="header-sub-navigation">

@@ -106,17 +106,17 @@ class AuthenticationViewsTestCase(TestCase):
                                                                    'site': Site.objects.get_current()})
         RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
         
-        resp = self.client.get('/settings/')
-        self.assertRedirects(resp, '/login/?next=/settings/', 302, 200)
+        resp = self.client.get('/account/settings/')
+        self.assertRedirects(resp, '/login/?next=/account/settings/', 302, 200)
         
         self.client.login(username='testuser@test.be', password='haha')
-        resp = self.client.get('/settings/')
+        resp = self.client.get('/account/settings/')
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('form' in resp.context)
         self.failIf('new_email' in resp.context)
         self.assertEqual(resp.context['form'].__class__, AccountSettingsForm)
         
-        resp = self.client.post('/settings/', {'email': 'othertestuser@test.be'})
+        resp = self.client.post('/account/settings/', {'email': 'othertestuser@test.be'})
         self.assertEqual(resp.status_code, 200)
         NewEmail.objects.get(user=user)
         self.assertTrue('new_email' in resp.context)
@@ -131,12 +131,12 @@ class AuthenticationViewsTestCase(TestCase):
         RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
         
         self.client.login(username='testuser@test.be', password='haha')
-        self.client.post('/settings/', {'email': 'othertestuser@test.be'})
+        self.client.post('/account/settings/', {'email': 'othertestuser@test.be'})
         resp = self.client.get('/email/change/wrongactivationcode/')
         self.assertEqual(resp.status_code, 404)
         new_email = NewEmail.objects.get(user=user)
         resp = self.client.get('/email/change/' + new_email.activation_key + '/')
-        self.assertRedirects(resp, '/settings/', 302, 200)
+        self.assertRedirects(resp, '/account/settings/', 302, 200)
         
     def test_change_password_view(self):
         user = RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
@@ -156,6 +156,6 @@ class AuthenticationViewsTestCase(TestCase):
         resp = self.client.post('/password/change/', {'old_password': 'haha',
                                                       'new_password1': 'haha1',
                                                       'new_password2': 'haha1'})
-        self.assertRedirects(resp, '/settings/', 302, 200)
+        self.assertRedirects(resp, '/account/settings/', 302, 200)
         self.assertTrue(User.objects.get(email='testuser@test.be').check_password('haha1'))
         

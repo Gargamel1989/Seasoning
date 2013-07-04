@@ -97,7 +97,7 @@ class Ingredient(models.Model):
     
     @property
     def primary_unit(self):
-        return CanUseUnit.objects.get(ingredient=self, is_primary_unit=True)
+        return CanUseUnit.objects.select_related().get(ingredient=self, is_primary_unit=True)
     
     def get_available_ins(self):
         """
@@ -113,17 +113,32 @@ class Ingredient(models.Model):
     
     def get_active_available_ins(self):
         """
-        Returns a queryset of the available in objects belonging to this ingredient
+        Returns a list of the available in objects belonging to this ingredient
         that are currently available (The current date is between the from and until
         date)
         
         The until date is extended with the preservability of the ingredient
         
-        """
-        today = datetime.date.today()
-        return self.get_available_ins().extra(where={('(date_from <= \'' + today.strftime('2000-%m-%d') + '\' AND DATE_ADD(date_until,INTERVAL ' + str(self.preservability) + ' DAY) >= \'' + today.strftime('2000-%m-%d') + '\') OR '
-                                                       '(date_from >= date_until AND (date_from <= \'' + today.strftime('2000-%m-%d') + '\' OR DATE_ADD(date_until,INTERVAL ' + str(self.preservability) + ' DAY) >= \'' + today.strftime('2000-%m-%d') + '\'))')})
+        This is done natively instead of through SQL because the SQL query would be 
+        pretty complicated, while the performance benefit is not very obvious as
+        every ingredient will only have a few available_ins
         
+        """
+        today_normalized = datetime.date.today().replace(year=2000)
+        
+        active_available_ins = []
+        for available_in in self.get_available_ins():
+            extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability)).replace(year=2000)
+            if available_in.date_from < available_in.date_until:
+                # Inner interval
+                if available_in.date_from <= today_normalized and today_normalized <= extended_until_date:
+                    active_available_ins.append(available_in)
+            else:
+                # Outer interval (date_from < extended_until_date) -> crosses newyear
+                if available_in.date_from <= today_normalized or today_normalized <= extended_until_date:
+                    active_available_ins.append(available_in)
+        return active_available_ins
+    
     def get_available_in_with_smallest_footprint(self):
         """
         Return the AvailableIn with the smallest footprint of the currently active
@@ -240,13 +255,13 @@ class UnitManager(models.Manager):
     
     def all_useable_units(self, ingredient_id):
         
-        query = ('(SELECT `canuseunit`.`id`, `canuseunit`.`ingredient`, `canuseunit`.`unit`, `canuseunit`.`is_primary_unit`, `canuseunit`.`conversion_factor`, name '
+        query = ('(SELECT `canuseunit`.`id`, `canuseunit`.`ingredient`, `canuseunit`.`unit`, `canuseunit`.`is_primary_unit`, `canuseunit`.`conversion_factor` '
                  ' FROM unit '
                  ' LEFT JOIN canuseunit '
                  ' ON unit.id=canuseunit.unit '
                  ' WHERE ingredient=%s) '
                  'UNION '
-                 '(SELECT 0, `canuseunit`.`ingredient`, derived_unit.id, 0, (canuseunit.conversion_factor*derived_unit.ratio) AS conversion_factor, derived_unit.name '
+                 '(SELECT 0, `canuseunit`.`ingredient`, derived_unit.id, 0, (canuseunit.conversion_factor*derived_unit.ratio) AS conversion_factor '
                  ' FROM unit AS derived_unit '
                  ' LEFT JOIN unit AS parent_unit '
                  ' ON derived_unit.parent_unit_id=parent_unit.id '
