@@ -24,7 +24,6 @@ from recipes.forms import AddRecipeForm, UsesIngredientForm, SearchRecipeForm,\
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
 from django.forms.models import inlineformset_factory
 from django.contrib import messages, comments
 from django.db.models import Q
@@ -199,3 +198,9 @@ def delete_recipe_comment(request, recipe_id, comment_id):
         return redirect(view_recipe, recipe_id)
     else:
         raise PermissionDenied
+
+@login_required
+def my_recipes(request):
+    recipes = request.user.recipes
+    
+    return render(request, 'recipes/my_recipes.html', {'recipes': recipes})

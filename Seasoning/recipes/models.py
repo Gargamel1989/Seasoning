@@ -31,68 +31,6 @@ from django.core.validators import MaxValueValidator
 from django.db.models.fields import FloatField
 from django.core.exceptions import ValidationError
 
-class RecipeManager(models.Manager):
-    
-    def get_everything(self, recipe_id):
-        recipe = self.select_related().get(pk=recipe_id)
-        return recipe
-    
-    # Get everything used by the recipe
-    # Returns a list of UsesIngredient and UsesRecipe objects!
-    def get_ingredients(self, recipe):
-        ingredients = self.get_ingredient_ingredients(recipe)
-        ingredients_list = list(ingredients)
-        ingredients_list = sorted(ingredients_list, key=lambda ingredient: ingredient.group + ingredient.ingredient.name)
-        return ingredients_list
-    
-    # Get all the ingredients used by the recipe
-    # Returns a list of UsesIngredient objects!
-    def get_ingredient_ingredients(self, recipe):
-        uses = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
-        ings = {}
-        # Build a dictionary of ingredients, mapping ids to the ingredient objects
-        for use in uses:
-            ings[use.ingredient.pk] = use.ingredient, use
-            
-        # Query database for available_in objects of the found ingredients that are available now
-        current_month = datetime.date.today().month
-        date_filter = (Q(date_from__lte=datetime.date(2000, current_month, 1)) & Q(date_until__gte=datetime.date(2000, current_month, 1)))
-        avails_in_c = AvailableInCountry.objects.select_related('country', 'transport_method').filter(date_filter, ingredient__in=ings.keys())
-        avails_in_s = AvailableInSea.objects.select_related('sea', 'transport_method').filter(ingredient__in=ings.keys())
-        
-        # Map available_in objects to their ingredients
-        for avail in avails_in_c:
-            ingredient = ings[avail.ingredient_id][0]
-            avail.ingredient = ingredient
-            if hasattr(ingredient, 'available_ins'):
-                ingredient.available_ins.append(avail)
-            else:
-                ingredient.available_ins = [avail]
-        
-        for avail in avails_in_s:
-            ingredient = ings[avail.ingredient_id][0]
-            avail.ingredient = ingredient
-            if hasattr(ingredient, 'available_ins'):
-                ingredient.available_ins.append(avail)
-            else:
-                ingredient.available_ins = [avail]
-        
-        # Query the can_use_unit informations of all ingredients
-        units = CanUseUnit.objects.raw('SELECT * FROM canuseunit JOIN usesingredient ON canuseunit.ingredient = usesingredient.ingredient WHERE usesingredient.recipe = %s', [recipe.id])
-        
-        # Each unit in this list corresponds to an ingredient
-        for unit in units:
-            ingredient, use = ings[unit.ingredient_id]
-            if ingredient.type == 'VE' or ingredient.type == 'FI':
-                ingredient.available_ins = sorted(ingredient.available_ins, key=lambda avail: avail.total_footprint())
-                unweighted_footprint = ingredient.available_ins[0].total_footprint()
-            else:
-                unweighted_footprint = ingredient.base_footprint
-            ingredient.unit_footprint = unweighted_footprint * unit.conversion_factor
-            ingredient.total_footprint = ingredient.unit_footprint * use.amount
-            
-        return uses
-
 def get_image_filename(instance, old_filename):
     extension = os.path.splitext(old_filename)[1]
     filename = str(time.time()) + extension
@@ -110,8 +48,6 @@ class Cuisine(models.Model):
 
 class Recipe(models.Model):
     
-    objects = RecipeManager()
-    
     class Meta:
         db_table = 'recipe'
     
@@ -128,7 +64,7 @@ class Recipe(models.Model):
                (MARINADE_AND_SAUCE,u'Marinades en Sauzen'))
     
     name = models.CharField(max_length=100)
-    author = models.ForeignKey(User, editable=False)
+    author = models.ForeignKey(User, related_name='recipes', editable=False)
     time_added = models.DateTimeField(auto_now_add=True, editable=False)
     
     course = models.PositiveSmallIntegerField(choices=COURSES)
