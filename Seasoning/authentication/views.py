@@ -33,6 +33,8 @@ from general.views import home
 from django.contrib import messages
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.forms import PasswordChangeForm
+import datetime
+from django.http.response import HttpResponse
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -315,6 +317,13 @@ def account_delete(request):
 
 def facebook_authentication(request):
     return render(request, 'authentication/social/facebook.html')
+
+def facebook_channel_file(request):
+    response = HttpResponse('<script src="//connect.facebook.net/en_US/all.js"></script>')
+    response['Pragma'] = 'public'
+    response['Cache-Control'] = 'max-age=' + str(60*60*24*365)
+    response['Expires'] = (datetime.datetime.now() + datetime.timedelta(days=365)).strftime('%a, %d %b %Y %H:%M:%S GMT')
+    return response
 
 def twitter_authentication(request):
     return render(request, 'authentication/social/twitter.html')
