@@ -312,3 +312,15 @@ def account_delete(request):
     else:
         form = DeleteAccountForm()
     return render(request, 'authentication/account_delete.html', {'form': form})
+
+def facebook_authentication(request):
+    return render(request, 'authentication/social/facebook.html')
+
+def twitter_authentication(request):
+    return render(request, 'authentication/social/twitter.html')
+
+def google_authentication(request):
+    return render(request, 'authentication/social/google.html')
+
+def openid_authentication(request):
+    return render(request, 'authentication/social/openid.html')

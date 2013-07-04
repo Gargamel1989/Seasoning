@@ -4,35 +4,51 @@
 
 <h1>Aanmelden bij Seasoning.be</h1>
 
-<form action="/login/" method="post" class="login-form">
-	{% csrf_token %}
-  	
-	{{ form.non_field_errors }}
-	
-	<div class="field-wrapper">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-		{{ form.username.errors }}
-	</div>
-	
-	<div class="field-wrapper">
-        {{ form.password.label_tag }}
-        {{ form.password }}
-		{{ form.password.errors }}
-	</div>
-	
-	<input type="hidden" name="next" value="{{ next }}" />
-		
-	<div id="extra-login-links">		    		
-		<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
-		<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
-	</div>
-  
-	<input type="submit" value="Aanmelden" id="login-submit"/>
-</form>
+<table>
+    <tr>
+        <td width=400px>
+            <form action="/login/" method="post" class="login-form">
+            	{% csrf_token %}
+              	
+            	{{ form.non_field_errors }}
+            	
+            	<div class="field-wrapper">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+            		{{ form.username.errors }}
+            	</div>
+            	
+            	<div class="field-wrapper">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+            		{{ form.password.errors }}
+            	</div>
+            	
+            	<input type="hidden" name="next" value="{{ next }}" />
+            		
+            	<div id="extra-login-links">		    		
+            		<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
+            		<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
+            	</div>
+              
+            	<input type="submit" value="Aanmelden" id="login-submit"/>
+            </form>
 
-<script type="text/javascript">
-document.getElementById('username').focus()
-</script>
-
+            <script type="text/javascript">
+            document.getElementById('username').focus()
+            </script>
+        </td>
+        <td>
+            <a class="btn btn-facebook" href="/auth/facebook" style="display:block; margin-bottom:15px;">
+                Login with Facebook
+            </a>
+            <a class="btn btn-google" href="/auth/google" style="display: block; margin-bottom:15px;">
+                Login with Google
+            </a>
+            <a class="btn btn-info btn-twitter" href="/auth/twitter" style="display: block; margin-bottom:15px;">
+                Login with Twitter
+            </a>
+        </td>
+    </tr>
+</table>
 {% endblock %}
