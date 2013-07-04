@@ -64,7 +64,7 @@ class Recipe(models.Model):
                (MARINADE_AND_SAUCE,u'Marinades en Sauzen'))
     
     name = models.CharField(max_length=100)
-    author = models.ForeignKey(User, related_name='recipes', editable=False)
+    author = models.ForeignKey(User, related_name='recipes', editable=False, null=True)
     time_added = models.DateTimeField(auto_now_add=True, editable=False)
     
     course = models.PositiveSmallIntegerField(choices=COURSES)

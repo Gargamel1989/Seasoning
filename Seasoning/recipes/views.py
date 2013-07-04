@@ -123,7 +123,7 @@ def search_recipes(request, sort_field=None):
                                                            'recipes': recipes})
 
 def view_recipe(request, recipe_id, portions=None):
-    recipe = Recipe.objects.select_related().get(pk=recipe_id)
+    recipe = Recipe.objects.select_related('author', 'cuisine').get(pk=recipe_id)
     usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
 
     if portions:
@@ -201,6 +201,6 @@ def delete_recipe_comment(request, recipe_id, comment_id):
 
 @login_required
 def my_recipes(request):
-    recipes = request.user.recipes
+    recipes = request.user.recipes.all()
     
     return render(request, 'recipes/my_recipes.html', {'recipes': recipes})
