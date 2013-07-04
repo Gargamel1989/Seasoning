@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from ingredients.models import Ingredient, Synonym, CanUseUnit,\
     AvailableInCountry, AvailableInSea, Unit
 from django.forms.models import inlineformset_factory, modelform_factory,\
@@ -42,7 +42,8 @@ def view_ingredients(request):
 def view_ingredient(request, ingredient_id):
     try:
         ingredient = Ingredient.objects.get(pk=ingredient_id)
-        useable_units = CanUseUnit.objects.all_useable_units(ingredient_id=ingredient_id)
+        useable_units = list(CanUseUnit.objects.all_useable_units(ingredient_id=ingredient_id))
+        primary_unit = ingredient.primary_unit
         try:
             available_ins = ingredient.get_available_ins().select_related()
         except Ingredient.BasicIngredientException:
@@ -51,6 +52,7 @@ def view_ingredient(request, ingredient_id):
         raise Http404    
     return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient,
                                                                 'useable_units': useable_units,
+                                                                'primary_unit': primary_unit,
                                                                 'available_ins': available_ins})
 
 
@@ -68,14 +70,13 @@ def ajax_ingredient_name_list(request, query=""):
     if request.is_ajax(): 
         # Query the database for ingredients with a name of synonym like the query
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM ('
-                       '    (SELECT id, name '
-                       '     FROM ingredient '
-                       '     WHERE name LIKE %s) '
+        cursor.execute('SELECT id, name '
+                       'FROM ingredient '
+                       'WHERE name LIKE %s '
                        'UNION '
-                       '    (SELECT ingredient, name '
-                       '     FROM synonym '
-                       '     WHERE name LIKE %s)) '
+                       'SELECT ingredient, name '
+                       'FROM synonym '
+                       'WHERE name LIKE %s '
                        'ORDER BY name', ['%%%s%%' % query, '%%%s%%' % query])
         
         # Serialize to json

@@ -291,74 +291,90 @@
 	</fieldset>
 	
 	<fieldset class="FI-fieldset">
-		<legend>Beschikbaarheidsdata</legend>
-		<div id="available_in_sea-group" class="field-group">
-			{{ availins_formset.management_form }}
-			<table>
-			{% for form in availins_formset %}
-				{% if forloop.first %}
-					<tr>
-						<td>
-							<label>{{ form.location.label }}</label>
-						</td>
-						<td>
-							<label>{{ form.transport_method.label }}</label>
-						</td>
-						<td class="date">
-							<label>{{ form.date_from.label }}</label>
-						</td>
-						<td class="date">
-							<label>{{ form.date_until.label }}</label>
-						</td>
+        <legend>Beschikbaarheidsdata</legend>
+        <div id="available_in_sea-group" class="field-group">
+            {{ availins_formset.management_form }}
+            <table>
+            {% for form in availins_formset %}
+                {% if forloop.first %}
+                    <tr>
+                        <td>
+                            <label>{{ form.location.label }}</label>
+                        </td>
+                        <td>
+                            <label>{{ form.transport_method.label }}</label>
+                        </td>
+                        <td>
+                            <label>{{ form.production_type.label }}</label>
+                        </td>
+                        <td>
+                            <label>{{ form.extra_production_footprint.label }}</label>
+                        </td>
+                        <td class="date">
+                            <label>{{ form.date_from.label }}</label>
+                        </td>
+                        <td class="date">
+                            <label>{{ form.date_until.label }}</label>
+                        </td>
                         <td>
                             <label>{{ form.endangered.label }}</label>
                         </td>
-						<td>
-							Verwijderen
-						</td>
-					</tr>
-				{% endif %}
-				<tr class="available_in_sea-form">
-					{{ form.id }}
-					<td>{{ form.location.errors }}
-						{{ form.location }}</td>
-					<td>{{ form.transport_method.errors }}
-						{{ form.transport_method }}</td>
-					<td class="date">{{ form.date_from.errors }}
-						{{ form.date_from }}</td>
+                        <td>
+                            Verwijderen
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr class="available_in_sea-form">
+                    {{ form.id }}
+                    <td>{{ form.location.errors }}
+                        {{ form.location }}</td>
+                    <td>{{ form.transport_method.errors }}
+                        {{ form.transport_method }}</td>
+                    <td>{{ form.production_type.errors }}
+                        {{ form.production_type }}</td>
+                    <td>{{ form.extra_production_footprint.errors }}
+                        {{ form.extra_production_footprint }}</td>
+                    <td class="date">{{ form.date_from.errors }}
+                        {{ form.date_from }}</td>
                     <td class="date">{{ form.date_until.errors }}
                         {{ form.date_until }}</td>
                     <td class="delete">{{ form.endangered.errors }}
                         {{ form.endangered }}</td>
-					<td class="delete">{{ form.DELETE }}</td>
-				</tr>
-			{% endfor %}
-				<tr class="empty available_in_sea-form">
-					<td>
-						{{ availins_formset.empty_form.location }}
-					</td>
-					<td>
-						{{ availins_formset.empty_form.transport_method }}
-					</td>
-					<td class="date">
-						{{ availins_formset.empty_form.date_from }}
-					</td>
-					<td class="date">
-						{{ availins_formset.empty_form.date_until }}
-					</td>
-					<td class="delete">
-					    {{ availins_formset.empty_form.endangered }}
-					</td>
-					<td class="delete">
-						{{ availins_formset.empty_form.DELETE }}
-					</td>
-				</tr>
-				<tr>
-					<td><a href="#" id="available_in_sea-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
-				</tr>
-			</table>
-		</div>
-	</fieldset>
+                    <td class="delete">{{ form.DELETE }}</td>
+                </tr>
+            {% endfor %}
+                <tr class="empty available_in_sea-form">
+                    <td>
+                        {{ availinc_formset.empty_form.location }}
+                    </td>
+                    <td>
+                        {{ availinc_formset.empty_form.transport_method }}
+                    </td>
+                    <td>
+                        {{ availinc_formset.empty_form.production_type }}
+                    </td>
+                    <td>
+                        {{ availinc_formset.empty_form.extra_production_footprint }}
+                    </td>
+                    <td class="date">
+                        {{ availinc_formset.empty_form.date_from }}
+                    </td>
+                    <td class="date">
+                        {{ availinc_formset.empty_form.date_until }}
+                    </td>
+                    <td class="delete">
+                        {{ availins_formset.empty_form.endangered }}
+                    </td>
+                    <td class="delete">
+                        {{ availinc_formset.empty_form.DELETE }}
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="#" id="available_in_sea-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
+                </tr>
+            </table>
+        </div>
+    </fieldset>
 	
 	<fieldset>
 		<div class="field-group">

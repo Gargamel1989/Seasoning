@@ -22,6 +22,7 @@ import time
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
 import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_image_filename(instance, old_filename):
@@ -96,7 +97,7 @@ class Ingredient(models.Model):
     
     @property
     def primary_unit(self):
-        return CanUseUnit.objects.get(ingredient=self, is_primary_unit=True)
+        return CanUseUnit.objects.select_related().get(ingredient=self, is_primary_unit=True)
     
     def get_available_ins(self):
         """
@@ -112,20 +113,31 @@ class Ingredient(models.Model):
     
     def get_active_available_ins(self):
         """
-        Returns a queryset of the available in objects belonging to this ingredient
+        Returns a list of the available in objects belonging to this ingredient
         that are currently available (The current date is between the from and until
         date)
         
         The until date is extended with the preservability of the ingredient
         
-        """
-        extended_date_sql = 'DATE_ADD(date_until,INTERVAL ' + str(self.preservability) + ' DAY)'
-        extended_until_date_added = self.get_available_ins().extra(select={'extended_date_until': extended_date_sql})
+        This is done natively instead of through SQL because the SQL query would be 
+        pretty complicated, while the performance benefit is not very obvious as
+        every ingredient will only have a few available_ins
         
-        today = datetime.date.today()
-        before_filtered = extended_until_date_added.filter(ingredient=self,
-                                                           date_from__lte=datetime.date(2000, today.month, today.day))
-        return before_filtered.extra(where={'"extended_date_until" >= ' + today.strftime('2000-%m-%d')})
+        """
+        today_normalized = datetime.date.today().replace(year=2000)
+        
+        active_available_ins = []
+        for available_in in self.get_available_ins():
+            extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability)).replace(year=2000)
+            if available_in.date_from < available_in.date_until:
+                # Inner interval
+                if available_in.date_from <= today_normalized and today_normalized <= extended_until_date:
+                    active_available_ins.append(available_in)
+            else:
+                # Outer interval (date_from < extended_until_date) -> crosses newyear
+                if available_in.date_from <= today_normalized or today_normalized <= extended_until_date:
+                    active_available_ins.append(available_in)
+        return active_available_ins
     
     def get_available_in_with_smallest_footprint(self):
         """
@@ -142,16 +154,16 @@ class Ingredient(models.Model):
         smallest_footprint = None
         for available_in in self.get_active_available_ins():
             today_normalized = datetime.date.today().replace(year=2000)
-            if today_normalized > available_in:
+            if today_normalized > available_in.date_until:
                 # This means this available in is currently under preservation
-                footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
+                footprint = available_in.footprint + (today_normalized - available_in.date_until).days*self.preservation_footprint
             else:
                 footprint = available_in.footprint
-            if not footprint or smallest_footprint > footprint:
+            if not smallest_footprint or smallest_footprint > footprint:
                 smallest_footprint = footprint
                 smallest_available_in = available_in
         if not smallest_footprint:
-            raise AvailableIn.DoesNotExist('No active AvailableIn object was found for ingredient ' + self)
+            raise ObjectDoesNotExist('No active AvailableIn object was found for ingredient ' + str(self))
         return smallest_available_in
         
     def footprint(self):
@@ -168,9 +180,9 @@ class Ingredient(models.Model):
         try:
             today_normalized = datetime.date.today().replace(year=2000)
             available_in = self.get_available_in_with_smallest_footprint()
-            if today_normalized > available_in:
+            if today_normalized > available_in.date_until:
                 # This means this available in is currently under preservation
-                footprint = available_in.footprint + (today_normalized - available_in.date_until)*self.preservation_footprint
+                footprint = available_in.footprint + (today_normalized - available_in.date_until).days*self.preservation_footprint
             else:
                 footprint = available_in.footprint
             return footprint
@@ -243,13 +255,13 @@ class UnitManager(models.Manager):
     
     def all_useable_units(self, ingredient_id):
         
-        query = ('(SELECT `canuseunit`.`id`, `canuseunit`.`ingredient`, `canuseunit`.`unit`, `canuseunit`.`is_primary_unit`, `canuseunit`.`conversion_factor`, name '
+        query = ('(SELECT `canuseunit`.`id`, `canuseunit`.`ingredient`, `canuseunit`.`unit`, `canuseunit`.`is_primary_unit`, `canuseunit`.`conversion_factor` '
                  ' FROM unit '
                  ' LEFT JOIN canuseunit '
                  ' ON unit.id=canuseunit.unit '
                  ' WHERE ingredient=%s) '
                  'UNION '
-                 '(SELECT 0, `canuseunit`.`ingredient`, derived_unit.id, 0, (canuseunit.conversion_factor*derived_unit.ratio) AS conversion_factor, derived_unit.name '
+                 '(SELECT 0, `canuseunit`.`ingredient`, derived_unit.id, 0, (canuseunit.conversion_factor*derived_unit.ratio) AS conversion_factor '
                  ' FROM unit AS derived_unit '
                  ' LEFT JOIN unit AS parent_unit '
                  ' ON derived_unit.parent_unit_id=parent_unit.id '
