@@ -68,8 +68,9 @@ urlpatterns = patterns('',
     url(r'^email/change/(?P<activation_key>\w+)/$', change_email),
     
     # Social logins
-    url(r'^auth/fb/$', 'authentication.views.facebook_authentication'),
+    url(r'^auth/fb/register/', 'authentication.views.facebook_registration'),
     url(r'^auth/fb/channel/$', 'authentication.views.facebook_channel_file'),
+    url(r'^auth/fb/', 'authentication.views.facebook_authentication'),
     url(r'^auth/twitter/$', 'authentication.views.twitter_authentication'),
     url(r'^auth/google/$', 'authentication.views.google_authentication'),
     url(r'^auth/openid/$', 'authentication.views.openid_authentication'),

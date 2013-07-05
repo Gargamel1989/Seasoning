@@ -71,7 +71,7 @@ TIME_ZONE = None
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1
+SITE_ID = secrets.SITE_ID
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -167,6 +167,11 @@ INSTALLED_APPS = (
 )
 
 AUTH_USER_MODEL = 'authentication.User'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'authentication.backends.SocialUserBackend',
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

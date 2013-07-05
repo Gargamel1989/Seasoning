@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.contrib.auth import login, load_backend
+from django.contrib.auth import login, load_backend, get_user_model
 from django.conf import settings
 from django.contrib.sites.models import RequestSite
 
 from authentication import signals
 from authentication.forms import EmailUserCreationForm
 from authentication.models import RegistrationProfile
+from django.contrib.auth.backends import ModelBackend
 
 
 class RegistrationBackend(object):
@@ -159,4 +160,30 @@ class RegistrationBackend(object):
 
         """
         return ('activation_complete', (), {})
+
+class SocialUserBackend(ModelBackend):
+    """
+    This backend provides the ability to log in a user with a social network
+    account.
     
+    By default, the ``authenticate`` method creates ``User`` objects for
+    usernames that don't already exist in the database.  Subclasses can disable
+    this behavior by setting the ``create_unknown_user`` attribute to
+    ``False``.
+    """
+    
+    FACEBOOK, TWITTER, GOOGLE, OPENID = 'facebook_id', 'twitter_id', 'google_id', 'openid_id'
+
+    def authenticate(self, network_id, network):
+        """
+        The id should be the social id of the user that is being authentication. It
+        is considered trusted.
+        The network parameter specifies from which social network the user is
+        authenticating. It should be one of backends.{FACEBOOK, TWIITER, GOOGLE, OPENID}
+        
+        """
+        UserModel = get_user_model()
+        try:
+            return UserModel.objects.get(**{network: network_id})
+        except UserModel.DoesNotExist:
+            return None

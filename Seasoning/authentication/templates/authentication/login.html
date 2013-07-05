@@ -27,7 +27,7 @@ $(document).ready(function() {
                 // Do ajax request to server. if uid is known log the user
                 // in and redirect to the 'next' page or to homepage.
                 // if uid is not know, redirect user to registration page
-                alert('connected')
+                window.location = 'https://www.{{ site }}/auth/fb/?uid=' + uid + '&accessToken=' + accessToken;
             } else if (response.status === 'not_authorized') {
                 // the user is logged in to Facebook, 
                 // but has not authenticated your app
@@ -44,7 +44,7 @@ $(document).ready(function() {
             } else {
                 // the user isn't logged in to Facebook.
                 // make the user login to facebook. then do the same as above
-                window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=https%3A%2F%2Fwww.seasoning.be%2Fauth%2Ffacebook%2F&scope=email&client_id=337617306368900&type=web_server'
+                window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=https%3A%2F%2Fwww.{{ site }}%2Fauth%2Fb%2F&scope=email&client_id=337617306368900&type=web_server'
             }
         });
         return false;

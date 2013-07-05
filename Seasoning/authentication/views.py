@@ -24,7 +24,7 @@ from django.shortcuts import render, redirect, render_to_response
 from django.template.context import RequestContext
 from authentication.forms import ResendActivationEmailForm, AccountSettingsForm,\
     DeleteAccountForm
-from django.contrib.auth import get_user_model, logout
+from django.contrib.auth import get_user_model, logout, authenticate, login
 from django.utils.translation import ugettext_lazy as _
 from authentication.models import NewEmail, User
 from django.core.exceptions import ObjectDoesNotExist
@@ -35,6 +35,10 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.forms import PasswordChangeForm
 import datetime
 from django.http.response import HttpResponse
+import urllib2
+from django.utils import simplejson
+from urllib2 import HTTPError
+from authentication.backends import SocialUserBackend
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -177,7 +181,7 @@ def resend_activation_email(request):
             
             messages.add_message(request, messages.INFO, _('A new activation email has been sent to %s. This email should '
                                                            'arrive within 15 minutes. Please be sure to check your Spam/Junk '
-                                                           'folder.'))            
+                                                           'folder.'))
             return redirect(home)
         
     else:
@@ -316,6 +320,27 @@ def account_delete(request):
     return render(request, 'authentication/account_delete.html', {'form': form})
 
 def facebook_authentication(request):
+    uid = request.GET.get('uid', '')
+    access_token = request.GET.get('accessToken', '')
+    redirect_to = request.REQUEST.get('next', '')
+    try:
+        user_info_fb = urllib2.urlopen('https://graph.facebook.com/me?access_token=' + access_token)
+        user_info = simplejson.loads(user_info_fb.read())
+        if uid == user_info['id']:
+            # The id can be trusted: try to log the user in
+            user = authenticate(**{'network_id':uid, 
+                                   'network':SocialUserBackend.FACEBOOK})
+            if user:
+                login(request, user)
+                return redirect(redirect_to)
+            messages.add_message(request, messages.INFO, _('Your social account has not been connected to Seasoning yet. Please take a minute to register.'))
+            return redirect('/auth/fb/register/')
+    except HTTPError:
+        pass
+    messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Facebook. Please try again.'))
+    return redirect('/login/')
+
+def facebook_registration(request):
     return render(request, 'authentication/social/facebook.html')
 
 def facebook_channel_file(request):
