@@ -20,9 +20,8 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django.conf.urls import patterns, url
 from authentication.views import registration_complete, registration_closed,\
     resend_activation_email, register, activate, change_email,\
-    change_password
+    change_password, login
 from authentication.backends import RegistrationBackend
-from authentication.forms import CheckActiveAuthenticationForm
 
 urlpatterns = patterns('',
     
@@ -41,8 +40,7 @@ urlpatterns = patterns('',
         name='registration_activate'),
     
     # Login urls
-    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'authentication/login.html',
-                                                         'authentication_form': CheckActiveAuthenticationForm}, name='auth_login'),
+    url(r'^login/$', login, name='auth_login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'authentication/logout.html'}),
     url(r'^password/reset/$', 'django.contrib.auth.views.password_reset', 
         {'template_name':'authentication/password_reset_form.html',
@@ -69,6 +67,7 @@ urlpatterns = patterns('',
     
     # Social logins
     url(r'^auth/fb/register/', 'authentication.views.facebook_registration'),
+    url(r'^auth/fb/connect/', 'authentication.views.facebook_connect'),
     url(r'^auth/fb/channel/$', 'authentication.views.facebook_channel_file'),
     url(r'^auth/fb/', 'authentication.views.facebook_authentication'),
     url(r'^auth/twitter/$', 'authentication.views.twitter_authentication'),

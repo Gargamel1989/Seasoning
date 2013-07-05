@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="fb-root"></div>
+<script src="https://connect.facebook.net/en_US/all.js#appId=337617306368900&xfbml=1"></script>
+<center>
+    <fb:registration
+        fields="name,email,gender,birthday"
+        redirect-uri="http://{{ site }}/auth/fb/register/">
+    </fb:registration>
+</center>
+{% endblock %}
