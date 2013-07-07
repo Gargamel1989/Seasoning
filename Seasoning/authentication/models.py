@@ -35,41 +35,36 @@ from imagekit.processors.resize import ResizeToFit, AddBorder
 from django.utils import timezone
 from django.core.mail import send_mail, EmailMultiAlternatives
 import recipes
+from django.contrib.auth.hashers import make_password, check_password,\
+    is_password_usable
 
 
 class UserManager(BaseUserManager):
     
-    def create_user(self, username, email, gender, date_of_birth, password=None):
+    def create_user(self, givenname, surname, email, date_of_birth, password=None):
         """
-        Creates and saves a User with the given email, date of
+        Creates and saves a User with the given name, email, date of
         birth and password.
         """
-        if not username:
-            raise ValueError(_('The given username must be set'))
-        if not email:
-            raise ValueError(_('Users must have an email address'))
-
-        user = self.model(
-            username=username,
-            email=UserManager.normalize_email(email),
-            gender=gender,
-            date_of_birth=date_of_birth
-        )
+        user = self.model(givenname=givenname,
+                          surname=surname,
+                          email=UserManager.normalize_email(email),
+                          date_of_birth=date_of_birth)
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, gender, date_of_birth, password):
+    def create_superuser(self, givenname, surname, email, date_of_birth, password):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
-        user = self.create_user(username,
-                                email,
-                                password=password,
-                                gender=gender,
-                                date_of_birth=date_of_birth)
+        user = self.create_user(givenname=givenname,
+                                surname=surname,
+                                email=UserManager.normalize_email(email),
+                                date_of_birth=date_of_birth,
+                                password=password)
         user.is_superuser = True
         user.save(using=self._db)
         return user
@@ -82,15 +77,12 @@ def get_image_filename(instance, old_filename):
     filename = str(time.time()) + '.png'
     return 'images/users/' + filename
 
-class User(AbstractBaseUser):
+class User(models.Model):
+    class Meta:
+        db_table = 'user'
+    
     
     objects = UserManager()
-    
-    MALE, FEMALE = 'M', 'F'
-    GENDER_CHOICES = (
-        (MALE, _('Male')),
-        (FEMALE, _('Female')),
-    )
     
     email = models.EmailField(
         verbose_name=_(_('email address')),
@@ -99,16 +91,18 @@ class User(AbstractBaseUser):
         db_index=True,
     )
     
-    username = models.CharField(_('username'), max_length=30,
-                                help_text=_('Required. 30 characters or fewer. Letters, numbers and '
-                                            '@/./+/-/_ characters'),
-                                validators=[validators.RegexValidator(re.compile('^[\w.@+-]+$'), _('Enter a valid username.'), 'invalid')],
-                                unique=True)
+    givenname = models.CharField(_('given name'), max_length=30,
+                                help_text=_('Required. 30 characters or fewer, only letters allowed'),
+                                validators=[validators.RegexValidator(re.compile('[a-zA-Z]{2,}'), _('Enter a valid Given Name.'), 'invalid')])
+    
+    surname = models.CharField(_('surname'), max_length=50,
+                                help_text=_('Required. 50 characters or fewer, only letters allowed'),
+                                validators=[validators.RegexValidator(re.compile('[a-zA-Z]{2,}'), _('Enter a valid Surname.'), 'invalid')])
+    
+    password = models.CharField(_('password'), max_length=128, null=True)
     
     avatar = ProcessedImageField([ResizeToFit(250, 250), AddBorder(2, 'Black')], format='PNG', \
                                   upload_to=get_image_filename, default='images/users/no_image.png')
-    
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     
     date_of_birth = models.DateField()
         
@@ -117,22 +111,21 @@ class User(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     
     date_joined = models.DateTimeField(_(_('date joined')), default=timezone.now)
-    
+    last_login = models.DateTimeField(_('last login'), default=timezone.now)
+
     facebook_id = models.CharField(max_length=20, editable=False, null=True)
     twitter_id = models.CharField(max_length=20, editable=False, null=True)
     google_id = models.CharField(max_length=20, editable=False, null=True)
     openid_id = models.CharField(max_length=20, editable=False, null=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['givenname', 'surname', 'password', 'date_of_birth']
 
     def get_full_name(self):
-        # The user is identified by their email address
-        return self.email
+        return ' '.join(self.givenname, self.surname)
 
     def get_short_name(self):
-        # The user is identified by their email address
-        return self.email
+        return self.givenname
 
     def email_user(self, subject, message, from_email=None):
         """
@@ -152,7 +145,44 @@ class User(AbstractBaseUser):
         super(User, self).delete(*args, **kwargs)
 
     def __unicode__(self):
-        return self.email   
+        return self.email
+
+    def natural_key(self):
+        return (self.email,)
+
+    def is_anonymous(self):
+        """
+        Always returns False. This is a way of comparing User objects to
+        anonymous users.
+        """
+        return False
+
+    def is_authenticated(self):
+        """
+        Always return True. This is a way to tell if the user has been
+        authenticated in templates.
+        """
+        return True
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        """
+        Returns a boolean of whether the raw_password was correct. Handles
+        hashing formats behind the scenes.
+        """
+        def setter(raw_password):
+            self.set_password(raw_password)
+            self.save(update_fields=["password"])
+        return check_password(raw_password, self.password, setter)
+
+    def set_unusable_password(self):
+        # Sets a value that will never be a valid hash
+        self.password = make_password(None)
+
+    def has_usable_password(self):
+        return is_password_usable(self.password)
 
 try:
     from django.utils.timezone import now as datetime_now
@@ -208,7 +238,7 @@ class RegistrationManager(models.Manager):
                 return user
         return False
     
-    def create_inactive_user(self, username, email, password, gender, date_of_birth,
+    def create_inactive_user(self, givenname, surname, email, password, date_of_birth,
                              site, send_email=True):
         """
         Create a new, inactive ``User``, generate a
@@ -219,7 +249,7 @@ class RegistrationManager(models.Manager):
         user. To disable this, pass ``send_email=False``.
         
         """
-        new_user = User.objects.create_user(username, email, gender, date_of_birth, password=password)
+        new_user = User.objects.create_user(givenname, surname, email, date_of_birth, password=password)
         new_user.is_active = False
         new_user.save()
 
@@ -238,14 +268,14 @@ class RegistrationManager(models.Manager):
         
         The activation key for the ``RegistrationProfile`` will be a
         SHA1 hash, generated from a combination of the ``User``'s
-        username and a random salt.
+        email and a random salt.
         
         """
         salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
-        username = user.username
-        if isinstance(username, unicode):
-            username = username.encode('utf-8')
-        activation_key = hashlib.sha1(salt+username).hexdigest()
+        email = user.email
+        if isinstance(email, unicode):
+            email = email.encode('utf-8')
+        activation_key = hashlib.sha1(salt+email).hexdigest()
         return self.create(user=user,
                            activation_key=activation_key)
         
@@ -278,8 +308,8 @@ class RegistrationManager(models.Manager):
         
         2. It prevents the possibility of a malicious user registering
            one or more accounts and never activating them (thus
-           denying the use of those usernames to anyone else); since
-           those accounts will be deleted, the usernames will become
+           denying the use of those emails to anyone else); since
+           those accounts will be deleted, the emails will become
            available for use again.
         
         If you have a troublesome ``User`` and wish to disable their
@@ -323,6 +353,7 @@ class RegistrationProfile(models.Model):
     objects = RegistrationManager()
     
     class Meta:
+        db_table = 'registrationprofile'
         verbose_name = _('registration profile')
         verbose_name_plural = _('registration profiles')
     
@@ -458,10 +489,10 @@ class NewEmailManager(models.Manager):
             old_new_email.delete()
         except self.model.DoesNotExist:
             pass
-        username = user.username
-        if isinstance(username, unicode):
-            username = username.encode('utf-8')
-        activation_key = hashlib.sha1(salt+username).hexdigest()
+        email = user.email
+        if isinstance(email, unicode):
+            email = email.encode('utf-8')
+        activation_key = hashlib.sha1(salt+email).hexdigest()
         inactive_email = self.create(user=user,
                                      activation_key=activation_key,
                                      email=new_email)
@@ -475,7 +506,10 @@ class NewEmail(models.Model):
     """
     This model stores a new email of an account while it has not been activated
     
-    """    
+    """
+    class Meta:
+        db_table = 'newemail'
+    
     user = models.ForeignKey(User, primary_key=True)
     activation_key = models.CharField(_('activation key'), unique=True, max_length=40)
     email = models.EmailField(

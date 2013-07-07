@@ -10,13 +10,20 @@
 	{{ form.non_field_errors }}
 	
 	<div class="field-wrapper">
-        {{ form.username.label_tag }}
-        {{ form.username }}
+        {{ form.givenname.label_tag }}
+        {{ form.givenname }}
         
-        {% if form.username.errors %}        
-			{{ form.username.errors }}
-        {% else %}
-        	<ul class="errorlist"><li></li></ul>	
+        {% if form.givenname.errors %}        
+			{{ form.givenname.errors }}	
+        {% endif %}
+	</div>
+	
+	<div class="field-wrapper">
+        {{ form.surname.label_tag }}
+        {{ form.surname }}
+        
+        {% if form.surname.errors %}        
+			{{ form.surname.errors }}
         {% endif %}
 	</div>
 	
@@ -25,20 +32,16 @@
         {{ form.email }}
         
         {% if form.email.errors %}        
-			{{ form.email.errors }}
-        {% else %}
-        	<ul class="errorlist"><li></li></ul>	
+			{{ form.email.errors }}	
         {% endif %}
 	</div>
 	
 	<div class="field-wrapper">
-        {{ form.password1.label_tag }}
-        {{ form.password1 }}
+        {{ form.password.label_tag }}
+        {{ form.password }}
         
-        {% if form.password1.errors %}        
-			{{ form.password1.errors }}
-        {% else %}
-        	<ul class="errorlist"><li></li></ul>	
+        {% if form.password.errors %}        
+			{{ form.password.errors }}	
         {% endif %}
 	</div>
 	
@@ -47,9 +50,7 @@
         {{ form.password2 }}
         
         {% if form.password2.errors %}        
-			{{ form.password2.errors }}
-        {% else %}
-        	<ul class="errorlist"><li></li></ul>	
+			{{ form.password2.errors }}	
         {% endif %}
 	</div>
 	
@@ -59,8 +60,6 @@
         
         {% if form.gender.errors %}        
 			{{ form.gender.errors }}
-        {% else %}
-        	<ul class="errorlist"><li></li></ul>	
         {% endif %}
 	</div>
 	
@@ -70,8 +69,6 @@
         
         {% if form.date_of_birth.errors %}        
 			{{ form.date_of_birth.errors }}
-        {% else %}
-        	<ul class="errorlist"><li></li></ul>	
         {% endif %}
 	</div>
 	
@@ -83,8 +80,6 @@
 	<div class="field-wrapper" id="terms-wrapper">
         {% if form.tos.errors %}        
 			{{ form.tos.errors }}
-        {% else %}
-        	<ul class="errorlist"><li></li></ul>	
         {% endif %}
         
         {{ form.tos }}

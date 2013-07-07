@@ -27,7 +27,7 @@ from authentication.forms import ResendActivationEmailForm, AccountSettingsForm,
 from django.contrib.auth import get_user_model, logout, authenticate, login
 from django.utils.translation import ugettext_lazy as _
 from authentication.models import NewEmail, User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import Http404
 from general.views import home
 from django.contrib import messages
@@ -38,10 +38,14 @@ from django.http.response import HttpResponse
 import urllib2
 from django.utils import simplejson
 from urllib2 import HTTPError
-from authentication.backends import SocialUserBackend
+from authentication.backends import SocialUserBackend, RegistrationBackend
 from django.contrib.auth.views import login as django_login
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from encodings.base64_codec import base64_decode
+import base64
+import hmac
+import hashlib
 
 
 def register(request, backend, success_url=None, form_class=None,
@@ -333,26 +337,25 @@ def login(request):
                         authentication_form=CheckActiveAuthenticationForm,
                         extra_context={'next_string': next_string})
 
+def base64_url_decode(inp):
+    padding_factor = len(inp) % 4
+    inp += "="*padding_factor
+    return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
+
 def facebook_authentication(request):
     code = request.GET.get('code', None)
     access_token = request.GET.get('accessToken', None)
     redirect_to = request.REQUEST.get('next', '')
+    
+    backend = SocialUserBackend()
     if not access_token and code:
-        try:
-            fb_token_request_url = 'https://graph.facebook.com/oauth/access_token?client_id=' + settings.FACEBOOK_APP_ID + \
-                                   '&redirect_uri=http://' + get_current_site(request).domain + '/auth/fb/' + \
-                                   '&client_secret=' + settings.FACEBOOK_SECRET + '&code=' + code
-            fb_token_response = urllib2.urlopen(fb_token_request_url).read()
-            if 'access_token' in fb_token_response:
-                access_token = fb_token_response.split('access_token=')[1]
-        except HTTPError:
-            pass
+        access_token = backend.get_facebook_access_token(request, code)
     if access_token:
-        try:
-            user_info_fb = urllib2.urlopen('https://graph.facebook.com/me?access_token=' + access_token)
-            user_info = simplejson.loads(user_info_fb.read())
+        user_info = backend.check_facebook_access_token(access_token)
+        if user_info:
             # The id can be trusted: try to log the user in
             user = authenticate(**{'network_id': user_info['id'], 
+                    
                                    'network':SocialUserBackend.FACEBOOK})
             if user:
                 login(request, user)
@@ -360,59 +363,68 @@ def facebook_authentication(request):
             try:
                 # Check if a user with this email has already been registered
                 user = User.objects.get(email=user_info['email'])
-                # TODO: redirect user to a page asking them to connect their Seasoning account to their facebook account
                 return redirect('/auth/fb/connect/')
             except User.DoesNotExist:
                 pass
-            messages.add_message(request, messages.INFO, _('Your social account has not been connected to Seasoning yet. Please take a minute to register.'))
+            messages.add_message(request, messages.INFO, _('Your social network account has not been connected to Seasoning yet. Please take a minute to register.'))
             return redirect('/auth/fb/register/')
-        except HTTPError:
-            pass
     messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Facebook. Please try again.'))
     return redirect('/login/')
 
 def facebook_connect(request):
+    if request.method == 'POST':
+        try:
+            access_token = request.POST['access_token']
+        except KeyError:
+            raise PermissionDenied    
+        backend = SocialUserBackend()
+        user_info = backend.check_facebook_access_token(access_token)
+        try:
+            user = User.objects.get(email=user_info['email'])
+            user.facebook_id = user_info['uid']
+            user.save()
+            login(request, user)
+            return redirect(home)
+        except User.DoesNotExist:
+            messages.add_message(request, messages.INFO, _('Your social network account has not been connected to Seasoning yet. Please take a minute to register.'))
+            return redirect('/auth/fb/register/')
     return render(request, 'authentication/social/facebook_connect.html')
 
 @csrf_exempt
-def facebook_registration(request):
+def facebook_registration(request, disallowed_url='registration_disallowed'):
     if request.method == 'POST':
-        print request.POST
+        signed_request = request.POST.get('signed_request', None)
+        if signed_request:
+            encoded_sig, payload = signed_request.split('.', 1)
+            sig = base64_url_decode(str(encoded_sig))
+            data = simplejson.loads(base64_url_decode(str(payload)))
+            if data.get('algorithm').upper() != 'HMAC-SHA256':
+                messages.add_message(request, messages.INFO, _('Something went wrong. Please try again or contact the administrator.'))
+                return redirect('/auth/fb/register/')
+            else:
+                expected_sig = hmac.new(settings.FACEBOOK_SECRET, msg=payload, digestmod=hashlib.sha256).digest()
+                 
+            if sig != expected_sig:
+                raise PermissionDenied
+                # TODO: csrf validation, test
+            user_data = data['registration']
+            print user_data
+            try:
+                User.objects.get(email=user_data['email'])
+                messages.add_message(request, messages.INFO, _('A user has already registered with that email. If this is your account, would you like to connect it to your Social Network account?'))
+                return redirect('/auth/fb/connect/')
+            except User.DoesNotExist:
+                pass
+            backend = RegistrationBackend()
+            if not backend.registration_allowed(request):
+                return redirect(disallowed_url)
+            user = backend.social_register(request, user_data['givenname'], user_data['surname'], user_data['email'], user_data['gender'], datetime.datetime.strptime('%M/%D/%Y', user_data['birthday']).date, data['user_id'], SocialUserBackend.FACEBOOK)
+            user = authenticate(**{'network_id': user.facebook_id, 
+                                   'network': SocialUserBackend.FACEBOOK})
+            login(request, user)
+            messages.add_message(request, messages.INFO, _('You have successfully registered your Facebook account on Seasoning. Have fun!'))            
+            return redirect(home)            
     return render(request, 'authentication/social/facebook_register.html', {'site': get_current_site(request).domain})
-#<QueryDict: {u'signed_request': [u'uSH6kDOv2XcuRIkS2spG-XFRr2QCNhLP7DHGaOViVKg.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNzMwMjIwMDAsImlzc3VlZF9hdCI6MTM3MzAxODAxMSwib2F1dGhfdG9rZW4iOiJDQUFFekQ2ZWR1NFFCQUpKMm4wQWlsZ2xTc2F4aE1hNUV0OWRXY0M4WUFXYVNuT0dNdmFHTHNaQnBPaEw3VUE3alY3TEprT29ka0tTOVpDemtDTDN3UUxaQzdhRG9XUHRpRVNQeXdhck9UbXd2SUZjMkhFMlpCSU9zY1ZTckpCMDdRWUdXUVNLVDR4cGlaQnlueUlmbFpBUTQ2WkJjeEFJbzdIUXc4WGwxaEJxWkFRWkRaRCIsInJlZ2lzdHJhdGlvbiI6eyJuYW1lIjoiU2Vhc29uaW5nIEJlIiwiZW1haWwiOiJqb2VwXHUwMDQwc2Vhc29uaW5nLmJlIiwiZ2VuZGVyIjoibWFsZSIsImJpcnRoZGF5IjoiMDFcLzAxXC8xOTg5In0sInJlZ2lzdHJhdGlvbl9tZXRhZGF0YSI6eyJmaWVsZHMiOiJuYW1lLGVtYWlsLGdlbmRlcixiaXJ0aGRheSJ9LCJ1c2VyIjp7ImNvdW50cnkiOiJiZSIsImxvY2FsZSI6Im5sX05MIn0sInVzZXJfaWQiOiIxMDAwMDYyNzYzNzEyMzIifQ']}>
-#Parsing the Signed Request
-#
-#Once you have captured the signed request, you need to perform three steps:
-#
-#    Split the signed request into two parts delineated by a '.' character (eg. 238fsdfsd.oijdoifjsidf899)
-#    Decode the first part - the encoded signature - from base64url
-#    Decode the second part - the 'payload' - from base64url and then decode the resultant JSON object
-#
-#These steps are possible in any modern programming language, here is an example in PHP:
-#
-#function parse_signed_request($signed_request) {
-#  list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
-#
-#  // decode the data
-#  $sig = base64_url_decode($encoded_sig);
-#  $data = json_decode(base64_url_decode($payload), true);
-#
-#  return $data;
-#}
-#
-#function base64_url_decode($input) {
-#  return base64_decode(strtr($input, '-_', '+/'));
-#}
-#
-#This will produce a JSON object that looks something like this:
-#
-#{
-#   "oauth_token": "{user-access-token}",
-#   "algorithm": "HMAC-SHA256",
-#   "expires": 1291840400,
-#   "issued_at": 1291836800,
-#   "user_id": "218471"
-#}
 
 def facebook_channel_file(request):
     response = HttpResponse('<script src="//connect.facebook.net/en_US/all.js"></script>')

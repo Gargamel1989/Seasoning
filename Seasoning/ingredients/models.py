@@ -39,7 +39,7 @@ class Ingredient(models.Model):
     Ingredients can be represented by it. This includes meat, which is not 
     dependent on time and has no special attributes
     
-    """    
+    """
     class Meta:
         db_table = 'ingredient'
     

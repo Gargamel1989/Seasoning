@@ -61,11 +61,8 @@ class EmailUserCreationForm(forms.ModelForm):
     """
     Form for registering a new user account.
     
-    Validates that the requested username is not already in use, and
-    requires the password to be entered twice to catch typos.
-    
-    Enforces uniqueness of email adresses and adds a ReCaptcha field 
-    and a required checkbox for agreeing to the site's Terms of Service. 
+    Adds a ReCaptcha field and a required checkbox for agreeing to the 
+    site's Terms of Service. 
     
     Subclasses should feel free to add any additional validation they
     need, but should avoid defining a ``save()`` method -- the actual
@@ -75,7 +72,7 @@ class EmailUserCreationForm(forms.ModelForm):
     """
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'gender', 'date_of_birth']
+        fields = ['givenname', 'surname', 'password', 'email', 'date_of_birth']
     
     password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
                                 label=_("Password (again)"))

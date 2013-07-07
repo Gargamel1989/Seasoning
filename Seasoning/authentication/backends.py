@@ -19,12 +19,16 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django.contrib.auth import login, load_backend, get_user_model
 from django.conf import settings
-from django.contrib.sites.models import RequestSite
+from django.contrib.sites.models import RequestSite, get_current_site
 
 from authentication import signals
 from authentication.forms import EmailUserCreationForm
-from authentication.models import RegistrationProfile
+from authentication.models import RegistrationProfile, User
 from django.contrib.auth.backends import ModelBackend
+import urllib2
+from django.utils import simplejson
+from urllib2 import HTTPError
+import re
 
 
 class RegistrationBackend(object):
@@ -68,7 +72,7 @@ class RegistrationBackend(object):
     """
     def register(self, request, **kwargs):
         """
-        Given a username, email address, password, gender and date of
+        Given a givenname, surname, email address, password, gender and date of
         birth, register a new user account, which will initially be inactive.
 
         Along with the new ``User`` object, a new
@@ -90,16 +94,34 @@ class RegistrationBackend(object):
         class of this backend as the sender.
 
         """
-        username, email, password, gender, date_of_birth = kwargs['username'], kwargs['email'], kwargs['password'], kwargs['gender'], kwargs['date_of_birth']
+        givenname, surname, email, password, date_of_birth = kwargs['givenname'], kwargs['surname'], kwargs['email'], kwargs['password'],  kwargs['date_of_birth']
         
         site = RequestSite(request)
-        new_user = RegistrationProfile.objects.create_inactive_user(username, email,
-                                                                    password, gender, date_of_birth, 
+        new_user = RegistrationProfile.objects.create_inactive_user(givenname, surname, email,
+                                                                    password, date_of_birth, 
                                                                     site)
         signals.user_registered.send(sender=self.__class__,
                                      user=new_user,
                                      request=request)
         return new_user
+    
+    def social_register(self, request, social_id, social_network, givenname, surname, email, password, date_of_birth):
+        """
+        Users registering from a social network already have a validated e-mail address,
+        and thus should not be sent an activatoin email
+        
+        The social_network parameter should be one of SocialUserBackend.{FACEBOOK, ...}
+        
+        """
+        new_user = User.objects.create_user(givenname, surname, email, date_of_birth)
+        new_user.save()
+        
+        signals.user_registered.send(sender=self.__class__,
+                                     user=new_user,
+                                     request=request)
+        
+        return new_user
+
 
     def activate(self, request, activation_key):
         """
@@ -167,7 +189,7 @@ class SocialUserBackend(ModelBackend):
     account.
     
     By default, the ``authenticate`` method creates ``User`` objects for
-    usernames that don't already exist in the database.  Subclasses can disable
+    emails that don't already exist in the database.  Subclasses can disable
     this behavior by setting the ``create_unknown_user`` attribute to
     ``False``.
     """
@@ -187,3 +209,21 @@ class SocialUserBackend(ModelBackend):
             return UserModel.objects.get(**{network: network_id})
         except UserModel.DoesNotExist:
             return None
+    
+    def get_facebook_access_token(self, request, code):
+        try:
+            fb_token_request_url = 'https://graph.facebook.com/oauth/access_token?client_id=' + settings.FACEBOOK_APP_ID + \
+                                   '&redirect_uri=http://' + get_current_site(request).domain + '/auth/fb/' + \
+                                   '&client_secret=' + settings.FACEBOOK_SECRET + '&code=' + code
+            fb_token_response = urllib2.urlopen(fb_token_request_url).read()
+            if re.match('^access_token\=.*', fb_token_response):
+                return fb_token_response.replace('access_token=', '')
+        except HTTPError:
+            return False
+        
+    def check_facebook_access_token(self, access_token):
+        try:
+            user_info_fb = urllib2.urlopen('https://graph.facebook.com/me?access_token=' + access_token)
+            return simplejson.loads(user_info_fb.read())
+        except HTTPError:
+            return False

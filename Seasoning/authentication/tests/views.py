@@ -159,3 +159,6 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertRedirects(resp, '/account/settings/', 302, 200)
         self.assertTrue(User.objects.get(email='testuser@test.be').check_password('haha1'))
         
+    def test_facebook_registration(self):
+        self.client.post('/auth/fb/register/', {u'signed_request': 'uSH6kDOv2XcuRIkS2spG-XFRr2QCNhLP7DHGaOViVKg.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNzMwMjIwMDAsImlzc3VlZF9hdCI6MTM3MzAxODAxMSwib2F1dGhfdG9rZW4iOiJDQUFFekQ2ZWR1NFFCQUpKMm4wQWlsZ2xTc2F4aE1hNUV0OWRXY0M4WUFXYVNuT0dNdmFHTHNaQnBPaEw3VUE3alY3TEprT29ka0tTOVpDemtDTDN3UUxaQzdhRG9XUHRpRVNQeXdhck9UbXd2SUZjMkhFMlpCSU9zY1ZTckpCMDdRWUdXUVNLVDR4cGlaQnlueUlmbFpBUTQ2WkJjeEFJbzdIUXc4WGwxaEJxWkFRWkRaRCIsInJlZ2lzdHJhdGlvbiI6eyJuYW1lIjoiU2Vhc29uaW5nIEJlIiwiZW1haWwiOiJqb2VwXHUwMDQwc2Vhc29uaW5nLmJlIiwiZ2VuZGVyIjoibWFsZSIsImJpcnRoZGF5IjoiMDFcLzAxXC8xOTg5In0sInJlZ2lzdHJhdGlvbl9tZXRhZGF0YSI6eyJmaWVsZHMiOiJuYW1lLGVtYWlsLGdlbmRlcixiaXJ0aGRheSJ9LCJ1c2VyIjp7ImNvdW50cnkiOiJiZSIsImxvY2FsZSI6Im5sX05MIn0sInVzZXJfaWQiOiIxMDAwMDYyNzYzNzEyMzIifQ'})
+        

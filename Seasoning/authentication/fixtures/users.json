@@ -3,8 +3,8 @@
 	 "model": "authentication.User",
 	 "fields":
 		{"email": "test@test.com",
-		 "username": "testuser",
-		 "gender": "M",
+		 "givenname": "test",
+		 "surname": "test2",
 		 "date_of_birth": "2000-01-01"
 		}
 	},
@@ -12,8 +12,8 @@
 	 "model": "authentication.User",
 	 "fields":
 		{"email": "test2@test.com",
-		 "username": "testuser2",
-		 "gender": "M",
+		 "givenname": "test",
+		 "surname": "test2",
 		 "date_of_birth": "2000-01-01"
 		}
 	}
