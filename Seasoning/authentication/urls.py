@@ -40,7 +40,7 @@ urlpatterns = patterns('',
         name='registration_activate'),
     
     # Login urls
-    url(r'^login/$', login, name='auth_login'),
+    url(r'^login/$', login, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'authentication/logout.html'}),
     url(r'^password/reset/$', 'django.contrib.auth.views.password_reset', 
         {'template_name':'authentication/password_reset_form.html',

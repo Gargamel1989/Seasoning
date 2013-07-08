@@ -210,6 +210,15 @@ class SocialUserBackend(ModelBackend):
         except UserModel.DoesNotExist:
             return None
     
+    def get_user(self, network, **kwargs):
+        if network == self.FACEBOOK:
+            user_info = self.check_facebook_access_token(kwargs['access_token'])
+            try:
+                return User.objects.get(email=user_info['email'])
+            except User.DoesNotExist:
+                pass
+        return None
+    
     def get_facebook_access_token(self, request, code):
         try:
             fb_token_request_url = 'https://graph.facebook.com/oauth/access_token?client_id=' + settings.FACEBOOK_APP_ID + \

@@ -318,7 +318,7 @@ class Sea(models.Model):
     
     """    
     class Meta:
-        db_table = 'Sea'
+        db_table = 'sea'
     
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50L)
