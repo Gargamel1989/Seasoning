@@ -162,20 +162,6 @@ a, a:visited {
     width: 998px;
 }
 
-.header-sub-navigation-backup {
-	max-width: none;
-    width: auto;
-    float: left;
-    font-size: 12px;
-    height: 22px;
-    line-height: 15px;
-    margin-top: 1px;
-    overflow: hidden;
-    padding-top: 7px;
-    position: relative;
-    white-space: nowrap;
-}
-
 .header-sub-navigation {
 	font-size: 12px;
     height: 22px;
@@ -187,6 +173,11 @@ a, a:visited {
     opacity: 0;
 }
 
+.header-sub-navigation.active {
+	left: 4px;
+	opacity: 1;
+}
+
 .header-sub-navigation a {
 	left: 0.024624px;
     opacity: 0.998769;
@@ -195,6 +186,10 @@ a, a:visited {
     position: relative;
     margin-right: 18px;
     color: #CFCFCF;
+}
+
+.header-sub-navigation a.active {
+	color: #00B539;
 }
 
 .header-sub-navigation a:hover {

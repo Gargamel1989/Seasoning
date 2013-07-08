@@ -106,19 +106,19 @@
                     <div id="header-sub-background"></div>
                     <div id="header-sub-container">
                         <div id="sub-navigation-recipes" class="header-sub-navigation {% active request "RECEPTEN" %}">
-                            <a class="sub-navigation-link {% block rsearch_nav_status %}{% endblock %}" href="/recipes/search/" >Recepten Zoeken</a>
-                            <a class="sub-navigation-link {% block radd_nav_status %}{% endblock %}" href="/recipes/add/" >Recept Toevoegen</a>
-                            <a class="sub-navigation-link {% block rmine_nav_status %}{% endblock %}" href="/recipes/mine/" >Mijn Recepten</a>
+                            <a class="sub-navigation-link {% active request "ReceptenZoeken" %}" href="/recipes/search/" >Recepten Zoeken</a>
+                            <a class="sub-navigation-link {% active request "ReceptToevoegen" %}" href="/recipes/add/" >Recept Toevoegen</a>
+                            <a class="sub-navigation-link {% active request "MijnRecepten" %}" href="/recipes/mine/" >Mijn Recepten</a>
                         </div>
                         <div id="sub-navigation-information" class="header-sub-navigation {% active request "INFORMATIE" %}">
-                            <a class="sub-navigation-link {% block ing_nav_status %}{% endblock %}" href="/ingredients/" >Ingredienten</a>
-                            <a class="sub-navigation-link {% block news_nav_status %}{% endblock %}" href="/news/" >Nieuws</a>
-                            <a class="sub-navigation-link {% block about_nav_status %}{% endblock %}" href="/about/" >Over Seasoning</a>
+                            <a class="sub-navigation-link {% active request "Ingredienten" %}" href="/ingredients/" >Ingredienten</a>
+                            <a class="sub-navigation-link {% active request "Nieuws" %}" href="/news/" >Nieuws</a>
+                            <a class="sub-navigation-link {% active request "OverSeasoning" %}" href="/about/" >Over Seasoning</a>
                         </div>
                         {% if user.is_superuser %}
                         <div id="sub-navigation-admin" class="header-sub-navigation {% active request "ADMIN" %}">
-                            <a class="sub-navigation-link {% block ingadm_nav_status %}{% endblock %}" href="/ingredients/list/" >Ingredienten</a>
-                            <a class="sub-navigation-link {% block unitadm_nav_status %}{% endblock %}" href="/ingredients/units/" >Eenheden</a>
+                            <a class="sub-navigation-link {% active request "IngredientenAdmin" %}" href="/ingredients/list/" >Ingredienten</a>
+                            <a class="sub-navigation-link {% active request "Units" %}" href="/ingredients/units/" >Eenheden</a>
                         </div>
                         {% endif %}
                     </div>

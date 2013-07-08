@@ -31,7 +31,9 @@ paths = {'RECEPTEN': ['/recipes/.*'],
          'MijnRecepten': ['/accounts/recipes/'],
          'Ingredienten': ['/ingredients/'],
          'Nieuws': ['/news/'],
-         'OverSeasoning': ['/about/'],}
+         'OverSeasoning': ['/about/'],
+         'IngredientenAdmin': ['/ingredients/list/', '/ingredients/add/', '/ingredients/edit/(\d*)/'],
+         'Units': ['/ingredients/units/.*'],}
 
 @register.simple_tag
 def active(request, link_name):
