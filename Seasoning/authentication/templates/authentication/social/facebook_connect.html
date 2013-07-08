@@ -1,5 +1,68 @@
 {% extends "base.html" %}
 
-<h1>Verbind je Sociale Netwerk account met je seasoning account</h1>
+{% block content %}
+<script>
+$(document).ready(function() {
+    
+    function fill_form(response) {
+        var accessToken = response.authResponse.accessToken;
+        $('#fb-access-token').val(accessToken);
+        FB.api('/me', function(response) {
+            $('#fb-user-img').attr('src', 'https://graph.facebook.com/' + response.id + '/picture');
+            $('#fb-user-name').text(response.name);
+        });
+    }
+    
+    // FACEBOOK
+    $.ajaxSetup({ cache: true });
+    $.getScript('//connect.facebook.net/en_UK/all.js', function(){
+        FB.init({
+            appId: '337617306368900',
+            channelUrl: '/auth/fb/channel/',
+        });
+    }).done(function() {
+        
+    FB.getLoginStatus(function(response) {
+        if (response.status === 'connected') {
+            fill_form(response);
+        } else if (response.status === 'not_authorized') {
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    fill_form(response);
+                }
+            }, {scope: 'email'})
+        } else {
+            // The user isn't logged in to Facebook.
+            window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=http://{{ site }}/auth/fb/connect/&scope=email&client_id=337617306368900'
+        }
+    }, true);
+    })
+    
 
-{{ form.as_p }}
+});
+
+</script>
+
+<h1>Seasoning verbinden met Facebook account</h1>
+
+<p>
+    Indien je Facebook wil gebruiken om aan te melden op je Seasoning account, moet je eerst beide
+    accounts verbinden. Je bent momenteel op Facebook ingelogd met volgende gegevens:    
+</p>
+<p>
+    <img id="fb-user-img" src=""><span id="fb-user-name"> </span>
+</p>
+<p>
+    Wil je deze Facebook account koppelen aan je Seasoning account?
+</p>
+<form action="" method="post">
+    {% csrf_token %}
+    
+    <input type="hidden" name="access-token" id="fb-access-token">
+    
+    <input type="submit" value="Account koppelen">
+    <input type="submit" value="Annuleren">
+
+</form>
+
+{% endblock %}

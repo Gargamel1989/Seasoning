@@ -192,32 +192,3 @@ class DeleteAccountForm(forms.Form):
         if not checkstring == 'DELETEME':
             raise forms.ValidationError('You must provide the string \'DELETEME\' if you would like to delete your account')
         return checkstring
-
-class SocialNetworkConnectionForm(forms.Form):
-    # TODO: test
-    
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput())
-    social_network = forms.CharField(max_length=20)
-    access_token = forms.CharField(max_length=50)
-    
-    def user(self):
-        if self.is_valid() and self._user:
-            return self._user
-        return None
-    
-    def social_id(self):
-        if self.is_valid() and self._social_id:
-            return self._social_id
-        return None
-    
-    def is_valid(self):
-        user = authenticate(username=self.email, password=self.password)
-        backend = authentication.backends.SocialUserBackend()
-        social_user = backend.get_user(backend.FACEBOOK, self.access_token)
-        if not user == social_user:
-            return False
-        self._user = user
-        self._social_id = backend.check_facebook_access_token(self.access_token)['id']
-        return super(SocialNetworkConnectionForm, self).is_valid()
-    

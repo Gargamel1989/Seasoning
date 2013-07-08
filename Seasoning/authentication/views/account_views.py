@@ -11,6 +11,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.forms import PasswordChangeForm
 from django.template.response import TemplateResponse
 from django.contrib.auth.views import login as django_login, logout
+from django.utils.translation import ugettext_lazy as _
 
 @login_required
 def account_settings(request):

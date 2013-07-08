@@ -44,7 +44,7 @@ $(document).ready(function() {
                 // make the user login to facebook. then do the same as above
                 window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=http://{{ site }}/auth/fb/&scope=email&client_id=337617306368900'
             }
-        });
+        }, true);
         return false;
     });
 });

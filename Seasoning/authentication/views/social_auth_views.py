@@ -1,6 +1,6 @@
 import base64
 from authentication.backends import SocialUserBackend, RegistrationBackend
-from django.contrib.auth import authenticate as django_auth, login as django_login
+from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import redirect, render
 from authentication.models import User
 from django.contrib import messages
@@ -13,18 +13,19 @@ from django.conf import settings
 import hashlib
 import datetime
 from django.contrib.sites.models import get_current_site
-from django.http.response import HttpResponse
-from authentication.forms import SocialNetworkConnectionForm
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
 
 def base64_url_decode(inp):
     padding_factor = len(inp) % 4
     inp += "="*padding_factor
     return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
 
+
 def facebook_authentication(request):
     code = request.GET.get('code', None)
     access_token = request.GET.get('accessToken', None)
-    redirect_to = request.REQUEST.get('next', '')
+    redirect_to = request.REQUEST.get('next', '/')
     
     backend = SocialUserBackend()
     if not access_token and code:
@@ -33,14 +34,17 @@ def facebook_authentication(request):
         user_info = backend.check_facebook_access_token(access_token)
         if user_info:
             # The id can be trusted: try to log the user in
-            user = django_auth(**{'network_id': user_info['id'], 
-                                          'network':SocialUserBackend.FACEBOOK})
+            user = authenticate(**{'network_id': user_info['id'], 
+                                   'network':SocialUserBackend.FACEBOOK})
             if user:
-                django_login(request, user)
-                return redirect(redirect_to)
+                auth_login(request, user)
+                print user.is_authenticated()
+                print request.user.is_authenticated()
+                return HttpResponseRedirect(redirect_to)
             try:
                 # Check if a user with this email has already been registered
                 user = User.objects.get(email=user_info['email'])
+                messages.add_message(request, messages.INFO, _('The email corresponding to your social network account is already in use on Seasoning.'))
                 return redirect('/auth/fb/connect/')
             except User.DoesNotExist:
                 pass
@@ -50,16 +54,22 @@ def facebook_authentication(request):
     return redirect('/login/')
 
 def facebook_connect(request):
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.INFO, _('Please log in to connect your Social Network account to a Seasoning account.'))
+        return redirect('/login/?next=/auth/fb/connect/')
     if request.method == 'POST':
-        form = SocialNetworkConnectionForm(request.POST)   
-        if form.is_valid():
-            user = form.user()
-            user.facebook_id = form.social_id()
+        if not 'Cancel' in request.POST:
+            backend = SocialUserBackend()
+            access_token = request.POST.get('access-token', '')
+            social_user_info = backend.check_facebook_access_token(access_token)
+            user = request.user
+            if not user.email == social_user_info['email']:
+                raise PermissionDenied
+            user.facebook_id = social_user_info['id'] 
             user.save()
-            django_login(request, user)
-            return redirect(home)
-    form = SocialNetworkConnectionForm()
-    return render(request, 'authentication/social/facebook_connect.html', {'form': form})
+            messages.add_message(request, messages.INFO, _('Your social network account has successfully connected to your Seasoning account!'))
+        return redirect(home)
+    return render(request, 'authentication/social/facebook_connect.html')
 
 @csrf_exempt
 def facebook_registration(request, disallowed_url='registration_disallowed'):
@@ -90,9 +100,9 @@ def facebook_registration(request, disallowed_url='registration_disallowed'):
             if not backend.registration_allowed(request):
                 return redirect(disallowed_url)
             user = backend.social_register(request, user_data['givenname'], user_data['surname'], user_data['email'], user_data['gender'], datetime.datetime.strptime('%M/%D/%Y', user_data['birthday']).date, data['user_id'], SocialUserBackend.FACEBOOK)
-            user = django_auth(**{'network_id': user.facebook_id, 
-                                  'network': SocialUserBackend.FACEBOOK})
-            django_login(request, user)
+            user = authenticate(**{'network_id': user.facebook_id, 
+                                   'network': SocialUserBackend.FACEBOOK})
+            auth_login(request, user)
             messages.add_message(request, messages.INFO, _('You have successfully registered your Facebook account on Seasoning. Have fun!'))            
             return redirect(home)            
     return render(request, 'authentication/social/facebook_register.html', {'site': get_current_site(request).domain})
