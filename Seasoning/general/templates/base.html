@@ -81,10 +81,10 @@
                                 <a id="header-logo" href="/" title="Seasoning"> <img width="148" height="32" src="http://res2.windows.microsoft.com/resbox/en/windows/main/4300ae64-546c-4bbe-9026-6779b3684fb9_18.png" alt="Seasoning"> </a>
                             </div>
                             <div id="header-main-navigation">
-                                <a id="main-navigation-recipes" class="main-navigation-link {{ request.path|active:"RECEPTEN" }}" href="/recipes/">RECEPTEN</a>
-                                <a id="main-navigation-information" class="main-navigation-link {{ request.path|active:"INFORMATIE" }}" href="/information/">INFORMATIE</a>
+                                <a id="main-navigation-recipes" class="main-navigation-link {% block REC_nav_status %}{% endblock %}" href="/recipes/">RECEPTEN</a>
+                                <a id="main-navigation-information" class="main-navigation-link {% block INFO_nav_status %}{% endblock %}" href="/information/">INFORMATIE</a>
                                 {% if user.is_superuser %}
-                                <a id="main-navigation-admin" class="main-navigation-link {{ request.path|active:"ADMIN" }}" href="/">ADMIN</a>
+                                <a id="main-navigation-admin" class="main-navigation-link {% block ADM_nav_status %}{% endblock %}" href="/">ADMIN</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -106,19 +106,19 @@
                     <div id="header-sub-background"></div>
                     <div id="header-sub-container">
                         <div id="sub-navigation-recipes" class="header-sub-navigation">
-                            <a class="sub-navigation-link {{ request.path|active:"ReceptenZoeken" }}" href="/recipes/search/" >Recepten Zoeken</a>
-                            <a class="sub-navigation-link {{ request.path|active:"ReceptToevoegen" }}" href="/recipes/add/" >Recept Toevoegen</a>
-                            <a class="sub-navigation-link {{ request.path|active:"MijnRecepten" }}" href="/recipes/mine/" >Mijn Recepten</a>
+                            <a class="sub-navigation-link {% block rsearch_nav_status %}{% endblock %}" href="/recipes/search/" >Recepten Zoeken</a>
+                            <a class="sub-navigation-link {% block radd_nav_status %}{% endblock %}" href="/recipes/add/" >Recept Toevoegen</a>
+                            <a class="sub-navigation-link {% block rmine_nav_status %}{% endblock %}" href="/recipes/mine/" >Mijn Recepten</a>
                         </div>
                         <div id="sub-navigation-information" class="header-sub-navigation">
-                            <a class="sub-navigation-link {{ request.path|active:"Ingredienten" }}" href="/ingredients/" >Ingredienten</a>
-                            <a class="sub-navigation-link {{ request.path|active:"Nieuws" }}" href="/news/" >Nieuws</a>
-                            <a class="sub-navigation-link {{ request.path|active:"OverSeasoning" }}" href="/about/" >Over Seasoning</a>
+                            <a class="sub-navigation-link {% block ing_nav_status %}{% endblock %}" href="/ingredients/" >Ingredienten</a>
+                            <a class="sub-navigation-link {% block news_nav_status %}{% endblock %}" href="/news/" >Nieuws</a>
+                            <a class="sub-navigation-link {% block about_nav_status %}{% endblock %}" href="/about/" >Over Seasoning</a>
                         </div>
                         {% if user.is_superuser %}
                         <div id="sub-navigation-admin" class="header-sub-navigation">
-                            <a class="sub-navigation-link" href="/ingredients/list/" >Ingredienten</a>
-                            <a class="sub-navigation-link" href="/ingredients/units/" >Eenheden</a>
+                            <a class="sub-navigation-link {% block ingadm_nav_status %}{% endblock %}" href="/ingredients/list/" >Ingredienten</a>
+                            <a class="sub-navigation-link {% block unitadm_nav_status %}{% endblock %}" href="/ingredients/units/" >Eenheden</a>
                         </div>
                         {% endif %}
                     </div>
