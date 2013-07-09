@@ -29,6 +29,8 @@ import urllib2
 from django.utils import simplejson
 from urllib2 import HTTPError
 import re
+import urllib
+from django.test import simple
 
 
 class RegistrationBackend(object):
@@ -228,4 +230,29 @@ class SocialUserBackend(ModelBackend):
             return simplejson.loads(user_info_fb.read())
         except HTTPError:
             return False
-        
+    
+    def get_google_access_token(self, request, code):
+        try:
+            google_token_request_url = 'https://accounts.google.com/o/oauth2/token'
+            post_data = {'code': code,
+                         'client_id': settings.GOOGLE_APP_ID,
+                         'client_secret': settings.GOOGLE_SECRET,
+                         'redirect_uri': 'http://' + str(get_current_site(request)) + '/auth/google/',
+                         'grant_type': 'authorization_code'}
+            data = urllib.urlencode(post_data)
+            google_token_response = urllib2.urlopen(google_token_request_url, data)
+            google_info = simplejson.loads(google_token_response.read())
+            try:
+                return google_info['access_token']
+            except KeyError:
+                return None
+        except HTTPError:
+            return None
+    
+    def check_google_access_token(self, access_token):
+        try:
+            user_info_google = urllib2.urlopen('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + access_token)
+            return simplejson.loads(user_info_google.read())
+        except HTTPError:
+            return False
+            

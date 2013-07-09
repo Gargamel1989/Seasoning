@@ -16,6 +16,8 @@ from django.contrib.sites.models import get_current_site
 from django.http.response import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
+from registration.forms import RegistrationForm
+from authentication.forms import EmailUserCreationForm
 
 def base64_url_decode(inp):
     padding_factor = len(inp) % 4
@@ -166,11 +168,57 @@ def facebook_channel_file(request):
     response['Expires'] = (datetime.datetime.now() + datetime.timedelta(days=365)).strftime('%a, %d %b %Y %H:%M:%S GMT')
     return response
 
+def google_authentication(request):
+    error = request.GET.get('error', None)
+    code = request.GET.get('code', None)
+    state = request.GET.get('state', None)
+    redirect_to = state or request.GET.get('next', '/')
+    
+    if error:
+        messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Facebook. Please try again.'))
+        return redirect('/login/')
+    elif code:
+        # The user has been redirected by google and given a code
+        backend = SocialUserBackend()
+        access_token = backend.get_google_access_token(request, code)
+        user_info = backend.check_google_access_token(access_token)
+        if user_info:
+            # Valid access token, we now trust the user because Google says so
+            # Check if a user is available with the returned Google ID
+            user = authenticate(**{'network_id': user_info['id'], 
+                                   'network':SocialUserBackend.GOOGLE})
+            if user:
+                # A user with the given Google ID has been found, log the user in
+                auth_login(request, user)
+                return redirect(redirect_to)
+            # A user with the given Google ID was not found in the Seasoning DB, check
+            # if a user with the given Google email is registered
+            try:
+                user = User.objects.get(email=user_info['email'])
+                # A user with the given Google email has been found. Prompt the user to
+                # connect his social network account to his Seasoning account
+                messages.add_message(request, messages.INFO, _('The email corresponding to your social network account is already in use on Seasoning. '
+                                                               'If this account belongs to you, please log in to connect it to your Google account, '
+                                                               'otherwise, please contact an administrator.'))
+                # The user is probably not logged in at this point, so he will be asked to log
+                # in first before connecting his Google account to his Seasoning account.
+                return redirect('/auth/google/connect/')
+            except User.DoesNotExist:
+                # A user with the given Facebook email was not found. Prompt the user to register
+                # at Seasoning using his Facebook account
+                messages.add_message(request, messages.INFO, _('Your Google account has not been connected to Seasoning yet. Please take a minute to register.'))
+                return redirect('/auth/google/register/')
+    return redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + settings.GOOGLE_APP_ID + \
+                    '&redirect_uri=http://' + str(get_current_site(request)) + '/auth/google/' + \
+                    '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https://www.googleapis.com/auth/userinfo.profile' + \
+                    '&state=' + redirect_to)
+
+def google_register(request):
+    form = EmailUserCreationForm()
+    return render(request, 'authentication/social/google_register.html', {'form': form})
+
 def twitter_authentication(request):
     return render(request, 'authentication/social/twitter.html')
-
-def google_authentication(request):
-    return render(request, 'authentication/social/google.html')
 
 def openid_authentication(request):
     return render(request, 'authentication/social/openid.html')
