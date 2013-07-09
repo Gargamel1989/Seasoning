@@ -16,6 +16,8 @@ from django.contrib.sites.models import get_current_site
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 
+# TODO: ook message laten zien bij registratie als er eerst op facebook ingelogd moet worden.
+
 def base64_url_decode(inp):
     padding_factor = len(inp) % 4
     inp += "="*padding_factor
@@ -73,6 +75,7 @@ def facebook_connect(request):
 
 @csrf_exempt
 def facebook_registration(request, disallowed_url='registration_disallowed'):
+    # TODO: add optional password?
     if request.method == 'POST':
         signed_request = request.POST.get('signed_request', None)
         if signed_request:
@@ -99,7 +102,9 @@ def facebook_registration(request, disallowed_url='registration_disallowed'):
             backend = RegistrationBackend()
             if not backend.registration_allowed(request):
                 return redirect(disallowed_url)
-            user = backend.social_register(request, user_data['givenname'], user_data['surname'], user_data['email'], user_data['gender'], datetime.datetime.strptime('%M/%D/%Y', user_data['birthday']).date, data['user_id'], SocialUserBackend.FACEBOOK)
+            user = backend.social_register(request, social_id=data['user_id'], social_network=SocialUserBackend.FACEBOOK,
+                                           givenname=user_data['first_name'], surname=user_data['last_name'], email=user_data['email'], 
+                                           date_of_birth=datetime.datetime.strptime(user_data['birthday'], '%m/%d/%Y').date())
             user = authenticate(**{'network_id': user.facebook_id, 
                                    'network': SocialUserBackend.FACEBOOK})
             auth_login(request, user)

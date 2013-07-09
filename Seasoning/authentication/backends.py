@@ -72,7 +72,7 @@ class RegistrationBackend(object):
     """
     def register(self, request, **kwargs):
         """
-        Given a givenname, surname, email address, password, gender and date of
+        Given a givenname, surname, email address, password and date of
         birth, register a new user account, which will initially be inactive.
 
         Along with the new ``User`` object, a new
@@ -105,7 +105,7 @@ class RegistrationBackend(object):
                                      request=request)
         return new_user
     
-    def social_register(self, request, social_id, social_network, givenname, surname, email, password, date_of_birth):
+    def social_register(self, request, social_id, social_network, givenname, surname, email, date_of_birth, password=None):
         """
         Users registering from a social network already have a validated e-mail address,
         and thus should not be sent an activatoin email
@@ -113,7 +113,8 @@ class RegistrationBackend(object):
         The social_network parameter should be one of SocialUserBackend.{FACEBOOK, ...}
         
         """
-        new_user = User.objects.create_user(givenname, surname, email, date_of_birth)
+        new_user = User.objects.create_user(givenname, surname, email, date_of_birth, password)
+        setattr(new_user, social_network, social_id)
         new_user.save()
         
         signals.user_registered.send(sender=self.__class__,
@@ -210,15 +211,6 @@ class SocialUserBackend(ModelBackend):
         except UserModel.DoesNotExist:
             return None
     
-    def get_user(self, network, **kwargs):
-        if network == self.FACEBOOK:
-            user_info = self.check_facebook_access_token(kwargs['access_token'])
-            try:
-                return User.objects.get(email=user_info['email'])
-            except User.DoesNotExist:
-                pass
-        return None
-    
     def get_facebook_access_token(self, request, code):
         try:
             fb_token_request_url = 'https://graph.facebook.com/oauth/access_token?client_id=' + settings.FACEBOOK_APP_ID + \
@@ -236,3 +228,4 @@ class SocialUserBackend(ModelBackend):
             return simplejson.loads(user_info_fb.read())
         except HTTPError:
             return False
+        
