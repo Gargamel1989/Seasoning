@@ -220,7 +220,7 @@ class SocialUserBackend(ModelBackend):
             if re.match('^access_token\=.*', fb_token_response):
                 return fb_token_response.replace('access_token=', '')
         except HTTPError:
-            return False
+            return None
         
     def check_facebook_access_token(self, access_token):
         try:

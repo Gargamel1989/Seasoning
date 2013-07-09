@@ -1,55 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<script>
-$(document).ready(function() {
-    
-    // FACEBOOK
-    $.ajaxSetup({ cache: true });
-    $.getScript('//connect.facebook.net/en_UK/all.js', function(){
-        FB.init({
-            appId: '337617306368900',
-            channelUrl: '/auth/fb/channel/',
-        });
-    });
-    
-    $('#fb-login-btn').click(function() {
-        
-        FB.getLoginStatus(function(response) {
-            if (response.status === 'connected') {
-                // The user is logged in and has authenticated your
-                // app, and response.authResponse supplies
-                // the user's ID, a valid access token, a signed
-                // request, and the time the access token 
-                // and signed request each expire
-                var accessToken = response.authResponse.accessToken;
-                // Do ajax request to server. If uid is known log the user
-                // in and redirect to the 'next' page or to homepage.
-                // If uid is not know, redirect user to registration page
-                window.location = 'http://{{ site }}/auth/fb/?accessToken=' + accessToken + '{{ next_string }}';
-            } else if (response.status === 'not_authorized') {
-                // the user is logged in to Facebook, 
-                // but has not authenticated your app
-                // present the user with an authorization box. After auth, 
-                // redirect to registration page or next/home according
-                // to the same rules as above
-                FB.login(function(response) {
-                    if (response.authResponse) {
-                        var accessToken = response.authResponse.accessToken;
-                        window.location = 'http://{{ site }}/auth/fb/?accessToken=' + accessToken + '{{ next_string }}';
-                    }
-                }, {scope: 'email'})
-            } else {
-                // the user isn't logged in to Facebook.
-                // make the user login to facebook. then do the same as above
-                window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=http://{{ site }}/auth/fb/&scope=email&client_id=337617306368900'
-            }
-        }, true);
-        return false;
-    });
-});
-</script>
-
 <h1>Aanmelden bij Seasoning.be</h1>
 
 <table>
@@ -87,7 +38,7 @@ $(document).ready(function() {
             </script>
         </td>
         <td>
-            <a id="fb-login-btn" href="#">
+            <a id="fb-login-btn" href="/auth/fb/?next={{ next }}">
                 Login with Facebook
             </a>
             <a class="btn btn-google" href="/auth/google" style="display: block; margin-bottom:15px;">
