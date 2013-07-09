@@ -81,6 +81,9 @@ class User(models.Model):
     class Meta:
         db_table = 'user'
     
+    RANKS = {0: 'Groentje', 1: 'Keukenhulp', 2: 'Leerjongen',
+             3: 'Hobbykok', 4: 'Fijnproever', 5: 'Sous Chef',
+             6: 'Chef Kok', 7: 'Meesterkok', 8: 'Saturnus'}
     
     objects = UserManager()
     
@@ -126,6 +129,13 @@ class User(models.Model):
 
     def get_short_name(self):
         return self.givenname
+    
+    def rank(self):
+        rank_num = self.recipes.bit_length() - 1
+        if rank_num >= 8:
+            # TODO: custom ranks
+            raise NotImplementedError
+        return self.RANKS[rank_num]
 
     def email_user(self, subject, message, from_email=None):
         """
