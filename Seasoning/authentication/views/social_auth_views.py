@@ -16,7 +16,6 @@ from django.contrib.sites.models import get_current_site
 from django.http.response import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
-from registration.forms import RegistrationForm
 from authentication.forms import EmailUserCreationForm
 
 def base64_url_decode(inp):
