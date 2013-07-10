@@ -115,10 +115,10 @@ class User(models.Model):
     date_joined = models.DateTimeField(_(_('date joined')), default=timezone.now)
     last_login = models.DateTimeField(_('last login'), default=timezone.now)
 
-    facebook_id = models.CharField(max_length=20, editable=False, null=True)
-    twitter_id = models.CharField(max_length=20, editable=False, null=True)
-    google_id = models.CharField(max_length=20, editable=False, null=True)
-    openid_id = models.CharField(max_length=20, editable=False, null=True)
+    facebook_id = models.CharField(max_length=30, editable=False, null=True)
+    twitter_id = models.CharField(max_length=30, editable=False, null=True)
+    google_id = models.CharField(max_length=30, editable=False, null=True)
+    openid_id = models.CharField(max_length=30, editable=False, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['givenname', 'surname', 'password', 'date_of_birth']

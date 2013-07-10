@@ -231,13 +231,13 @@ class SocialUserBackend(ModelBackend):
         except HTTPError:
             return False
     
-    def get_google_access_token(self, request, code):
+    def get_google_access_token(self, request, code, redirect_uri_endpoint):
         try:
             google_token_request_url = 'https://accounts.google.com/o/oauth2/token'
             post_data = {'code': code,
                          'client_id': settings.GOOGLE_APP_ID,
                          'client_secret': settings.GOOGLE_SECRET,
-                         'redirect_uri': 'http://' + str(get_current_site(request)) + '/auth/google/',
+                         'redirect_uri': 'http://' + str(get_current_site(request)) + redirect_uri_endpoint,
                          'grant_type': 'authorization_code'}
             data = urllib.urlencode(post_data)
             google_token_response = urllib2.urlopen(google_token_request_url, data)
@@ -246,7 +246,7 @@ class SocialUserBackend(ModelBackend):
                 return google_info['access_token']
             except KeyError:
                 return None
-        except HTTPError:
+        except HTTPError as e:
             return None
     
     def check_google_access_token(self, access_token):

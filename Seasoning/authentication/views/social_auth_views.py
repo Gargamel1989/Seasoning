@@ -97,13 +97,13 @@ def facebook_connect(request):
                 user = request.user
                 user.facebook_id = social_user_info['id'] 
                 user.save()
-                messages.add_message(request, messages.INFO, _('Your social network account has successfully connected to your Seasoning account!'))
+                messages.add_message(request, messages.INFO, _('Your social network account has been successfully connected to your Seasoning account!'))
             # If the user pressed cancel, return him to the home page
             return redirect(home)
     except PermissionDenied:
         pass
     # Show the connect account form
-    return render(request, 'authentication/social/facebook_connect.html')
+    return render(request, 'authentication/social/facebook_connect.html', {'app_id': settings.FACEBOOK_APP_ID})
 
 @csrf_exempt
 def facebook_registration(request, disallowed_url='registration_disallowed'):
@@ -177,44 +177,107 @@ def google_authentication(request):
     state = request.GET.get('state', None)
     redirect_to = state or request.GET.get('next', '/')
     
-    if error:
-        messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Facebook. Please try again.'))
-        return redirect('/login/')
-    elif code:
-        # The user has been redirected by google and given a code
-        backend = SocialUserBackend()
-        access_token = backend.get_google_access_token(request, code)
-        user_info = backend.check_google_access_token(access_token)
-        if user_info:
-            # Valid access token, we now trust the user because Google says so
-            # Check if a user is available with the returned Google ID
-            user = authenticate(**{'network_id': user_info['id'], 
-                                   'network':SocialUserBackend.GOOGLE})
-            if user:
-                # A user with the given Google ID has been found, log the user in
-                auth_login(request, user)
-                return redirect(redirect_to)
-            # A user with the given Google ID was not found in the Seasoning DB, check
-            # if a user with the given Google email is registered
-            try:
-                user = User.objects.get(email=user_info['email'])
-                # A user with the given Google email has been found. Prompt the user to
-                # connect his social network account to his Seasoning account
-                messages.add_message(request, messages.INFO, _('The email corresponding to your social network account is already in use on Seasoning. '
-                                                               'If this account belongs to you, please log in to connect it to your Google account, '
-                                                               'otherwise, please contact an administrator.'))
-                # The user is probably not logged in at this point, so he will be asked to log
-                # in first before connecting his Google account to his Seasoning account.
-                return redirect('/auth/google/connect/')
-            except User.DoesNotExist:
-                # A user with the given Facebook email was not found. Prompt the user to register
-                # at Seasoning using his Facebook account
-                messages.add_message(request, messages.INFO, _('Your Google account has not been connected to Seasoning yet. Please take a minute to register.'))
-                return redirect('/auth/google/register/')
-    return redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + settings.GOOGLE_APP_ID + \
+    if error is None and code is None:
+        # User is just starting to try to authenticate using google, redirect him to google
+        # servers to fetch us an authorization code
+        return redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + settings.GOOGLE_APP_ID + \
                     '&redirect_uri=http://' + str(get_current_site(request)) + '/auth/google/' + \
                     '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https://www.googleapis.com/auth/userinfo.profile' + \
                     '&state=' + redirect_to)
+    
+    if code:
+        # The user has been redirected by google and given a code
+        backend = SocialUserBackend()
+        access_token = backend.get_google_access_token(request, code, '/auth/google/')
+        if access_token:
+            # We received an access token from google for our code
+            user_info = backend.check_google_access_token(access_token)
+            if user_info:
+                # Valid access token, we now trust the user because Google says so
+                # Check if a user is available with the returned Google ID
+                user = authenticate(**{'network_id': user_info['id'], 
+                                       'network':SocialUserBackend.GOOGLE})
+                if user:
+                    # A user with the given Google ID has been found, log the user in
+                    auth_login(request, user)
+                    return redirect(redirect_to)
+                # A user with the given Google ID was not found in the Seasoning DB, check
+                # if a user with the given Google email is registered
+                try:
+                    user = User.objects.get(email=user_info['email'])
+                    # A user with the given Google email has been found. Prompt the user to
+                    # connect his social network account to his Seasoning account
+                    messages.add_message(request, messages.INFO, _('The email corresponding to your social network account is already in use on Seasoning. '
+                                                                   'If this account belongs to you, please log in to connect it to your Google account, '
+                                                                   'otherwise, please contact an administrator.'))
+                    # The user is probably not logged in at this point, so he will be asked to log
+                    # in first before connecting his Google account to his Seasoning account.
+                    return redirect('/auth/google/connect/?access_token=' + access_token)
+                except User.DoesNotExist:
+                    # A user with the given Facebook email was not found. Prompt the user to register
+                    # at Seasoning using his Facebook account
+                    messages.add_message(request, messages.INFO, _('Your Google account has not been connected to Seasoning yet. Please take a minute to register.'))
+                    return redirect('/auth/google/register/')
+        messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Google. Please try again.'))
+        return redirect('/login/')
+
+@login_required
+def google_connect(request):
+    # The currently logged in user will try to connect his Seasoning account to his
+    # Google account.
+    try:
+        if request.method == 'POST':
+            # User has just decided to connect his current google account to his seasoning account
+            if not 'Cancel' in request.POST:
+                # The user actually wants to connect his accounts
+                backend = SocialUserBackend()
+                access_token = request.POST.get('access-token', '')
+                # Check the access token and get the users Facebook info
+                social_user_info = backend.check_google_access_token(access_token)
+                if not social_user_info:
+                    # Access token was invalid or we were unable to connect to Facebook
+                    messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Google. Please try again.'))
+                    raise PermissionDenied
+                user = request.user
+                user.google_id = social_user_info['id'] 
+                user.save()
+                messages.add_message(request, messages.INFO, _('Your Google account has been successfully connected to your Seasoning account!'))
+            # If the user pressed cancel, return him to the home page
+            return redirect(home)
+    except PermissionDenied:
+        pass
+    
+    # User wants to connect his google account to his seasoning account
+    error = request.GET.get('error', None)
+    code = request.GET.get('code', None)
+    access_token = request.GET.get('access_token', None)
+    
+    if access_token is None and error is None and code is None:
+        # User wants to connect his google account to his seasoning account. First we need to get
+        # an authorization code
+        return redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + settings.GOOGLE_APP_ID + \
+                        '&redirect_uri=http://' + str(get_current_site(request)) + '/auth/google/connect/' + \
+                        '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https://www.googleapis.com/auth/userinfo.profile')
+    
+    if access_token is None and code:
+        # User was redirected from google, so fetch an access token for the received code
+        backend = SocialUserBackend()
+        access_token = backend.get_google_access_token(request, code, '/auth/google/connect/')
+    
+    if access_token:
+        # We now have an acces code that was either fetched from google, or given to us in the url get params.
+        # Doesn't matter, now we can show te connect form to the user
+        user_info = backend.check_google_access_token(access_token)
+        if user_info:
+            return render(request, 'authentication/social/google_connect.html', {'app_id': settings.GOOGLE_APP_ID,
+                                                                                 'access_token': access_token,
+                                                                                 'id': user_info['id'],
+                                                                                 'name': user_info['name'],
+                                                                                 'email': user_info['email']})
+    # If we're here, something above must have gone wrong...
+    messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Google. Please try again.'))
+    return redirect(home)
+    
 
 def google_register(request):
     form = EmailUserCreationForm()
