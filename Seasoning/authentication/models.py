@@ -28,13 +28,12 @@ from django.db import models
 from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import BaseUserManager
 from django.core import validators
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFit, AddBorder
 from django.utils import timezone
 from django.core.mail import send_mail, EmailMultiAlternatives
-import recipes
 from django.contrib.auth.hashers import make_password, check_password,\
     is_password_usable
 
@@ -131,9 +130,9 @@ class User(models.Model):
         return self.givenname
     
     def rank(self):
-        # Get the log²(recipes_added_by_user) rounded down. This is the current
+        # Get the log2(recipes_added_by_user) rounded down. This is the current
         # rank of the user. Minimum rank is 0, maximum rank is 8
-        # x.bit_length() - 1 = log²(x) (except for x=0 -> x.bit_length() = 0)
+        # x.bit_length() - 1 = log2(x) (except for x=0 -> x.bit_length() = 0)
         rank_num = min(8, max(0, len(self.recipes.all()).bit_length() - 1))
         return self.RANKS[rank_num]
 
