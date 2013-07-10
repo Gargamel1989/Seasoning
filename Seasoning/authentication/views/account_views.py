@@ -5,13 +5,21 @@ from authentication.forms import AccountSettingsForm, DeleteAccountForm,\
 from authentication.models import NewEmail, User
 from django.contrib import messages
 from django.contrib.sites.models import RequestSite
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import Http404
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.forms import PasswordChangeForm
 from django.template.response import TemplateResponse
 from django.contrib.auth.views import login as django_login, logout
 from django.utils.translation import ugettext_lazy as _
+
+@login_required
+def public_profile(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    recipes = user.recipes.all()
+    
+    return render(request, 'authentication/public_profile.html', {'user': user,
+                                                                  'recipes': recipes})
 
 @login_required
 def account_settings(request):

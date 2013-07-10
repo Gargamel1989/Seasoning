@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Profiel van {{ user.full_name }}</h2>
+
+<p>
+    <img src="{{ MEDIA_URL }}{{ user.avatar }}"> Naam: {{ user.get_full_name }}
+</p>
+<p>
+    Rang: {{ user.rank }}
+</p>
+<div>
+    Toegevoegde recepten: 
+    {% if not recipes %}
+    <p>
+        Deze gebruiker heeft nog geen recepten toegevoegd!
+    </p>
+    {% else %}
+    <p>
+        {% for recipe in recipes %}
+        <a href="/recipes/{{ recipe.id }}/">{{ recipe.name }}</a><br/>
+        {% endfor %}
+    </p>
+    {% endif %}
+</div>
+
+{% endblock %}

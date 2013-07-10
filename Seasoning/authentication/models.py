@@ -125,16 +125,16 @@ class User(models.Model):
     REQUIRED_FIELDS = ['givenname', 'surname', 'password', 'date_of_birth']
 
     def get_full_name(self):
-        return ' '.join(self.givenname, self.surname)
+        return ' '.join((self.givenname, self.surname))
 
     def get_short_name(self):
         return self.givenname
     
     def rank(self):
-        rank_num = self.recipes.bit_length() - 1
-        if rank_num >= 8:
-            # TODO: custom ranks
-            raise NotImplementedError
+        # Get the log²(recipes_added_by_user) rounded down. This is the current
+        # rank of the user. Minimum rank is 0, maximum rank is 8
+        # x.bit_length() - 1 = log²(x) (except for x=0 -> x.bit_length() = 0)
+        rank_num = min(8, max(0, len(self.recipes.all()).bit_length() - 1))
         return self.RANKS[rank_num]
 
     def email_user(self, subject, message, from_email=None):
