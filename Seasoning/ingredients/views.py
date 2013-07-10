@@ -32,20 +32,8 @@ from django.http.response import HttpResponse, Http404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from ingredients.forms import SearchIngredientForm
-from django.contrib.auth import load_backend, login, authenticate
-from django.conf import settings
-from authentication.models import User
-from general.views import home
-from authentication.backends import SocialUserBackend
 
 def view_ingredients(request):
-    user = User.objects.get(pk=1)
-    user2 = authenticate(**{'network_id': user.facebook_id, 
-                           'network':SocialUserBackend.FACEBOOK})
-    backend = load_backend(settings.AUTHENTICATION_BACKENDS[0])
-    user2.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
-    login(request, user2)
-    return redirect(home)
     search_form = SearchIngredientForm()
     ingredients = Ingredient.objects.all()
     return render(request, 'ingredients/view_ingredients.html', {'form': search_form,
