@@ -95,9 +95,6 @@ def facebook_connect(request):
                     messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Facebook. Please try again.'))
                     raise PermissionDenied
                 user = request.user
-                if not user.email == social_user_info['email']:
-                    messages.add_message(request, messages.INFO, _('The email of your Seasoning account did not match that of your Facebook account.'))
-                    raise PermissionDenied
                 user.facebook_id = social_user_info['id'] 
                 user.save()
                 messages.add_message(request, messages.INFO, _('Your social network account has successfully connected to your Seasoning account!'))
@@ -131,6 +128,13 @@ def facebook_registration(request, disallowed_url='registration_disallowed'):
                 raise PermissionDenied
             # This is now trusted data, extract the users info from the data
             user_data = data['registration']
+            try:
+                # Check if a user with this Facebook id already exists
+                User.objects.get(faceboo_id=data['user_id'])
+                messages.add_message(request, messages.INFO, _('A user has already registered with your Facebook account. If this is you, please log in, otherwise, contact an administrator'))
+                return redirect('/login/')
+            except User.DoesNotExist:
+                pass
             try:
                 # Check if a user with this Facebook email is already registered
                 User.objects.get(email=user_data['email'])

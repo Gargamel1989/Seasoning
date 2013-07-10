@@ -33,7 +33,7 @@ $(document).ready(function() {
             }, {scope: 'email'})
         } else {
             // The user isn't logged in to Facebook.
-            window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=http://{{ site }}/auth/fb/connect/&scope=email&client_id=337617306368900'
+            window.location = 'https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=http://{{ site }}/auth/fb/&scope=email&client_id=337617306368900'
         }
     }, true);
     })
