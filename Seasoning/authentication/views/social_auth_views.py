@@ -16,7 +16,7 @@ from django.contrib.sites.models import get_current_site
 from django.http.response import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
-from authentication.forms import EmailUserCreationForm
+from authentication.forms import EmailUserCreationForm, SocialUserCheckForm
 
 def base64_url_decode(inp):
     padding_factor = len(inp) % 4
@@ -130,7 +130,7 @@ def facebook_registration(request, disallowed_url='registration_disallowed'):
             user_data = data['registration']
             try:
                 # Check if a user with this Facebook id already exists
-                User.objects.get(faceboo_id=data['user_id'])
+                User.objects.get(facebook_id=data['user_id'])
                 messages.add_message(request, messages.INFO, _('A user has already registered with your Facebook account. If this is you, please log in, otherwise, contact an administrator'))
                 return redirect('/login/')
             except User.DoesNotExist:
@@ -279,9 +279,86 @@ def google_connect(request):
     return redirect(home)
     
 
-def google_register(request):
-    form = EmailUserCreationForm()
-    return render(request, 'authentication/social/google_register.html', {'form': form})
+def google_register(request, disallowed_url='registration_disallowed'):
+    form = None
+    backend = SocialUserBackend()
+    if request.method == 'POST':
+        access_token = request.POST.get('access_token', '')
+        # User has registered using his google account
+        form = SocialUserCheckForm(request.POST)
+        if form.is_valid():
+            user_info = backend.check_google_access_token(access_token)
+            if user_info:
+                try:
+                    # Check if a user with this Google id already exists
+                    User.objects.get(google_id=user_info['id'])
+                    messages.add_message(request, messages.INFO, _('A user has already registered with your Google account. If this is you, please log in, otherwise, contact an administrator'))
+                    return redirect('/login/')
+                except User.DoesNotExist:
+                    pass
+                try:
+                    # Check if a user with this Facebook email is already registered
+                    User.objects.get(email=user_info['email'])
+                    messages.add_message(request, messages.INFO, _('A user has already registered with that email. If this is your account, would you like to connect it to your Social Network account?'))
+                    return redirect('/auth/fb/connect/')
+                except User.DoesNotExist:
+                    # A user with this Google email does not exist, so we will register a new one
+                    pass
+                backend = RegistrationBackend()
+                # Check if registration is allowed
+                if not backend.registration_allowed(request):
+                    return redirect(disallowed_url)
+                # Register the user
+                try:
+                    date_of_birth = date_of_birth=datetime.datetime.strptime(user_info['birthday'], '%m/%d/%Y').date()
+                except ValueError:
+                    date_of_birth = datetime.date.today()
+                password = form.cleaned_data['password'] or None
+                user = backend.social_register(request, social_id=user_info['id'], social_network=SocialUserBackend.GOOGLE,
+                                               givenname=user_info['given_name'], surname=user_info['family_name'], email=user_info['email'], 
+                                               date_of_birth=date_of_birth, password=password)
+                # And log him in, because we don't need to validate his information
+                user = authenticate(**{'network_id': user.facebook_id, 
+                                       'network': SocialUserBackend.GOOGLE})
+                auth_login(request, user)
+                messages.add_message(request, messages.INFO, _('You have successfully registered your Google account on Seasoning. Have fun!'))            
+                return redirect(home)
+            # Invalid access token...
+            access_token = None
+    else:
+        # User wants to register using his google account
+        error = request.GET.get('error', None)
+        code = request.GET.get('code', None)
+        
+        if error is None and code is None:
+            # User wants to register using his google account. First we need to get
+            # an authorization code
+            return redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + settings.GOOGLE_APP_ID + \
+                            '&redirect_uri=http://' + str(get_current_site(request)) + '/auth/google/register/' + \
+                            '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https://www.googleapis.com/auth/userinfo.profile')
+            
+        if code:
+            # User was redirected from google, so fetch an access token for the received code
+            access_token = backend.get_google_access_token(request, code, '/auth/google/register/')
+            
+    if access_token:
+        # We now have an acces code that was either fetched from google, or given to us in the url get params.
+        # Doesn't matter, now we can show te connect form to the user
+        user_info = backend.check_google_access_token(access_token)
+        if user_info:
+            if not form:
+                form = SocialUserCheckForm()
+            return render(request, 'authentication/social/google_register.html', {'form': form,
+                                                                                  'givenname': user_info['given_name'],
+                                                                                  'surname': user_info['family_name'],
+                                                                                  'email': user_info['email'],
+                                                                                  'date_of_birth': user_info['birthday'],
+                                                                                  'image': 'http://profiles.google.com/s2/photos/profile/' + user_info['id'] + '?sz=100',
+                                                                                  'access_token': access_token})
+                
+    # If we're here, something above must have gone wrong...
+    messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Google. Please try again.'))
+    return redirect(home)
 
 def twitter_authentication(request):
     return render(request, 'authentication/social/twitter.html')

@@ -100,6 +100,31 @@ class EmailUserCreationForm(forms.ModelForm):
                 raise forms.ValidationError(_("The two password fields didn't match."))
         return self.cleaned_data
 
+class SocialUserCheckForm(forms.Form):
+    
+    password = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
+                                label=_("Password"), required=False) 
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
+                                label=_("Password (again)"), required=False)
+    
+    tos = forms.BooleanField(widget=forms.CheckboxInput(attrs=attrs_dict),
+                             label=_(u'I have read and agree to the Terms of Service'),
+                             error_messages={'required': _("You must agree to the terms to register")})
+    
+    def clean(self):
+        """
+        Verifiy that the values entered into the two password fields
+        match. Note that an error here will end up in
+        ``non_field_errors()`` because it doesn't apply to a single
+        field.
+        
+        """
+        super(SocialUserCheckForm, self).clean()
+        if 'password' in self.cleaned_data and 'password2' in self.cleaned_data:
+            if self.cleaned_data['password'] != self.cleaned_data['password2']:
+                raise forms.ValidationError(_("The two password fields didn't match."))
+        return self.cleaned_data
+
     
 class ResendActivationEmailForm(forms.Form):
     """
