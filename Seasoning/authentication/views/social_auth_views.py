@@ -16,7 +16,7 @@ from django.contrib.sites.models import get_current_site
 from django.http.response import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
-from authentication.forms import EmailUserCreationForm, SocialUserCheckForm
+from authentication.forms import SocialUserCheckForm
 
 def base64_url_decode(inp):
     padding_factor = len(inp) % 4
