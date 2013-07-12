@@ -68,14 +68,12 @@ urlpatterns = patterns('',
     
     # Social logins
     url(r'^auth/fb/register/', 'authentication.views.facebook_registration'),
-    url(r'^auth/fb/connect/', 'authentication.views.facebook_connect'),
     url(r'^auth/fb/disconnect/', 'authentication.views.facebook_disconnect'),
     url(r'^auth/fb/channel/$', 'authentication.views.facebook_channel_file'),
-    url(r'^auth/fb/', 'authentication.views.facebook_authentication'),
     url(r'^auth/google/register/$', 'authentication.views.google_register'),
-    url(r'^auth/google/connect/', 'authentication.views.google_connect'),
+    url(r'^auth/(.*)/connect/', 'authentication.views.social_connect'),
     url(r'^auth/google/disconnect/', 'authentication.views.google_disconnect'),
-    url(r'^auth/google/$', 'authentication.views.google_authentication'),
+    url(r'^auth/(.*)/$', 'authentication.views.social_auth'),
     url(r'^auth/twitter/$', 'authentication.views.twitter_authentication'),
     url(r'^auth/openid/$', 'authentication.views.openid_authentication'),
     

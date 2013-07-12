@@ -10,7 +10,7 @@
 	{{ form.non_field_errors }}
 	
 	<div class="field-wrapper">
-        {{ form.givenname.label_tag }}
+        {{ form.givenname.label }}
         {{ form.givenname }}
         
         {% if form.givenname.errors %}        
@@ -19,7 +19,7 @@
 	</div>
 	
 	<div class="field-wrapper">
-        {{ form.surname.label_tag }}
+        {{ form.surname.label }}
         {{ form.surname }}
         
         {% if form.surname.errors %}        
@@ -28,7 +28,7 @@
 	</div>
 	
 	<div class="field-wrapper">
-        {{ form.email.label_tag }}
+        {{ form.email.label }}
         {{ form.email }}
         
         {% if form.email.errors %}        
@@ -37,7 +37,7 @@
 	</div>
 	
 	<div class="field-wrapper">
-        {{ form.password.label_tag }}
+        {{ form.password.label }}
         {{ form.password }}
         
         {% if form.password.errors %}        
@@ -46,7 +46,7 @@
 	</div>
 	
 	<div class="field-wrapper">
-        {{ form.password2.label_tag }}
+        {{ form.password2.label }}
         {{ form.password2 }}
         
         {% if form.password2.errors %}        
@@ -55,7 +55,7 @@
 	</div>
 	
 	<div class="field-wrapper">
-        {{ form.gender.label_tag }}
+        {{ form.gender.label }}
         {{ form.gender }}
         
         {% if form.gender.errors %}        
@@ -64,7 +64,7 @@
 	</div>
 	
 	<div class="field-wrapper">
-        {{ form.date_of_birth.label_tag }}
+        {{ form.date_of_birth.label }}
         {{ form.date_of_birth }}
         
         {% if form.date_of_birth.errors %}        
@@ -83,7 +83,7 @@
         {% endif %}
         
         {{ form.tos }}
-        {{ form.tos.label_tag}}
+        {{ form.tos.label}}
 	</div>
   
 	<input type="submit" value="Registreer" id="account-submit" tabindex=5/>

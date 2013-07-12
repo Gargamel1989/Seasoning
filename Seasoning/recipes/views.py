@@ -162,6 +162,11 @@ def edit_recipe(request, recipe_id=None):
         recipe_form = AddRecipeForm(request.POST, instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe)
         
+        # Check for existence of every used ingredient
+        for usesingredient_form in usesingredient_formset:
+            # TODO: check if ingredients exist
+            pass
+        
         if recipe_form.is_valid() and usesingredient_formset.is_valid():
             recipe_form.save(author=request.user)
             usesingredient_formset.save()

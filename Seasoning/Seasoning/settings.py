@@ -171,6 +171,8 @@ AUTH_USER_MODEL = 'authentication.User'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'authentication.backends.SocialUserBackend',
+    'authentication.backends.GoogleAuthBackend',
+    'authentication.backends.FacebookAuthBackend',
 )
 
 # A sample logging configuration. The only tangible logging

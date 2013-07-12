@@ -21,6 +21,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from ingredients.models import Ingredient
+from ingredients.models import UnknownIngredient
 
 class AutoCompleteSelectIngredientWidget(forms.widgets.TextInput):
 
@@ -54,10 +55,11 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
         if value:
             try:
                 ingredient = Ingredient.objects.get(name__exact=value)
-            except MultipleObjectsReturned:
-                raise forms.ValidationError(u"Multiple result returned for ingredient name: %s" % value)
             except ObjectDoesNotExist:
-                raise forms.ValidationError(u"No ingredient found with name: %s" % value)
+                try:
+                    ingredient = UnknownIngredient.objects.get(name__exact=value)
+                except ObjectDoesNotExist:
+                    raise forms.ValidationError(u"No ingredient found with name: %s" % value)
             return ingredient
         else:
             if self.required:

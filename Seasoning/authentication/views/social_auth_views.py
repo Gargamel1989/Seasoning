@@ -1,5 +1,5 @@
 import base64
-from authentication.backends import SocialUserBackend, RegistrationBackend
+from authentication.backends import GoogleAuthBackend, FacebookAuthBackend, SocialUserBackend, RegistrationBackend
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import redirect, render
 from authentication.models import User
@@ -18,12 +18,132 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 from authentication.forms import SocialUserCheckForm
 
+BACKENDS = {'google': GoogleAuthBackend,
+            'fb': FacebookAuthBackend}
+
 def base64_url_decode(inp):
     padding_factor = len(inp) % 4
     inp += "="*padding_factor
     return base64.b64decode(unicode(inp).translate(dict(zip(map(ord, u'-_'), u'+/'))))
 
+def social_auth(request, backend):
+    backend = BACKENDS[backend]
+    backend = backend()
+    
+    code = request.GET.get('code', None)
+    state = request.GET.get('state', None)
+    next_page = state or request.REQUEST.get('next', None)
+    
+    redirect_uri = 'http://' + str(get_current_site(request)) + '/auth/' + backend.NAME + '/'
+    if code is None:
+        # User has just click the 'Login with ...' button to start a social authentication.
+        # Redirect him to the social network, so we may get an authorization code.
+        return redirect(backend.get_auth_code_url(redirect_uri=redirect_uri, 
+                                                  next_page=next_page))
+    else:
+        # User has been redirected to the social network, and has come back with a code
+        # We now need to exchange this code for an access token in our backend
+        access_token = backend.get_access_token(code,
+                                                redirect_uri=redirect_uri)
+    
+        if access_token:
+            # We now have an access token
+            user_info = backend.get_user_info(access_token)
+            
+            if user_info:
+                # We received a valid access token, and were able to exchange it for the necessary
+                # user information. 
+                # Lets try to authenticate the user
+                user = authenticate(**{backend.ID_FIELD: user_info['id']})
+                
+                if user:
+                    # User was successfully authenticated, so log him in
+                    auth_login(request, user)
+                    return redirect(next_page or home)
+                # A user with the this id whas not found in the database. Check if we can find a
+                # Seasoning account with the social users email
+                try:
+                    user = User.objects.get(email=user_info['email'])
+                    # A user with the given email has been found. Prompt the user to
+                    # connect his social network account to his Seasoning account
+                    messages.add_message(request, messages.INFO, _('The email corresponding to your ' + backend.name() + ' account is already in use on Seasoning. '
+                                                                   'If this account belongs to you, please log in to connect it to your ' + backend.name() + ' account, '
+                                                                   'otherwise, please contact an administrator.'))
+                    # The user is probably not logged in at this point, so he will be asked to log
+                    # in first before connecting his social network account to his Seasoning account.
+                    return redirect('/auth/' + backend.NAME + '/connect/')
+                except User.DoesNotExist:
+                    # A user with the given email was not found. Prompt the user to register
+                    # at Seasoning using his social network account
+                    messages.add_message(request, messages.INFO, _('Your ' + backend.name() + ' account has not been connected to Seasoning yet. Please take a minute to register.'))
+                    return redirect('/auth/' + backend.NAME + '/register/')
+    
+    # The code or access token was not correct or we were unable to connect to the social network. Please try again later
+    messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with ' + backend.name() + '. Please try again.'))
+    return redirect('/login/')
 
+@login_required
+def social_connect(request, backend):
+    backend = BACKENDS[backend]
+    backend = backend()
+    
+    if request.method == 'POST':
+        # The user has posted his intent to connect his social network id with
+        # his Seasoning account
+        if 'Cancel' in request.POST:
+            # User didn't want to connect
+            return redirect(home)
+        
+        access_token = request.POST.get('access-token', '')
+        if access_token:
+            # Check the access token and get the users Facebook info
+            user_info = backend.get_user_info(access_token)
+            if user_info:
+                # Access token was valid and we have received the users' info
+                # Check if this user is already connected to a Seasoning account
+                user = authenticate(**{backend.ID_FIELD: user_info['id']})
+                if user:
+                    # User already has an account on Seasoning, so we can't connect it to another one
+                    messages.add_message(request, messages.INFO, _('This ' + backend.name() + ' account is already connected to another account.'))
+                else:
+                    backend.connect_user(request.user, user_info['id'])
+                    messages.add_message(request, messages.INFO, _('Your ' + backend.name() + ' account has been successfully connected to your Seasoning account!'))
+                    return redirect(home)
+            else:
+                # Invalid access token or something else went wrong
+                messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with ' + backend.name() + '. Please try again.'))
+    
+    # User wants to connect his social account to his Seasoning account. Get the neccessary information
+    # He either did something wrong while posting his response, or has not had the change to post it yet.
+    code = request.GET.get('code', None)
+    access_token = request.GET.get('accessToken', None)
+    next_page = request.REQUEST.get('next', None)
+    
+    redirect_uri = 'http://' + str(get_current_site(request)) + '/auth/' + backend.NAME + '/connect/'
+    if code is None:
+        # Redirect User to the social network, so we may get an authorization code.
+        return redirect(backend.get_auth_code_url(redirect_uri=redirect_uri, 
+                                                  next_page=next_page))
+    else:
+        # User has been redirected to the social network, and has come back with a code
+        # We now need to exchange this code for an access token in our backend
+        access_token = backend.get_access_token(code,
+                                                redirect_uri=redirect_uri)
+    
+        if access_token:
+            # We now have an access token
+            user_info = backend.get_user_info(access_token)
+            
+            if user_info:
+                # We received a valid access token, and were able to exchange it for the necessary
+                # user information.
+                context = {'access_token': access_token}
+                context.update(user_info)
+                return render(request, 'authentication/social/' + backend.NAME + '_connect.html', context)
+        
+        messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with ' + backend.name() + '. Please try again.'))
+        return redirect('/account/settings/')
+    
 def facebook_authentication(request):
     code = request.GET.get('code', None)
     access_token = request.GET.get('accessToken', None)

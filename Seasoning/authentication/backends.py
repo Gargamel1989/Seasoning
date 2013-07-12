@@ -255,4 +255,131 @@ class SocialUserBackend(ModelBackend):
             return simplejson.loads(user_info_google.read())
         except HTTPError:
             return False
-            
+
+class OAuth2Backend(ModelBackend):
+    
+    ID_FIELD = None
+    NAME = None
+    OAUTH_URL = None
+    TOKEN_REQUEST_URL = None
+    USER_INFO_URL = None
+    APP_ID = None
+    APP_SECRET = None
+    SCOPE = None
+    
+    def name(self):
+        if self.NAME is None:
+            raise NotImplementedError
+        return self.NAME.capitalize()
+    
+    def authenticate(self, **kwargs):
+        if self.ID_FIELD is None:
+            raise NotImplementedError
+        social_id = kwargs.get(self.ID_FIELD)
+        try:
+            return User.objects.get(**{self.ID_FIELD: social_id})
+        except User.DoesNotExist:
+            return None
+    
+    def get_auth_code_url(self, redirect_uri, next_page=None):
+        if self.APP_ID is None or self.SCOPE is None or self.OAUTH_URL is None:
+            raise NotImplementedError
+        params = ['response_type=code',
+                  'client_id=' + self.APP_ID,
+                  'redirect_uri=' + redirect_uri,
+                  'scope=' + self.SCOPE]
+        if next_page:
+            params.append('state='+ next_page)
+        return self.OAUTH_URL + '?' + '&'.join(params)
+    
+    def get_unparsed_user_info(self, access_token):
+        try:
+            user_info = urllib2.urlopen(self.USER_INFO_URL + '?access_token=' + access_token)
+            return simplejson.loads(user_info.read())
+        except HTTPError:
+            return False
+    
+    def connect_user(self, user, social_id):
+        if self.ID_FIELD is None:
+            raise NotImplementedError
+        setattr(user, self.ID_FIELD, social_id)
+        user.save()
+    
+    
+class GoogleAuthBackend(OAuth2Backend):
+    
+    ID_FIELD = 'google_id'
+    NAME = 'google'
+    OAUTH_URL = 'https://accounts.google.com/o/oauth2/auth'
+    TOKEN_REQUEST_URL = 'https://accounts.google.com/o/oauth2/token'
+    USER_INFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo'
+    APP_ID = settings.GOOGLE_APP_ID
+    APP_SECRET = settings.GOOGLE_SECRET
+    SCOPE = 'https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile'
+    
+    def get_access_token(self, code, redirect_uri):
+        if self.APP_ID is None or self.APP_SECRET is None or self.TOKEN_REQUEST_URL is None:
+            raise NotImplementedError
+        try:
+            post_data = {'code': code,
+                         'client_id': self.APP_ID,
+                         'client_secret': self.APP_SECRET,
+                         'redirect_uri': redirect_uri,
+                         'grant_type': 'authorization_code'}
+            data = urllib.urlencode(post_data)
+            token_response = urllib2.urlopen(self.TOKEN_REQUEST_URL, data)
+            try:
+                token = simplejson.loads(token_response.read())
+                return token['access_token']
+            except (KeyError, ValueError):
+                error = TypeError()
+                error.token_response = token_response.read()
+                raise error
+        except HTTPError:
+            return None
+    
+    def get_user_info(self, access_token):
+        google_info = self.get_unparsed_user_info(access_token)
+        return {'id': google_info['id'],
+                'name': google_info['name'],
+                'givenname': google_info['given_name'],
+                'surname': google_info['family_name'],
+                'email': google_info['email']}
+    
+    
+class FacebookAuthBackend(OAuth2Backend):
+    
+    ID_FIELD = 'facebook_id'
+    NAME = 'fb'
+    OAUTH_URL = 'https://www.facebook.com/dialog/oauth'
+    TOKEN_REQUEST_URL = 'https://graph.facebook.com/oauth/access_token'
+    USER_INFO_URL = 'https://graph.facebook.com/me'
+    APP_ID = settings.FACEBOOK_APP_ID
+    APP_SECRET = settings.FACEBOOK_SECRET
+    SCOPE = 'email'
+    
+    def name(self):
+        return 'Facebook'
+    
+    def get_access_token(self, code, redirect_uri):
+        try:
+            params = {'code=' + code,
+                      'client_id=' + self.APP_ID,
+                      'client_secret=' + self.APP_SECRET,
+                      'redirect_uri=' + redirect_uri,}
+            full_token_request_url = self.TOKEN_REQUEST_URL + '?' + '&'.join(params)
+            fb_token_response = urllib2.urlopen(full_token_request_url).read()
+            return fb_token_response.replace('access_token=', '')
+        except HTTPError:
+            return None
+    
+    def get_user_info(self, access_token):
+        fb_info = self.get_unparsed_user_info(access_token)
+        print fb_info
+        return {'id': fb_info['id'],
+                'name': fb_info['name'],
+                'givenname': fb_info['first_name'],
+                'surname': fb_info['last_name'],
+                'email': fb_info['email']}
+    
+    
