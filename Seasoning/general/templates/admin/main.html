@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Seasoning Admin</h2>
+
+<p>
+	Welkom op de Seasoning admin paginas. Hier een kort overzicht van Seasoning:
+</p>
+<ul>
+	<li>Er zijn {{ users }} gebruikers geregistreerd</li>
+	<li>Er zijn {{ ingredients }} ingredienten beschikbaar (waarvan {{ accepted_ingredients }} afgewerkte)</li>
+	<li>Er zijn {{ recipes }} recepten toegevoegd</li>
+</ul>
+
+
+{% endblock %}
