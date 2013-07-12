@@ -79,7 +79,7 @@
                                 <a id="main-navigation-recipes" class="main-navigation-link {% active request "RECEPTEN" %}" href="/recipes/">RECEPTEN</a>
                                 <a id="main-navigation-information" class="main-navigation-link {% active request "INFORMATIE" %}" href="/information/">INFORMATIE</a>
                                 {% if user.is_superuser %}
-                                <a id="main-navigation-admin" class="main-navigation-link {% active request "ADMIN" %}" href="/">ADMIN</a>
+                                <a id="main-navigation-admin" class="main-navigation-link {% active request "ADMIN" %}" href="/admin/">ADMIN</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -112,6 +112,7 @@
                         </div>
                         {% if user.is_superuser %}
                         <div id="sub-navigation-admin" class="header-sub-navigation {% active request "ADMIN" %}">
+                            <a class="sub-navigation-link {% active request "GebruikersAdmin" %}" href="/authentication/users/" >Gebruikers</a>
                             <a class="sub-navigation-link {% active request "IngredientenAdmin" %}" href="/ingredients/list/" >Ingredienten</a>
                             <a class="sub-navigation-link {% active request "Units" %}" href="/ingredients/units/" >Eenheden</a>
                         </div>

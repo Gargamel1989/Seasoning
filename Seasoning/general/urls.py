@@ -17,28 +17,22 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.conf.urls import patterns, include
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
     # General Pages
-    (r'^', include('general.urls')),
+    url(r'^$', 'general.views.home', name='home'),
+    url(r'^contact/$', 'general.views.contact'),
+    url(r'^motifs/$', 'general.views.motifs'),
+    url(r'^privacypolicy/$', 'general.views.privacypolicy'),
+    url(r'^sitemap/$', 'general.views.sitemap'),
+    url(r'^support/$', 'general.views.support'),
+    url(r'^terms/$', 'general.views.terms'),
+    
+    # Admin Pages
+    url(r'^admin/', 'general.views.admin'),
 
-    # Core pages
-    (r'^ingredients/', include('ingredients.urls')),
-    (r'^recipes/', include('recipes.urls')),
-    
-    # Registration pages
-    (r'^', include('authentication.urls')),
-    
-     # Comments
-    (r'^comments/', include('django.contrib.comments.urls')),
+    # Backup Database
+    url(r'^backup/$', 'general.views.backup_db'),
     
 )
-
-from django.conf import settings
-# debug stuff to serve static media
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', 
-            {'document_root': settings.MEDIA_ROOT}),
-   )

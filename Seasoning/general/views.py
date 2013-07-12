@@ -22,6 +22,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 import time
 import os
+from authentication.models import User
+from ingredients.models import Ingredient
+from recipes.models import Recipe
 
 def home(request):
     return render(request, 'seasoning/homepage.html')
@@ -43,6 +46,16 @@ def support(request):
 
 def terms(request):
     return render(request, 'seasoning/terms.html')
+
+def admin(request):
+    users = len(User.objects.all())
+    ingredients = len(Ingredient.objects.all())
+    accepted_ingredients = len(Ingredient.objects.filter(accepted=True))
+    recipes = len(Recipe.objects.all())
+    return render(request, 'admin/main.html', {'users': users,
+                                               'ingredients': ingredients,
+                                               'accepted_ingredients': accepted_ingredients,
+                                               'recipes': recipes})
 
 @staff_member_required
 def backup_db(request):

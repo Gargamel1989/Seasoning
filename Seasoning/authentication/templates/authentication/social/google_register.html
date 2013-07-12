@@ -1,32 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<script type="text/javascript">
-	(function() {
-		var po = document.createElement('script');
-		po.type = 'text/javascript';
-		po.async = true;
-		po.src = 'https://apis.google.com/js/client:plusone.js';
-		var s = document.getElementsByTagName('script')[0];
-		s.parentNode.insertBefore(po, s);
-	})();
-	$(document).ready(function() {
-	    $('input').attr('readonly','readonly');
-	});
-</script>
 <p>
     Het wachtwoord veld is <strong>NIET VERPLICHT</strong>. Je moet dit veld enkel invullen indien je in de toekomst
     om privacy redenen liever via Seasoning zelf aanmeldt in plaats van via Google. Dit wachtwoord moet bijgevolg
     niet overeenkomen met je Google wachtwoord.
 </p>
-<form action="/" method="post">
-{{ form.givenname.label }} {{ form.givenname }}<br/>
-{{ form.surname.label }} {{ form.surname }}<br/>
-{{ form.email.label }} {{ form.email }}<br/>
-{{ form.date_of_birth.label }} {{ form.date_of_birth }}<br/>
-{{ form.password.label }} {{ form.password }}<br/>
-{{ form.password2.label }} {{ form.password2 }}<br/>
-{{ form.tos }} {{ form.tos.label }}<br/>
-<input type="submit" value="Registreren">
+<form method="post" action="/auth/google/register/">
+{% csrf_token %}
+{{ form.non_field_errors }}
+Given name
+<input id="id_givenname" type="text" name="givenname" maxlength="30" value="{{ givenname }}" disabled>
+<br>
+Surname
+<input id="id_surname" type="text" name="surname" maxlength="50" value="{{ surname }}" disabled>
+<br>
+Email address
+<input id="id_email" type="text" name="email" maxlength="255" value="{{ email }}" disabled>
+<br>
+Avatar: <img src="{{ image }}">
+<br>
+Date of birth
+<input id="id_date_of_birth" type="text" name="date_of_birth" value="{{ date_of_birth }}" disabled>
+<br>
+{{ form.password.label }} {{ form.password }}
+{{ form.password.errors }}
+<br>
+{{ form.password2.label }} {{ form.password2 }}
+{{ form.password2.errors }}
+<br>
+{{ form.tos }} {{ form.tos.label }}
+{{ form.tos.errors }}
+<br>
+<input type="hidden" value="{{ access_token }}" name="access_token">
+<input type="submit" value="Registreren" readonly="readonly">
 </form>
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+
+$(document).ready(function() {
+	$("#twitter-form").submit()
+})
+
+</script>
+<form id="twitter-form" action="https://api.twitter.com/oauth/request_token" method="POST">
+  <input type="hidden" name="oauth_nonce" value="{{ app_id }}">
+  <input type="hidden" name="oauth_callbac" value="{{ callback_url }}">
+</form>
+{% endblock %}
