@@ -34,28 +34,14 @@ Gebruikersnaam: {{ user.username }}
         {% if user.facebook_id %}
         Dit account is gekoppeld met een Facebook account. Klik <a href="/auth/fb/disconnect/">hier</a> om deze accounts te ontkoppelen.
         {% else %}
-        Dit account is niet gekoppeld met een Facebook account
+        Dit account is niet gekoppeld met een Facebook account. Klik <a href="/auth/fb/connect/">hier</a> om een Facebook account te koppelen.
         {% endif %}
     </div>
     <div>
         Google: {% if user.google_id %}
         Dit account is gekoppeld met een Google account. Klik <a href="/auth/google/disconnect/">hier</a> om deze accounts te ontkoppelen.
         {% else %}
-        Dit account is niet gekoppeld met een Google account
-        {% endif %}
-    </div>
-    <div>
-        Twitter: {% if user.twitter_id %}
-        Dit account is gekoppeld met een Twitter account. Klik <a href="/auth/twitter/disconnect/">hier</a> om deze accounts te ontkoppelen.
-        {% else %}
-        Dit account is niet gekoppeld met een Twitter account
-        {% endif %}
-    </div>
-    <div>
-        OpenID: {% if user.openid_id %}
-        Dit account is gekoppeld met een OpenID account. Klik <a href="/auth/openid/disconnect/">hier</a> om deze accounts te ontkoppelen.
-        {% else %}
-        Dit account is niet gekoppeld met een OpenID account
+        Dit account is niet gekoppeld met een Google account. Klik <a href="/auth/google/connect/">hier</a> om een Google account te koppelen.
         {% endif %}
     </div>
 </p>

@@ -4,7 +4,10 @@
 
 <h1>Registreren bij Seasoning.be</h1>
 
-<form action="/register/" method="post" class="account-form">
+<table>
+    <tr>
+        <td width=400px>
+            <form action="/register/" method="post" class="account-form">
 	{% csrf_token %}
   	
 	{{ form.non_field_errors }}
@@ -92,5 +95,15 @@
 <script type="text/javascript">
 document.getElementById('username').focus()
 </script>
-
+</td>
+        <td>
+            <a id="fb-register-btn" href="/auth/fb/register/">
+                Registreer via Facebook
+            </a><br/>
+            <a class="google-register-btn" href="/auth/google/register/">
+                Registreer via Google
+            </a>
+        </td>
+    </tr>
+</table>
 {% endblock %}

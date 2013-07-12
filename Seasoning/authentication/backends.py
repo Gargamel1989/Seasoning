@@ -17,10 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.contrib.auth import login, load_backend, get_user_model
+from django.contrib.auth import login, load_backend
 from django.conf import settings
-from django.contrib.sites.models import RequestSite, get_current_site
-
 from authentication import signals
 from authentication.forms import EmailUserCreationForm
 from authentication.models import RegistrationProfile, User
@@ -28,9 +26,8 @@ from django.contrib.auth.backends import ModelBackend
 import urllib2
 from django.utils import simplejson
 from urllib2 import HTTPError
-import re
 import urllib
-from django.test import simple
+import datetime
 
 
 class RegistrationBackend(object):
@@ -107,25 +104,6 @@ class RegistrationBackend(object):
                                      request=request)
         return new_user
     
-    def social_register(self, request, social_id, social_network, givenname, surname, email, date_of_birth, password=None):
-        """
-        Users registering from a social network already have a validated e-mail address,
-        and thus should not be sent an activatoin email
-        
-        The social_network parameter should be one of SocialUserBackend.{FACEBOOK, ...}
-        
-        """
-        new_user = User.objects.create_user(givenname, surname, email, date_of_birth, password)
-        setattr(new_user, social_network, social_id)
-        new_user.save()
-        
-        signals.user_registered.send(sender=self.__class__,
-                                     user=new_user,
-                                     request=request)
-        
-        return new_user
-
-
     def activate(self, request, activation_key):
         """
         Given an an activation key, look up and activate the user
@@ -186,76 +164,6 @@ class RegistrationBackend(object):
         """
         return ('activation_complete', (), {})
 
-class SocialUserBackend(ModelBackend):
-    """
-    This backend provides the ability to log in a user with a social network
-    account.
-    
-    By default, the ``authenticate`` method creates ``User`` objects for
-    emails that don't already exist in the database.  Subclasses can disable
-    this behavior by setting the ``create_unknown_user`` attribute to
-    ``False``.
-    """
-    
-    FACEBOOK, TWITTER, GOOGLE, OPENID = 'facebook_id', 'twitter_id', 'google_id', 'openid_id'
-
-    def authenticate(self, network_id, network):
-        """
-        The id should be the social id of the user that is being authentication. It
-        is considered trusted.
-        The network parameter specifies from which social network the user is
-        authenticating. It should be one of backends.{FACEBOOK, TWIITER, GOOGLE, OPENID}
-        
-        """
-        UserModel = get_user_model()
-        try:
-            return UserModel.objects.get(**{network: network_id})
-        except UserModel.DoesNotExist:
-            return None
-    
-    def get_facebook_access_token(self, request, code):
-        try:
-            fb_token_request_url = 'https://graph.facebook.com/oauth/access_token?client_id=' + settings.FACEBOOK_APP_ID + \
-                                   '&redirect_uri=http://' + get_current_site(request).domain + '/auth/fb/' + \
-                                   '&client_secret=' + settings.FACEBOOK_SECRET + '&code=' + code
-            fb_token_response = urllib2.urlopen(fb_token_request_url).read()
-            if re.match('^access_token\=.*', fb_token_response):
-                return fb_token_response.replace('access_token=', '')
-        except HTTPError:
-            return None
-        
-    def check_facebook_access_token(self, access_token):
-        try:
-            user_info_fb = urllib2.urlopen('https://graph.facebook.com/me?access_token=' + access_token)
-            return simplejson.loads(user_info_fb.read())
-        except HTTPError:
-            return False
-    
-    def get_google_access_token(self, request, code, redirect_uri_endpoint):
-        try:
-            google_token_request_url = 'https://accounts.google.com/o/oauth2/token'
-            post_data = {'code': code,
-                         'client_id': settings.GOOGLE_APP_ID,
-                         'client_secret': settings.GOOGLE_SECRET,
-                         'redirect_uri': 'http://' + str(get_current_site(request)) + redirect_uri_endpoint,
-                         'grant_type': 'authorization_code'}
-            data = urllib.urlencode(post_data)
-            google_token_response = urllib2.urlopen(google_token_request_url, data)
-            google_info = simplejson.loads(google_token_response.read())
-            try:
-                return google_info['access_token']
-            except KeyError:
-                return None
-        except HTTPError as e:
-            return None
-    
-    def check_google_access_token(self, access_token):
-        try:
-            user_info_google = urllib2.urlopen('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + access_token)
-            return simplejson.loads(user_info_google.read())
-        except HTTPError:
-            return False
-
 class OAuth2Backend(ModelBackend):
     
     ID_FIELD = None
@@ -272,14 +180,50 @@ class OAuth2Backend(ModelBackend):
             raise NotImplementedError
         return self.NAME.capitalize()
     
+    @property
+    def connect_url(self):
+        return '/auth/' + self.NAME + '/connect/'
+    
+    @property
+    def registration_url(self):
+        return '/auth/' + self.NAME + '/register/'
+    
     def authenticate(self, **kwargs):
         if self.ID_FIELD is None:
             raise NotImplementedError
-        social_id = kwargs.get(self.ID_FIELD)
+        if not self.ID_FIELD in kwargs:
+            raise TypeError
+        social_id = kwargs[self.ID_FIELD]
         try:
             return User.objects.get(**{self.ID_FIELD: social_id})
         except User.DoesNotExist:
             return None
+    
+    def registration_allowed(self, request):
+        """
+        Indicate whether account registration is currently permitted,
+        based on the value of the setting ``REGISTRATION_OPEN``. This
+        is determined as follows:
+
+        * If ``REGISTRATION_OPEN`` is not specified in settings, or is
+          set to ``True``, registration is permitted.
+
+        * If ``REGISTRATION_OPEN`` is both specified and set to
+          ``False``, registration is not permitted.
+        
+        """
+        return getattr(settings, 'REGISTRATION_OPEN', True)
+
+    def register(self, request, social_id, givenname, surname, email, date_of_birth, password=None):
+        if self.ID_FIELD is None:
+            raise NotImplementedError
+        new_user = User.objects.create_user(givenname, surname, email, date_of_birth, password)
+        setattr(new_user, self.ID_FIELD, social_id)
+        new_user.save()
+        
+        signals.user_registered.send(sender=self.__class__,
+                                     user=new_user,
+                                     request=request)
     
     def get_auth_code_url(self, redirect_uri, next_page=None):
         if self.APP_ID is None or self.SCOPE is None or self.OAUTH_URL is None:
@@ -303,6 +247,12 @@ class OAuth2Backend(ModelBackend):
         if self.ID_FIELD is None:
             raise NotImplementedError
         setattr(user, self.ID_FIELD, social_id)
+        user.save()
+    
+    def disconnect_user(self, user):
+        if self.ID_FIELD is None:
+            raise NotImplementedError
+        setattr(user, self.ID_FIELD, None)
         user.save()
     
     
@@ -340,11 +290,17 @@ class GoogleAuthBackend(OAuth2Backend):
     
     def get_user_info(self, access_token):
         google_info = self.get_unparsed_user_info(access_token)
+        try:
+            date_of_birth = datetime.datetime.strptime(google_info['birthday'], '%Y-%m-%d').date()
+        except ValueError:
+            date_of_birth = datetime.date.today()
         return {'id': google_info['id'],
                 'name': google_info['name'],
                 'givenname': google_info['given_name'],
                 'surname': google_info['family_name'],
-                'email': google_info['email']}
+                'email': google_info['email'],
+                'date_of_birth': date_of_birth,
+                'image': 'http://profiles.google.com/s2/photos/profile/' + google_info['id'] + '?sz=100'}
     
     
 class FacebookAuthBackend(OAuth2Backend):
@@ -356,7 +312,7 @@ class FacebookAuthBackend(OAuth2Backend):
     USER_INFO_URL = 'https://graph.facebook.com/me'
     APP_ID = settings.FACEBOOK_APP_ID
     APP_SECRET = settings.FACEBOOK_SECRET
-    SCOPE = 'email'
+    SCOPE = 'email,user_birthday'
     
     def name(self):
         return 'Facebook'
@@ -375,11 +331,16 @@ class FacebookAuthBackend(OAuth2Backend):
     
     def get_user_info(self, access_token):
         fb_info = self.get_unparsed_user_info(access_token)
-        print fb_info
+        try:
+            date_of_birth = datetime.datetime.strptime(fb_info['birthday'], '%m/%d/%Y').date()
+        except ValueError:
+            date_of_birth = datetime.date.today()
         return {'id': fb_info['id'],
                 'name': fb_info['name'],
                 'givenname': fb_info['first_name'],
                 'surname': fb_info['last_name'],
-                'email': fb_info['email']}
+                'email': fb_info['email'],
+                'date_of_birth': date_of_birth,
+                'image': 'https://graph.facebook.com/' + fb_info['id'] + '/picture'}
     
     

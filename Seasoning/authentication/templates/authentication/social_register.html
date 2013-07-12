@@ -3,10 +3,10 @@
 {% block content %}
 <p>
     Het wachtwoord veld is <strong>NIET VERPLICHT</strong>. Je moet dit veld enkel invullen indien je in de toekomst
-    om privacy redenen liever via Seasoning zelf aanmeldt in plaats van via Google. Dit wachtwoord moet bijgevolg
-    niet overeenkomen met je Google wachtwoord.
+    om privacy redenen liever via Seasoning zelf aanmeldt in plaats van via {{ backend.name }}. Dit wachtwoord moet bijgevolg
+    niet overeenkomen met je {{ backend.name }} wachtwoord.
 </p>
-<form method="post" action="/auth/google/register/">
+<form method="post" action="{{ backend.registration_url }}">
 {% csrf_token %}
 {{ form.non_field_errors }}
 Given name

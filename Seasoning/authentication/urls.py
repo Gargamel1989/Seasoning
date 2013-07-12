@@ -67,15 +67,10 @@ urlpatterns = patterns('',
     url(r'^email/change/(?P<activation_key>\w+)/$', change_email),
     
     # Social logins
-    url(r'^auth/fb/register/', 'authentication.views.facebook_registration'),
-    url(r'^auth/fb/disconnect/', 'authentication.views.facebook_disconnect'),
-    url(r'^auth/fb/channel/$', 'authentication.views.facebook_channel_file'),
-    url(r'^auth/google/register/$', 'authentication.views.google_register'),
+    url(r'^auth/(.*)/register/', 'authentication.views.social_register'),
     url(r'^auth/(.*)/connect/', 'authentication.views.social_connect'),
-    url(r'^auth/google/disconnect/', 'authentication.views.google_disconnect'),
+    url(r'^auth/(.*)/disconnect/', 'authentication.views.social_disconnect'),
     url(r'^auth/(.*)/$', 'authentication.views.social_auth'),
-    url(r'^auth/twitter/$', 'authentication.views.twitter_authentication'),
-    url(r'^auth/openid/$', 'authentication.views.openid_authentication'),
     
     # Admin pages
     url(r'^authentication/users/$', 'authentication.views.list_users'),

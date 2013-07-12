@@ -38,17 +38,11 @@
             </script>
         </td>
         <td>
-            <a id="fb-login-btn" href="/auth/fb/?next={{ next }}">
-                Login with Facebook
+            <a id="fb-login-btn" href="/auth/fb/{% if next %}?next={{ next }}{% endif %}">
+                Aanmelden met Facebook
             </a><br/>
-            <a class="btn btn-google" href="/auth/google/?next={{ next }}">
-                Login with Google
-            </a><br/>
-            <a class="btn btn-info btn-twitter" href="/auth/twitter/?next={{ next }}">
-                Login with Twitter
-            </a><br/>
-            <a class="btn btn-info btn-openid" href="/auth/openid/?next={{ next }}">
-                Login with OpenID
+            <a class="btn btn-google" href="/auth/google/{% if next %}?next={{ next }}{% endif %}">
+                Aanmelden met Google
             </a>
         </td>
     </tr>
