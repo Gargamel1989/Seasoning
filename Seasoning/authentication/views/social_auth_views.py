@@ -105,6 +105,13 @@ def facebook_connect(request):
     # Show the connect account form
     return render(request, 'authentication/social/facebook_connect.html', {'app_id': settings.FACEBOOK_APP_ID})
 
+@login_required
+def facebook_disconnect(request):
+    request.user.facebook_id = None
+    request.user.save()
+    messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your Facebook account.'))
+    return redirect('/account/settings/')
+
 @csrf_exempt
 def facebook_registration(request, disallowed_url='registration_disallowed'):
     if request.method == 'POST':
@@ -277,6 +284,13 @@ def google_connect(request):
     # If we're here, something above must have gone wrong...
     messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with Google. Please try again.'))
     return redirect(home)
+
+@login_required
+def google_disconnect(request):
+    request.user.google_id = None
+    request.user.save()
+    messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your Google account.'))
+    return redirect('/account/settings/')
     
 
 def google_register(request):
