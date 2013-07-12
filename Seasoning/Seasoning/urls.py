@@ -17,18 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.conf.urls import patterns, include, url
-from general.views import home, contact, motifs, privacypolicy, sitemap, support, terms, backup_db
+from django.conf.urls import patterns, include
 
 urlpatterns = patterns('',
     # General Pages
-    url(r'^$', home, name='home'),
-    url(r'^contact/$', contact),
-    url(r'^motifs/$', motifs),
-    url(r'^privacypolicy/$', privacypolicy),
-    url(r'^sitemap/$', sitemap),
-    url(r'^support/$', support),
-    url(r'^terms/$', terms),
+    (r'^', include('general.urls')),
 
     # Core pages
     (r'^ingredients/', include('ingredients.urls')),
@@ -39,9 +32,6 @@ urlpatterns = patterns('',
     
      # Comments
     (r'^comments/', include('django.contrib.comments.urls')),
-    
-    # Backup Database
-    (r'^backup/$', backup_db),
     
 )
 

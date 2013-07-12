@@ -76,4 +76,7 @@ urlpatterns = patterns('',
     url(r'^auth/google/$', 'authentication.views.google_authentication'),
     url(r'^auth/twitter/$', 'authentication.views.twitter_authentication'),
     url(r'^auth/openid/$', 'authentication.views.openid_authentication'),
+    
+    # Admin pages
+    url(r'^authentication/users/$', 'authentication.views.list_users'),
 )

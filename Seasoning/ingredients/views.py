@@ -131,8 +131,8 @@ def list_ingredients(request):
     ingredients = Ingredient.objects.all().order_by('accepted', 'name')
     perc_done = int(len(ingredients)/5)
     
-    return render(request, 'ingredients/list_ingredients.html', {'ingredients': ingredients,
-                                                                 'perc_done': perc_done})
+    return render(request, 'admin/list_ingredients.html', {'ingredients': ingredients,
+                                                           'perc_done': perc_done})
 
 def edit_ingredient(request, ingredient_id=None):
     """
@@ -263,12 +263,12 @@ def edit_ingredient(request, ingredient_id=None):
     
         
         
-    return render(request, 'ingredients/edit_ingredient.html', {'new': new,
-                                                                'ingredient_form': ingredient_form,
-                                                                'synonym_formset': synonym_formset,
-                                                                'canuseunit_formset': canuseunit_formset,
-                                                                'availinc_formset': availinc_formset,
-                                                                'availins_formset': availins_formset})
+    return render(request, 'admin/edit_ingredient.html', {'new': new,
+                                                          'ingredient_form': ingredient_form,
+                                                          'synonym_formset': synonym_formset,
+                                                          'canuseunit_formset': canuseunit_formset,
+                                                          'availinc_formset': availinc_formset,
+                                                          'availins_formset': availins_formset})
 
 def list_units(request):
     """
@@ -280,7 +280,7 @@ def list_units(request):
     
     units = Unit.objects.all()
     
-    return render(request, 'ingredients/list_units.html', {'units': units})
+    return render(request, 'admin/list_units.html', {'units': units})
 
 def edit_unit(request, unit_id=None):
     """
@@ -306,4 +306,4 @@ def edit_unit(request, unit_id=None):
     else:
         unit_form = UnitForm(instance=unit)
     
-    return render(request, 'ingredients/edit_unit.html', {'unit_form': unit_form})
+    return render(request, 'admin/edit_unit.html', {'unit_form': unit_form})

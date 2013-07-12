@@ -25,13 +25,14 @@ register = template.Library()
 paths = {'RECEPTEN': ['/recipes/.*'],
          'INFORMATIE': ['/ingredients/', '/ingredients/\d*/', '/information/'],
          'ADMIN': ['/ingredients/list/', '/ingredients/add/', '/ingredients/edit/(\d*)/', 
-                   '/ingredients/units/.*'],
+                   '/ingredients/units/.*', '/authentication/users/'],
          'ReceptenZoeken': ['/recipes/search/'],
          'ReceptToevoegen': ['/recipes/add/'],
          'MijnRecepten': ['/accounts/recipes/'],
          'Ingredienten': ['/ingredients/'],
          'Nieuws': ['/news/'],
          'OverSeasoning': ['/about/'],
+         'GebruikersAdmin': ['/authentication/users/'],
          'IngredientenAdmin': ['/ingredients/list/', '/ingredients/add/', '/ingredients/edit/(\d*)/'],
          'Units': ['/ingredients/units/.*'],}
 
