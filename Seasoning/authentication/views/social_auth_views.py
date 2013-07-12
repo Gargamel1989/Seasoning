@@ -259,9 +259,9 @@ def google_connect(request):
                         '&redirect_uri=http://' + str(get_current_site(request)) + '/auth/google/connect/' + \
                         '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https://www.googleapis.com/auth/userinfo.profile')
     
+    backend = SocialUserBackend()
     if access_token is None and code:
         # User was redirected from google, so fetch an access token for the received code
-        backend = SocialUserBackend()
         access_token = backend.get_google_access_token(request, code, '/auth/google/connect/')
     
     if access_token:
@@ -361,7 +361,12 @@ def google_register(request, disallowed_url='registration_disallowed'):
     return redirect(home)
 
 def twitter_authentication(request):
-    return render(request, 'authentication/social/twitter.html')
+    next = request.GET.get('next', None)
+    callback_url = 'http://' + get_current_site(request) + '/auth/twitter/'
+    if next is not None:
+        callback_url += '?next=' + next
+    
+    return render(request, 'authentication/social/twitter.html', {'callback_url': callback_url})
 
 def openid_authentication(request):
     return render(request, 'authentication/social/openid.html')
