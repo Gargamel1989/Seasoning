@@ -25,6 +25,8 @@ import os
 from authentication.models import User
 from ingredients.models import Ingredient
 from recipes.models import Recipe
+from django.template.loaders.app_directories import Loader
+from django.core.exceptions import PermissionDenied
 
 def home(request):
     return render(request, 'seasoning/homepage.html')
@@ -48,6 +50,9 @@ def terms(request):
     return render(request, 'seasoning/terms.html')
 
 def admin(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+   
     users = len(User.objects.all())
     ingredients = len(Ingredient.objects.all())
     accepted_ingredients = len(Ingredient.objects.filter(accepted=True))
@@ -56,6 +61,37 @@ def admin(request):
                                                'ingredients': ingredients,
                                                'accepted_ingredients': accepted_ingredients,
                                                'recipes': recipes})
+
+def edit_static_pages(request, page_name=None):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+    
+    context = {}
+    if page_name:
+        page = 'seasoning/' + page_name + '.html'
+        searcher = Loader().get_template_sources(page)
+        while True:
+            try:
+                path = searcher.next()
+                f = open(path, 'rw')
+                f.close()
+                break
+            except IOError:
+                continue
+            
+    if request.method == 'POST':
+        f.open(path, 'w+')
+        f.write(request.POST['content'])
+        f.close()
+    
+    if path:
+        f = open(path, 'r+')
+        contents = f.read()
+        f.close()
+        context['page'] = page
+        context['contents'] = contents
+        
+    return render(request, 'admin/edit_static_pages.html', context)
 
 @staff_member_required
 def backup_db(request):

@@ -30,7 +30,9 @@ urlpatterns = patterns('',
     url(r'^terms/$', 'general.views.terms'),
     
     # Admin Pages
-    url(r'^admin/', 'general.views.admin'),
+    url(r'^admin/$', 'general.views.admin'),
+    url(r'^admin/static/$', 'general.views.edit_static_pages'),
+    url(r'^admin/static/(.*)/$', 'general.views.edit_static_pages'),
 
     # Backup Database
     url(r'^backup/$', 'general.views.backup_db'),
