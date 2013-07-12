@@ -107,9 +107,12 @@ def facebook_connect(request):
 
 @login_required
 def facebook_disconnect(request):
-    request.user.facebook_id = None
-    request.user.save()
-    messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your Facebook account.'))
+    if request.user.password == '!':
+        messages.add_message(request, messages.INFO, _('You can only disconnect social accounts if your password has been set.'))
+    else:
+        request.user.facebook_id = None
+        request.user.save()
+        messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your Facebook account.'))
     return redirect('/account/settings/')
 
 @csrf_exempt
@@ -287,9 +290,12 @@ def google_connect(request):
 
 @login_required
 def google_disconnect(request):
-    request.user.google_id = None
-    request.user.save()
-    messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your Google account.'))
+    if request.user.password == '!':
+        messages.add_message(request, messages.INFO, _('You can only disconnect social accounts if your password has been set.'))
+    else:
+        request.user.google_id = None
+        request.user.save()
+        messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your Google account.'))
     return redirect('/account/settings/')
     
 

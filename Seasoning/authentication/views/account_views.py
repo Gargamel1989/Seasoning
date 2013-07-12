@@ -8,10 +8,11 @@ from django.contrib.sites.models import RequestSite
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import Http404
 from django.views.decorators.debug import sensitive_post_parameters
-from django.contrib.auth.forms import PasswordChangeForm
 from django.template.response import TemplateResponse
 from django.contrib.auth.views import login as django_login, logout
 from django.utils.translation import ugettext_lazy as _
+from authentication.forms import SocialPasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
 
 @login_required
 def public_profile(request, user_id):
@@ -83,6 +84,9 @@ def change_password(request,
     Provides a form where the users password can be changed.
     
     """
+    if request.user.password == '!':
+        password_change_form = SetPasswordForm
+        
     if request.method == "POST":
         form = password_change_form(user=request.user, data=request.POST)
         if form.is_valid():

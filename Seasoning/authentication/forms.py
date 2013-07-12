@@ -23,7 +23,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from captcha.fields import ReCaptchaField
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.forms.models import ModelForm
 from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
@@ -217,3 +217,10 @@ class DeleteAccountForm(forms.Form):
         if not checkstring == 'DELETEME':
             raise forms.ValidationError('You must provide the string \'DELETEME\' if you would like to delete your account')
         return checkstring
+
+class SocialPasswordChangeForm(PasswordChangeForm):
+    
+    def clean_old_password(self):
+        if self.user.password == '!':
+            return '!'
+        return super(SocialPasswordChangeForm, self).clean_old_password()
