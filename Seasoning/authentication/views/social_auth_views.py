@@ -361,10 +361,10 @@ def google_register(request, disallowed_url='registration_disallowed'):
     return redirect(home)
 
 def twitter_authentication(request):
-    next = request.GET.get('next', None)
-    callback_url = 'http://' + get_current_site(request) + '/auth/twitter/'
-    if next is not None:
-        callback_url += '?next=' + next
+    redirect_to = request.GET.get('next', None)
+    callback_url = 'http://' + str(get_current_site(request)) + '/auth/twitter/'
+    if redirect_to is not None:
+        callback_url += '?next=' + redirect_to
     
     return render(request, 'authentication/social/twitter.html', {'callback_url': callback_url})
 
