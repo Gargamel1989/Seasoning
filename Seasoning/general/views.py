@@ -80,7 +80,7 @@ def edit_static_pages(request, page_name=None):
                 continue
             
     if request.method == 'POST':
-        f = open(path, 'w+')
+        f.open(path, 'w+')
         f.write(request.POST['content'])
         f.close()
     
