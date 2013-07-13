@@ -32,22 +32,28 @@ def home(request):
     return render(request, 'seasoning/homepage.html')
 
 def contact(request):
-    return render(request, 'seasoning/contact.html')
+    return render(request, 'static_page.html', {'title': 'Contact',
+                                                'static_page': 'seasoning/contact.html'})
 
 def motifs(request):
-    return render(request, 'seasoning/motifs.html')
+    return render(request, 'static_page.html', {'title': 'Motivering',
+                                                'static_page': 'seasoning/motifs.html'})
 
 def privacypolicy(request):
-    return render(request, 'seasoning/privacypolicy.html')
+    return render(request, 'static_page.html', {'title': 'Privacybeleid',
+                                                'static_page': 'seasoning/privacypolicy.html'})
 
 def sitemap(request):
-    return render(request, 'seasoning/sitemap.html')
+    return render(request, 'static_page.html', {'title': 'Sitemap',
+                                                'static_page': 'seasoning/sitemap.html'})
 
 def support(request):
-    return render(request, 'seasoning/support.html')
+    return render(request, 'static_page.html', {'title': 'Ondersteuning',
+                                                'static_page': 'seasoning/support.html'})
 
 def terms(request):
-    return render(request, 'seasoning/terms.html')
+    return render(request, 'static_page.html', {'title': 'Voorwaarden',
+                                                'static_page': 'seasoning/terms.html'})
 
 def admin(request):
     if not request.user.is_superuser:
@@ -73,7 +79,7 @@ def edit_static_pages(request, page_name=None):
         while True:
             try:
                 path = searcher.next()
-                f = open(path, 'rw')
+                f = open(path, 'r')
                 f.close()
                 break
             except IOError:
@@ -88,6 +94,7 @@ def edit_static_pages(request, page_name=None):
         f = open(path, 'r+')
         contents = f.read()
         f.close()
+        context['page_name'] = page_name
         context['page'] = page
         context['contents'] = contents
         

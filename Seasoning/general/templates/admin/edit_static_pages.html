@@ -10,9 +10,9 @@
 </p>
 {% if page %}
 <p>
+	<div><a href="/{{ page_name }}/">{{ page }}</a>: </div>
 	<form action="" method="post">
 		{% csrf_token %}
-		<span>{{ page }}: </span><br>
 		<textarea name="content" style="width:100%;height:1000px;">{{ contents }}</textarea>
 		<br/>
 		<input type="submit" value="Opslaan">

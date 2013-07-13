@@ -20,8 +20,10 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
-    # General Pages
+    # Home Page
     url(r'^$', 'general.views.home', name='home'),
+    
+    # Static Pages
     url(r'^contact/$', 'general.views.contact'),
     url(r'^motifs/$', 'general.views.motifs'),
     url(r'^privacypolicy/$', 'general.views.privacypolicy'),
