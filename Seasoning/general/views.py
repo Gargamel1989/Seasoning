@@ -84,7 +84,7 @@ def edit_static_pages(request, page_name=None):
         f.write(request.POST['content'])
         f.close()
     
-    if path:
+    if page_name:
         f = open(path, 'r+')
         contents = f.read()
         f.close()
