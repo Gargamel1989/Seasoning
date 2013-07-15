@@ -29,7 +29,7 @@ from django.template.loaders.app_directories import Loader
 from django.core.exceptions import PermissionDenied
 
 def home(request):
-    return render(request, 'seasoning/homepage.html')
+    return render(request, 'homepage.html')
 
 def contact(request):
     return render(request, 'static_page.html', {'title': 'Contact',
