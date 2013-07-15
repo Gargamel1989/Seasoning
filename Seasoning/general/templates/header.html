@@ -1,0 +1,136 @@
+{% load home_extras %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="en-us" />
+    <title>Seasoning | {% block title %}Geef smaak aan de seizoenen{% endblock %}</title>
+    <meta name="ROBOTS" content="ALL" />
+    <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="Seasoning" />
+    <meta name="keywords" content="Duurzaam, Eten, Koken" />
+    <meta name="description" content="Seasoning is een online applicatie die u helpt bij het duurzamer maken van uw dagelijkse leven." />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css" media="screen" />
+	<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>
+	<script>
+			$(function() {
+				$("#main-navigation-recipes").hover(function() {
+					$("#sub-navigation-information").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-admin").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-recipes").stop().animate({
+						left : "4px",
+						opacity : 1
+					}, 300);
+				});
+				$("#main-navigation-information").hover(function() {
+					$("#sub-navigation-recipes").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-admin").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-information").stop().animate({
+						left : "4px",
+						opacity : 1
+					}, 300);
+				});
+				$("#main-navigation-admin").hover(function() {
+					$("#sub-navigation-recipes").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-information").stop().animate({
+						left : "650px",
+						opacity : 0
+					}, 200);
+					$("#sub-navigation-admin").stop().animate({
+						left : "4px",
+						opacity : 1
+					}, 300);
+				});
+			});
+        </script>
+        {% block extrahead %}{% endblock %}
+    </head>
+  
+	<body>
+	    {% block afterbody %}{% endblock %}
+        <div id="body-container">
+            <div id="header">
+                <div id="header-main">
+                    <div id="header-main-background"></div>
+                    <div id="header-main-container">
+                        <div id="header-main-left">
+                            <div id="header-logo-container">
+                                
+                            </div>
+                            <div id="header-main-navigation">
+                                <a id="main-navigation-recipes" class="main-navigation-link {% active request "RECEPTEN" %}" href="/recipes/">RECEPTEN</a>
+                                <a id="main-navigation-information" class="main-navigation-link {% active request "INFORMATIE" %}" href="/information/">INFORMATIE</a>
+                                {% if user.is_superuser %}
+                                <a id="main-navigation-admin" class="main-navigation-link {% active request "ADMIN" %}" href="/admin/">ADMIN</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div id="header-logo" style="float:left;margin-top:10px;margin-left:100px;">
+                            <a href="/">
+                                <img width="250" height="45" src="http://www.zendesk.com/wp-content/themes/zendesk-twentyeleven/img/p-brand/downloads/Logo/Zendesk_logo_RGB.png">
+                            </a>
+                        </div>
+                        <div id="header-main-right">
+                            <div id="header-sign-in">
+                                {% if user.is_authenticated %}
+                                <a id="header-username" href="/account/settings/">{{ user.get_full_name }}</a>
+                                <a href="/logout/">Afmelden</a>
+                                {% else %}
+                                <a href="/register/">Registreren</a>
+                                <a href="/login/">Aanmelden</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                </div>
+                <div id="header-sub">
+                    <div id="header-sub-background"></div>
+                    <div id="header-sub-container">
+                        <div id="sub-navigation-recipes" class="header-sub-navigation {% active request "RECEPTEN" %}">
+                            <a class="sub-navigation-link {% active request "ReceptenZoeken" %}" href="/recipes/search/" >Recepten Zoeken</a>
+                            <a class="sub-navigation-link {% active request "ReceptToevoegen" %}" href="/recipes/add/" >Recept Toevoegen</a>
+                            <a class="sub-navigation-link {% active request "MijnRecepten" %}" href="/recipes/mine/" >Mijn Recepten</a>
+                        </div>
+                        <div id="sub-navigation-information" class="header-sub-navigation {% active request "INFORMATIE" %}">
+                            <a class="sub-navigation-link {% active request "Ingredienten" %}" href="/ingredients/" >Ingredienten</a>
+                            <a class="sub-navigation-link {% active request "Nieuws" %}" href="/news/" >Nieuws</a>
+                            <a class="sub-navigation-link {% active request "OverSeasoning" %}" href="/about/" >Over Seasoning</a>
+                        </div>
+                        {% if user.is_superuser %}
+                        <div id="sub-navigation-admin" class="header-sub-navigation {% active request "ADMIN" %}">
+                            <a class="sub-navigation-link {% active request "GebruikersAdmin" %}" href="/authentication/users/" >Gebruikers</a>
+                            <a class="sub-navigation-link {% active request "IngredientenAdmin" %}" href="/ingredients/list/" >Ingredienten</a>
+                            <a class="sub-navigation-link {% active request "Units" %}" href="/ingredients/units/" >Eenheden</a>
+                            <a class="sub-navigation-link {% active request "StaticAdmin" %}" href="/admin/static/" >Statische Paginas</a>
+                            <a class="sub-navigation-link" href="/backup/" >Backup Database</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div id="content">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

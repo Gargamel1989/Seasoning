@@ -118,7 +118,7 @@ p.button {
 }
 
 #header-main-navigation a {
-	color: #238F32;
+	color: #78A302;
 	margin-right: 18px;
 }
 
@@ -127,7 +127,7 @@ p.button {
 }
 
 #header-main-navigation a:hover {
-	color: #186322;
+	color: #597901;
 }
 
 #header-main-right {
@@ -211,7 +211,7 @@ p.button {
     display: inline-block;
     position: relative;
     margin-right: 18px;
-    color: #238F32;
+    color: #78A302;
 }
 
 .header-sub-navigation a.active {
@@ -219,11 +219,11 @@ p.button {
 }
 
 .header-sub-navigation a:hover {
-	color: #186322;
+	color: #597901;
 }
 
 #content {
-	padding-top: 100px;
+	padding-top: 87px;
 	clear: both;
     min-height: 0;
     width: 100%;
@@ -234,4 +234,5 @@ p.button {
 	max-width: 998px;
     min-width: 998px;
 	margin: auto;
+	margin-top: 0px;
 }

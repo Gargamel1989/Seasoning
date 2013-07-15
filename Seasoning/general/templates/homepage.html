@@ -1,7 +1,11 @@
-{% extends "base.html" %}
+{% extends "header.html" %}
 
-{% block content %}
+{% block extrahead %}
+<link href="{{ STATIC_URL }}css/homepage.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
 
-<h2>Welkom op Seasoning, de site waar momenteel nog niks op te doen valt!</h2>
+{% block body %}
 
+<div id="eyecatcher">ga
+</div>
 {% endblock %}
