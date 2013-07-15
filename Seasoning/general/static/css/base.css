@@ -118,7 +118,7 @@ p.button {
 }
 
 #header-main-navigation a {
-	color: #96B566;
+	color: #238F32;
 	margin-right: 18px;
 }
 
@@ -127,7 +127,7 @@ p.button {
 }
 
 #header-main-navigation a:hover {
-	color: #668E39;
+	color: #186322;
 }
 
 #header-main-right {
@@ -147,7 +147,7 @@ p.button {
 }
 
 #header-sign-in a {
-	color: #96B566;
+	color: #238F32;
 	margin-left: 18px;
 }
 
@@ -158,11 +158,11 @@ p.button {
 }
 
 #header-sign-in a:hover {
-	color: #668E39;
+	color: #186322;
 }
 
 #header-sign-in a#header-username:hover {
-	color: #668E39;
+	color: #186322;
 }
 
 #header-sub {
@@ -211,7 +211,7 @@ p.button {
     display: inline-block;
     position: relative;
     margin-right: 18px;
-    color: #96B566;
+    color: #238F32;
 }
 
 .header-sub-navigation a.active {
@@ -219,7 +219,7 @@ p.button {
 }
 
 .header-sub-navigation a:hover {
-	color: #668E39;
+	color: #186322;
 }
 
 #content {
