@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'general',
     'ingredients',
     'recipes',
+    'faq',
 )
 
 AUTH_USER_MODEL = 'authentication.User'
