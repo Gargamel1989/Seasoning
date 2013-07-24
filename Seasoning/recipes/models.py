@@ -23,10 +23,8 @@ from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
 from imagekit.processors.resize import ResizeToFit, AddBorder
 import ingredients
-from ingredients.models import AvailableInCountry, AvailableInSea, CanUseUnit,\
-    Ingredient
+from ingredients.models import CanUseUnit, Ingredient
 import datetime
-from django.db.models import Q
 from django.core.validators import MaxValueValidator
 from django.db.models.fields import FloatField
 from django.core.exceptions import ValidationError
@@ -108,6 +106,11 @@ class Recipe(models.Model):
             # Check the veganism of this ingredient
             if uses.ingredient.veganism < self.veganism:
                 self.veganism = uses.ingredient.veganism
+            
+            # Check the state of this ingredient
+            if not uses.ingredient.accepted:
+                self.accepted = False
+                
         super(Recipe, self).save(*args, **kwargs)
         
     def footprint_pp(self):
@@ -156,6 +159,16 @@ class UsesIngredient(models.Model):
         self.clean()
         super(UsesIngredient, self).save(*args, **kwargs)
 
+class UnknownIngredient(models.Model):
+    class Meta:
+        db_table = 'unknown_ingredient'
+    
+    name = models.CharField(max_length=50L)
+    requested_by = models.ForeignKey(User)
+    for_recipe = models.ForeignKey(Recipe)
+    
+    real_ingredient = models.ForeignKey(Ingredient)
+    
 class Vote(models.Model):
     class Meta:
         unique_together = (("recipe", "user"),)

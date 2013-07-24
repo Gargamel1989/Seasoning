@@ -19,9 +19,8 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 # Based on django-ajax-selects from crucialfelix
 from django import forms
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from ingredients.models import Ingredient
-from ingredients.models import UnknownIngredient
 
 class AutoCompleteSelectIngredientWidget(forms.widgets.TextInput):
 
@@ -56,10 +55,7 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
             try:
                 ingredient = Ingredient.objects.get(name__exact=value)
             except ObjectDoesNotExist:
-                try:
-                    ingredient = UnknownIngredient.objects.get(name__exact=value)
-                except ObjectDoesNotExist:
-                    raise forms.ValidationError(u"No ingredient found with name: %s" % value)
+                raise forms.ValidationError(u"No ingredient found with name: %s" % value)
             return ingredient
         else:
             if self.required:

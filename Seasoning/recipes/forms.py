@@ -22,6 +22,7 @@ from recipes.models import Recipe, UsesIngredient, Cuisine
 import recipes
 from django.forms.widgets import RadioSelect
 from ingredients.fields import AutoCompleteSelectIngredientField
+from ingredients.models import Ingredient
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -42,6 +43,33 @@ class UsesIngredientForm(forms.ModelForm):
     
     class Meta:
         model = UsesIngredient
+    
+    def is_valid_before_ingrequest(self):
+        """
+        Check if this form would be valid if a known ingredient was used
+        
+        """
+        if super(UsesIngredientForm, self).is_valid():
+            # Check if the form is valid anyway
+            return True
+        if not self.cleaned_data['recipe'] or not self.cleaned_data['amount'] or not self.cleaned_data['unit']:
+            # Check if any fields except ingredient are invalid, if so, the form would be invalid anyway
+            return False
+        if not self['ingredient'].value() or len(self['ingredient'].value()) > 50:
+            # Check if anything else is wrong with the ingredient field
+            return False
+        return True
+            
+    
+    def uses_existing_ingredient(self):
+        try:
+            if self['ingredient'].value():
+                Ingredient.objects.get(name__iexact=self['ingredient'].value())
+            return True
+        except Ingredient.DoesNotExist:
+            pass
+        return False        
+            
 
 class SearchRecipeForm(forms.Form):
     
