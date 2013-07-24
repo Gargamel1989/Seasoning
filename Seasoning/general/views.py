@@ -29,7 +29,7 @@ from django.template.loaders.app_directories import Loader
 from django.core.exceptions import PermissionDenied
 
 def home(request):
-    return render(request, 'seasoning/homepage.html')
+    return render(request, 'homepage.html')
 
 def contact(request):
     return render(request, 'static_page.html', {'title': 'Contact',
@@ -54,6 +54,18 @@ def support(request):
 def terms(request):
     return render(request, 'static_page.html', {'title': 'Voorwaarden',
                                                 'static_page': 'seasoning/terms.html'})
+
+def information(request):
+    return render(request, 'static_page.html', {'title': 'Informatie',
+                                                'static_page': 'seasoning/information.html'})
+
+def news(request):
+    return render(request, 'static_page.html', {'title': 'Nieuws',
+                                                'static_page': 'seasoning/news.html'})
+
+def about(request):
+    return render(request, 'static_page.html', {'title': 'Over Seasoning',
+                                                'static_page': 'seasoning/about.html'})
 
 def admin(request):
     if not request.user.is_superuser:

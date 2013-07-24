@@ -1,6 +1,10 @@
+html {
+    overflow-y: scroll;
+}
+
 body {
 	font-family:'Segoe UI',Tahoma,Helvetica,Sans-Serif;
-	color: #454545;
+	color: #3F5823;
     font-size: 13px;
     line-height: 20px;
     text-align: center;
@@ -52,6 +56,7 @@ p.button {
     top: 0;
     width: 100%;
     z-index: 10;
+    border-bottom: 1px solid #CFCFCF;
 }
 
 #header-main {
@@ -60,13 +65,14 @@ p.button {
 
 #header-main-background {
 	width: 100%;
-	background-color: #1A1A1A;
-    height: 105px;
+	background-color: #F7F6F6;
+	border-bottom: solid #C0C0C0 1px;
+    height: 65px;
     min-width: 225%;
 }
 
 #header-main-container {
-	margin: -105px auto 0;
+	margin: -65px auto 0;
     max-width: 998px;
     min-width: 998px;
     padding-left: 4px;
@@ -76,21 +82,27 @@ p.button {
 
 #header-main-left {
 	float: left;
-    height: 105px;
+    height: 65px;
+    width: 280px;
     margin: 0;
-    max-width: 541px;
-    min-width: 541px;
     overflow: hidden;
     position: relative;
 }
 
 #header-logo-container {
 	line-height: normal;
-    margin-top: 30px;
+    margin-top: 5px;
 }
 
 #header-logo-container img {
-	background-color: #00B539;
+	float: left;
+}
+
+#header-logo-container span {
+	color: #066006;
+	float: left;
+	font-size: 35px;
+	margin-top: -3px;
 }
 
 #header-main-navigation {
@@ -106,53 +118,51 @@ p.button {
 }
 
 #header-main-navigation a {
-	color: #CFCFCF;
+	color: #78A302;
 	margin-right: 18px;
 }
 
 #header-main-navigation a.active {
-	color: #00B539;
+	text-decoration: underline;
 }
 
 #header-main-navigation a:hover {
-	color: #FFFFFF;
+	color: #597901;
 }
 
 #header-main-right {
 	float: right;
-    height: 105px;
-    max-width: 427px;
-    width: 427px;
+    height: 65px;
+    width: 200px;
 }
 
 #header-sign-in {
 	bottom: 7px;
     font-size: 12px;
     line-height: normal;
-    max-width: 427px;
-    min-width: 427px;
+    width: inherit;
     position: absolute;
     text-align: right;
     word-wrap: break-word;
 }
 
 #header-sign-in a {
-	color: #8E8E8E;
+	color: #238F32;
 	margin-left: 18px;
 }
 
 #header-sign-in a#header-username {
-	color: #CFCFCF;
+	color: #3F5823;
 	margin-left: 18px;
 	font-size: 13px;
 }
 
 #header-sign-in a:hover {
-	color: #FFFFFF;
+	color: #186322;
 }
 
 #header-sign-in a#header-username:hover {
-	color: #FFFFFF;
+	color: #186322;
 }
 
 #header-sub {
@@ -161,16 +171,17 @@ p.button {
 
 #header-sub-background {
 	width: 100%;
-	background-color: #2A2A2A;
-    height: 33px;
+	background-color: #EBEBEB;
+	border-bottom: solid #C0C0C0 1px;
+    height: 20px;
     min-width: 225%;
     opacity: 0.9;
     z-index: 9;
 }
 
 #header-sub-container {
-	height: 33px;
-    margin: -33px auto 0;
+	height: 19px;
+    margin: -20px auto 0;
     padding-left: 4px;
     padding-right: 4px;
     position: relative;
@@ -179,10 +190,10 @@ p.button {
 
 .header-sub-navigation {
 	font-size: 12px;
-    height: 22px;
+    height: 20px;
     line-height: 15px;
     margin-top: 1px;
-    padding-top: 7px;
+    padding-top: 0px;
     position: absolute;
     left: 650px;
     opacity: 0;
@@ -200,19 +211,19 @@ p.button {
     display: inline-block;
     position: relative;
     margin-right: 18px;
-    color: #CFCFCF;
+    color: #78A302;
 }
 
 .header-sub-navigation a.active {
-	color: #00B539;
+	text-decoration: underline;
 }
 
 .header-sub-navigation a:hover {
-	color: #FFFFFF;
+	color: #597901;
 }
 
 #content {
-	padding-top: 150px;
+	padding-top: 87px;
 	clear: both;
     min-height: 0;
     width: 100%;
@@ -223,4 +234,5 @@ p.button {
 	max-width: 998px;
     min-width: 998px;
 	margin: auto;
+	margin-top: 0px;
 }
