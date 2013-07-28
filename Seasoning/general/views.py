@@ -47,9 +47,9 @@ def sitemap(request):
     return render(request, 'static_page.html', {'title': 'Sitemap',
                                                 'static_page': 'seasoning/sitemap.html'})
 
-def support(request):
-    return render(request, 'static_page.html', {'title': 'Ondersteuning',
-                                                'static_page': 'seasoning/support.html'})
+def help(request):
+    return render(request, 'static_page.html', {'title': 'Help',
+                                                'static_page': 'seasoning/help.html'})
 
 def terms(request):
     return render(request, 'static_page.html', {'title': 'Voorwaarden',

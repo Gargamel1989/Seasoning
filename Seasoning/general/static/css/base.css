@@ -1,11 +1,13 @@
 html {
 overflow-y:scroll;
+   height:100%;
 }
 
 body {
 margin: 0;
 font-family:Verdana, Geneva, sans-serif;
 color:#5B6553;
+   height:100%;
 }
 
 h1 {
@@ -23,6 +25,11 @@ transition:all .3s ease-out;
 a:hover {
 color:#76BA3B;
 transition:all .3s ease-out;
+}
+
+#container {
+   min-height:100%;
+   position:relative;
 }
 
 #header {
@@ -105,10 +112,13 @@ padding-right: 30px;
 #account-controls #account-settings-link img {
 	height: 30px;
 	width: 30px;
+	background: white;
+	transition:all .3s ease-out;
 }
 
 #account-controls #account-settings-link:hover img {
 	opacity: .5;
+	transition:all .3s ease-out;
 }
 
 #nav-container .sub-nav {
@@ -133,6 +143,76 @@ font-size:.75em;
 color:#598c2c;
 }
 
+#body {
+	padding-bottom: 50px;
+}
+
+#footer {
+content: " ";
+display: block;
+height: 50px;
+min-width: 700px;
+width: 100%;
+border-top:1px solid #055999;
+position: relative;
+background-color: #629B31;
+position: absolute;
+bottom: 0px;
+box-shadow:0 -2px 2px 0 rgba(0,0,0,0.3);
+}
+
+#footer #footer-container {
+max-width:960px;
+min-width: 680px;
+margin: auto;
+padding: 5px 0;
+color:#F4FAEF;
+}
+
+#footer-container img {
+	margin-top: 5px;
+	float: left;
+}
+
+#footer-container ul {
+	margin: 0;
+	padding: 0;
+	line-height: 40px;
+	margin-left: 25%;
+}
+
+#footer-container ul li {
+	float: left;
+	list-style: disc outside none;
+	margin-right: 25px;
+	font-size: .75em;
+}
+
+#footer-container ul li.first {
+	list-style: none;
+}
+
+#footer-container a {
+	color: #F4FAEF;
+	text-decoration: none;
+}
+
+#footer-container a:hover {
+	color: #95CE64;
+}
+
+#footer-container img.social-logo {
+	width: 30px;
+	float: right;
+	padding-left: 10px;
+ border-radius: 5px 5px 5px 5px;
+
+-moz-border-radius: 5px 5px 5px 5px;
+
+-webkit-border-radius: 5px 5px 5px 5px;
+}
+
+
 
 
 
@@ -142,6 +222,7 @@ color:#598c2c;
  ****************************/
 #introbox {
 height:300px;
+min-width: 700px;
 background-color:#A0D373;
 background-image:linear-gradient(to top,#A0D373,#76BA3B);
 box-shadow:3px -3px 7px rgba(0,0,0,0.1) inset;
