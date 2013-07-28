@@ -1,0 +1,67 @@
+{% load home_extras %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+	<head>
+		<title>Seasoning | {% block title %}Geef smaak aan de seizoenen{% endblock %}</title>
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="en-us" />
+		<meta name="ROBOTS" content="ALL" />
+		<meta http-equiv="imagetoolbar" content="no" />
+		<meta name="MSSmartTagsPreventParsing" content="true" />
+		<meta name="Copyright" content="Seasoning" />
+		<meta name="keywords" content="Duurzaam, Eten, Koken" />
+		<meta name="description" content="Seasoning is een online applicatie die u helpt bij het duurzamer maken van uw dagelijkse leven." />
+		
+		<link rel="icon" href="{{ STATIC_URL }}img/favicon.ico" type="image/x-icon" />
+		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+		<link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css" media="screen" />
+		{% block extra_link %}{% endblock %}
+		
+		<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>
+		<script src="{{ STATIC_URL }}js/base.js" type="text/javascript"></script>
+		{% block extra_script %}{% endblock %}
+		
+		{% block extra_head %}{% endblock %}
+	</head>
+	
+	<body>
+		<div id="header">
+			<div id="nav-container">
+				<ul id="main-nav">
+					<li><a id="main-nav-link-recipes" class="main-nav-link" href="/recipes/">RECEPTEN</a></li>
+					<li><a id="main-nav-link-info" class="main-nav-link" href="/information/">INFORMATIE</a></li>
+					{% if user.is_superuser %}
+					<li><a id="main-nav-link-admin" class="main-nav-link" href="/admin/">ADMIN</a></li>
+					{% endif %}
+				</ul>
+				<ul id="sub-nav-recipes" class="sub-nav {% active request "RECEPTEN" %}">
+					<li class="sub-nav-link"><a href="/recipes/search/">Recept Zoeken</a></li>
+					<li class="sub-nav-link"><a href="/recipes/add/">Recept	Toevoegen</a></li>
+					<li class="sub-nav-link"><a href="/recipes/mine/">Mijn Recepten</a></li>
+				</ul>
+				<ul id="sub-nav-info" class="sub-nav {% active request "INFORMATIE" %}">
+					<li class="sub-nav-link"><a href="/recipes/">Ingredienten</a></li>
+					<li class="sub-nav-link"><a href="/information/">Nieuws</a></li>
+					<li class="sub-nav-link"><a href="/information/">Over Seasoning</a></li>
+				</ul>
+				{% if user.is_superuser %}
+				<ul id="sub-nav-admin" class="sub-nav {% active request "ADMIN" %}">
+					<li class="sub-nav-link"><a href="/authentication/users/" >Gebruikers</a></li>
+					<li class="sub-nav-link"><a href="/ingredients/list/" >Ingredienten</a></li>
+					<li class="sub-nav-link"><a href="/ingredients/units/" >Eenheden</a></li>
+					<li class="sub-nav-link"><a href="/admin/static/" >Statische Paginas</a></li>
+					<li class="sub-nav-link"><a href="/faq/admin/" >FAQ</a></li>
+					<li class="sub-nav-link"><a href="/backup/" >Backup Database</a></li>
+				</ul>
+				{% endif %}
+				<ul id="account-controls">
+					<li class="account-controls-link"><a href="/register/">Registreren</a></li>
+					<li class="account-controls-link"><a href="/login/">Aanmelden</a></li>
+				</ul>
+			</div>
+		</div>
+		{% block body %}{% endblock %}
+	</body>
+</html>

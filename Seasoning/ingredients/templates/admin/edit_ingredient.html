@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block extrahead %}
+{% block extra_head %}
     <link href="{{ STATIC_URL }}css/edit_ingredient.css" rel="stylesheet" type="text/css" media="screen" />
     <script src="{{ STATIC_URL }}js/formset.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -25,8 +25,9 @@
     <script src="{{ STATIC_URL }}js/veg_ingredients.js" type="text/javascript"></script>
 {% endblock %}
 
+{% block page_name %}Ingredient {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
+
 {% block content %}
-<h1>Ingredient {% if new %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
 
 <form action="" method="post" enctype="multipart/form-data">
 	{% csrf_token %}

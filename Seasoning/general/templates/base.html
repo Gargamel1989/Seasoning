@@ -1,17 +1,19 @@
-{% extends "header.html" %}
+{% extends "skeleton.html" %}
 
 {% block body %}
-                <div id="content-container">
-                    {% if messages %}
-                    <ul class="messages">
-                        {% for message in messages %}
-                        <li class="{{ message.tags }}">
-                            {{ message }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% block content %}
-                    {% endblock %}
-                </div>
+		<div id="content">
+			{% if messages %}
+			<ul class="messages">
+				{% for message in messages %}
+				<li class="{{ message.tags }}">
+					{{ message }}
+				</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+			
+			<h1>{% block page_name %}Naamloze pagina{% endblock %}</h1>
+
+			{% block content %}{% endblock %}
+		</div>
 {% endblock %}

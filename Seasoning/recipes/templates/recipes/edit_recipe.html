@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block page_name %}Recept {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
+
 {% block extrahead %}
     <script src="{{ STATIC_URL }}js/autocomplete_ingredients.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/formset.js" type="text/javascript"></script>
@@ -13,7 +15,6 @@
 
 
 {% block content %}
-<h1>Recept {% if new %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
 
 <form action="" method="post" enctype="multipart/form-data">
   {% if unknown_ingredients %}

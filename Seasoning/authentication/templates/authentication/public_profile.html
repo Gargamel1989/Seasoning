@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block page_name %}Profiel van {{ user.full_name }}{% endblock %}
 
-<h2>Profiel van {{ user.full_name }}</h2>
+{% block content %}
 
 <p>
     <img src="{{ MEDIA_URL }}{{ user.avatar }}"> Naam: {{ user.get_full_name }}
