@@ -28,8 +28,8 @@ transition:all .3s ease-out;
 #header {
 height:65px;
 min-width: 700px;
-background-color:#71B238;
-background-image:linear-gradient(to top,#71B238 0%,#A0D373 94%);
+background-color:#76BA3B;
+background-image:linear-gradient(to top,#629B31 0%,#76BA3B 94%);
 border-bottom:1px solid #055999;
 box-shadow:0 1px 2px 0 rgba(0,0,0,0.3);
 z-index:4;
@@ -54,7 +54,7 @@ margin:0;
 
 #nav-container li {
 	display:inline-block;
-	padding-right: 10px;
+	padding-right: 15px;
 }
 
 #nav-container a {
@@ -143,7 +143,7 @@ color:#598c2c;
 #introbox {
 height:300px;
 background-color:#A0D373;
-background-image:linear-gradient(to top,#A0D373,#71B238);
+background-image:linear-gradient(to top,#A0D373,#76BA3B);
 box-shadow:3px -3px 7px rgba(0,0,0,0.1) inset;
 z-index:1;
 position:relative;

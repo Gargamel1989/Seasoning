@@ -194,13 +194,13 @@ class User(models.Model):
     def has_usable_password(self):
         return is_password_usable(self.password)
     
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.givenname != self.__cached_givenname__ or self.surname != self.__cached_surname__:
             # Check if the name of the user was changed
             if self.name_changed:
                 # This user has already changed his or her name
                 raise PermissionDenied
-        super(User, self).save();
+        super(User, self).save(*args, **kwargs);
         self.__cached_givenname__ = self.givenname
         self.__cached_surname__ = self.surname
     

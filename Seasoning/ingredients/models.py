@@ -46,20 +46,21 @@ class Ingredient(models.Model):
         pass
     
     # Choices
-    VEGETABLES, FRUIT, TUBERS, NUTS_AND_SEEDS, CEREAL_PRODUCTS, HERBS, SPICES, OILS_AND_VINEGARS, MEAT, FISH, DAIRY_PRODUCTS, DRINKS, OTHER = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-    CATEGORIES = ((VEGETABLES,u'Groenten'),
+    DRINKS, FRUIT, CEREAL, VEGETABLES, HERBS_AND_SPICES, NUTS_AND_SEEDS, OILS, LEGUME, SEAFOOD, SUPPLEMENTS, FISH, MEAT, MEAT_SUBS, DAIRY_PRODUCTS = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+    CATEGORIES = ((DRINKS,u'Dranken'),
                   (FRUIT,u'Fruit'),
-                  (TUBERS,u'Knollen'),
+                  (CEREAL,u'Graanproducten'),
+                  (VEGETABLES,u'Groenten'),
+                  (HERBS_AND_SPICES,u'Kruiden en Specerijen'),
                   (NUTS_AND_SEEDS,u'Noten en Zaden'),
-                  (CEREAL_PRODUCTS,u'Graanproducten'),
-                  (HERBS,u'Kruiden'),
-                  (SPICES,u'Specerijen'),
-                  (OILS_AND_VINEGARS,u'Olies en Azijnen'),
-                  (MEAT,u'Vlees'),
+                  unicode(OILS,u'Oliën'),
+                  (LEGUME,u'Peulvrucht'),
+                  (SEAFOOD,u'Schaal- en Schelpdieren'),
+                  (SUPPLEMENTS,u'Supplement'),
                   (FISH,u'Vis'),
-                  (DAIRY_PRODUCTS,u'Zuivelproducten'),
-                  (DRINKS,u'Dranken'),
-                  (OTHER,u'Andere'))
+                  (MEAT,u'Vlees'),
+                  (MEAT_SUBS,u'Vleesvervangers'),
+                  (DAIRY_PRODUCTS,u'Zuivel'))
     NON_VEGETARIAN, VEGETARIAN, VEGAN  = 0, 1, 2
     VEGANISMS = ((VEGAN,u'Veganistisch'),
                  (VEGETARIAN,u'Vegetarisch'),

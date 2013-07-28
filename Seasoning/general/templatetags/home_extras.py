@@ -24,7 +24,7 @@ register = template.Library()
 
 paths = {'RECEPTEN': ['/recipes/.*'],
          'INFORMATIE': ['/ingredients/', '/ingredients/\d*/', '/information/',
-                        '/news/.*', '/about/'],
+                        '/news/.*', '/help/'],
          'ADMIN': ['/ingredients/list/', '/ingredients/add/', '/ingredients/edit/(\d*)/', 
                    '/ingredients/units/.*', '/authentication/users/','/faq/admin/.*',
                    '/admin/.*'],
