@@ -42,9 +42,9 @@
 					<li class="sub-nav-link"><a href="/recipes/mine/">Mijn Recepten</a></li>
 				</ul>
 				<ul id="sub-nav-info" class="sub-nav {% active request "INFORMATIE" %}">
-					<li class="sub-nav-link"><a href="/recipes/">Ingredienten</a></li>
-					<li class="sub-nav-link"><a href="/information/">Nieuws</a></li>
-					<li class="sub-nav-link"><a href="/information/">Over Seasoning</a></li>
+					<li class="sub-nav-link"><a href="/ingredients/">Ingredienten</a></li>
+					<li class="sub-nav-link"><a href="/news/">Nieuws</a></li>
+					<li class="sub-nav-link"><a href="/about/">Over Seasoning</a></li>
 				</ul>
 				{% if user.is_superuser %}
 				<ul id="sub-nav-admin" class="sub-nav {% active request "ADMIN" %}">
@@ -57,8 +57,13 @@
 				</ul>
 				{% endif %}
 				<ul id="account-controls">
+					{% if user.is_authenticated %}
+					<li id="account-settings-link" class="account-controls-link"><a href="/account/settings/"><span id="img-darkener"><img src="https://www.seasoning.be/media/{{ user.avatar }}" /></span>{{ user.get_full_name }}</a></li>
+					<li class="account-controls-link"><a href="/logout/">Afmelden</a></li>
+					{% else %}
 					<li class="account-controls-link"><a href="/register/">Registreren</a></li>
 					<li class="account-controls-link"><a href="/login/">Aanmelden</a></li>
+					{% endif %}
 				</ul>
 			</div>
 		</div>
