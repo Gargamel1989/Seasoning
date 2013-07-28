@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block page_name %}Recept {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
+
 {% block extrahead %}
     <script src="{{ STATIC_URL }}js/autocomplete_ingredients.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/formset.js" type="text/javascript"></script>
@@ -13,9 +15,30 @@
 
 
 {% block content %}
-<h1>Recept {% if new %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
 
 <form action="" method="post" enctype="multipart/form-data">
+  {% if unknown_ingredients %}
+  <p>
+  	U hebt ingredienten opgegeven in het recept die niet teruggevonden werden in onze databank:
+  	<ul>
+  		{% for unknown_ingredient in unknown_ingredients %}
+  		<li>{{ unknown_ingredient }}</li>
+  		{% endfor %}
+  	</ul>
+  	U hebt 3 mogelijkheden:
+  	<ol>
+  		<li>Het recept niet toevoegen</li>
+  		<li>De ongekende ingredienten vervangen door andere, gelijkaardige ingredient die wel in onze databank terug
+  			te vinden zijn</li>
+  		<li>De ongekende ingredienten aanvragen. Uw recept zal opgeslagen worden, maar niet zichtbaar zijn voor andere
+  			gebruikers, tot wij alle ongekende ingredienten in onze databank gestoken hebben. Let op dat dit geen simpel
+  			proces is, en nogal wat tijd in beslag kan nemen.
+  		</li>
+  	</ol>
+  	<input type="submit" value="Annuleren" name="stop-submit" /><input type="submit" value="Ingredienten Aanvragen" name="ingrequest-submit" />
+  </p>
+  {% endif %}
+  
   {% csrf_token %}
   {{ recipe_form.non_field_errors }}
   {{ recipe_form.as_p }}
@@ -60,7 +83,7 @@
 	</tr>
   </table>
   
-  <input id="submit-btn" type="submit" value="{% if new %}Toevoegen{% else %}Aanpassen{% endif %}" />
+  <input id="submit-btn" type="submit" value="{% if new %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
 </form>
 
 {% endblock %}

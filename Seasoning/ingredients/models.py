@@ -23,9 +23,6 @@ from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
-import authentication
-import recipes
-
 
 def get_image_filename(instance, old_filename):
     """
@@ -200,14 +197,6 @@ class Ingredient(models.Model):
             self.preservation_footprint = 0 
         super(Ingredient, self).save()
 
-class UnknownIngredient(models.Model):
-    class Meta:
-        db_table = 'unknown_ingredient'
-    
-    name = models.CharField(max_length=50L)
-#    requested_by = models.ForeignKey(authentication.models.User)
-#    for_recipe = models.ForeignKey(recipes.models.Recipe)
-    
 class Synonym(models.Model):
     """
     Represents a synonym for an ingredient, these will be displayed when viewing

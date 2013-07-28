@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block page_name %}Eenheid {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
+{% block page_name %}Vraag {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
 
 {% block content %}
 
 <form action="" method="post" enctype="multipart/form-data">
 	{% csrf_token %}
 	
-	{{ unit_form.as_p }}
+	{{ question_form.as_p }}
 	
 	<input id="submit-btn" type="submit" value="{% if new %}Toevoegen{% else %}Aanpassen{% endif %}" />
 </form>

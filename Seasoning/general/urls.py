@@ -30,6 +30,9 @@ urlpatterns = patterns('',
     url(r'^sitemap/$', 'general.views.sitemap'),
     url(r'^support/$', 'general.views.support'),
     url(r'^terms/$', 'general.views.terms'),
+    url(r'^information/$', 'general.views.information'),
+    url(r'^news/$', 'general.views.news'),
+    url(r'^about/$', 'general.views.about'),
     
     # Admin Pages
     url(r'^admin/$', 'general.views.admin'),

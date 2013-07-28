@@ -82,11 +82,11 @@ def ajax_ingredient_name_list(request, query=""):
         # Serialize to json
         ingredients_json = json.dumps(cursor.fetchall())
   
-        # Return the response  
+        # Return the response
         return HttpResponse(ingredients_json, mimetype='application/javascript')
     
-    # If this is not an ajax request, 404
-    raise Http404
+    # If this is not an ajax request, permission is denied
+    raise PermissionDenied
 
 def ajax_ingredients_page(request):
     """
@@ -112,7 +112,7 @@ def ajax_ingredients_page(request):
         ingredients_json = json.dumps(ingredients)
         return HttpResponse(ingredients_json, mimetype='application/javascript')
     
-    raise Http404
+    raise PermissionDenied
 
 
 

@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load comments %}
 
+{% block page_name %}{{ recipe.name }}{% endblock %}
+
 {% block content %}
 
-<h1>{{ recipe.name }}</h1>
 <a href="/recipes/edit/{{ recipe.id }}/">Wijzigen</a><br/><br/>
 
 <p>Auteur: {{ recipe.author.username }}</p>

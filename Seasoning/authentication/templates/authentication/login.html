@@ -1,50 +1,49 @@
 {% extends "base.html" %}
 
+{% block page_name %}Aanmelden bij Seasoning{% endblock %}
+
 {% block content %}
-<h1>Aanmelden bij Seasoning.be</h1>
 
-<table>
-    <tr>
-        <td width=400px>
-            <form action="/login/" method="post" class="login-form">
-            	{% csrf_token %}
-              	
-            	{{ form.non_field_errors }}
-            	
-            	<div class="field-wrapper">
-                    {{ form.username.label_tag }}
-                    {{ form.username }}
-            		{{ form.username.errors }}
-            	</div>
-            	
-            	<div class="field-wrapper">
-                    {{ form.password.label_tag }}
-                    {{ form.password }}
-            		{{ form.password.errors }}
-            	</div>
-            	
-            	<input type="hidden" name="next" value="{{ next }}" />
-            		
-            	<div id="extra-login-links">		    		
-            		<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
-            		<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
-            	</div>
-              
-            	<input type="submit" value="Aanmelden" id="login-submit"/>
-            </form>
+<div id="seasoning-login">
+	<form action="/login/" method="post" class="login-form">
+		{% csrf_token %}
 
-            <script type="text/javascript">
-            document.getElementById('username').focus()
-            </script>
-        </td>
-        <td>
-            <a id="fb-login-btn" href="/auth/fb/{% if next %}?next={{ next }}{% endif %}">
-                Aanmelden met Facebook
-            </a><br/>
-            <a class="btn btn-google" href="/auth/google/{% if next %}?next={{ next }}{% endif %}">
-                Aanmelden met Google
-            </a>
-        </td>
-    </tr>
-</table>
+		{{ form.non_field_errors }}
+		
+		<div class="field-wrapper">
+			{{ form.username.label_tag }}
+			{{ form.username }}
+			<div class="login-error">{{ form.username.errors }}</div>
+		</div>
+		
+		<div class="field-wrapper">
+			{{ form.password.label_tag }}
+			{{ form.password }}
+			<div class="login-error">{{ form.password.errors }}</div>
+		</div>
+		
+		<input type="hidden" name="next" value="{{ next }}" />
+		
+		<div id="extra-login-links">		    		
+			<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
+			<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
+		</div>
+		
+		<input type="submit" value="Aanmelden" id="login-submit"/>
+	</form>
+
+	<script type="text/javascript">
+		document.getElementById('username').focus()
+	</script>
+</div>
+
+<div id="social-login">
+	<a id="fb-login-btn" href="/auth/fb/{% if next %}?next={{ next }}{% endif %}">
+		<img id="fb-logo" src="{{ STATIC_URL }}img/fb-logo.png" />Aanmelden met Facebook
+	</a>
+	<br/>
+	<a id="google-login-btn" href="/auth/google/{% if next %}?next={{ next }}{% endif %}">
+		<img id="google-logo" src="{{ STATIC_URL }}img/google-logo.png" />Aanmelden met Google
+	</a>
+</div>
 {% endblock %}

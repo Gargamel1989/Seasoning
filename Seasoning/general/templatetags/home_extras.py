@@ -25,7 +25,8 @@ register = template.Library()
 paths = {'RECEPTEN': ['/recipes/.*'],
          'INFORMATIE': ['/ingredients/', '/ingredients/\d*/', '/information/'],
          'ADMIN': ['/ingredients/list/', '/ingredients/add/', '/ingredients/edit/(\d*)/', 
-                   '/ingredients/units/.*', '/authentication/users/'],
+                   '/ingredients/units/.*', '/authentication/users/','/faq/admin/.*',
+                   '/admin/.*'],
          'ReceptenZoeken': ['/recipes/search/'],
          'ReceptToevoegen': ['/recipes/add/'],
          'MijnRecepten': ['/accounts/recipes/'],
@@ -35,7 +36,8 @@ paths = {'RECEPTEN': ['/recipes/.*'],
          'GebruikersAdmin': ['/authentication/users/'],
          'IngredientenAdmin': ['/ingredients/list/', '/ingredients/add/', '/ingredients/edit/(\d*)/'],
          'Units': ['/ingredients/units/.*'],
-         'StaticAdmin': ['/admin/static/.*'],}
+         'StaticAdmin': ['/admin/static/.*'],
+         'Faq': ['/faq/admin/*']}
 
 @register.simple_tag
 def active(request, link_name):

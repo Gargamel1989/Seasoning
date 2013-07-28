@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block page_name %}Statische paginas bewerken{% endblock %}
 
-<h2>Statische paginas bewerken</h2>
+{% block content %}
 
 <p>
 	<a href="/admin/static/contact/">Contact</a> | <a href="/admin/static/support/">Help</a> | <a href="/admin/static/motifs/">Motivering</a> | 
-	<a href="/admin/static/privacypolicy/">Privacybeleid</a> | <a href="/admin/static/sitemap/">Sitemap</a> | <a href="/admin/static/terms/">Voorwaarden</a>
+	<a href="/admin/static/privacypolicy/">Privacybeleid</a> | <a href="/admin/static/sitemap/">Sitemap</a> | <a href="/admin/static/terms/">Voorwaarden</a> |
+	<a href="/admin/static/information/">Informatie</a> | <a href="/admin/static/news/">Nieuws</a> | <a href="/admin/static/about/">Over Seasoning</a>
 </p>
 {% if page %}
 <p>

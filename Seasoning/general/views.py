@@ -55,6 +55,18 @@ def terms(request):
     return render(request, 'static_page.html', {'title': 'Voorwaarden',
                                                 'static_page': 'seasoning/terms.html'})
 
+def information(request):
+    return render(request, 'static_page.html', {'title': 'Informatie',
+                                                'static_page': 'seasoning/information.html'})
+
+def news(request):
+    return render(request, 'static_page.html', {'title': 'Nieuws',
+                                                'static_page': 'seasoning/news.html'})
+
+def about(request):
+    return render(request, 'static_page.html', {'title': 'Over Seasoning',
+                                                'static_page': 'seasoning/about.html'})
+
 def admin(request):
     if not request.user.is_superuser:
         raise PermissionDenied
