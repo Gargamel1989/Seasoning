@@ -29,6 +29,7 @@ from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
 from authentication.models import User
 import authentication
+from django.core.exceptions import ValidationError
 
         
 class ShownImageInput(ClearableFileInput):
@@ -185,10 +186,22 @@ class AccountSettingsForm(ModelForm):
     """    
     class Meta:
         model = get_user_model()
-        fields = ['email', 'avatar']
+        fields = ['givenname', 'surname', 'email', 'avatar']
         widgets = {
             'avatar': ShownImageInput,
         }
+    
+    def clean_givenname(self):
+        user = self.instance
+        if user.givenname != self.cleaned_data['givenname'] and user.name_changed:
+            raise ValidationError(_('Name can only be changed once!'))
+        return user.givenname
+    
+    def clean_surname(self):
+        user = self.instance
+        if user.givenname != self.cleaned_data['givenname'] and user.name_changed:
+            raise ValidationError(_('Name can only be changed once!'))
+        return user.givenname
     
     def clean_email(self):
         user = self.instance

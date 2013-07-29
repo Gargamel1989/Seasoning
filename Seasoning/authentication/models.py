@@ -36,6 +36,7 @@ from django.utils import timezone
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.contrib.auth.hashers import make_password, check_password,\
     is_password_usable
+from django.core.exceptions import PermissionDenied
 
 
 class UserManager(BaseUserManager):
@@ -101,6 +102,9 @@ class User(models.Model):
                                 help_text=_('Required. 50 characters or fewer, only letters allowed'),
                                 validators=[validators.RegexValidator(re.compile('[a-zA-Z]{2,}'), _('Enter a valid Surname.'), 'invalid')])
     
+    # Field to check if user has changed his name (name can only be changed once to avoid abuse)
+    name_changed = models.BooleanField(default=False, editable=False)
+    
     password = models.CharField(_('password'), max_length=128, null=True)
     
     avatar = ProcessedImageField([ResizeToFit(250, 250), AddBorder(2, 'Black')], format='PNG', \
@@ -122,6 +126,13 @@ class User(models.Model):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['givenname', 'surname', 'password', 'date_of_birth']
+    
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        
+        # Theses should only be set by the save method!
+        self.__cached_givenname__ = self.givenname
+        self.__cached_surname__ = self.surname
 
     def get_full_name(self):
         return ' '.join((self.givenname, self.surname))
@@ -142,16 +153,6 @@ class User(models.Model):
         
         """
         send_mail(subject, message, from_email, [self.email])
-    
-    def delete(self, delete_recipes=False, *args, **kwargs):
-        """
-        Delete this user and the recipes added by this user 
-        if this is wanted
-        
-        """
-        if not delete_recipes:
-            self.recipes.all().update(author=None)
-        super(User, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return self.email
@@ -192,6 +193,26 @@ class User(models.Model):
 
     def has_usable_password(self):
         return is_password_usable(self.password)
+    
+    def save(self, *args, **kwargs):
+        if self.givenname != self.__cached_givenname__ or self.surname != self.__cached_surname__:
+            # Check if the name of the user was changed
+            if self.name_changed:
+                # This user has already changed his or her name
+                raise PermissionDenied
+        super(User, self).save(*args, **kwargs);
+        self.__cached_givenname__ = self.givenname
+        self.__cached_surname__ = self.surname
+    
+    def delete(self, delete_recipes=False, *args, **kwargs):
+        """
+        Delete this user and the recipes added by this user 
+        if this is wanted
+        
+        """
+        if not delete_recipes:
+            self.recipes.all().update(author=None)
+        super(User, self).delete(*args, **kwargs)
 
 try:
     from django.utils.timezone import now as datetime_now

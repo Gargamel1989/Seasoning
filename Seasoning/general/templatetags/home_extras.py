@@ -23,7 +23,8 @@ import re
 register = template.Library()
 
 paths = {'RECEPTEN': ['/recipes/.*'],
-         'INFORMATIE': ['/ingredients/', '/ingredients/\d*/', '/information/'],
+         'INFORMATIE': ['/ingredients/', '/ingredients/\d*/', '/information/',
+                        '/news/.*', '/help/'],
          'ADMIN': ['/ingredients/list/', '/ingredients/add/', '/ingredients/edit/(\d*)/', 
                    '/ingredients/units/.*', '/authentication/users/','/faq/admin/.*',
                    '/admin/.*'],

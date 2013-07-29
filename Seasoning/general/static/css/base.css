@@ -4,10 +4,8 @@ overflow-y:scroll;
 
 body {
 margin: 0;
-background-image:url('http://www.designbolts.com/wp-content/uploads/2012/12/Dust-White-Seamless-pattern-for-website-background.jpg');
-background-image:url('http://www.designbolts.com/wp-content/uploads/2012/12/Light-paper-fibers-Seamless-Pattern.jpg');
 font-family:Verdana, Geneva, sans-serif;
-color:#76BA3B;
+color:#5B6553;
 }
 
 h1 {
@@ -18,20 +16,20 @@ mari
 }
 
 a {
-color:#76BA3B;
+color:#5B6553;
 transition:all .3s ease-out;
 }
 
 a:hover {
-color:#598c2c;
+color:#76BA3B;
 transition:all .3s ease-out;
 }
 
 #header {
 height:65px;
 min-width: 700px;
-background-color:#71B238;
-background-image:linear-gradient(to top,#71B238 0%,#A0D373 94%);
+background-color:#76BA3B;
+background-image:linear-gradient(to top,#629B31 0%,#76BA3B 94%);
 border-bottom:1px solid #055999;
 box-shadow:0 1px 2px 0 rgba(0,0,0,0.3);
 z-index:4;
@@ -56,7 +54,7 @@ margin:0;
 
 #nav-container li {
 	display:inline-block;
-	padding-right: 10px;
+	padding-right: 15px;
 }
 
 #nav-container a {
@@ -91,6 +89,28 @@ right:10px;
 font-size:.75em;
 }
 
+#account-controls #account-settings-link {
+font-size: 1.2em;
+font-weight: 600;
+padding-right: 30px;
+}
+
+#account-controls #account-settings-link #img-darkener {
+	background: #1E2F0F;
+	position: absolute;
+	left: -35px;
+	top: -5px;
+}
+
+#account-controls #account-settings-link img {
+	height: 30px;
+	width: 30px;
+}
+
+#account-controls #account-settings-link:hover img {
+	opacity: .5;
+}
+
 #nav-container .sub-nav {
 	bottom: -22px;
 	left: 400px;
@@ -105,7 +125,7 @@ font-size:.75em;
 }
 
 #nav-container .sub-nav li a {
-color:inherit;
+color:#76BA3B;
 font-size:.75em;
 }
 
@@ -123,7 +143,7 @@ color:#598c2c;
 #introbox {
 height:300px;
 background-color:#A0D373;
-background-image:linear-gradient(to top,#A0D373,#71B238);
+background-image:linear-gradient(to top,#A0D373,#76BA3B);
 box-shadow:3px -3px 7px rgba(0,0,0,0.1) inset;
 z-index:1;
 position:relative;
@@ -360,6 +380,7 @@ padding: 0 10px;
 }
 
 #content h1 {
+color: #76BA3B;
 border-bottom: 2px solid #76BA3B;
 margin-bottom: 20px;
 }

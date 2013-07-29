@@ -4,12 +4,12 @@
 
 {% block content %}
 
-<h2>Account Instellingen</h2>
-
 <form action="" method="post" enctype="multipart/form-data">
 {% csrf_token %}
 <p>
-Gebruikersnaam: {{ user.username }}
+Naam: {{ form.givenname }} {{ form.surname }}
+{{ form.givenname.errors }}
+{{ form.surname.errors }}
 </p>
 <p>
 	{{ form.email.errors }}
