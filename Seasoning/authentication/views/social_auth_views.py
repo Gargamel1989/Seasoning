@@ -10,6 +10,7 @@ from django.contrib.sites.models import get_current_site
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 from authentication.forms import SocialUserCheckForm
+from django.core.exceptions import PermissionDenied
 
 BACKENDS = {'google': GoogleAuthBackend,
             'fb': FacebookAuthBackend}
@@ -23,10 +24,22 @@ def social_auth(request, backend):
     backend = BACKENDS[backend]
     backend = backend()
     
+    error = request.GET.get('error', None)
     code = request.GET.get('code', None)
     state = request.GET.get('state', None)
     next_page = state or request.REQUEST.get('next', None)
     
+    if error is not None:
+        # Something went wrong
+        error_reason = request.GET.get(backend.ERROR_REASON_PARAM, '')
+        if error_reason == backend.ACCESS_DENIED_STRING:
+            # User denied us access to his profile...
+            messages.add_message(request, messages.INFO, _('Could not access your ' + backend.name() + ' Information. Please try again.'))            
+            return redirect('/login/')
+        else:
+            messages.add_message(request, messages.INFO, _('Something went wrong. Check URL for error.'))
+            return render(request, 'authentication/login.html')
+            
     redirect_uri = 'http://' + str(get_current_site(request)) + '/auth/' + backend.NAME + '/'
     if code is None:
         # User has just click the 'Login with ...' button to start a social authentication.
@@ -41,7 +54,11 @@ def social_auth(request, backend):
     
         if access_token:
             # We now have an access token
-            user_info = backend.get_user_info(access_token)
+            try:
+                user_info = backend.get_user_info(access_token)
+            except PermissionDenied:
+                messages.add_message(request, messages.INFO, _('You cannot use this type of ' + backend.name() + ' account on Seasoning. Please try another...'))            
+                return redirect('/login/')
             
             if user_info:
                 # We received a valid access token, and were able to exchange it for the necessary
@@ -85,8 +102,12 @@ def social_connect(request, backend):
         # his Seasoning account
         access_token = request.POST.get('access-token', '')
         if access_token:
-            # Check the access token and get the users Facebook info
-            user_info = backend.get_user_info(access_token)
+            # Check the access token and get the users Social info
+            try:
+                user_info = backend.get_user_info(access_token)
+            except PermissionDenied:
+                messages.add_message(request, messages.INFO, _('You cannot connect this type of ' + backend.name() + ' account to your Seasoning account. Please try another...'))            
+                return redirect('/login/')
             if user_info:
                 # Access token was valid and we have received the users' info
                 # Check if this user is already connected to a Seasoning account
@@ -121,7 +142,11 @@ def social_connect(request, backend):
     
         if access_token:
             # We now have an access token
-            user_info = backend.get_user_info(access_token)
+            try:
+                user_info = backend.get_user_info(access_token)
+            except PermissionDenied:
+                messages.add_message(request, messages.INFO, _('You cannot connect this type of ' + backend.name() + ' account to your Seasoning account. Please try another...'))            
+                return redirect('/login/')
             
             if user_info:
                 # We received a valid access token, and were able to exchange it for the necessary
@@ -162,8 +187,12 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
         if form.is_valid():
             # User agreed to tos, and if he provided password, they match
             if access_token:
-                # We alse need to check if the additional information provided by the user is valid
-                user_info = backend.get_user_info(access_token)
+                # We also need to check if the additional information provided by the user is valid
+                try:
+                    user_info = backend.get_user_info(access_token)
+                except PermissionDenied:
+                    messages.add_message(request, messages.INFO, _('You cannot use this type of ' + backend.name() + ' account to register on Seasoning. Please try another...'))            
+                    return redirect('/register/')
                 if user_info:
                     try:
                         # Check if a user with this Google id already exists
@@ -198,7 +227,7 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
                 # message as expected
                 access_token = None
     else:
-        # User wants to register using his google account
+        # User wants to register using his social account
         code = request.GET.get('code', None)
         
         redirect_uri = 'http://' + str(get_current_site(request)) + backend.registration_url
@@ -216,7 +245,11 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
     if access_token:
         # We now have an access token either by getting one with an authorization code, or by extracting it from the
         # POST parameters
-        user_info = backend.get_user_info(access_token)
+        try:
+            user_info = backend.get_user_info(access_token)
+        except PermissionDenied:
+            messages.add_message(request, messages.INFO, _('You cannot use this type of ' + backend.name() + ' account to register on Seasoning. Please try another...'))            
+            return redirect('/register/')
         
         context = {'backend': backend,
                    'form': form,

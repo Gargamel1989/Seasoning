@@ -14,7 +14,6 @@ h1 {
 margin:0;
 font-size:38px;
 font-family:Lobster, Verdana, Geneva, sans-serif;
-mari
 }
 
 a {
@@ -147,6 +146,25 @@ color:#598c2c;
 	padding-bottom: 50px;
 }
 
+#body .messages {
+	list-style: none;
+	padding: 5px;
+	margin: 0 0 20px 0;
+	background-color: rgba(98, 155, 49, 0.5);
+	border:1px dashed #055999;
+box-shadow:1px 1px 2px 0 rgba(0,0,0,0.3);
+}
+
+#body .messages li {
+	opacity: 1;
+}
+
+#footer-clearer {
+	clear: both;
+	height: 20px;
+	padding-bottom: 50px;
+}
+
 #footer {
 content: " ";
 display: block;
@@ -167,18 +185,27 @@ min-width: 680px;
 margin: auto;
 padding: 5px 0;
 color:#F4FAEF;
+position: relative;
 }
 
-#footer-container img {
-	margin-top: 5px;
-	float: left;
+#footer-container #cc-license {
+	position: absolute;
+	left: 0;
+	top: 10px;
+	margin-left: 10px;
+}
+
+#footer-container #footer-links {
+	margin: auto;
+	padding: 0 115px;
 }
 
 #footer-container ul {
-	margin: 0;
+	margin: auto;
+	width: 510px;
+	height: 1px;
 	padding: 0;
 	line-height: 40px;
-	margin-left: 25%;
 }
 
 #footer-container ul li {
@@ -201,15 +228,17 @@ color:#F4FAEF;
 	color: #95CE64;
 }
 
+#footer-container #social-network-links {
+	position: absolute;
+	top: 10px;
+	right: 0;
+	margin-right: 10px;
+}
+
 #footer-container img.social-logo {
 	width: 30px;
-	float: right;
 	padding-left: 10px;
- border-radius: 5px 5px 5px 5px;
-
--moz-border-radius: 5px 5px 5px 5px;
-
--webkit-border-radius: 5px 5px 5px 5px;
+ 	border-radius: 5px;
 }
 
 
@@ -466,6 +495,55 @@ border-bottom: 2px solid #76BA3B;
 margin-bottom: 20px;
 }
 
+/*****************************
+ * General form styles 
+ *****************************/
+form .errorlist {
+	clear: both;
+	font-size: .75em;
+	list-style: none;
+	float: right;
+	color: red;
+	padding: 0;
+	margin: 5px 0 15px 0;
+}
+
+form .spacer {
+	height: 10px;
+	clear: both;
+}
+
+form .field-wrapper {
+	height: 25px;
+	margin-bottom: 10px;
+	clear: both;
+}
+
+form .field-wrapper label {
+	display: block;
+	float: left;
+	width: 150px;
+	line-height: 23px;
+}
+
+form .field-wrapper input {
+	margin: 0;
+	width: 50%;
+	float: right;
+	clear: none;
+}
+
+form .field-wrapper .tooltip {
+	display: none;
+}
+
+form input {
+	margin-top: 5px;
+	width: 150px; 	
+	float: right;
+	clear: both;
+}
+
 /*
  * Login Page
  */
@@ -474,37 +552,11 @@ margin-bottom: 20px;
 	float: left;
 }
 
-#seasoning-login .field-wrapper {
-	margin-bottom: 10px;
-}
-
-#seasoning-login .field-wrapper label {
-	display: block;
-	float: left;
-	width: 150px;
-}
-
-#seasoning-login .field-wrapper input {
-	width: 50%;
-	float: right;
-}
-
-#seasoning-login .login-error {
-	clear: both;
-}
-
 #seasoning-login #extra-login-links a {
 	display: block;
 	font-size: .75em;
 	float: right;
 	clear: right;
-}
-
-#seasoning-login input#login-submit {
-	margin-top: 5px;
-	width: 150px;
-	float: right;
-	clear: both;
 }
 
 #social-login {
@@ -546,3 +598,86 @@ margin-bottom: 20px;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+
+/*
+ * Registration Page
+ */
+#seasoning-register {
+	width: 45%;
+	float: left;
+}
+
+#seasoning-register #captcha-wrapper {
+	margin: 10px 0;
+	min-height: 130px;
+     height:auto !important; 
+     height:130px; 
+}
+
+#captcha-wrapper #recaptcha_area {
+	margin: auto;
+}
+
+#captcha-wrapper .errorlist {
+	float: none;
+	text-align: center;
+}
+
+#seasoning-register #terms-wrapper input {
+	float: left;
+	width: 10px;
+	margin: 5px 5px 0 0;
+}
+
+#seasoning-register #terms-wrapper label {
+	width: auto;
+}
+
+#seasoning-register input#register-submit {
+	margin-top: 5px;
+	width: 150px;
+	float: right;
+	clear: both;
+}
+
+#social-register {
+	width:45%;
+	float: right;
+	text-align: center;
+	padding-top: 10px;
+}
+
+#social-register a {
+	display: block;
+	width: 80%;
+	margin: auto;
+	padding: 5px;
+	text-decoration: none;
+	border-width: 1px;
+	border-style: solid;
+}
+
+#social-register img {
+	float: left;
+	height: 20px;
+	margin-left: 5px;
+}
+
+#social-register #fb-register-btn {
+	background-color: #3B5998;
+	color: #FFFFFF;
+	text-shadow: none;
+	border-width: 1px;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+#social-register #google-register-btn {
+	background-color: #F5F5F5;
+	color: #333333;
+	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+

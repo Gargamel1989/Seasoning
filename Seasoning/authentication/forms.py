@@ -18,7 +18,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
 from django import forms
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -28,7 +28,6 @@ from django.forms.models import ModelForm
 from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
 from authentication.models import User
-import authentication
 from django.core.exceptions import ValidationError
 
         
@@ -57,8 +56,6 @@ class ShownImageInput(ClearableFileInput):
 
         return mark_safe(template % substitutions)
 
-attrs_dict = {'class': 'required'}
-
 class EmailUserCreationForm(forms.ModelForm):
     """
     Form for registering a new user account.
@@ -76,16 +73,39 @@ class EmailUserCreationForm(forms.ModelForm):
         model = User
         fields = ['givenname', 'surname', 'password', 'email', 'date_of_birth']
     
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
-                                label=_("Password (again)"))
+    givenname = forms.CharField(max_length=30,
+                                widget=forms.TextInput(attrs={'tabindex':'1'}),
+                                help_text=_('Your name will be used to identify you on Seasoning.'))
     
-    tos = forms.BooleanField(widget=forms.CheckboxInput(attrs=attrs_dict),
+    surname = forms.CharField(max_length=50,
+                              widget=forms.TextInput(attrs={'tabindex':'2'}),
+                              help_text=_('Your name will be used to identify you on Seasoning.'))
+    
+    email = forms.EmailField(widget=forms.TextInput(attrs={'tabindex':'3'}),
+                             help_text=_('Your email will never be sold or shared. It will not be shown on the site, unless you enable this '
+                                         'option.<br/>An email will be sent to this email address to verify your account. You will not '
+                                         'receive any further emails from Seasoning.'))
+    
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'required',
+                                                                 'tabindex': '4'}, render_value=False))
+    
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'required',
+                                                                  'tabindex': '5'}, render_value=False),
+                                label=_("Password (again)"),
+                                help_text=_('Please enter the same password as above for verification purposes.'))
+    
+    date_of_birth = forms.DateField(widget=forms.TextInput(attrs={'tabindex':'6'}),
+                                    help_text=_('Your birthday will be used for age validation and possible some anonymous statistics about the '
+                                                'users of Seasoning.'))
+                             
+    captcha = ReCaptchaField(attrs={'theme': 'red',
+                                    'tabindex': 7},
+                             error_messages = {'required': _("You must enter the correct ReCaptcha characters")})
+    
+    tos = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'required',
+                                                               'tabindex': '8'}),
                              label=_(u'I have read and agree to the Terms of Service'),
                              error_messages={'required': _("You must agree to the terms to register")})
-                             
-    captcha = ReCaptchaField(attrs={'theme': 'clean',
-                                    'tabindex': 5},
-                             error_messages = {'required': _("You must enter the correct ReCaptcha characters")})
     
     def clean(self):
         """
@@ -100,6 +120,9 @@ class EmailUserCreationForm(forms.ModelForm):
             if self.cleaned_data['password'] != self.cleaned_data['password2']:
                 raise forms.ValidationError(_("The two password fields didn't match."))
         return self.cleaned_data
+
+attrs_dict = {'class': 'required',
+              'tabindex': '8'}
 
 class SocialUserCheckForm(forms.Form):
     

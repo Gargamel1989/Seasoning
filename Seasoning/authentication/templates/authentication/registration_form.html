@@ -1,46 +1,93 @@
 {% extends "base.html" %}
 
+{% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<style>
+/*
+ * Tooltip styles
+ */
+.ui-tooltip {
+    position: absolute;
+}
+
+.ui-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: .75em;
+    color: #5B6553;
+}
+</style>
+{% endblock %}
+{% block extra_script %}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+$(function() {
+    $(document).tooltip({ 
+        items: ".tooltip-field input", 
+        content:  function() {
+            return $(this).parent().children('.tooltip').text();
+        },
+        position: {
+            my: "left top",
+            at: "right+10 top-2"
+        },  
+    }).off("mouseover mouseout");
+    
+    $('#id_date_of_birth').datepicker({ showAnim: "fadeIn",
+                                        changeMonth: true,
+                                        changeYear: true,
+                                        maxDate: -365
+    });
+    
+})
+</script>
+{% endblock %}
+
 {% block page_name %}Registreren bij Seasoning{% endblock %}
 
 {% block content %}
 
-<table>
-    <tr>
-        <td width=400px>
-            <form action="/register/" method="post" class="account-form">
+<div id="seasoning-register">
+    <form action="/register/" method="post" class="account-form">
 	{% csrf_token %}
   	
 	{{ form.non_field_errors }}
 	
-	<div class="field-wrapper">
-        {{ form.givenname.label }}
+	<div class="field-wrapper tooltip-field">
+        {{ form.givenname.label_tag }}
         {{ form.givenname }}
+        <div class="tooltip">{{ form.givenname.help_text }}</div>
         
         {% if form.givenname.errors %}        
 			{{ form.givenname.errors }}	
         {% endif %}
 	</div>
 	
-	<div class="field-wrapper">
-        {{ form.surname.label }}
+	<div class="field-wrapper tooltip-field">
+        {{ form.surname.label_tag }}
         {{ form.surname }}
+        <div class="tooltip">{{ form.surname.help_text }}</div>
         
         {% if form.surname.errors %}        
 			{{ form.surname.errors }}
         {% endif %}
 	</div>
 	
-	<div class="field-wrapper">
-        {{ form.email.label }}
+	<div class="spacer"> </div>
+	
+	<div class="field-wrapper tooltip-field">
+        {{ form.email.label_tag }}
         {{ form.email }}
+        <div class="tooltip">{{ form.email.help_text }}</div>
         
         {% if form.email.errors %}        
 			{{ form.email.errors }}	
         {% endif %}
 	</div>
+    
+    <div class="spacer"> </div>
 	
 	<div class="field-wrapper">
-        {{ form.password.label }}
+        {{ form.password.label_tag }}
         {{ form.password }}
         
         {% if form.password.errors %}        
@@ -48,62 +95,59 @@
         {% endif %}
 	</div>
 	
-	<div class="field-wrapper">
-        {{ form.password2.label }}
+	<div class="field-wrapper tooltip-field">
+        {{ form.password2.label_tag }}
         {{ form.password2 }}
+        <div class="tooltip">{{ form.password2.help_text }}</div>
         
         {% if form.password2.errors %}        
 			{{ form.password2.errors }}	
         {% endif %}
 	</div>
+    
+    <div class="spacer"> </div>
 	
-	<div class="field-wrapper">
-        {{ form.gender.label }}
-        {{ form.gender }}
-        
-        {% if form.gender.errors %}        
-			{{ form.gender.errors }}
-        {% endif %}
-	</div>
-	
-	<div class="field-wrapper">
-        {{ form.date_of_birth.label }}
+	<div class="field-wrapper tooltip-field">
+        {{ form.date_of_birth.label_tag }}
         {{ form.date_of_birth }}
+        <div class="tooltip">{{ form.date_of_birth.help_text }}</div>
         
         {% if form.date_of_birth.errors %}        
 			{{ form.date_of_birth.errors }}
         {% endif %}
 	</div>
+    
+    <div class="spacer"> </div>
 	
 	<div class="field-wrapper" id="captcha-wrapper">
-		{{ form.captcha.errors }}
         {{ form.captcha }}
+        {{ form.captcha.errors }}
 	</div>
 	
 	<div class="field-wrapper" id="terms-wrapper">
-        {% if form.tos.errors %}        
-			{{ form.tos.errors }}
+        {{ form.tos }}
+        {{ form.tos.label_tag}}
+	   
+	   {% if form.tos.errors %}        
+            {{ form.tos.errors }}
         {% endif %}
         
-        {{ form.tos }}
-        {{ form.tos.label}}
-	</div>
+    </div>
   
-	<input type="submit" value="Registreer" id="account-submit" tabindex=5/>
+	<input type="submit" value="Registreer" id="register-submit" tabindex=9 />
 </form>
 
 <script type="text/javascript">
 document.getElementById('username').focus()
 </script>
-</td>
-        <td>
-            <a id="fb-register-btn" href="/auth/fb/register/">
-                Registreer via Facebook
-            </a><br/>
-            <a class="google-register-btn" href="/auth/google/register/">
-                Registreer via Google
-            </a>
-        </td>
-    </tr>
-</table>
+</div>
+<div id="social-register">
+    <a id="fb-register-btn" href="/auth/fb/register/">
+        <img id="fb-logo" src="{{ STATIC_URL }}img/fb-logo.png" />Registreer via Facebook
+    </a>
+    <br/>
+    <a id="google-register-btn" href="/auth/google/register/">
+        <img id="google-logo" src="{{ STATIC_URL }}img/google-logo.png" />Registreer via Google
+    </a>
+</div>
 {% endblock %}

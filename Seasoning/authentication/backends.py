@@ -28,6 +28,7 @@ from django.utils import simplejson
 from urllib2 import HTTPError
 import urllib
 import datetime
+from django.core.exceptions import PermissionDenied
 
 
 class RegistrationBackend(object):
@@ -174,6 +175,8 @@ class OAuth2Backend(ModelBackend):
     APP_ID = None
     APP_SECRET = None
     SCOPE = None
+    ERROR_REASON_PARAM = None
+    ACCESS_DENIED_STRING = None
     
     def name(self):
         if self.NAME is None:
@@ -266,6 +269,8 @@ class GoogleAuthBackend(OAuth2Backend):
     APP_ID = settings.GOOGLE_APP_ID
     APP_SECRET = settings.GOOGLE_SECRET
     SCOPE = 'https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile'
+    ERROR_REASON_PARAM = 'error'
+    ACCESS_DENIED_STRING = 'access_denied'
     
     def get_access_token(self, code, redirect_uri):
         if self.APP_ID is None or self.APP_SECRET is None or self.TOKEN_REQUEST_URL is None:
@@ -313,6 +318,8 @@ class FacebookAuthBackend(OAuth2Backend):
     APP_ID = settings.FACEBOOK_APP_ID
     APP_SECRET = settings.FACEBOOK_SECRET
     SCOPE = 'email,user_birthday'
+    ERROR_REASON_PARAM = 'error_reason'
+    ACCESS_DENIED_STRING = 'user_denied'
     
     def name(self):
         return 'Facebook'
@@ -335,12 +342,15 @@ class FacebookAuthBackend(OAuth2Backend):
             date_of_birth = datetime.datetime.strptime(fb_info['birthday'], '%m/%d/%Y').date()
         except ValueError:
             date_of_birth = datetime.date.today()
-        return {'id': fb_info['id'],
-                'name': fb_info['name'],
-                'givenname': fb_info['first_name'],
-                'surname': fb_info['last_name'],
-                'email': fb_info['email'],
-                'date_of_birth': date_of_birth,
-                'image': 'https://graph.facebook.com/' + fb_info['id'] + '/picture'}
+        try:
+            return {'id': fb_info['id'],
+                    'name': fb_info['name'],
+                    'givenname': fb_info['first_name'],
+                    'surname': fb_info['last_name'],
+                    'email': fb_info['email'],
+                    'date_of_birth': date_of_birth,
+                    'image': 'https://graph.facebook.com/' + fb_info['id'] + '/picture'}
+        except KeyError:
+            raise PermissionDenied
     
     
