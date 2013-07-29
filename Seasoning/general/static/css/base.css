@@ -36,7 +36,7 @@ height:65px;
 min-width: 700px;
 background-color:#76BA3B;
 background-image:linear-gradient(to top,#629B31 0%,#76BA3B 94%);
-border-bottom:1px solid #055999;
+border-bottom:1px solid #5B6553;
 box-shadow:0 1px 2px 0 rgba(0,0,0,0.3);
 z-index:4;
 position:relative;
@@ -171,7 +171,7 @@ display: block;
 height: 50px;
 min-width: 700px;
 width: 100%;
-border-top:1px solid #055999;
+border-top:1px solid #5B6553;
 position: relative;
 background-color: #629B31;
 position: absolute;
@@ -522,7 +522,7 @@ form .field-wrapper {
 form .field-wrapper label {
 	display: block;
 	float: left;
-	width: 150px;
+	width: 140px;
 	line-height: 23px;
 }
 
@@ -630,7 +630,8 @@ form input {
 }
 
 #seasoning-register #terms-wrapper label {
-	width: auto;
+	width: 90%;
+	float: left;
 }
 
 #seasoning-register input#register-submit {

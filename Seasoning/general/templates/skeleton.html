@@ -30,6 +30,7 @@
 		<div id="container">
 			<div id="header">
 				<div id="nav-container">
+				    <a href="/">Seasoning</a>
 					<ul id="main-nav">
 						<li><a id="main-nav-link-recipes" class="main-nav-link" href="/recipes/">RECEPTEN</a></li>
 						<li><a id="main-nav-link-info" class="main-nav-link" href="/information/">INFORMATIE</a></li>
@@ -38,14 +39,14 @@
 						{% endif %}
 					</ul>
 					<ul id="sub-nav-recipes" class="sub-nav {% active request "RECEPTEN" %}">
-						<li class="sub-nav-link"><a href="/recipes/search/">Recept Zoeken</a></li>
-						<li class="sub-nav-link"><a href="/recipes/add/">Recept	Toevoegen</a></li>
+						<li class="sub-nav-link"><a href="/recipes/search/">Recepten Zoeken</a></li>
+						<li class="sub-nav-link"><a href="/recipes/add/">Recepten	Toevoegen</a></li>
 						<li class="sub-nav-link"><a href="/recipes/mine/">Mijn Recepten</a></li>
 					</ul>
 					<ul id="sub-nav-info" class="sub-nav {% active request "INFORMATIE" %}">
 						<li class="sub-nav-link"><a href="/ingredients/">Ingredienten</a></li>
 						<li class="sub-nav-link"><a href="/news/">Nieuws</a></li>
-						<li class="sub-nav-link"><a href="/contribute/">Jouw Bijdrage</a></li>
+						<li class="sub-nav-link"><a href="/contribute/">Bijdragen</a></li>
 					</ul>
 					{% if user.is_superuser %}
 					<ul id="sub-nav-admin" class="sub-nav {% active request "ADMIN" %}">
