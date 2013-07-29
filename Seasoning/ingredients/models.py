@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Copyright 2012, 2013 Driesen Joep
 
@@ -53,7 +54,7 @@ class Ingredient(models.Model):
                   (VEGETABLES,u'Groenten'),
                   (HERBS_AND_SPICES,u'Kruiden en Specerijen'),
                   (NUTS_AND_SEEDS,u'Noten en Zaden'),
-                  unicode(OILS,u'Oliën'),
+                  (OILS,u'OliÃ«n'),
                   (LEGUME,u'Peulvrucht'),
                   (SEAFOOD,u'Schaal- en Schelpdieren'),
                   (SUPPLEMENTS,u'Supplement'),
