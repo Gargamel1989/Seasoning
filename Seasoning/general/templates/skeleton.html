@@ -27,46 +27,77 @@
 	</head>
 	
 	<body>
-		<div id="header">
-			<div id="nav-container">
-				<ul id="main-nav">
-					<li><a id="main-nav-link-recipes" class="main-nav-link" href="/recipes/">RECEPTEN</a></li>
-					<li><a id="main-nav-link-info" class="main-nav-link" href="/information/">INFORMATIE</a></li>
+		<div id="container">
+			<div id="header">
+				<div id="nav-container">
+					<ul id="main-nav">
+						<li><a id="main-nav-link-recipes" class="main-nav-link" href="/recipes/">RECEPTEN</a></li>
+						<li><a id="main-nav-link-info" class="main-nav-link" href="/information/">INFORMATIE</a></li>
+						{% if user.is_superuser %}
+						<li><a id="main-nav-link-admin" class="main-nav-link" href="/admin/">ADMIN</a></li>
+						{% endif %}
+					</ul>
+					<ul id="sub-nav-recipes" class="sub-nav {% active request "RECEPTEN" %}">
+						<li class="sub-nav-link"><a href="/recipes/search/">Recept Zoeken</a></li>
+						<li class="sub-nav-link"><a href="/recipes/add/">Recept	Toevoegen</a></li>
+						<li class="sub-nav-link"><a href="/recipes/mine/">Mijn Recepten</a></li>
+					</ul>
+					<ul id="sub-nav-info" class="sub-nav {% active request "INFORMATIE" %}">
+						<li class="sub-nav-link"><a href="/ingredients/">Ingredienten</a></li>
+						<li class="sub-nav-link"><a href="/news/">Nieuws</a></li>
+						<li class="sub-nav-link"><a href="/contribute/">Jouw Bijdrage</a></li>
+					</ul>
 					{% if user.is_superuser %}
-					<li><a id="main-nav-link-admin" class="main-nav-link" href="/admin/">ADMIN</a></li>
+					<ul id="sub-nav-admin" class="sub-nav {% active request "ADMIN" %}">
+						<li class="sub-nav-link"><a href="/authentication/users/" >Gebruikers</a></li>
+						<li class="sub-nav-link"><a href="/ingredients/list/" >Ingredienten</a></li>
+						<li class="sub-nav-link"><a href="/ingredients/units/" >Eenheden</a></li>
+						<li class="sub-nav-link"><a href="/admin/static/" >Statische Paginas</a></li>
+						<li class="sub-nav-link"><a href="/faq/admin/" >FAQ</a></li>
+						<li class="sub-nav-link"><a href="/backup/" >Backup Database</a></li>
+					</ul>
 					{% endif %}
-				</ul>
-				<ul id="sub-nav-recipes" class="sub-nav {% active request "RECEPTEN" %}">
-					<li class="sub-nav-link"><a href="/recipes/search/">Recept Zoeken</a></li>
-					<li class="sub-nav-link"><a href="/recipes/add/">Recept	Toevoegen</a></li>
-					<li class="sub-nav-link"><a href="/recipes/mine/">Mijn Recepten</a></li>
-				</ul>
-				<ul id="sub-nav-info" class="sub-nav {% active request "INFORMATIE" %}">
-					<li class="sub-nav-link"><a href="/ingredients/">Ingredienten</a></li>
-					<li class="sub-nav-link"><a href="/news/">Nieuws</a></li>
-					<li class="sub-nav-link"><a href="/contribute/">Jouw Bijdrage</a></li>
-				</ul>
-				{% if user.is_superuser %}
-				<ul id="sub-nav-admin" class="sub-nav {% active request "ADMIN" %}">
-					<li class="sub-nav-link"><a href="/authentication/users/" >Gebruikers</a></li>
-					<li class="sub-nav-link"><a href="/ingredients/list/" >Ingredienten</a></li>
-					<li class="sub-nav-link"><a href="/ingredients/units/" >Eenheden</a></li>
-					<li class="sub-nav-link"><a href="/admin/static/" >Statische Paginas</a></li>
-					<li class="sub-nav-link"><a href="/faq/admin/" >FAQ</a></li>
-					<li class="sub-nav-link"><a href="/backup/" >Backup Database</a></li>
-				</ul>
-				{% endif %}
-				<ul id="account-controls">
-					{% if user.is_authenticated %}
-					<li id="account-settings-link" class="account-controls-link"><a href="/account/settings/"><span id="img-darkener"><img src="https://www.seasoning.be/media/{{ user.avatar }}" /></span>{{ user.get_full_name }}</a></li>
-					<li class="account-controls-link"><a href="/logout/">Afmelden</a></li>
-					{% else %}
-					<li class="account-controls-link"><a href="/register/">Registreren</a></li>
-					<li class="account-controls-link"><a href="/login/">Aanmelden</a></li>
-					{% endif %}
-				</ul>
+					<ul id="account-controls">
+						{% if user.is_authenticated %}
+						<li id="account-settings-link" class="account-controls-link"><a href="/account/settings/"><span id="img-darkener"><img src="{{ MEDIA_URL }}{{ user.avatar }}" /></span>{{ user.get_full_name }}</a></li>
+						<li class="account-controls-link"><a href="/logout/">Afmelden</a></li>
+						{% else %}
+						<li class="account-controls-link"><a href="/register/">Registreren</a></li>
+						<li class="account-controls-link"><a href="/login/">Aanmelden</a></li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+			<div id="body">
+				{% block body %}{% endblock %}
+			</div>
+			<div id="footer">
+				<div id="footer-container">
+					<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl" target="_blank"><img alt="Creative Commons Licentie" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a>
+					<ul>
+						<li class="first">
+							<a href="/motifs/">Motivering</a>
+						</li>
+						<li>
+							<a href="/contact/">Contact</a>
+						</li>
+						<li>
+							<a href="/help/">Help</a>
+						</li>
+						<li>
+							<a href="/terms/">Voorwaarden</a>
+						</li>
+						<li>
+							<a href="/privacypolicy/">Privacybeleid</a>
+						</li>
+						<li>
+							<a href="/sitemap/">Sitemap</a>
+						</li>
+					</ul>
+					<a href="http://www.facebook.com/Seasoningbelgium"><img src="{{ STATIC_URL }}img/fb-logo-2.png" class="social-logo" /></a>
+					<a href="http://www.twitter.com/Seasoningbe"><img src="{{ STATIC_URL }}img/twitter-bird.png" class="social-logo" /></a>
+				</div>
 			</div>
 		</div>
-		{% block body %}{% endblock %}
 	</body>
 </html>

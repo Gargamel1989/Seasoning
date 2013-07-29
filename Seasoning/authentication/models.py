@@ -200,7 +200,11 @@ class User(models.Model):
             if self.name_changed:
                 # This user has already changed his or her name
                 raise PermissionDenied
+            else:
+                self.name_changed = True
         super(User, self).save(*args, **kwargs);
+        print self.__cached_givenname__
+        print self.__cached_surname__
         self.__cached_givenname__ = self.givenname
         self.__cached_surname__ = self.surname
     

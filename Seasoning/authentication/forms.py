@@ -195,13 +195,13 @@ class AccountSettingsForm(ModelForm):
         user = self.instance
         if user.givenname != self.cleaned_data['givenname'] and user.name_changed:
             raise ValidationError(_('Name can only be changed once!'))
-        return user.givenname
+        return self.cleaned_data['givenname']
     
     def clean_surname(self):
         user = self.instance
-        if user.givenname != self.cleaned_data['givenname'] and user.name_changed:
+        if user.surname != self.cleaned_data['surname'] and user.name_changed:
             raise ValidationError(_('Name can only be changed once!'))
-        return user.givenname
+        return self.cleaned_data['surname']
     
     def clean_email(self):
         user = self.instance
