@@ -29,7 +29,8 @@ from django.template.loaders.app_directories import Loader
 from django.core.exceptions import PermissionDenied
 
 def home(request):
-    return render(request, 'homepage.html')
+    recipe_otw = None#Recipe.objects.get(pk=1)
+    return render(request, 'homepage.html', {'recipe_otw': recipe_otw})
 
 def contact(request):
     return render(request, 'static_page.html', {'title': 'Contact',

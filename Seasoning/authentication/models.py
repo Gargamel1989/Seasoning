@@ -95,11 +95,13 @@ class User(models.Model):
     )
     
     givenname = models.CharField(_('given name'), max_length=30,
-                                help_text=_('Required. 30 characters or fewer, only letters allowed'),
+                                help_text=_('30 characters or fewer, only letters allowed. '
+                                            'Your name will be used to identify you on Seasoning.'),
                                 validators=[validators.RegexValidator(re.compile('[a-zA-Z]{2,}'), _('Enter a valid Given Name.'), 'invalid')])
     
     surname = models.CharField(_('surname'), max_length=50,
-                                help_text=_('Required. 50 characters or fewer, only letters allowed'),
+                                help_text=_('50 characters or fewer, only letters allowed '
+                                            'Your name will be used to identify you on Seasoning.'),
                                 validators=[validators.RegexValidator(re.compile('[a-zA-Z]{2,}'), _('Enter a valid Surname.'), 'invalid')])
     
     # Field to check if user has changed his name (name can only be changed once to avoid abuse)

@@ -263,8 +263,9 @@ padding-top: 20px;
 #introbox #introbox-container {
 max-width:960px;
 min-width: 680px;
+height:270px;
 margin:auto;
-padding:0 10px;
+padding:30px 10px 0 10px;
 position: relative;
 overflow: hidden;
 }
@@ -402,7 +403,6 @@ background-color:#6AB030;
 }
 
 #introbox-container #slideshow {
-height:300px;
 list-style:none outside none;
 margin:0;
 padding:0;
@@ -413,21 +413,12 @@ display:none;
 }
 
 #introbox-container #slideshow .slide .slide-content {
-width:100%;
-padding-top:30px;
+float: left;
 }
 
 #introbox-container #slideshow .slide .slide-content h1 {
 width:400px;
 color:#F4FAEF;
-float:left;
-}
-
-#introbox-container #slideshow .slide .slide-content img {
-height:200px;
-margin-top: 20px;
-position: absolute;
-right: 10px;
 }
 
 #introbox-container #slideshow .slide .slide-content p {
@@ -436,8 +427,18 @@ font-size:12px;
 line-height:18px;
 width:300px;
 margin-top:30px;
-float:left;
-clear: left;
+}
+
+#introbox-container #slideshow .slide .slide-image {
+	overflow: hidden;
+	position: relative;
+}
+
+#introbox-container #slideshow .slide img {
+height:200px;
+display: block;
+margin: auto;
+-webkit-mask-image: url('/static/img/mask.png')
 }
 
 #introbox-container #slideshow-controls {
@@ -531,6 +532,19 @@ form .field-wrapper input {
 	width: 50%;
 	float: right;
 	clear: none;
+}
+
+form .field-wrapper select {
+	margin: 0;
+	width: 51%;
+	float: right;
+	clear: none;
+}
+
+form .field-wrapper textarea {
+	max-width: 450px;
+	height: 50px;
+	float: right;
 }
 
 form .field-wrapper .tooltip {
@@ -681,4 +695,11 @@ form input {
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+
+/*
+ * Add Recipe Form
+ */
+#add-recipe-form {
+	width: 500px;
+}
 

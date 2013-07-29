@@ -81,7 +81,9 @@ $(window).load(function() {
 	// Remove loader and display slideshow when everything is loaded
 	$('#introbox-loader').fadeOut(500, function() { 
 		$(this).remove();
-		$('#slideshow #slide-1').fadeIn(500);
+		// Find the active slide
+		var active_slide = $('#slideshow-controls a.active').attr('id').replace('slideshow-control-', '');
+		$('#slideshow #slide-' + active_slide).fadeIn(500);
 		$('#slideshow-controls').fadeIn(500);
 	});
 });

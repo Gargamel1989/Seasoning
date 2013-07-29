@@ -1,5 +1,39 @@
 {% extends "base.html" %}
 
+{% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<style>
+/*
+ * Tooltip styles
+ */
+.ui-tooltip {
+    position: absolute;
+}
+
+.ui-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: .75em;
+    color: #5B6553;
+}
+</style>
+{% endblock %}
+
+{% block extra_script %}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+    $(document).tooltip({ 
+        items: ".tooltip-field input,select,textarea", 
+        content:  function() {
+            return $(this).parent().children('.tooltip').text();
+        },
+        position: {
+            my: "left top",
+            at: "right+10 top-2"
+        },  
+    }).off("mouseover mouseout");
+</script>
+{% endblock %}
+
 {% block page_name %}Recept {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
 
 {% block extrahead %}
@@ -16,7 +50,7 @@
 
 {% block content %}
 
-<form action="" method="post" enctype="multipart/form-data">
+<form id="add-recipe-form" action="" method="post" enctype="multipart/form-data">
   {% if unknown_ingredients %}
   <p>
   	U hebt ingredienten opgegeven in het recept die niet teruggevonden werden in onze databank:
@@ -40,8 +74,111 @@
   {% endif %}
   
   {% csrf_token %}
-  {{ recipe_form.non_field_errors }}
-  {{ recipe_form.as_p }}
+  {{ form.non_field_errors }}
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.name.label_tag }}
+    {{ recipe_form.name }}
+    <div class="tooltip">{{ recipe_form.name.help_text }}</div>
+    
+    {% if recipe_form.name.errors %}        
+        {{ recipe_form.name.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.course.label_tag }}
+    {{ recipe_form.course }}
+    <div class="tooltip">{{ recipe_form.course.help_text }}</div>
+    
+    {% if recipe_form.course.errors %}        
+        {{ recipe_form.course.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.cuisine.label_tag }}
+    {{ recipe_form.cuisine }}
+    <div class="tooltip">{{ recipe_form.cuisine.help_text }}</div>
+    
+    {% if recipe_form.cuisine.errors %}        
+        {{ recipe_form.cuisine.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.description.label_tag }}
+    {{ recipe_form.description }}
+    <div class="tooltip">{{ recipe_form.description.help_text }}</div>
+    
+    {% if recipe_form.description.errors %}        
+        {{ recipe_form.description.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.portions.label_tag }}
+    {{ recipe_form.portions }}
+    <div class="tooltip">{{ recipe_form.portions.help_text }}</div>
+    
+    {% if recipe_form.portions.errors %}        
+        {{ recipe_form.portions.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.active_time.label_tag }}
+    {{ recipe_form.active_time }}
+    <div class="tooltip">{{ recipe_form.active_time.help_text }}</div>
+    
+    {% if recipe_form.active_time.errors %}        
+        {{ recipe_form.active_time.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.passive_time.label_tag }}
+    {{ recipe_form.passive_time }}
+    <div class="tooltip">{{ recipe_form.passive_time.help_text }}</div>
+    
+    {% if recipe_form.passive_time.errors %}        
+        {{ recipe_form.passive_time.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.extra_info.label_tag }}
+    {{ recipe_form.extra_info }}
+    <div class="tooltip">{{ recipe_form.extra_info.help_text }}</div>
+    
+    {% if recipe_form.extra_info.errors %}        
+        {{ recipe_form.extra_info.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.instructions.label_tag }}
+    {{ recipe_form.instructions }}
+    <div class="tooltip">{{ recipe_form.instructions.help_text }}</div>
+    
+    {% if recipe_form.instructions.errors %}        
+        {{ recipe_form.instructions.errors }} 
+    {% endif %}
+  </div>
+  
+  <div class="field-wrapper tooltip-field">
+    {{ recipe_form.image.label_tag }}
+    {{ recipe_form.image }}
+    <div class="tooltip">{{ recipe_form.image.help_text }}</div>
+    
+    {% if recipe_form.image.errors %}        
+        {{ recipe_form.image.errors }} 
+    {% endif %}
+  </div>
+  
+  <br /><br /><br /><br /><br /><br />
+  
+  
   {{ usesingredient_formset.management_form }}
   <table>
     {% for form in usesingredient_formset %}

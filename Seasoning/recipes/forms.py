@@ -31,7 +31,7 @@ class AddRecipeForm(forms.ModelForm):
         exclude = ['author', 'time_added',
                    'rating', 'number_of_votes',
                    'thumbnail', 'accepted']
-        
+    
     def save(self, author, commit=True):
         recipe = super(AddRecipeForm, self).save(commit=False)
         recipe.author = author
