@@ -17,6 +17,7 @@ function addForm(btn, prefix) {
 	updateElementIndex(new_row, formCount)
 	
 	new_row.insertBefore(empty_row);
+	alert('#id_' + prefix + '-TOTAL_FORMS');
 	$('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
 		
 	return false;

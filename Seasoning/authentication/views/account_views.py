@@ -36,8 +36,8 @@ def account_settings(request):
     
     """
     context = {}
+    user = get_user_model().objects.get(id=request.user.id)
     if request.method == "POST":
-        user = get_user_model().objects.get(id=request.user.id)
         form = AccountSettingsForm(request.POST, request.FILES, instance=user)
         
         if form.is_valid():
@@ -49,7 +49,7 @@ def account_settings(request):
             # New email address has been replaced by old email address in the form, so it will not be saved until activated
             form.save()
     else:
-        form = AccountSettingsForm(instance=request.user)
+        form = AccountSettingsForm(instance=user)
     
     try:
         new_email = NewEmail.objects.get(user=request.user)

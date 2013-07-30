@@ -9,8 +9,8 @@
 				return addForm(this, "synonym_set");
 			});
 		
-			$('#can_use_unit-addbtn').click(function() {
-				return addForm(this, "can_use_unit");
+			$('#useable_units-addbtn').click(function() {
+				return addForm(this, "useable_units");
 			});
 		
 			$('#available_in_country-addbtn').click(function() {
@@ -147,7 +147,7 @@
 	
 	<fieldset>
 		<legend>Bruikbare Eenheden</legend>
-		<div id="can_use_unit-group" class="field-group">
+		<div id="useable_units-group" class="field-group">
 			{{ canuseunit_formset.management_form }}
 			<table>
 			{% for form in canuseunit_formset %}
@@ -167,7 +167,7 @@
 						</td>
 					</tr>
 				{% endif %}
-				<tr class="can_use_unit-form">
+				<tr class="useable_units-form">
 					{{ form.id }}
 					<td>{{ form.unit.errors }}
 						{{ form.unit }}</td>
@@ -178,7 +178,7 @@
 					<td class="delete">{{ form.DELETE }}</td>
 				</tr>
 			{% endfor %}
-				<tr class="empty can_use_unit-form">
+				<tr class="empty useable_units-form">
 					<td>
 						{{ canuseunit_formset.empty_form.unit }}
 					</td>
@@ -193,7 +193,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><a href="#" id="can_use_unit-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
+					<td><a href="#" id="useable_units-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
 				</tr>
 			</table>
 		</div>
