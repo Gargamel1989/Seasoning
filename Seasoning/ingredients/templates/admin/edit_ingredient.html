@@ -190,7 +190,7 @@
 	
 	<fieldset class="VE-fieldset">
 		<legend>Beschikbaarheidsdata</legend>
-		<div id="available_in_country-group" class="field-group">
+		<div id="available_in_country-formset" class="field-group formset">
 			{{ availinc_formset.management_form }}
 			<table>
 			{% for form in availinc_formset %}
@@ -259,16 +259,16 @@
 						{{ availinc_formset.empty_form.DELETE }}
 					</td>
 				</tr>
-				<tr>
-					<td><a href="#" id="available_in_country-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
-				</tr>
+                <tr>
+                    <td class="formset-button-container"> </td>
+                </tr>
 			</table>
 		</div>
 	</fieldset>
 	
 	<fieldset class="FI-fieldset">
         <legend>Beschikbaarheidsdata</legend>
-        <div id="available_in_sea-group" class="field-group">
+        <div id="available_in_sea-formset" class="field-group formset">
             {{ availins_formset.management_form }}
             <table>
             {% for form in availins_formset %}
@@ -346,7 +346,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><a href="#" id="available_in_sea-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
+                    <td class="formset-button-container"> </td>
                 </tr>
             </table>
         </div>
