@@ -35,38 +35,54 @@ color:#598c2c;
 					<li id="slide-1" class="slide">
 						<div class="slide-content">
 							<h1>Gezond en bewust eten, volgens de seizoenen</h1>
-							<img src="strawberry.gif">
 							<p>
 								Seasoning helpt je bewuster omgaan met je alledaagse
 								voeding. Dat is niet enkel goed voor het milieu, maar ook voor je
 								gezondheid!
 							</p>
-						</div>
+                        </div>
+                        <div class="slide-image">
+                            <img src="{{ STATIC_URL }}img/Slide1.png">
+                        </div>
 					</li>
 					<li id="slide-2" class="slide">
 						<div class="slide-content">
 							<h1>Bekijk je eigen recepten vanuit een andere hoek</h1>
-							<img src="strawberry.gif">
 							<p>
 								Voeg je eigen recepten toe aan onze databank. Zo kan je
 								niet alleen ontdekken wat hun impact is op het milieu, maar geef
 								je ook terug aan onze community
 							</p>
-						</div>
+                        </div>
+                        <div class="slide-image">
+                            <img src="{{ STATIC_URL }}img/Slide2.png">
+                        </div>
 					</li>
-					<li id="slide-3" class="slide">
-						<div class="slide-content">
-							<h1>Eet je eigen kaka</h1>
-							<img src="strawberry.gif">
-							<p>Duurzamer als dat wordt het niet!</p>
-						</div>
-					</li>
+                    <li id="slide-3" class="slide">
+                        <div class="slide-content">
+                            <h1>Eet je eigen kaka</h1>
+                            <p>Duurzamer als dat wordt het niet!</p>
+                        </div>
+                        <div class="slide-image">
+                            <img src="{{ STATIC_URL }}img/gdf.bmp">
+                        </div>
+                    </li>
+                    <li id="slide-4" class="slide">
+                        <div class="slide-content">
+                            <h1>Recept van de week:<br />{{ recipe_otw.name }}</h1>
+                            <p>{{ recipe_otw.description }}</p>
+                        </div>
+                        <div class="slide-image">
+                            <img src="{{ STATIC_URL }}img/gdf.bmp">
+                        </div>
+                    </li>
 				</ul>
 				<div id="slideshow-controls">
 					<ul>
-						<li><a id="slideshow-control-1" class="active" href="#"></a></li>
+						<li><a id="slideshow-control-1" {% if not user.is_authenticated %}class="active" {% endif %}href="#"></a></li>
 						<li><a id="slideshow-control-2" href="#"></a></li>
-						<li><a id="slideshow-control-3" href="#"></a></li>
+                        <li><a id="slideshow-control-3" href="#"></a></li>
+                        <li><a id="slideshow-control-4" {% if user.is_authenticated %}class="active" {% endif %}href="#"></a></li>
 					</ul>
 				</div>
 			</div>

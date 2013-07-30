@@ -75,11 +75,13 @@ class EmailUserCreationForm(forms.ModelForm):
     
     givenname = forms.CharField(max_length=30,
                                 widget=forms.TextInput(attrs={'tabindex':'1'}),
-                                help_text=_('Your name will be used to identify you on Seasoning.'))
+                                help_text=_('30 characters or fewer, only letters allowed. '
+                                            'Your name will be used to identify you on Seasoning.'))
     
     surname = forms.CharField(max_length=50,
                               widget=forms.TextInput(attrs={'tabindex':'2'}),
-                              help_text=_('Your name will be used to identify you on Seasoning.'))
+                              help_text=_('50 characters or fewer, only letters allowed '
+                                          'Your name will be used to identify you on Seasoning.'))
     
     email = forms.EmailField(widget=forms.TextInput(attrs={'tabindex':'3'}),
                              help_text=_('Your email will never be sold or shared. It will not be shown on the site, unless you enable this '
@@ -214,6 +216,12 @@ class AccountSettingsForm(ModelForm):
             'avatar': ShownImageInput,
         }
     
+    def __init__(self, *args, **kwargs):
+        super(AccountSettingsForm, self).__init__(*args, **kwargs)
+        if self.instance.name_changed:
+            del self.fields['givenname']
+            del self.fields['surname']
+        
     def clean_givenname(self):
         user = self.instance
         if user.givenname != self.cleaned_data['givenname'] and user.name_changed:

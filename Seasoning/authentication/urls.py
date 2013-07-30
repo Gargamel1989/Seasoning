@@ -61,6 +61,8 @@ urlpatterns = patterns('',
     # Profile urls
     url(r'^profile/(\d*)/', 'authentication.views.public_profile', name='public_profile'),
     url(r'^account/settings/$', 'authentication.views.account_settings'),
+    url(r'^account/settings/social/$', 'authentication.views.account_settings_social'),
+    url(r'^account/settings/privacy/$', 'authentication.views.account_settings_privacy'),
     url(r'^account/delete/$', 'authentication.views.account_delete'),
     url(r'^password/change/$', change_password,
         name='password_change'),

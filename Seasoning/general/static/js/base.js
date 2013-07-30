@@ -39,7 +39,7 @@ function next_slide() {
 	$('#slideshow .slide').each(function() {
 		if ($(this).css('display') != 'none') {
 			var current_slide = parseInt($(this).attr('id').replace('slide-', ''), 10);
-			var next_slide = current_slide % 3 + 1;
+			var next_slide = current_slide % 4 + 1;
 			goto_slide(next_slide);
 			return;
 		}
@@ -81,7 +81,9 @@ $(window).load(function() {
 	// Remove loader and display slideshow when everything is loaded
 	$('#introbox-loader').fadeOut(500, function() { 
 		$(this).remove();
-		$('#slideshow #slide-1').fadeIn(500);
+		// Find the active slide
+		var active_slide = $('#slideshow-controls a.active').attr('id').replace('slideshow-control-', '');
+		$('#slideshow #slide-' + active_slide).fadeIn(500);
 		$('#slideshow-controls').fadeIn(500);
 	});
 });

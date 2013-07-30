@@ -61,6 +61,14 @@ def account_settings(request):
     return render(request, 'authentication/account_settings.html', context)
 
 @login_required
+def account_settings_social(request):
+    return render(request, 'authentication/account_settings_social.html')
+
+@login_required
+def account_settings_privacy(request):
+    return render(request, 'authentication/account_settings_privacy.html')
+
+@login_required
 def change_email(request, activation_key):
     """
     This checks if the given activation key belongs to the current users new,

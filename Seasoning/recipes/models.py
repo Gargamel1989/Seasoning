@@ -28,6 +28,7 @@ import datetime
 from django.core.validators import MaxValueValidator
 from django.db.models.fields import FloatField
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 def get_image_filename(instance, old_filename):
     extension = os.path.splitext(old_filename)[1]
@@ -61,25 +62,31 @@ class Recipe(models.Model):
                (SOUP,u'Soep'),
                (MARINADE_AND_SAUCE,u'Marinades en Sauzen'))
     
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,
+                            help_text=_('The names of the recipe.'))
     author = models.ForeignKey(User, related_name='recipes', editable=False, null=True)
     time_added = models.DateTimeField(auto_now_add=True, editable=False)
     
-    course = models.PositiveSmallIntegerField(choices=COURSES)
-    cuisine = models.ForeignKey(Cuisine, db_column='cuisine')
-    description = models.TextField()
-    portions = models.PositiveIntegerField()
-    active_time = models.IntegerField()
-    passive_time = models.IntegerField()
+    course = models.PositiveSmallIntegerField(choices=COURSES,
+                                              help_text=_("The type of course this recipe will provide."))
+    cuisine = models.ForeignKey(Cuisine, db_column='cuisine',
+                                help_text=_("The type of cuisine this recipe represents."))
+    description = models.TextField(help_text=_("A few sentences describing the recipe."))
+    portions = models.PositiveIntegerField(help_text=_('The average amount of people that can be fed by this recipe '
+                                                       'using the given amounts of ingredients.'))
+    active_time = models.IntegerField(help_text=_('The time needed to prepare this recipe where you are actually doing something.'))
+    passive_time = models.IntegerField(help_text=_('The time needed to prepare this recipe where you can do something else (e.g. water is boiling)'))
     
     rating = models.FloatField(null=True, blank=True, default=None, editable=False)
     number_of_votes = models.PositiveIntegerField(default=0, editable=False)
     
     ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient', editable=False)
-    extra_info = models.TextField(default='')
-    instructions = models.TextField()
+    extra_info = models.TextField(default='',
+                                  help_text=_('Extra info about the ingredients or needed tools (e.g. "You will need a mixer for this recipe" or "Use big potatoes")'))
+    instructions = models.TextField(help_text=_('Detailed instructions for preparing this recipe.'))
     
-    image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
+    image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png',
+                                help_text=_('An image of this recipe. Please do not use copyrighted images, these will be removed as quick as possible.'))
     thumbnail = ImageSpecField([ResizeToFit(250, 250), AddBorder(2, 'Black')], image_field='image', format='PNG')
     
     # Derived Parameters

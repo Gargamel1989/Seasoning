@@ -26,6 +26,11 @@ color:#76BA3B;
 transition:all .3s ease-out;
 }
 
+.clear-div {
+	clear: both;
+	float: none;
+}
+
 #container {
    min-height:100%;
    position:relative;
@@ -151,7 +156,7 @@ color:#598c2c;
 	padding: 5px;
 	margin: 0 0 20px 0;
 	background-color: rgba(98, 155, 49, 0.5);
-	border:1px dashed #055999;
+	border:1px dashed #5B6553;
 box-shadow:1px 1px 2px 0 rgba(0,0,0,0.3);
 }
 
@@ -263,8 +268,9 @@ padding-top: 20px;
 #introbox #introbox-container {
 max-width:960px;
 min-width: 680px;
+height:270px;
 margin:auto;
-padding:0 10px;
+padding:30px 10px 0 10px;
 position: relative;
 overflow: hidden;
 }
@@ -402,7 +408,6 @@ background-color:#6AB030;
 }
 
 #introbox-container #slideshow {
-height:300px;
 list-style:none outside none;
 margin:0;
 padding:0;
@@ -413,21 +418,12 @@ display:none;
 }
 
 #introbox-container #slideshow .slide .slide-content {
-width:100%;
-padding-top:30px;
+float: left;
 }
 
 #introbox-container #slideshow .slide .slide-content h1 {
 width:400px;
 color:#F4FAEF;
-float:left;
-}
-
-#introbox-container #slideshow .slide .slide-content img {
-height:200px;
-margin-top: 20px;
-position: absolute;
-right: 10px;
 }
 
 #introbox-container #slideshow .slide .slide-content p {
@@ -436,8 +432,16 @@ font-size:12px;
 line-height:18px;
 width:300px;
 margin-top:30px;
-float:left;
-clear: left;
+}
+
+#introbox-container #slideshow .slide .slide-image {
+	position: relative;
+}
+
+#introbox-container #slideshow .slide img {
+position: absolute;
+height:300px;
+top: -30px;
 }
 
 #introbox-container #slideshow-controls {
@@ -514,7 +518,7 @@ form .spacer {
 }
 
 form .field-wrapper {
-	height: 25px;
+	min-height: 25px;
 	margin-bottom: 10px;
 	clear: both;
 }
@@ -531,6 +535,19 @@ form .field-wrapper input {
 	width: 50%;
 	float: right;
 	clear: none;
+}
+
+form .field-wrapper select {
+	margin: 0;
+	width: 51%;
+	float: right;
+	clear: none;
+}
+
+form .field-wrapper textarea {
+	max-width: 450px;
+	height: 50px;
+	float: right;
 }
 
 form .field-wrapper .tooltip {
@@ -681,4 +698,129 @@ form input {
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/*
+ * Account Settings
+ */
+#account-settings-container {
+	position: relative;
+}
+
+#account-settings-container #account-settings {
+	width: 65%;
+	margin: 0 20px 0 0;
+	float: left;
+}
+
+#account-settings #id_givenname {
+	width: 20%;
+	margin-right: 4%;
+}
+
+#account-settings #id_surname {
+	width: 25%;
+}
+
+#account-settings #name_errors {
+	float: right;
+	clear: right;
+	width: 60%;
+}
+
+#name_errors #givenname_errors {
+	width: 50%;
+}
+
+#name_errors #surname_errors {
+	width: 49%;
+}
+
+#name_errors ul {
+	padding: 0;
+	margin: 5px 0 15px 0;
+}
+
+#account-settings #password_p {
+	margin: 0;
+	float: right;
+	text-align: right;
+}
+
+#account-settings img#avatar_img {
+	width: 240px;
+	float: right;
+	margin-bottom: 10px;
+}
+
+#account-settings input#id_avatar {
+	float: right;
+	clear: right;
+	text-align: right;
+	margin-bottom: 10px;
+	width: 300px;
+}
+
+#account-settings-container #account-settings-links {
+	width: 180px;
+	float: right;
+	border-left: 1px solid #D5EBC1;
+	padding: 35px 0 0 10px;
+	position: absolute;
+	right: 0;
+	top: -20px;
+	bottom: 0;
+}
+
+#account-settings .social-connection {
+	margin-bottom: 20px;
+}
+
+#account-settings .social-connection img {
+	width: 100px;
+	float: left;
+	border-radius: 5px;
+	margin: 14px 0;
+	height: 34px;
+}
+
+#account-settings .social-connection p {
+	height: 40px;
+	line-height: 20px;
+	float: left;
+	border-radius: 5px;
+	margin: 10px;
+}
+
+#account-settings .social-connection p.active {
+	color:#6AB030;
+}
+
+#account-settings-links ul {
+	margin: 0;
+	padding: 0;
+}
+
+#account-settings-links li {
+	list-style: none;
+	margin-bottom: 10px;
+}
+
+#account-settings-links li a {
+color:#76BA3B;
+text-decoration: none;
+}
+
+#account-settings-links li a:hover {
+color:#598c2c;
+}
+
+#account-settings-links li.active a {
+	font-weight: 600;
+}
+
+/*
+ * Add Recipe Form
+ */
+#add-recipe-form {
+	width: 500px;
+}
 
