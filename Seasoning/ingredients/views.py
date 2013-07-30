@@ -61,26 +61,31 @@ def view_ingredient(request, ingredient_id):
 Ajax calls
 """
 
-def ajax_ingredient_name_list(request, query=""):
+def ajax_ingredient_name_list(request):
     """
     An ajax call that returns a json list with every ingredient 
     name or synonym containing the given search query
     
     """    
-    if request.is_ajax(): 
+    if request.is_ajax() and 'term' in request.GET:
+        query = request.GET['term']
+        
         # Query the database for ingredients with a name of synonym like the query
         cursor = connection.cursor()
-        cursor.execute('SELECT id, name '
+        cursor.execute('SELECT name '
                        'FROM ingredient '
                        'WHERE name LIKE %s '
                        'UNION '
-                       'SELECT ingredient, name '
+                       'SELECT name '
                        'FROM synonym '
                        'WHERE name LIKE %s '
                        'ORDER BY name', ['%%%s%%' % query, '%%%s%%' % query])
         
+        # Convert results to dict
+        result = [dict(zip(['value', 'label'], [row[0], row[0]])) for row in cursor.fetchall()]
+        
         # Serialize to json
-        ingredients_json = json.dumps(cursor.fetchall())
+        ingredients_json = json.dumps(result)
   
         # Return the response
         return HttpResponse(ingredients_json, mimetype='application/javascript')

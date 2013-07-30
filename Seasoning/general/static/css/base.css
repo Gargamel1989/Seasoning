@@ -8,6 +8,7 @@ margin: 0;
 font-family:Verdana, Geneva, sans-serif;
 color:#5B6553;
    height:100%;
+   background-image: url("/static/img/bg.png");
 }
 
 h1 {
@@ -35,6 +36,10 @@ transition:all .3s ease-out;
 .clear-div {
 	clear: both;
 	float: none;
+}
+
+.ui-autocomplete {
+	
 }
 
 #container {
@@ -208,12 +213,12 @@ position: relative;
 
 #footer-container #footer-links {
 	margin: auto;
-	padding: 0 110px;
+	padding: 0 150px 0 110px;
 }
 
 #footer-container ul {
 	margin: auto;
-	width: 510px;
+	width: 28.5em;
 	height: 1px;
 	padding: 0;
 	line-height: 40px;
@@ -222,12 +227,13 @@ position: relative;
 #footer-container ul li {
 	float: left;
 	list-style: disc outside none;
-	margin-right: 25px;
+	margin-left: 25px;
 	font-size: .7em;
 }
 
 #footer-container ul li.first {
 	list-style: none;
+	margin-left: 0;
 }
 
 #footer-container a {
