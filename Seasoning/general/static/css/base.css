@@ -26,6 +26,11 @@ color:#76BA3B;
 transition:all .3s ease-out;
 }
 
+.clear-div {
+	clear: both;
+	float: none;
+}
+
 #container {
    min-height:100%;
    position:relative;
@@ -513,7 +518,7 @@ form .spacer {
 }
 
 form .field-wrapper {
-	height: 25px;
+	min-height: 25px;
 	margin-bottom: 10px;
 	clear: both;
 }
@@ -696,32 +701,65 @@ form input {
 /*
  * Account Settings
  */
-#id_givenname {
-	width: 20%;
-	margin-right: 4%;
-}
-
-#id_surname {
-	width: 25%;
-}
-
-#password_p {
-	margin: 0;
-	float: right;
-	text-align: right;
-}
-
 #account-settings-container {
 	position: relative;
 }
 
-#account-settings {
+#account-settings-container #account-settings {
 	width: 65%;
 	margin: 0 20px 0 0;
 	float: left;
 }
 
-#account-settings-links {
+#account-settings #id_givenname {
+	width: 20%;
+	margin-right: 4%;
+}
+
+#account-settings #id_surname {
+	width: 25%;
+}
+
+#account-settings #name_errors {
+	float: right;
+	clear: right;
+	width: 60%;
+}
+
+#name_errors #givenname_errors {
+	width: 50%;
+}
+
+#name_errors #surname_errors {
+	width: 49%;
+}
+
+#name_errors ul {
+	padding: 0;
+	margin: 5px 0 15px 0;
+}
+
+#account-settings #password_p {
+	margin: 0;
+	float: right;
+	text-align: right;
+}
+
+#account-settings img#avatar_img {
+	width: 240px;
+	float: right;
+	margin-bottom: 10px;
+}
+
+#account-settings input#id_avatar {
+	float: right;
+	clear: right;
+	text-align: right;
+	margin-bottom: 10px;
+	width: 300px;
+}
+
+#account-settings-container #account-settings-links {
 	width: 180px;
 	float: right;
 	border-left: 1px solid #D5EBC1;
@@ -730,6 +768,30 @@ form input {
 	right: 0;
 	top: -20px;
 	bottom: 0;
+}
+
+#account-settings .social-connection {
+	margin-bottom: 20px;
+}
+
+#account-settings .social-connection img {
+	width: 100px;
+	float: left;
+	border-radius: 5px;
+	margin: 14px 0;
+	height: 34px;
+}
+
+#account-settings .social-connection p {
+	height: 40px;
+	line-height: 20px;
+	float: left;
+	border-radius: 5px;
+	margin: 10px;
+}
+
+#account-settings .social-connection p.active {
+	color:#6AB030;
 }
 
 #account-settings-links ul {
@@ -749,6 +811,10 @@ text-decoration: none;
 
 #account-settings-links li a:hover {
 color:#598c2c;
+}
+
+#account-settings-links li.active a {
+	font-weight: 600;
 }
 
 /*

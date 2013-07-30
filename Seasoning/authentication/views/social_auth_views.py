@@ -125,10 +125,22 @@ def social_connect(request, backend):
     
     # User wants to connect his social account to his Seasoning account. Get the neccessary information
     # He either did something wrong while posting his response, or has not had the change to post it yet.
+    error = request.GET.get('error', None)
     code = request.GET.get('code', None)
     access_token = request.GET.get('accessToken', None)
     next_page = request.REQUEST.get('next', None)
     
+    if error is not None:
+        # Something went wrong
+        error_reason = request.GET.get(backend.ERROR_REASON_PARAM, '')
+        if error_reason == backend.ACCESS_DENIED_STRING:
+            # User denied us access to his profile...
+            messages.add_message(request, messages.INFO, _('Could not access your ' + backend.name() + ' Information. Please try again.'))            
+            return redirect('/account/settings/social/')
+        else:
+            messages.add_message(request, messages.INFO, _('Something went wrong. Check URL for error.'))
+            return render(request, 'authentication/login.html')
+            
     redirect_uri = 'http://' + str(get_current_site(request)) + backend.connect_url
     if code is None:
         # Redirect User to the social network, so we may get an authorization code.

@@ -216,6 +216,12 @@ class AccountSettingsForm(ModelForm):
             'avatar': ShownImageInput,
         }
     
+    def __init__(self, *args, **kwargs):
+        super(AccountSettingsForm, self).__init__(*args, **kwargs)
+        if self.instance.name_changed:
+            del self.fields['givenname']
+            del self.fields['surname']
+        
     def clean_givenname(self):
         user = self.instance
         if user.givenname != self.cleaned_data['givenname'] and user.name_changed:
