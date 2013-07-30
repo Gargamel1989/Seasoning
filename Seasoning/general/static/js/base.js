@@ -39,7 +39,7 @@ function next_slide() {
 	$('#slideshow .slide').each(function() {
 		if ($(this).css('display') != 'none') {
 			var current_slide = parseInt($(this).attr('id').replace('slide-', ''), 10);
-			var next_slide = current_slide % 3 + 1;
+			var next_slide = current_slide % 4 + 1;
 			goto_slide(next_slide);
 			return;
 		}

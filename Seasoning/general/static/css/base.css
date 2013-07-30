@@ -151,7 +151,7 @@ color:#598c2c;
 	padding: 5px;
 	margin: 0 0 20px 0;
 	background-color: rgba(98, 155, 49, 0.5);
-	border:1px dashed #055999;
+	border:1px dashed #5B6553;
 box-shadow:1px 1px 2px 0 rgba(0,0,0,0.3);
 }
 
@@ -430,15 +430,13 @@ margin-top:30px;
 }
 
 #introbox-container #slideshow .slide .slide-image {
-	overflow: hidden;
 	position: relative;
 }
 
 #introbox-container #slideshow .slide img {
-height:200px;
-display: block;
-margin: auto;
--webkit-mask-image: url('/static/img/mask.png')
+position: absolute;
+height:300px;
+top: -30px;
 }
 
 #introbox-container #slideshow-controls {
@@ -695,6 +693,63 @@ form input {
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/*
+ * Account Settings
+ */
+#id_givenname {
+	width: 20%;
+	margin-right: 4%;
+}
+
+#id_surname {
+	width: 25%;
+}
+
+#password_p {
+	margin: 0;
+	float: right;
+	text-align: right;
+}
+
+#account-settings-container {
+	position: relative;
+}
+
+#account-settings {
+	width: 65%;
+	margin: 0 20px 0 0;
+	float: left;
+}
+
+#account-settings-links {
+	width: 180px;
+	float: right;
+	border-left: 1px solid #D5EBC1;
+	padding: 35px 0 0 10px;
+	position: absolute;
+	right: 0;
+	top: -20px;
+	bottom: 0;
+}
+
+#account-settings-links ul {
+	margin: 0;
+	padding: 0;
+}
+
+#account-settings-links li {
+	list-style: none;
+	margin-bottom: 10px;
+}
+
+#account-settings-links li a {
+color:#76BA3B;
+text-decoration: none;
+}
+
+#account-settings-links li a:hover {
+color:#598c2c;
+}
 
 /*
  * Add Recipe Form
