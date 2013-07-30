@@ -129,7 +129,7 @@ def list_ingredients(request):
         raise PermissionDenied
    
     ingredients = Ingredient.objects.all().order_by('accepted', 'name')
-    perc_done = int(len(ingredients)/5)
+    perc_done = int(len(ingredients)/7)
     
     return render(request, 'admin/list_ingredients.html', {'ingredients': ingredients,
                                                            'perc_done': perc_done})

@@ -240,9 +240,12 @@ position: relative;
 	margin-right: 10px;
 }
 
+#footer-container #social-network-links a {
+	margin-left: 10px;
+}
+
 #footer-container img.social-logo {
 	width: 30px;
-	margin-left: 10px;
  	border-radius: 5px;
 }
 
