@@ -1,29 +1,4 @@
-{% extends "base.html" %}
-
-{% block extra_head %}
-    <link href="{{ STATIC_URL }}css/edit_ingredient.css" rel="stylesheet" type="text/css" media="screen" />
-    <script src="{{ STATIC_URL }}js/formset.js" type="text/javascript"></script>
-    <script type="text/javascript">
-		$(document).ready(function() {
-			$('#synonym_set-addbtn').click(function() {
-				return addForm(this, "synonym_set");
-			});
-		
-			$('#useable_units-addbtn').click(function() {
-				return addForm(this, "useable_units");
-			});
-		
-			$('#available_in_country-addbtn').click(function() {
-				return addForm(this, "available_in_country");
-			});
-		
-			$('#available_in_sea-addbtn').click(function() {
-				return addForm(this, "available_in_sea");
-			});
-		});
-	</script>
-    <script src="{{ STATIC_URL }}js/veg_ingredients.js" type="text/javascript"></script>
-{% endblock %}
+{% extends "admin.html" %}
 
 {% block page_name %}Ingredient {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
 
@@ -36,7 +11,7 @@
 	{{ canuseunit_formset.non_field_errors }}
 	<fieldset>
 		<legend>Basisinformatie</legend>
-		<div class="field-group">
+		<div id="synonym_set-formset" class="field-group formset">
 			{{ synonym_formset.management_form }}
 			<table>
 				<tr>
@@ -49,7 +24,7 @@
 						{{ ingredient_form.name }}</td>
 					<td>{{ ingredient_form.plural_name.errors }}
 						{{ ingredient_form.plural_name }}</td>
-					<td class="delete"></td>
+					<td class="delete"> </td>
 				</tr>
 				{% for form in synonym_formset %}
 				<tr class="synonym_set-form">
@@ -73,7 +48,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><a href="#" id="synonym_set-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
+					<td class="formset-button-container"> </td>
 				</tr>
 			</table>
 		</div>
@@ -147,7 +122,7 @@
 	
 	<fieldset>
 		<legend>Bruikbare Eenheden</legend>
-		<div id="useable_units-group" class="field-group">
+		<div id="useable_units-formset" class="field-group formset">
 			{{ canuseunit_formset.management_form }}
 			<table>
 			{% for form in canuseunit_formset %}
@@ -193,7 +168,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><a href="#" id="useable_units-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
+					<td class="formset-button-container"> </td>
 				</tr>
 			</table>
 		</div>

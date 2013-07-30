@@ -1,17 +1,18 @@
-{% extends "base.html" %}
+{% extends "admin.html" %}
 
-{% block page_name %}Ingredienten Administratie{% endblock %}
-
-{% block extrahead %}
+{% block extra_link %}
+    {{ block.super }}
     <link href="{{ STATIC_URL }}css/progress.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
+
+{% block page_name %}Ingredienten{% endblock %}
 
 {% block content %}
 
 <a href="/ingredients/add/">Nieuw Ingredient</a><br/><br/><br/>
 
-<h2>Vooruitgang: {{ ingredients | length }}/500</h2>
-<div class="meter{% if perc_done > 75 %} green{% elif perc_done > 25%} yellow{% else %} red{% endif %}">
+<h2>Vooruitgang: {{ ingredients | length }}/700</h2>
+<div class="meter{% if perc_done > 75%} green{% elif perc_done > 25%} yellow{% else %} red{% endif %}">
 	<span style="width: {{ perc_done }}%"></span>
 </div>
 

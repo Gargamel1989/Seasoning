@@ -1,0 +1,220 @@
+/**
+ * 	A CSS file for the admin pages
+ */
+
+
+/*
+ * Edit Ingredient Page
+ */
+form {
+    margin: 0;
+    padding: 0;
+    width: 700px;
+}
+
+fieldset {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: #CCCCCC -moz-use-text-color -moz-use-text-color;
+    border-right: medium none;
+    border-style: solid none none;
+    border-width: 1px medium medium;
+    width: 750px;
+}
+
+legend {
+    background: none repeat scroll 0 0 transparent;
+    color: #003366;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 1em 0;
+    padding: 0 0.5em;
+}
+
+fieldset div.field-group {
+	float: left;
+	clear: both;
+	margin: 1em 0 1em 2em;
+}
+
+fieldset div.field-group table td {
+	padding: 0 14px 5px 0;
+}
+
+fieldset td.delete input {
+	width: auto;
+}
+
+fieldset div.field-group div {
+	float: left;
+}
+
+fieldset div.field-group div.field {
+	clear: both;
+	margin-top: 5px;
+}
+
+fieldset .vertical-fields {
+	margin-right: 20px;
+}
+
+fieldset .delete {
+	margin: 0;
+}
+
+label {
+	float: left;
+    width: 204px;
+    text-align: left;
+}
+
+input {
+	float: left;
+	width: 200px;
+}
+
+textarea {
+	float: left;
+	width: 320px;
+}
+
+select {
+	float: left;
+	margin-left: 20px;
+}
+
+.vertical-fields input,textarea {
+	margin-top: 0.5em
+}
+
+.field-group .field input {
+	margin-left: 20px;
+}
+
+#sources-field textarea {
+	width: 666px;
+	height: 3.5em;
+}
+
+#image-source textarea {
+	width: 350px;
+	height: 3.5em;
+	margin-left: 20px;
+}
+
+
+fieldset div select {
+    padding: 1px;
+    width: 200px;
+}
+
+#can_use_unit-group td {
+	padding-right: 10px;
+}
+
+#can_use_unit-group label {
+	width: 120px;
+}
+
+td.checkbox {
+	float: left;
+}
+
+#can_use_unit-group .checkbox input {
+	float: left;
+	width: 10px;
+}
+
+#can_use_unit-group select {
+	margin-left: 0;
+	width: 150px;
+}
+
+#available_in_country-group select, input {
+	margin-left: 0;
+	width: 120px;
+}
+
+#available_in_sea-group select, input {
+	margin-left: 0;
+	width: 120px;
+}
+
+#available_in_country-group label {
+	width: auto;
+}
+
+#available_in_country-sea label {
+	width: auto;
+}
+
+#available_in_country-group .date input {
+	width: 100px;
+}
+
+#available_in_country-sea .date input {
+	width: 100px;
+}
+
+#available_in_country-group td.date {
+	max-width: none;
+}
+
+#available_in_sea-group td.date {
+	max-width: none;
+}
+
+#available_in_country-group td {
+	margin-left: 0;
+	max-width: 150px;
+}
+
+#available_in_sea-group td {
+	margin-left: 0;
+	max-width: 150px;
+}
+
+input#submit-btn {
+	margin-left: 2em;
+}
+
+input:focus, textarea:focus {
+    background: none repeat scroll 0 0 #EFEFEF;
+    color: #000000;
+}
+
+#ing-image {
+	float: left;
+	clear: both;
+	margin: 10px 0 0 224px;
+	width: 206px;
+	height: 206px;
+}
+
+.formset a>img {
+	float: left;
+	width: 30px;
+	height: 30px;
+	margin-left: 20px;
+}
+
+.empty {
+	display: none;
+}
+
+.errorlist {
+	padding: 0;
+	text-align: left;
+	color: red;
+	list-style-type: none;
+}
+
+.VE-fieldset {
+	display: none;
+}
+
+.FI-fieldset {
+	display: none;
+}
