@@ -35,7 +35,7 @@ class AddRecipeForm(forms.ModelForm):
     def save(self, author, commit=True):
         recipe = super(AddRecipeForm, self).save(commit=False)
         recipe.author = author
-        return recipe.save(commit=commit)
+        return recipe.save()
 
 class UsesIngredientForm(forms.ModelForm):
 
