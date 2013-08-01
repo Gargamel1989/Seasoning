@@ -47,7 +47,7 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
     def __init__(self, *args, **kwargs):
         widget = kwargs.get('widget', False)
         if not widget or not isinstance(widget, AutoCompleteSelectIngredientWidget):
-            kwargs['widget'] = AutoCompleteSelectIngredientWidget()
+            kwargs['widget'] = AutoCompleteSelectIngredientWidget(attrs={'class': 'autocomplete-ingredient'})
         super(AutoCompleteSelectIngredientField, self).__init__(*args, **kwargs)
         
     def clean(self, value):

@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^(\d*)/$', 'ingredients.views.view_ingredient', name='view_ingredient'),
     
     # AJAX Calls
-    url(r'^ing_list/(.*)/$', 'ingredients.views.ajax_ingredient_name_list'),
+    url(r'^ing_list/$', 'ingredients.views.ajax_ingredient_name_list'),
     
     # Admin Pages
     url(r'^list/$', 'ingredients.views.list_ingredients', name='list_ingredients'),
