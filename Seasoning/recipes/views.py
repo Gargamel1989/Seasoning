@@ -38,7 +38,9 @@ def browse_recipes(request):
     Browse through recipes
     
     """
-    return render(request, 'recipes/browse_recipes.html')
+    recipes = Recipe.objects.all()
+    
+    return render(request, 'recipes/browse_recipes.html', {'recipes': recipes})
 
 def search_recipes(request, sort_field=None):
     """"
@@ -129,7 +131,7 @@ def view_recipe(request, recipe_id, portions=None):
     usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
 
     if portions:
-        ratio = int(portions)/recipe.portions
+        ratio = float(portions)/recipe.portions
         recipe.footprint = ratio * recipe.footprint
         for uses in usess:
             uses.amount = ratio * uses.amount
@@ -162,7 +164,7 @@ def edit_recipe(request, recipe_id=None):
                                                         form=UsesIngredientForm)
     
     if request.method == 'POST':
-        recipe_form = AddRecipeForm(request.POST, instance=recipe)
+        recipe_form = AddRecipeForm(request.POST, request.FILES, instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe)
         
         if 'stop-submit' in request.POST or 'normal-submit' in request.POST or 'ingrequest-submit' in request.POST:
@@ -203,7 +205,7 @@ def edit_recipe(request, recipe_id=None):
                             # Only when this button is pressed, should we add all the ingredients, otherwise, just show the dialog
                             # about the unknown ingredients
                             for ingredient in unknown_ingredients:
-                                # TODO: request the ingredient -> send a mail to admins with all needed information
+                                # FIXME: request the ingredient -> send a mail to admins with all needed information
                                 pass
                         elif 'normal-submit' in request.POST:
                             context['unknown_ingredients'] = unknown_ingredients
