@@ -1,5 +1,7 @@
 {% extends "admin.html" %}
 
+{% block extra_script %}<script src="{{ STATIC_URL }}js/forms.js"></script>{% endblock %}
+
 {% block page_name %}Ingredient {% if new %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
 
 {% block content %}

@@ -96,9 +96,47 @@ class Ingredient(models.Model):
     image_source = models.TextField(blank=True)
     accepted = models.BooleanField(default=False)
     
+    def __unicode__(self):
+        return self.name
+
     @property
     def primary_unit(self):
-        return CanUseUnit.objects.select_related().get(ingredient=self, is_primary_unit=True)
+        try:
+            useable_units = self.useable_units.all()
+            for useable_unit in useable_units:
+                if useable_unit.is_primary_unit:
+                    return useable_unit
+            return None
+        except CanUseUnit.DoesNotExist:
+            return None
+    
+    def always_available(self):
+        """
+        Check if this Ingredient is always available somewhere
+        
+        """
+        try:
+            available_ins_cache = self.get_available_ins()
+        except self.BasicIngredientException:
+            return True
+        
+        available_ins = []
+        start_date = datetime.datetime(AvailableIn.BASE_YEAR, 1, 1)
+        current_date = start_date
+        
+        while available_ins_cache and current_date > start_date:
+            available_ins = available_ins_cache
+            available_ins_cache = []
+            for available_in in available_ins:
+                if self.available_in_active(available_in, current_date):
+                    start_date = current_date
+                    current_date = available_in.date_until
+                    break
+                available_ins_cache.append(available_in)
+        
+        if current_date >= datetime.datetime(AvailableIn.BASE_YEAR, 12, 31):
+            return True
+        return False
     
     def get_available_ins(self):
         """
@@ -125,21 +163,28 @@ class Ingredient(models.Model):
         every ingredient will only have a few available_ins
         
         """
-        today_normalized = datetime.date.today().replace(year=2000)
+        today = datetime.date.today()
         
         active_available_ins = []
         for available_in in self.get_available_ins():
-            extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability)).replace(year=2000)
-            if available_in.date_from < available_in.date_until:
-                # Inner interval
-                if available_in.date_from <= today_normalized and today_normalized <= extended_until_date:
-                    active_available_ins.append(available_in)
-            else:
-                # Outer interval (date_from < extended_until_date) -> crosses newyear
-                if available_in.date_from <= today_normalized or today_normalized <= extended_until_date:
-                    active_available_ins.append(available_in)
+            if self.available_in_active(available_in, today):
+                active_available_ins.append(available_in)
         return active_available_ins
     
+    def available_in_active(self, available_in, date):
+        normalized_date = date.replace(year=2000)
+        
+        extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability)).replace(year=2000)
+        if available_in.date_from < available_in.date_until:
+            # Inner interval
+            if available_in.date_from <= normalized_date and normalized_date <= extended_until_date:
+                return True
+        else:
+            # Outer interval (date_from < extended_until_date) -> crosses newyear
+            if available_in.date_from <= normalized_date or normalized_date <= extended_until_date:
+                return True
+        return False
+        
     def get_available_in_with_smallest_footprint(self):
         """
         Return the AvailableIn with the smallest footprint of the currently active
@@ -189,9 +234,6 @@ class Ingredient(models.Model):
             return footprint
         except self.BasicIngredientException:
             return self.base_footprint
-    
-    def __unicode__(self):
-        return self.name
     
     def save(self):
         if not self.type == 1:
@@ -355,6 +397,8 @@ class AvailableIn(models.Model):
     greenhouse production)
     
     """
+    BASE_YEAR = 2000
+    
     class Meta:
         abstract = True
     
@@ -382,8 +426,8 @@ class AvailableIn(models.Model):
     def save(self, *args, **kwargs):
         self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.location.distance*self.transport_method.emission_per_km
         
-        self.date_from = self.date_from.replace(year=2000)
-        self.date_until = self.date_until.replace(year=2000)
+        self.date_from = self.date_from.replace(year=self.BASE_YEAR)
+        self.date_until = self.date_until.replace(year=self.BASE_YEAR)
         
         models.Model.save(self, *args, **kwargs)
     

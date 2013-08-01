@@ -1,12 +1,23 @@
 {% extends "base.html" %}
 
-{% block page_name %}Ingredienten{% endblock %}
+{% block title %}Ingredienten{% endblock %}
 
-{% block extrahead %}
-    <link href="{{ STATIC_URL }}css/progress.css" rel="stylesheet" type="text/css" media="screen" />
+{% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 {% endblock %}
 
+{% block extra_script %}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="{{ STATIC_URL }}js/forms.js"></script>
+{% endblock %}
+
+{% block page_name %}Ingredienten{% endblock %}
+
 {% block content %}
+<p>
+	Hier kan je onze uitgebreide ingredientendatabase raadplegen. Je kan met het onderstaande veld naar specifieke ingredienten zoeken, of gewoon
+	wat rondkijken. Als je op een ingredient klikt, verschijnt er meer informatie
+</p>
 
 {{ form.as_p }}
 
