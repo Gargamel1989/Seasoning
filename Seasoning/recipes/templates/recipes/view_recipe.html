@@ -1,65 +1,163 @@
 {% extends "base.html" %}
 {% load comments %}
 
+{% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<style>
+/*
+ * Tooltip styles
+ */
+.ui-tooltip {
+    position: absolute;
+}
+
+.ui-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: .75em;
+    color: #5B6553;
+}
+</style>
+{% endblock %}
+
+{% block extra_script %}
+<script src="{{ STATIC_URL }}js/raty.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#portions-slider').slider({
+            min: 1,
+            max: 8,
+            value: {{ recipe.portions }}
+        });
+        
+        $('#rating-display').raty({
+            path: '{{ STATIC_URL }}img/raty',
+            width: 110,
+            score: {{ recipe.rating }},
+            readOnly: true,
+        });
+    });
+</script>
+{% endblock %}
+
 {% block page_name %}{{ recipe.name }}{% endblock %}
 
 {% block content %}
+<div id="below-recipe-name">
+    <div id="recipe-actions">
+        {% if recipe.author == user %}
+        <a href="/recipes/edit/{{ recipe.id }}/" title="Wijzig dit recept"><img src="{{ STATIC_URL }}img/icons/edit.png" /></a>
+        <a href="/recipes/delete/{{ recipe.id }}/" title="Verwijder dit recept" onclick="return confirm('Bent u zeker dat u dit recept wil verwijderen?')"><img src="{{ STATIC_URL }}img/icons/delete.png" /></a>
+        {% endif %}
+    </div>
+    
+    <div id="add-info">
+        <span id="author">Toegevoegd door <a href="/profile/{{ user.id }}/">{{ recipe.author.get_full_name }}</a></span><br />
+        <span id="time-added">{{ recipe.time_added|date:"j F Y, G" }}u{{ recipe.time_added|date:"i" }}</span>
+    </div>
+    
+    <div class="clear-div"> </div>
+</div>
 
-<a href="/recipes/edit/{{ recipe.id }}/">Wijzigen</a><br/><br/>
-
-<p>Auteur: <a href="/profile/{{ user.id }}/">{{ recipe.author.get_full_name }}</a></p>
-<p>Tijdstip toegevoegd: {{ recipe.time_added }}</p>
-<p><img src="{{ MEDIA_URL }}{{ recipe.image }}"/></p>
-<p>Soort maaltijd: {{ recipe.get_course_display }}</p>
-<p>Keuken: {{ recipe.cuisine }}</p>
-<p>Veganisme: {{ recipe.get_veganism_display }}</p>
-<p>Beschrijving: {{ recipe.description }}</p>
-
-<p>
-  <a href="/recipes/{{ recipe.id }}/portions/1/">1</a> | 
-  <a href="/recipes/{{ recipe.id }}/portions/2/">2</a> | 
-  <a href="/recipes/{{ recipe.id }}/portions/3/">3</a> | 
-  <a href="/recipes/{{ recipe.id }}/portions/4/">4</a> | 
-  <a href="/recipes/{{ recipe.id }}/portions/5/">5</a> | 
-  <a href="/recipes/{{ recipe.id }}/portions/6/">6</a> | 
-  <a href="/recipes/{{ recipe.id }}/portions/7/">7</a> | 
-  <a href="/recipes/{{ recipe.id }}/portions/8/">8</a>
-</p>
-<p>
-	Rating: {% if recipe.rating %}{{ recipe.rating }} ({{ recipe.number_of_votes }} stem{% if recipe.number_of_votes > 1 %}men{% endif %}){% else %}Dit recept heeft nog geen rating{% endif %}<br>
-	Jouw Rating: 
-	{% if not user.is_authenticated %}
-		<a href="{% url 'login' %}?next={{ request.path  }}">Meld je aan</a> om een rating te geven aan dit recept
-	{% else %}
-		<a href="/recipes/vote/{{ recipe.id }}/0/" {% ifequal user_vote.score 0 %}class="current-vote" style="font-weight: bold"{% endifequal %}>0</a>
-		<a href="/recipes/vote/{{ recipe.id }}/1/" {% ifequal user_vote.score 1 %}class="current-vote" style="font-weight: bold"{% endifequal %}>1</a>
-		<a href="/recipes/vote/{{ recipe.id }}/2/" {% ifequal user_vote.score 2 %}class="current-vote" style="font-weight: bold"{% endifequal %}>2</a>
-		<a href="/recipes/vote/{{ recipe.id }}/3/" {% ifequal user_vote.score 3 %}class="current-vote" style="font-weight: bold"{% endifequal %}>3</a>
-		<a href="/recipes/vote/{{ recipe.id }}/4/" {% ifequal user_vote.score 4 %}class="current-vote" style="font-weight: bold"{% endifequal %}>4</a>
-		<a href="/recipes/vote/{{ recipe.id }}/5/" {% ifequal user_vote.score 5 %}class="current-vote" style="font-weight: bold"{% endifequal %}>5</a>
-		{% if user_vote %}<a href="/recipes/removevote/{{ recipe.id }}/">Remove your vote</a>{% endif %}
-{% endif %}
-</p>
-<p>Porties: {{ recipe.portions }}</p>
-<p>Actieve tijd: {{ recipe.active_time }}</p>
-<p>Passieve tijd: {{ recipe.passive_time }}</p>
-<p>Extra Info: {{ recipe.extra_info }}</p>
-<p>Totale voetafdruk: {{ recipe.footprint }} kgCO2 ({{ recipe.footprint_pp }} pp.)</p>
-
-<p>
-	Ingredienten:<br>
-	{% for uses in usess %}
-		<a href="/ingredients/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.amount }} {{ uses.unit.short_name}} ({{ uses.ingredient.footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short_name }} -> {{ uses.footprint }} kgCO2)<br>
-		{% for avail in uses.ingredient.available_in_country.all %}
-		--- Kan komen van {{ avail.country.name }} met transportmethode: {{ avail.transport_method.name }} tussen {{ avail.month_from }} en {{ avail.month_until }} (Uitstoot van deze optie: {{ avail.footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short_name }})<br>
-		{% endfor %}
-	{% endfor %}
-</p>
-
-<p>Bereidingswijze:
-	<br>
-	{{ recipe.instructions }}	
-</p>
+    
+<div id="recipe">
+    
+    <div id="img-and-basic-info-wrapper">
+        <img id="recipe-img" src="{{ MEDIA_URL }}{{ recipe.image }}"/>
+        
+        <div id="rating">
+            <strong>Populariteit</strong>
+            <div id="current-rating">
+                <div id="rating-display"> </div>
+                <span id="rating-numbers">({{ recipe.rating }}, {{ recipe.number_of_votes }} ratings)</span>
+            </div>
+        </div>
+        
+        <div id="time-needed">
+            <strong>Bereidingstijd</strong>
+            <div class="timebar">
+                <div class="timebar-active" style="width: {{ active_time_perc }}%"><span class="time-label">{% if recipe.active_time != total_time %}{{ recipe.active_time }} min{% endif %}</span></div>
+                <div class="timebar-passive" style="width: {{ passive_time_perc }}%"><span class="time-label">{{ total_time }} min</span></div>
+            </div>
+        </div>
+        
+        <div id="portions">
+            <strong>Porties</strong>
+            <div id="portions-slider-wrapper">
+                <div id="portions-slider-labels">
+                    <div class="portions-slider-label" style="left: 0%">
+                        <span> </span>1
+                    </div>
+                    <div class="portions-slider-label" style="left: 14.3%">
+                        <span> </span>2
+                    </div>
+                    <div class="portions-slider-label" style="left: 28.6%">
+                        <span> </span>3
+                     </div>
+                    <div class="portions-slider-label" style="left: 42.9%">
+                        <span> </span>4
+                     </div>
+                    <div class="portions-slider-label" style="left: 57.2%">
+                        <span> </span>5
+                     </div>
+                    <div class="portions-slider-label" style="left: 71.4%">
+                        <span> </span>6
+                     </div>
+                    <div class="portions-slider-label" style="left: 85.7%">
+                        <span> </span>7
+                     </div>
+                    <div class="portions-slider-label" style="left: 100%">
+                        <span> </span>8
+                     </div>
+                </div>
+                <div id="portions-slider"> </div>
+                <div class="clear-div"> </div>
+            </div>
+            <input id="custom-portions-input" type="text" value="{{ recipe.portions }}"/>
+        </div>
+    </div>
+    
+    
+    <p>Soort maaltijd: {{ recipe.get_course_display }}</p>
+    <p>Keuken: {{ recipe.cuisine }}</p>
+    <p>Veganisme: {{ recipe.get_veganism_display }}</p>
+    <p>Beschrijving: {{ recipe.description }}</p>
+    
+    <p>Totale voetafdruk: {{ recipe.footprint }} kgCO2 ({{ recipe.footprint_pp }} pp.)</p>
+    
+    <div class="clear-div"> </div>
+    
+    <div class="recipe-info-wrapper">
+    	<h2>Ingredienten</h2>
+    	<div id="ingredients">
+        	{% for uses in usess %}
+        		<a href="/ingredients/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.amount }} {{ uses.unit.short_name}} ({{ uses.ingredient.footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short_name }} -> {{ uses.footprint }} kgCO2)<br>
+        		{% for avail in uses.ingredient.available_in_country.all %}
+        		--- Kan komen van {{ avail.country.name }} met transportmethode: {{ avail.transport_method.name }} tussen {{ avail.month_from }} en {{ avail.month_until }} (Uitstoot van deze optie: {{ avail.footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short_name }})<br>
+        		{% endfor %}
+        	{% endfor %}
+        </div>
+        {% if recipe.extra_info %}
+        <div id="extra-info">
+            <strong>Extra Info/Benodigdheden:</strong><br />
+            {{ recipe.extra_info|linebreaks }}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="recipe-info-wrapper">
+        <h2>Bereidingswijze</h2>
+        <div id="instructions">
+    	   {% if recipe.original_portions %}
+            <div id="instructions-warning">
+                Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.original_portions }} porties. U hebt het aantal porties aangepast, waardoor het mogelijk
+                is dat deze instructies niet meer volledig accuraat zijn. Houdt hier rekening mee.
+            </div>
+            {% endif %}
+            {{ recipe.instructions|linebreaks }}
+    	</div>	
+    </div>
+</div>
 
 <div id="give-comment">
     <h2>Geef een reactie op dit recept:</h2>

@@ -27,7 +27,7 @@ from ingredients.models import CanUseUnit, Ingredient
 import datetime
 from django.core.validators import MaxValueValidator
 from django.db.models.fields import FloatField
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import ugettext_lazy as _
 
 def get_image_filename(instance, old_filename):
@@ -95,6 +95,10 @@ class Recipe(models.Model):
     
     accepted = models.BooleanField(default=False)
     
+    # Set this to false if this object should not be saved (e.g. when certain fields have been 
+    # overwritten for portions calculations)
+    save_allowed = True
+    
     def save(self, *args, **kwargs):
         """
         Calculate the recipes footprint by adding the footprint
@@ -103,6 +107,9 @@ class Recipe(models.Model):
         with the lowest veganism.
         
         """
+        if not self.save_allowed:
+            raise PermissionDenied('Saving this object has been disallowed')
+        
         self.footprint = 0
         self.veganism = Ingredient.VEGAN
         
@@ -138,8 +145,9 @@ class Recipe(models.Model):
         vote.delete()
     
     def calculate_and_set_rating(self):
-        new_rating = self.votes.all().aggregate(models.Avg('score'))
-        self.rating = new_rating['score__avg']
+        aggregate = self.votes.all().aggregate(models.Count('score'), models.Avg('score'))
+        self.rating = aggregate['score__avg']
+        self.number_of_votes = aggregate['score__count']
         self.save()
 
 class UsesIngredient(models.Model):
@@ -154,6 +162,10 @@ class UsesIngredient(models.Model):
     amount = models.FloatField(default=0)
     unit = models.ForeignKey(ingredients.models.Unit, db_column='unit')
     
+    # Set this to false if this object should not be saved (e.g. when certain fields have been 
+    # overwritten for portions calculations)
+    save_allowed = True
+    
     def footprint(self):
         unit_properties = CanUseUnit.objects.get(ingredient=self.ingredient, unit=self.unit)
         return (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
@@ -163,6 +175,9 @@ class UsesIngredient(models.Model):
             raise ValidationError('This unit cannot be used for measuring this Ingredient.')
     
     def save(self, *args, **kwargs):
+        if not self.save_allowed:
+            raise PermissionDenied('Saving this object has been disallowed')
+        
         self.clean()
         super(UsesIngredient, self).save(*args, **kwargs)
 
