@@ -35,9 +35,8 @@ from ingredients.forms import SearchIngredientForm
 
 def view_ingredients(request):
     search_form = SearchIngredientForm()
-    ingredients = Ingredient.objects.all()
-    return render(request, 'ingredients/view_ingredients.html', {'form': search_form,
-                                                                 'ingredients': ingredients})
+    
+    return render(request, 'ingredients/view_ingredients.html', {'form': search_form})
     
 def view_ingredient(request, ingredient_id):
     try:
@@ -102,7 +101,7 @@ def ajax_ingredients_page(request):
     if request.is_ajax() and request.method == 'POST':
         query = request.POST.get('query', '')
         name = Q(name__icontains=query)
-        synonym = Q(synonym__icontains=query)
+        synonym = Q(synonym__name__icontains=query)
         ingredient_list = Ingredient.objects.filter(name | synonym).order_by('name')
         paginator = Paginator(ingredient_list, 25)
         
@@ -114,7 +113,8 @@ def ajax_ingredients_page(request):
         except EmptyPage:
             ingredients = paginator.page(paginator.num_pages)
         
-        ingredients_json = json.dumps(ingredients)
+        # FIXME: send ingredients page to template and send template to client instead of ing list
+        ingredients_json = json.dumps(ingredients.object_list)
         return HttpResponse(ingredients_json, mimetype='application/javascript')
     
     raise PermissionDenied

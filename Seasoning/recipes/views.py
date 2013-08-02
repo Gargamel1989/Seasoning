@@ -133,6 +133,7 @@ def view_recipe(request, recipe_id, portions=None):
     if portions:
         ratio = float(portions)/recipe.portions
         recipe.footprint = ratio * recipe.footprint
+        recipe.portions = float(portions)
         for uses in usess:
             uses.amount = ratio * uses.amount
         
