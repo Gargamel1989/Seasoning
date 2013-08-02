@@ -130,11 +130,14 @@ def view_recipe(request, recipe_id, portions=None):
     recipe = Recipe.objects.select_related('author', 'cuisine').get(pk=recipe_id)
     usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
 
-    if portions:
+    if portions and int(portions) != recipe.portions:
         ratio = float(portions)/recipe.portions
+        recipe.save_allowed = False
         recipe.footprint = ratio * recipe.footprint
+        recipe.original_portions = recipe.portions
         recipe.portions = float(portions)
         for uses in usess:
+            uses.save_allowed = False
             uses.amount = ratio * uses.amount
         
     user_vote = None
@@ -144,9 +147,16 @@ def view_recipe(request, recipe_id, portions=None):
         except ObjectDoesNotExist:
             pass
     
+    total_time = recipe.active_time + recipe.passive_time
+    active_time_perc = (float(recipe.active_time) / total_time) * 100
+    passive_time_perc = 100 - active_time_perc
+    
     return render(request, 'recipes/view_recipe.html', {'recipe': recipe,
                                                         'usess': usess,
-                                                        'user_vote': user_vote})
+                                                        'user_vote': user_vote,
+                                                        'active_time_perc': active_time_perc,
+                                                        'passive_time_perc': passive_time_perc,
+                                                        'total_time': total_time})
 
 
 @login_required
@@ -221,6 +231,18 @@ def edit_recipe(request, recipe_id=None):
     context['usesingredient_formset'] = usesingredient_formset
     return render(request, 'recipes/edit_recipe.html', context)
 
+@login_required
+def delete_recipe(request, recipe_id):
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    
+    if recipe.author == request.user:
+        recipe.delete()
+        messages.add_message(request, messages.INFO, 'Uw recept \'' + recipe.name + '\' werd met succes uit onze databank verwijderd.')
+        return redirect('home')
+        
+        
+    raise PermissionDenied
+    
 
 @login_required
 def vote(request, recipe_id, score):
