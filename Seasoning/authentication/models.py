@@ -109,7 +109,7 @@ class User(models.Model):
     
     password = models.CharField(_('password'), max_length=128, null=True)
     
-    avatar = ProcessedImageField([ResizeToFit(250, 250), AddBorder(2, 'Black')], format='PNG', \
+    avatar = ProcessedImageField([ResizeToFit(250, 250)], format='PNG', \
                                   upload_to=get_image_filename, default='images/users/no_image.png')
     
     date_of_birth = models.DateField()

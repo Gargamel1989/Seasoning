@@ -10,7 +10,6 @@ font-family:Verdana, Geneva, sans-serif;
 font-size: 1em;
 color:#5B6553;
    height:100%;
-   background-image: url("/static/img/bg.png");
 }
 
 h1 {
@@ -38,6 +37,10 @@ transition:all .3s ease-out;
 .clear-div {
 	clear: both;
 	float: none;
+}
+
+#id_honeypot {
+	display: none;
 }
 
 .ui-autocomplete {
@@ -875,3 +878,80 @@ color:#598c2c;
 	width: 500px;
 }
 
+
+/*
+ * View Recipe
+ */
+
+#give-comment .comment {
+	padding-top: 10px;
+	padding-bottom: 30px;
+}
+
+.comment textarea {
+	width: 99%;
+	height: 150px;
+}
+
+#comment-list {
+	width: 100%;
+	margin-top: 20px;
+}
+
+#comment-list .comment {
+	padding-top: 10px;
+	padding-bottom: 30px;
+	border-bottom: 1px solid #D5EBC1;
+transition:all .5s ease-out;
+}
+
+#comment-list .comment:hover {
+	background-color: rgba(118, 186, 59, 0.1);
+transition:all .5s ease-out;
+}
+
+.comment .commenter-img {
+	float: left;
+}
+
+.commenter-img img {
+	width: 100px;
+	height: 100px;
+	margin-left: 10px;
+}
+
+.comment-content {
+	margin-left: 140px;
+	position: relative;
+}
+
+.comment-content .commenter a {
+	color: #76BA3B;
+	text-decoration: none;
+	font-weight: 600;
+transition:all .3s ease-out;
+}
+
+.comment-content .comment-submit-date a {
+	color: #76BA3B;
+	text-decoration: none;
+	font-size: .75em;
+transition:all .3s ease-out;
+}
+
+.comment-content a:hover {
+color:#598c2c;
+transition:all .3s ease-out;
+}
+
+.comment-content .comment-delete {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.comment-content .comment-body {
+	margin-top: 10px;
+	width: 80%;
+	text-align: justify;
+}
