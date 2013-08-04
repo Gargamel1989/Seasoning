@@ -136,7 +136,7 @@ class Recipe(models.Model):
             vote = self.votes.get(user=user)
             vote.score = score
         except Vote.DoesNotExist:
-            # The given user has not voted on this recipe yet
+            # The given user has not voted on thiik s recipe yet
             vote = Vote(recipe=self, user=user, score=score)
         vote.save()
     
@@ -167,11 +167,14 @@ class UsesIngredient(models.Model):
     save_allowed = True
     
     def footprint(self):
-        unit_properties = CanUseUnit.objects.get(ingredient=self.ingredient, unit=self.unit)
+        unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
+        if self.unit.parent_unit:
+            unit_properties.unit = self.unit
+            unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
         return (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
     
     def clean(self):
-        if not self.unit in [useable_unit.unit for useable_unit in self.ingredient.useable_units.all()]:
+        if not self.unit in [useable_unit.unit for useable_unit in CanUseUnit.objects.all_useable_units(self.ingredient.pk)]:
             raise ValidationError('This unit cannot be used for measuring this Ingredient.')
     
     def save(self, *args, **kwargs):

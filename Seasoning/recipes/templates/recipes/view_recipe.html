@@ -27,19 +27,57 @@
         $('#portions-slider').slider({
             min: 1,
             max: 8,
-            value: {{ recipe.portions }}
+            value: {{ recipe.portions }},
+            change: function(event, ui) {
+            	$('#custom-portions-input').val(ui.value).trigger('change');
+            }
         });
         
         $('#rating-display').raty({
             path: '{{ STATIC_URL }}img/raty',
-            width: 110,
-            score: {{ recipe.rating }},
+            width: 110,{% if recipe.rating %}
+            score: {{ recipe.rating }},{% endif %}
             readOnly: true,
+            noRatedMsg: "Nog geen ratings voor dit recept!",
+        });
+        
+        $('#user-rating-display').raty({
+            path: '{{ STATIC_URL }}img/raty',
+            width: 110,
+            {% if user_vote %}score: {{ user_vote.score }},{% endif %}
+            click: function(score, evt) {
+            	$.post('/recipes/vote/',
+            		   {'recipe': {{ recipe.id }},
+            		    'score': score})
+            	.done(function(data) {
+            		var new_rating_info = $.parseJSON(data);
+            		$('#rating-display').raty('set', {score: parseFloat(new_rating_info['new_rating'])});
+            		$('#total-rating').text(parseFloat(new_rating_info['new_rating']));
+            		$('#total-votes').text(parseInt(new_rating_info['new_novotes']));
+            	});
+           	},
+        });
+        
+        $('#custom-portions-input').change(function() {
+        	$.post('/recipes/portions/',
+        		   {'recipe': {{ recipe.id }},
+        		    'portions': $('#custom-portions-input').val()})
+        	.done(function(data) {
+        		if ($('#custom-portions-input').val() != {{ recipe.portions }}) {
+        			$('#instructions-warning').fadeIn('1000');
+        		} else {
+        			$('#instructions-warning').fadeOut('1000');
+        		}
+        		var parsed_data = $.parseJSON(data);
+        		$('#total-footprint').text(parsed_data['new_footprint']);
+        		$('#ingredients').html(parsed_data['ingredient_list']);
+        	});
         });
     });
 </script>
 {% endblock %}
 
+{% block title %}Recept Bekijken{% endblock %}
 {% block page_name %}{{ recipe.name }}{% endblock %}
 
 {% block content %}
@@ -52,7 +90,7 @@
     </div>
     
     <div id="add-info">
-        <span id="author">Toegevoegd door <a href="/profile/{{ user.id }}/">{{ recipe.author.get_full_name }}</a></span><br />
+        <span id="author">Toegevoegd door <a href="/profile/{{ recipe.author.id }}/">{{ recipe.author.get_full_name }}</a></span><br />
         <span id="time-added">{{ recipe.time_added|date:"j F Y, G" }}u{{ recipe.time_added|date:"i" }}</span>
     </div>
     
@@ -69,8 +107,16 @@
             <strong>Populariteit</strong>
             <div id="current-rating">
                 <div id="rating-display"> </div>
-                <span id="rating-numbers">({{ recipe.rating }}, {{ recipe.number_of_votes }} ratings)</span>
+                <span id="rating-numbers">(<span id="total-rating">{% if recipe.rating != None %}{{ recipe.rating }}{% else %} - {% endif %}</span>, <span id="total-votes">{{ recipe.number_of_votes }}</span> ratings)</span>
             </div>
+            <div id="user-rating">
+            	Jouw rating: 
+            	{% if user.is_authenticated %}
+            	<div id="user-rating-display"> </div>
+            	{% else %}
+            	<a href="/login/">Meld je aan</a> om een rating aan dit recept te geven
+            	{% endif %}
+           	</div>
         </div>
         
         <div id="time-needed">
@@ -123,20 +169,15 @@
     <p>Veganisme: {{ recipe.get_veganism_display }}</p>
     <p>Beschrijving: {{ recipe.description }}</p>
     
-    <p>Totale voetafdruk: {{ recipe.footprint }} kgCO2 ({{ recipe.footprint_pp }} pp.)</p>
+    <p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint }}</span> kgCO2 ({{ recipe.footprint_pp }} pp.)</p>
     
     <div class="clear-div"> </div>
     
     <div class="recipe-info-wrapper">
     	<h2>Ingredienten</h2>
     	<div id="ingredients">
-        	{% for uses in usess %}
-        		<a href="/ingredients/{{ uses.ingredient.id }}/">{{ uses.ingredient.name }}</a> - {{ uses.amount }} {{ uses.unit.short_name}} ({{ uses.ingredient.footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short_name }} -> {{ uses.footprint }} kgCO2)<br>
-        		{% for avail in uses.ingredient.available_in_country.all %}
-        		--- Kan komen van {{ avail.country.name }} met transportmethode: {{ avail.transport_method.name }} tussen {{ avail.month_from }} en {{ avail.month_until }} (Uitstoot van deze optie: {{ avail.footprint }} kgCO2/{{ uses.ingredient.primary_unit.unit.short_name }})<br>
-        		{% endfor %}
-        	{% endfor %}
-        </div>
+			{% include "recipes/ingredient_list.html" %}
+		</div>
         {% if recipe.extra_info %}
         <div id="extra-info">
             <strong>Extra Info/Benodigdheden:</strong><br />
@@ -148,12 +189,10 @@
     <div class="recipe-info-wrapper">
         <h2>Bereidingswijze</h2>
         <div id="instructions">
-    	   {% if recipe.original_portions %}
-            <div id="instructions-warning">
-                Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.original_portions }} porties. U hebt het aantal porties aangepast, waardoor het mogelijk
+    	   <div id="instructions-warning">
+                Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.portions }} porties. U hebt het aantal porties aangepast, waardoor het mogelijk
                 is dat deze instructies niet meer volledig accuraat zijn. Houdt hier rekening mee.
             </div>
-            {% endif %}
             {{ recipe.instructions|linebreaks }}
     	</div>	
     </div>
