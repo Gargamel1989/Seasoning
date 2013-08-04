@@ -175,7 +175,7 @@ class Ingredient(models.Model):
         normalized_date = date.replace(year=2000)
         
         extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability)).replace(year=2000)
-        if available_in.date_from < available_in.date_until:
+        if available_in.date_from < extended_until_date:
             # Inner interval
             if available_in.date_from <= normalized_date and normalized_date <= extended_until_date:
                 return True
@@ -208,7 +208,7 @@ class Ingredient(models.Model):
             if not smallest_footprint or smallest_footprint > footprint:
                 smallest_footprint = footprint
                 smallest_available_in = available_in
-        if not smallest_footprint:
+        if smallest_footprint is None:
             raise ObjectDoesNotExist('No active AvailableIn object was found for ingredient ' + str(self))
         return smallest_available_in
         

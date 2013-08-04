@@ -32,6 +32,10 @@ from ingredients.models import Ingredient
 from django.forms.formsets import formset_factory
 from django.contrib.comments.views.moderation import perform_delete
 from general.views import home
+from django.http.response import Http404, HttpResponse
+from django.utils import simplejson
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 
 def browse_recipes(request):
     """
@@ -126,20 +130,10 @@ def search_recipes(request, sort_field=None):
                                                            'exclude_ingredients_formset': exclude_ingredients_formset,
                                                            'recipes': recipes})
 
-def view_recipe(request, recipe_id, portions=None):
+def view_recipe(request, recipe_id):
     recipe = Recipe.objects.select_related('author', 'cuisine').get(pk=recipe_id)
     usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
 
-    if portions and int(portions) != recipe.portions:
-        ratio = float(portions)/recipe.portions
-        recipe.save_allowed = False
-        recipe.footprint = ratio * recipe.footprint
-        recipe.original_portions = recipe.portions
-        recipe.portions = float(portions)
-        for uses in usess:
-            uses.save_allowed = False
-            uses.amount = ratio * uses.amount
-        
     user_vote = None
     if request.user.is_authenticated():
         try:
@@ -244,16 +238,76 @@ def delete_recipe(request, recipe_id):
     raise PermissionDenied
     
 
-@login_required
-def vote(request, recipe_id, score):
-    recipe = get_object_or_404(Recipe, pk=recipe_id)
-    recipe.vote(user=request.user, score=int(score))
-    return redirect(view_recipe, recipe_id)
+"""
+Ajax calls
+"""
 
+@csrf_exempt
+@login_required
+def vote(request):
+    
+    if request.is_ajax() and request.method == 'POST':
+        recipe_id = request.POST.get('recipe', None)
+        score = request.POST.get('score', None)
+        
+        if recipe_id and score:
+            try:
+                recipe = Recipe.objects.select_related().get(pk=recipe_id)
+            except Recipe.DoesNotExist:
+                raise Http404
+            recipe.vote(user=request.user, score=int(score))
+            data = simplejson.dumps({'new_rating': recipe.rating,
+                                     'new_novotes': recipe.number_of_votes})
+            return HttpResponse(data)
+        
+    raise PermissionDenied
+    
+
+@csrf_exempt
 @login_required
 def remove_vote(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     recipe.unvote(user=request.user)
+
+@csrf_exempt
+@login_required
+def get_recipe_portions(request):
+    
+#     if portions and int(portions) != recipe.portions:
+#         ratio = float(portions)/recipe.portions
+#         recipe.save_allowed = False
+#         recipe.footprint = ratio * recipe.footprint
+#         recipe.original_portions = recipe.portions
+#         recipe.portions = float(portions)
+#         for uses in usess:
+#             uses.save_allowed = False
+#             uses.amount = ratio * uses.amount
+        
+    if request.is_ajax() and request.method == 'POST':
+        recipe_id = request.POST.get('recipe', None)
+        portions = request.POST.get('portions', None)
+        
+        if recipe_id and portions:
+            try:
+                recipe = Recipe.objects.get(pk=recipe_id)
+                usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe)
+            except Recipe.DoesNotExist, UsesIngredient.DoesNotExist:
+                raise Http404
+            
+            ratio = float(portions)/recipe.portions
+            new_footprint = ratio * recipe.footprint
+            
+            for uses in usess:
+                uses.save_allowed = False
+                uses.amount = ratio * uses.amount
+            
+            data = {'ingredient_list': render_to_string('recipes/ingredient_list.html', {'usess': usess}),
+                    'new_footprint': new_footprint}
+            json_data = simplejson.dumps(data);
+            
+            return HttpResponse(json_data)
+    
+    raise PermissionDenied
 
 @login_required
 def delete_recipe_comment(request, recipe_id, comment_id):
