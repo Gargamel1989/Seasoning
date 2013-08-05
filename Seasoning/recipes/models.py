@@ -88,11 +88,11 @@ class Recipe(models.Model):
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png',
                                 help_text=_('An image of this recipe. Please do not use copyrighted images, these will be removed as quick as possible.'))
-    thumbnail = ImageSpecField([ResizeToFit(250, 250), AddBorder(2, 'Black')], image_field='image', format='PNG')
+    thumbnail = ImageSpecField([ResizeToFit(250, 250)], image_field='image', format='PNG')
     
     # Derived Parameters
     footprint = FloatField(null=True, editable=False)
-    veganism = models.CharField(max_length=2L, choices=Ingredient.VEGANISMS, editable=False)
+    veganism = models.PositiveSmallIntegerField(choices=Ingredient.VEGANISMS, editable=False)
     
     accepted = models.BooleanField(default=False)
     
