@@ -148,12 +148,8 @@ document.getElementById('username').focus()
 </script>
 </div>
 <div id="social-register">
-    <a id="fb-register-btn" href="/auth/fb/register/">
-        <img id="fb-logo" src="{{ STATIC_URL }}img/fb-logo.png" />Registreer via Facebook
-    </a>
+    {% include "includes/fb-button.html" with register=True %}
     <br/>
-    <a id="google-register-btn" href="/auth/google/register/">
-        <img id="google-logo" src="{{ STATIC_URL }}img/google-logo.png" />Registreer via Google
-    </a>
+    {% include "includes/google-button.html" with register=True %}
 </div>
 {% endblock %}

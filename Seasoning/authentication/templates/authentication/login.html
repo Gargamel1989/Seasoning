@@ -38,13 +38,9 @@
 </div>
 
 <div id="social-login">
-	<a id="fb-login-btn" href="/auth/fb/{% if next %}?next={{ next }}{% endif %}">
-		<img id="fb-logo" src="{{ STATIC_URL }}img/fb-logo.png" />Aanmelden met Facebook
-	</a>
+	{% include "includes/fb-button.html" %}
 	<br/>
-	<a id="google-login-btn" href="/auth/google/{% if next %}?next={{ next }}{% endif %}">
-		<img id="google-logo" src="{{ STATIC_URL }}img/google-logo.png" />Aanmelden met Google
-	</a>
+    {% include "includes/google-button.html" %}
 </div>
 
 <div id="register">
