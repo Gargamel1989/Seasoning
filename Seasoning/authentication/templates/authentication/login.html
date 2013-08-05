@@ -27,7 +27,6 @@
 		
 		<div id="extra-login-links">		    		
 			<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
-			<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
 		</div>
 		
 		<input type="submit" value="Aanmelden" id="login-submit"/>
@@ -46,5 +45,12 @@
 	<a id="google-login-btn" href="/auth/google/{% if next %}?next={{ next }}{% endif %}">
 		<img id="google-logo" src="{{ STATIC_URL }}img/google-logo.png" />Aanmelden met Google
 	</a>
+</div>
+
+<div id="register">
+    <h2>
+        Nog niet geregistreerd?
+    </h2>
+    {% include "includes/registration-button.html" %}
 </div>
 {% endblock %}

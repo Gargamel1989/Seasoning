@@ -11,7 +11,6 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.template.response import TemplateResponse
 from django.contrib.auth.views import login as django_login, logout
 from django.utils.translation import ugettext_lazy as _
-from authentication.forms import SocialPasswordChangeForm
 from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
 
 @login_required
@@ -19,7 +18,7 @@ def public_profile(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     recipes = user.recipes.all()
     
-    return render(request, 'authentication/public_profile.html', {'user': user,
+    return render(request, 'authentication/public_profile.html', {'viewed_user': user,
                                                                   'recipes': recipes})
 
 @login_required

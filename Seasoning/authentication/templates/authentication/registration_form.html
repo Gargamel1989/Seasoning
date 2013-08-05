@@ -38,7 +38,8 @@ $(function() {
     $('#id_date_of_birth').datepicker({ showAnim: "fadeIn",
                                         changeMonth: true,
                                         changeYear: true,
-                                        maxDate: -365
+                                        maxDate: -365,
+                                        dateFormat: "dd-mm-yy",
     });
     
 })
@@ -50,7 +51,7 @@ $(function() {
 {% block content %}
 
 <div id="seasoning-register">
-    <form action="/register/" method="post" class="account-form">
+    <form action="/register/" method="post" id="registration-form">
 	{% csrf_token %}
   	
 	{{ form.non_field_errors }}
@@ -136,8 +137,10 @@ $(function() {
         {% endif %}
         
     </div>
-  
-	<input type="submit" value="Registreer" id="register-submit" tabindex=9 />
+    
+    <div id="registration-submit-button" onclick="document.registration-form.submit()">
+        {% include "includes/registration-button.html" %}
+    </div>
 </form>
 
 <script type="text/javascript">

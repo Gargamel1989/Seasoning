@@ -97,6 +97,7 @@ class EmailUserCreationForm(forms.ModelForm):
                                 help_text=_('Please enter the same password as above for verification purposes.'))
     
     date_of_birth = forms.DateField(widget=forms.TextInput(attrs={'tabindex':'6'}),
+                                    input_formats=['%d-%m-%Y', '%Y-%m-%d', '%d/%m/%Y'],
                                     help_text=_('Your birthday will be used for age validation and possible some anonymous statistics about the '
                                                 'users of Seasoning.'))
                              
@@ -106,7 +107,7 @@ class EmailUserCreationForm(forms.ModelForm):
     
     tos = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'required',
                                                                'tabindex': '8'}),
-                             label=_(u'I have read and agree to the Terms of Service'),
+                             label=mark_safe(_(u'I have read and agree to the <a href="/terms/">Terms of Service</a>')),
                              error_messages={'required': _("You must agree to the terms to register")})
     
     def clean(self):

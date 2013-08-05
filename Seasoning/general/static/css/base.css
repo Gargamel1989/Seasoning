@@ -25,6 +25,7 @@ font-family:Lobster, Verdana, Geneva, sans-serif;
 h2 {
 margin:0;
 font-size:1.2em;
+font-family:Lobster, Verdana, Geneva, sans-serif;
 }
 
 a {
@@ -430,14 +431,8 @@ padding: 0 10px;
 }
 
 #content h1 {
-color: #5B6553;
 border-bottom: 2px solid #5B6553;
 margin-bottom: 20px;
-}
-
-#content h2 {
-color: #76BA3B;
-font-family:Lobster, Verdana, Geneva, sans-serif;
 }
 
 /*****************************
@@ -557,6 +552,13 @@ form input {
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+#register {
+	clear: both;
+	padding-top: 50px;
+}
+
+
+
 /*
  * Registration Page
  */
@@ -592,11 +594,12 @@ form input {
 	float: left;
 }
 
-#seasoning-register input#register-submit {
-	margin-top: 5px;
-	width: 150px;
-	float: right;
+#seasoning-register #registration-submit-button {
+	margin: auto;
+	width: 250px;
+	display: block;
 	clear: both;
+	text-align: center;
 }
 
 #social-register {

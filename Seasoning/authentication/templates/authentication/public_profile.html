@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
 {% block title %}Publiek Profiel{% endblock %}
-{% block page_name %}Profiel van {{ user.full_name }}{% endblock %}
+{% block page_name %}Profiel van {{ viewed_user.full_name }}{% endblock %}
 
 {% block content %}
 
 <p>
-    <img src="{{ MEDIA_URL }}{{ user.avatar }}"> Naam: {{ user.get_full_name }}
+    <img src="{{ MEDIA_URL }}{{ viewed_user.avatar }}"> Naam: {{ viewed_user.get_full_name }}
 </p>
 <p>
-    Rang: {{ user.rank }}
+    Rang: {{ viewed_user.rank }}<br />
+    Recepten toe te voegen tot volgende rang: {{ viewed_user.recipes_until_next_rank }}
 </p>
 <div>
     Toegevoegde recepten: 

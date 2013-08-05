@@ -39,6 +39,7 @@ class Cuisine(models.Model):
     
     class Meta:
         db_table = 'cuisine'
+        ordering = ["name"]
     
     name = models.CharField(max_length=50)
     
@@ -69,7 +70,7 @@ class Recipe(models.Model):
     
     course = models.PositiveSmallIntegerField(choices=COURSES,
                                               help_text=_("The type of course this recipe will provide."))
-    cuisine = models.ForeignKey(Cuisine, db_column='cuisine',
+    cuisine = models.ForeignKey(Cuisine, db_column='cuisine', default=lambda: Cuisine.objects.get(name="Andere"),
                                 help_text=_("The type of cuisine this recipe represents."))
     description = models.TextField(help_text=_("A few sentences describing the recipe."))
     portions = models.PositiveIntegerField(help_text=_('The average amount of people that can be fed by this recipe '
