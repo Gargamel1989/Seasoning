@@ -1,6 +1,10 @@
+/*
+ * General Elements
+ */
+
 html {
 overflow-y:scroll;
-   height:100%;
+height:100%;
 font-size: 100%;
 }
 
@@ -9,7 +13,7 @@ margin: 0;
 font-family:Verdana, Geneva, sans-serif;
 font-size: 1em;
 color:#5B6553;
-   height:100%;
+height:100%;
 }
 
 h1 {
@@ -20,7 +24,7 @@ font-family:Lobster, Verdana, Geneva, sans-serif;
 
 h2 {
 margin:0;
-font-size:25px;
+font-size:1.2em;
 }
 
 a {
@@ -30,21 +34,32 @@ transition:all .3s ease-out;
 
 a:hover {
 color:#76BA3B;
-transition:all .3s ease-out;
 }
 
 .clear-div {
-	clear: both;
-	float: none;
+clear: both;
+float: none;
+}
+
+
+
+/*
+ * Standard Django Elements
+ */
+
+form .empty {
+	display: none;
 }
 
 #id_honeypot {
 	display: none;
 }
 
-.ui-autocomplete {
-	
-}
+
+
+/*
+ * Skeleton Page CSS
+ */
 
 #container {
    min-height:100%;
@@ -271,9 +286,10 @@ position: relative;
 
 
 
-/****************************
- *   Homepage styles        *
- ****************************/
+/*
+ * Homepage CSS
+ */
+
 #introbox {
 height:300px;
 min-width: 660px;
@@ -301,134 +317,6 @@ overflow: hidden;
 
 #introbox #introbox-loader {
 padding-top:100px;
-}
-
-#floatingCirclesG {
-position:relative;
-width:60px;
-height:60px;
--moz-transform:scale(0.6);
--webkit-transform:scale(0.6);
--ms-transform:scale(0.6);
--o-transform:scale(0.6);
-transform:scale(0.6);
-margin:auto;
-}
-
-.f_circleG {
-position:absolute;
-background-color:#6AB030;
-height:11px;
-width:11px;
--moz-border-radius:5px;
--moz-animation-name:f_fadeG;
--moz-animation-duration:1.44s;
--moz-animation-iteration-count:infinite;
--moz-animation-direction:linear;
--webkit-border-radius:5px;
--webkit-animation-name:f_fadeG;
--webkit-animation-duration:1.44s;
--webkit-animation-iteration-count:infinite;
--webkit-animation-direction:linear;
--ms-border-radius:5px;
--ms-animation-name:f_fadeG;
--ms-animation-duration:1.44s;
--ms-animation-iteration-count:infinite;
--ms-animation-direction:linear;
--o-border-radius:5px;
--o-animation-name:f_fadeG;
--o-animation-duration:1.44s;
--o-animation-iteration-count:infinite;
--o-animation-direction:linear;
-border-radius:5px;
-animation-name:f_fadeG;
-animation-duration:1.44s;
-animation-iteration-count:infinite;
-animation-direction:linear;
-}
-
-#frotateG_01 {
-left:0;
-top:25px;
--moz-animation-delay:.54s;
--webkit-animation-delay:.54s;
--ms-animation-delay:.54s;
--o-animation-delay:.54s;
-animation-delay:.54s;
-}
-
-#frotateG_02 {
-left:7px;
-top:7px;
--moz-animation-delay:.72s;
--webkit-animation-delay:.72s;
--ms-animation-delay:.72s;
--o-animation-delay:.72s;
-animation-delay:.72s;
-}
-
-#frotateG_03 {
-left:25px;
-top:0;
--moz-animation-delay:.9s;
--webkit-animation-delay:.9s;
--ms-animation-delay:.9s;
--o-animation-delay:.9s;
-animation-delay:.9s;
-}
-
-#frotateG_04 {
-right:7px;
-top:7px;
--moz-animation-delay:1.08s;
--webkit-animation-delay:1.08s;
--ms-animation-delay:1.08s;
--o-animation-delay:1.08s;
-animation-delay:1.08s;
-}
-
-#frotateG_05 {
-right:0;
-top:25px;
--moz-animation-delay:1.26s;
--webkit-animation-delay:1.26s;
--ms-animation-delay:1.26s;
--o-animation-delay:1.26s;
-animation-delay:1.26s;
-}
-
-#frotateG_06 {
-right:7px;
-bottom:7px;
--moz-animation-delay:1.44s;
--webkit-animation-delay:1.44s;
--ms-animation-delay:1.44s;
--o-animation-delay:1.44s;
-animation-delay:1.44s;
-}
-
-#frotateG_07 {
-left:25px;
-bottom:0;
--moz-animation-delay:1.62s;
--webkit-animation-delay:1.62s;
--ms-animation-delay:1.62s;
--o-animation-delay:1.62s;
-animation-delay:1.62s;
-}
-
-#frotateG_08 {
-left:7px;
-bottom:7px;
--moz-animation-delay:1.8s;
--webkit-animation-delay:1.8s;
--ms-animation-delay:1.8s;
--o-animation-delay:1.8s;
-animation-delay:1.8s;
-}
-
-100% {
-background-color:#6AB030;
 }
 
 #introbox-container #slideshow {

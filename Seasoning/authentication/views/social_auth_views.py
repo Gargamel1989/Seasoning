@@ -185,6 +185,7 @@ def social_disconnect(request, backend):
         messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your ' + backend.name() + ' account.'))
     return redirect('/account/settings/')
 
+
 @csrf_exempt
 def social_register(request, backend, disallowed_url='registration_disallowed'):
     backend = BACKENDS[backend]
@@ -207,8 +208,8 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
                     return redirect('/register/')
                 if user_info:
                     try:
-                        # Check if a user with this Google id already exists
-                        User.objects.get(google_id=user_info['id'])
+                        # Check if a user with this social id already exists
+                        User.objects.get(**{backend.ID_FIELD: user_info['id']})
                         messages.add_message(request, messages.INFO, _('A user has already registered with your ' + backend.name() + ' account. If this is you, please log in, otherwise, contact an administrator'))
                         return redirect('/login/')
                     except User.DoesNotExist:
@@ -262,6 +263,24 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
         except PermissionDenied:
             messages.add_message(request, messages.INFO, _('You cannot use this type of ' + backend.name() + ' account to register on Seasoning. Please try another...'))            
             return redirect('/register/')
+        
+        try:
+            # Check if a user with this social id already exists
+            User.objects.get(**{backend.ID_FIELD: user_info['id']})
+            messages.add_message(request, messages.INFO, _('A user has already registered with your ' + backend.name() + ' account. If this is you, please log in, otherwise, contact an administrator'))
+            return redirect('/login/')
+        except User.DoesNotExist:
+            pass
+        try:
+            # Check if a user with this Facebook email is already registered
+            User.objects.get(email=user_info['email'])
+            messages.add_message(request, messages.INFO, _('A user has already registered on Seasoning with the email in your ' + backend.name() + '. If this is your account, would you like to connect it to your ' + backend.name() + 'account?'))
+            return redirect(backend.connect_url)
+        except User.DoesNotExist:
+            # A user with this Google email does not exist, so we will register a new one
+            pass
+                    
+                    
         
         context = {'backend': backend,
                    'form': form,
