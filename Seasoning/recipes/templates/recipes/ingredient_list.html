@@ -13,8 +13,12 @@
 			<a href="#" title="Meer informatie over dit ingredient"><img src="/static/img/icons/add.png" /></a>
 		</span>
 		<span class="ingredient-footprint">
-			{{ uses.footprint|floatformat:"3" }} kgCO2
+			<span class="footprint-number">{{ uses.footprint|floatformat:"3" }}</span> kgCO2
 		</span>
+        <div class="footprint-percentage">
+            <span class="percentage-number"> </span>
+            <div class="footprint-fill"> </div>
+        </div>
 	</span>
 	<div class="clear-div"> </div>
 </div>
