@@ -181,7 +181,7 @@
     	<div>Dit is een {{ recipe.get_veganism_display|lower }} recept</div>
     </div>
     
-	<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint }}</span> kgCO2 ({{ recipe.footprint_pp }} pp.)</p>
+	<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint|floatformat:"3" }}</span> kgCO2 ({{ recipe.footprint_pp|floatformat:"3" }} kgCO2 pp.)</p>
     
     <strong>Beschrijving</strong>
     <p>{{ recipe.description|linebreaks }}</p>

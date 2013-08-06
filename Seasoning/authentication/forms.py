@@ -37,7 +37,7 @@ class ShownImageInput(ClearableFileInput):
     the file input field
     
     """
-    initial_text = _('Avatar')
+    initial_text = _(' ')
     
     def render(self, name, value, attrs=None):
         substitutions = {

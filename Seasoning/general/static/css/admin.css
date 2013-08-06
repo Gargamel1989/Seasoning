@@ -1,220 +1,294 @@
-/**
- * 	A CSS file for the admin pages
+/*
+ * General Elements
  */
+html {
+	overflow-y:scroll;
+	height:100%;
+	font-size: 100%;
+}
+
+body {
+	margin: 0;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size: 1em;
+	color:#5B6553;
+	height:100%;
+}
+
+h1 {
+	margin-bottom: 20px;
+}
+
+a {
+	color:#5B6553;
+	transition:all .3s ease-out;
+}
+
+a:hover {
+	color:#76BA3B;
+}
+
+/*
+ * Standard Elements
+ */
+.clear-div {
+	clear: both;
+	float: none;
+}
+
+
 
 
 /*
- * Edit Ingredient Page
+ * Skeleton Page CSS
  */
-form {
-    margin: 0;
-    padding: 0;
-    width: 700px;
+
+#container {
+   min-height:100%;
+   position:relative;
 }
 
-fieldset {
-    -moz-border-bottom-colors: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    border-color: #CCCCCC -moz-use-text-color -moz-use-text-color;
-    border-right: medium none;
-    border-style: solid none none;
-    border-width: 1px medium medium;
-    width: 750px;
+#header {
+	height:65px;
+	min-width: 660px;
+	background-color:#76BA3B;
+	background-image:linear-gradient(to top,#629B31 0%,#76BA3B 94%);
+	border-bottom:1px solid #5B6553;
+	box-shadow:0 1px 2px 0 rgba(0,0,0,0.3);
+	z-index:4;
+	position:relative;
+	overflow: visible;
 }
 
-legend {
-    background: none repeat scroll 0 0 transparent;
-    color: #003366;
-    font-size: 1.3em;
-    font-weight: bold;
-    margin: 1em 0;
-    padding: 0 0.5em;
+#header #nav-container {
+	max-width:960px;
+	min-width: 640px;
+	height:100%;
+	position:relative;
+	margin:auto;
+	padding:0 10px;
 }
 
-fieldset div.field-group {
-	float: left;
-	clear: both;
-	margin: 1em 0 1em 2em;
+#nav-container ul {
+	list-style:none;
+	position:absolute;
+	padding:0;
+	margin:0;
 }
 
-fieldset div.field-group table td {
-	padding: 0 14px 5px 0;
+#nav-container li {
+	display:inline-block;
+	padding-right: 15px;
+	font-size: 1em;
 }
 
-fieldset td.delete input {
-	width: auto;
+#nav-container a {
+	text-decoration:none;
+	color:#F4FAEF;
 }
 
-fieldset div.field-group div {
-	float: left;
+#nav-container a:hover {
+	color:#598c2c;
+	text-decoration:none;
 }
 
-fieldset div.field-group div.field {
-	clear: both;
-	margin-top: 5px;
+#nav-container #main-nav {
+	bottom:5px;
 }
 
-fieldset .vertical-fields {
-	margin-right: 20px;
+#nav-container #main-nav li {
+	padding-right:20px;
 }
 
-fieldset .delete {
+#nav-container #main-nav li a {
+	font-weight:700;
+}
+
+#nav-container #account-controls {
+	bottom:5px;
+	right:10px;
+}
+
+#account-controls #account-settings-link {
+	font-weight: 600;
+	padding-right: 20px;
+}
+
+#account-settings-link a {
+	position: relative;
+}
+
+#account-controls #account-settings-link #img-darkener {
+	background: #1E2F0F;
+	position: absolute;
+	left: -35px;
+	bottom: -2px;
+}
+
+#account-controls #account-settings-link img {
+	height: 30px;
+	width: 30px;
+	background: white;
+	transition:all .3s ease-out;
+}
+
+#account-controls #account-settings-link:hover img {
+	opacity: .5;
+	transition:all .3s ease-out;
+}
+
+#nav-container .sub-nav {
+	bottom: -25px;
+	left: 400px;
+	opacity: 0;
+	transition:all .3s ease-out;
+}
+
+#nav-container .sub-nav.active {
+	opacity: 1;
+	left: 10px;
+	transition:all .3s ease-out;
+}
+
+#nav-container .sub-nav li a {
+	color:#76BA3B;
+}
+
+#nav-container .sub-nav li a:hover {
+	color:#598c2c;
+}
+
+#body {
+	width: 960px;
+	margin: 40px auto;
+	padding-bottom: 50px;
+}
+
+#body div.breadcrumbs {
+	background: none;
+	padding: 0;
+	margin-bottom: 10px;
+}
+
+#body .messages {
+	list-style: none;
+	padding: 5px;
+	margin: 0 0 20px 0;
+	background-color: rgba(98, 155, 49, 0.5);
+	border:1px dashed #5B6553;
+	box-shadow:1px 1px 2px 0 rgba(0,0,0,0.3);
+}
+
+#body .messages li {
+	opacity: 1;
+}
+
+#body #content {
 	margin: 0;
 }
 
-label {
+
+#footer-clearer {
+	clear: both;
+	height: 20px;
+	padding-bottom: 50px;
+}
+
+#footer {
+	display: block;
+	height: 50px;
+	min-width: 660px;
+	width: 100%;
+	border-top:1px solid #5B6553;
+	position: relative;
+	background-color: #2F2F2F;
+	background-image: url("/static/img/bg.jpg");
+	position: absolute;
+	bottom: 0px;
+	box-shadow:0 -2px 2px 0 rgba(0,0,0,0.3);
+}
+
+#footer #footer-container {
+	max-width:960px;
+	min-width: 640px;
+	margin: auto;
+	padding: 5px 0;
+	color:#F4FAEF;
+	position: relative;
+}
+
+#footer-container #cc-license {
+	position: absolute;
+	left: 0;
+	top: 10px;
+}
+
+#footer-container #footer-links-container {
+	margin: 0;
+	padding: 0 110px 0 110px;
+	overflow: hidden;
+	text-align: center;
+}
+
+#footer-links-container #footer-links {
+	display: inline-block;
+	height: 40px;
+	overflow: hidden;
+}
+
+#footer-container ul {
+	margin: 0;
+	padding: 0;
+	line-height: 40px;
+}
+
+#footer-container ul li {
 	float: left;
-    width: 204px;
-    text-align: left;
+	list-style: disc outside none;
+	margin-left: 1.8em;
+	font-size: .7em;
 }
 
-input {
-	float: left;
-	width: 200px;
-}
-
-textarea {
-	float: left;
-	width: 320px;
-}
-
-select {
-	float: left;
-	margin-left: 20px;
-}
-
-.vertical-fields input,textarea {
-	margin-top: 0.5em
-}
-
-.field-group .field input {
-	margin-left: 20px;
-}
-
-#sources-field textarea {
-	width: 666px;
-	height: 3.5em;
-}
-
-#image-source textarea {
-	width: 350px;
-	height: 3.5em;
-	margin-left: 20px;
-}
-
-
-fieldset div select {
-    padding: 1px;
-    width: 200px;
-}
-
-#can_use_unit-group td {
-	padding-right: 10px;
-}
-
-#can_use_unit-group label {
-	width: 120px;
-}
-
-td.checkbox {
-	float: left;
-}
-
-#can_use_unit-group .checkbox input {
-	float: left;
-	width: 10px;
-}
-
-#can_use_unit-group select {
+#footer-container ul li.first {
+	list-style: none;
 	margin-left: 0;
+}
+
+#footer-container a {
+	color: #F4FAEF;
+	text-decoration: none;
+}
+
+#footer-container a:hover {
+	color: #A0D373;
+}
+
+#footer-container #social-network-links {
+	position: absolute;
+	top: 10px;
+	right: 0;
+}
+
+#footer-container #social-network-links a {
+	margin-left: 0px;
+	display: inline-block;
+}
+
+#footer-container img.social-logo {
+	width: 30px;
+ 	border-radius: 5px;
+}
+
+td.field-transport_method {
 	width: 150px;
 }
 
-#available_in_country-group select, input {
-	margin-left: 0;
-	width: 120px;
+td.field-location {
+	width: 250px;
 }
 
-#available_in_sea-group select, input {
-	margin-left: 0;
-	width: 120px;
-}
-
-#available_in_country-group label {
-	width: auto;
-}
-
-#available_in_country-sea label {
-	width: auto;
-}
-
-#available_in_country-group .date input {
-	width: 100px;
-}
-
-#available_in_country-sea .date input {
-	width: 100px;
-}
-
-#available_in_country-group td.date {
-	max-width: none;
-}
-
-#available_in_sea-group td.date {
-	max-width: none;
-}
-
-#available_in_country-group td {
-	margin-left: 0;
-	max-width: 150px;
-}
-
-#available_in_sea-group td {
-	margin-left: 0;
-	max-width: 150px;
-}
-
-input#submit-btn {
-	margin-left: 2em;
-}
-
-input:focus, textarea:focus {
-    background: none repeat scroll 0 0 #EFEFEF;
-    color: #000000;
-}
-
-#ing-image {
-	float: left;
-	clear: both;
-	margin: 10px 0 0 224px;
-	width: 206px;
-	height: 206px;
-}
-
-.formset a>img {
-	float: left;
-	width: 30px;
-	height: 30px;
-	margin-left: 20px;
-}
-
-.empty {
-	display: none;
-}
-
-.errorlist {
-	padding: 0;
-	text-align: left;
-	color: red;
-	list-style-type: none;
-}
-
-.VE-fieldset {
-	display: none;
-}
-
-.FI-fieldset {
-	display: none;
+#preview-title {
+	margin: 20px 0;
+	font-size: 1.5em;
+	border-bottom: 2px solid #5B6553;
 }

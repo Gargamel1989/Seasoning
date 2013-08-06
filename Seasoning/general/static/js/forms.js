@@ -53,8 +53,7 @@ $(document).ready(function() {
 			add_form(prefix);
 			return false;
 		})
-		$(this).append(button);
-		$(this).children('.formset-button-container')
+		$(this).find('.formset-button-container').append(button);
 	})
 	
 	/*

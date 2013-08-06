@@ -21,7 +21,58 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from ingredients.models import Ingredient
+from django.forms.widgets import Widget, Select
+from django.utils.safestring import mark_safe
+import calendar
 
+class MonthWidget(Widget):
+        
+    month_field = '%s_month'
+    
+    def render(self, name, value, attrs=None):
+        try:
+            month_val = value.month
+        except AttributeError:
+            month_val = None
+        
+        output = []
+
+        if 'id' in self.attrs:
+            id_ = self.attrs['id']
+        else:
+            id_ = 'id_%s' % name
+
+        month_choices = ((0, '---'),
+                         (1, 'Januari'), (2, 'Februari'), (3, 'Maart'), (4, 'April'), (5, 'Mei'), (6, 'Juni'),
+                         (7, 'Juli'), (8, 'Augustus'), (9, 'September'), (10, 'Oktober'), (11, 'November'), (12, 'December'))
+        local_attrs = self.build_attrs(id=self.month_field % id_)
+        s = Select(choices=month_choices)
+        select_html = s.render(self.month_field % name, month_val, local_attrs)
+        output.append(select_html)
+        
+        return mark_safe(u'\n'.join(output))
+
+    def id_for_label(self, id_):
+        return '%s_month' % id_
+    id_for_label = classmethod(id_for_label)
+
+    def value_from_datadict(self, data, files, name):
+        m = data.get(self.month_field % name)
+        if m == "0":
+            return None
+        if m:
+            return '%s-%s-%s' % (2000, m, 1)
+        return data.get(name, None)
+
+class LastOfMonthWidget(MonthWidget):
+    def value_from_datadict(self, data, files, name):
+        m = data.get(self.month_field % name)
+        if m == "0":
+            return None
+        if m:
+            return '%s-%s-%s' % (2000, m, calendar.monthrange(2000, int(m))[1])
+        return data.get(name, None)
+    
 class AutoCompleteSelectIngredientWidget(forms.widgets.TextInput):
 
     def render(self, name, value, attrs=None):

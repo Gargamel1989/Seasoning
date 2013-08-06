@@ -21,7 +21,7 @@ import os, time
 from django.db import models
 from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
-from imagekit.processors.resize import ResizeToFit, AddBorder
+from imagekit.processors.resize import ResizeToFit
 import ingredients
 from ingredients.models import CanUseUnit, Ingredient
 import datetime

@@ -17,102 +17,22 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 import time
 import os
-from authentication.models import User
-from ingredients.models import Ingredient
-from recipes.models import Recipe
-from django.template.loaders.app_directories import Loader
-from django.core.exceptions import PermissionDenied
+from general.models import StaticPage
 
 def home(request):
     recipe_otw = None#Recipe.objects.get(pk=1)
     return render(request, 'homepage.html', {'recipe_otw': recipe_otw})
 
-def contact(request):
-    return render(request, 'static_page.html', {'title': 'Contact',
-                                                'static_page': 'seasoning/contact.html'})
-
-def motifs(request):
-    return render(request, 'static_page.html', {'title': 'Motivering',
-                                                'static_page': 'seasoning/motifs.html'})
-
-def privacypolicy(request):
-    return render(request, 'static_page.html', {'title': 'Privacybeleid',
-                                                'static_page': 'seasoning/privacypolicy.html'})
-
-def sitemap(request):
-    return render(request, 'static_page.html', {'title': 'Sitemap',
-                                                'static_page': 'seasoning/sitemap.html'})
-
-def help(request):
-    return render(request, 'static_page.html', {'title': 'Help',
-                                                'static_page': 'seasoning/help.html'})
-
-def terms(request):
-    return render(request, 'static_page.html', {'title': 'Voorwaarden',
-                                                'static_page': 'seasoning/terms.html'})
-
-def information(request):
-    return render(request, 'static_page.html', {'title': 'Informatie',
-                                                'static_page': 'seasoning/information.html'})
-
-def news(request):
-    return render(request, 'static_page.html', {'title': 'Nieuws',
-                                                'static_page': 'seasoning/news.html'})
-
-def about(request):
-    return render(request, 'static_page.html', {'title': 'Over Seasoning',
-                                                'static_page': 'seasoning/about.html'})
-
-def admin(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-   
-    users = len(User.objects.all())
-    ingredients = len(Ingredient.objects.all())
-    accepted_ingredients = len(Ingredient.objects.filter(accepted=True))
-    recipes = len(Recipe.objects.all())
-    return render(request, 'admin/main.html', {'users': users,
-                                               'ingredients': ingredients,
-                                               'accepted_ingredients': accepted_ingredients,
-                                               'recipes': recipes})
-
-def edit_static_pages(request, page_name=None):
-    if not request.user.is_superuser:
-        raise PermissionDenied
+def static_page(request, url):
+    static_page = get_object_or_404(StaticPage, url=url)
+    return render(request, 'static_page.html', {'title': static_page.name,
+                                                'body_html': static_page.body_html})
     
-    context = {}
-    if page_name:
-        page = 'seasoning/' + page_name + '.html'
-        searcher = Loader().get_template_sources(page)
-        while True:
-            try:
-                path = searcher.next()
-                f = open(path, 'r')
-                f.close()
-                break
-            except IOError:
-                continue
-            
-    if request.method == 'POST':
-        f.open(path, 'w+')
-        f.write(request.POST['content'])
-        f.close()
-    
-    if page_name:
-        f = open(path, 'r+')
-        contents = f.read()
-        f.close()
-        context['page_name'] = page_name
-        context['page'] = page
-        context['contents'] = contents
-        
-    return render(request, 'admin/edit_static_pages.html', context)
-
 @staff_member_required
 def backup_db(request):
     '''

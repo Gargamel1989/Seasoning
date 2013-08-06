@@ -22,6 +22,7 @@
 
 {% block extra_script %}
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="{{ STATIC_URL }}js/forms.js"></script>
 <script>
     $(document).tooltip({ 
         items: ".tooltip-field input,select,textarea", 
@@ -37,17 +38,6 @@
 {% endblock %}
 
 {% block page_name %}Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
-
-{% block extrahead %}
-    <script src="{{ STATIC_URL }}js/autocomplete_ingredients.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}js/formset.js" type="text/javascript"></script>
-    <script type="text/javascript">
-		$(document).ready(function() {
-			$('#uses-addbtn').click(function() {
-				return addForm(this, "uses");
-			})});
-	</script>
-{% endblock %}
 
 
 {% block content %}
@@ -182,7 +172,7 @@
   
   
   {{ usesingredient_formset.management_form }}
-  <table>
+  <table id="uses-formset" class="formset">
     {% for form in usesingredient_formset %}
     {% if forloop.first %}
     <tr>
@@ -217,9 +207,9 @@
 	{{ usesingredient_formset.empty_form.amount }} {{ usesingredient_formset.empty_form.unit }}
       </td>
     </tr>
-    <tr>
-		<td><a href="#" id="uses-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a></td>
-	</tr>
+                <tr>
+                    <td class="formset-button-container"> </td>
+                </tr>
   </table>
   <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
 </form>
