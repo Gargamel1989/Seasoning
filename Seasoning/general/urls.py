@@ -17,29 +17,22 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
+from django.contrib import admin
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
     # Home Page
     url(r'^$', 'general.views.home', name='home'),
     
-    # Static Pages
-    url(r'^contact/$', 'general.views.contact'),
-    url(r'^motifs/$', 'general.views.motifs'),
-    url(r'^privacypolicy/$', 'general.views.privacypolicy'),
-    url(r'^sitemap/$', 'general.views.sitemap'),
-    url(r'^help/$', 'general.views.help'),
-    url(r'^terms/$', 'general.views.terms'),
-    url(r'^information/$', 'general.views.information'),
-    url(r'^news/$', 'general.views.news'),
-    url(r'^about/$', 'general.views.about'),
+    # Admin
+    (r'^admin/', include(admin.site.urls)),
     
-    # Admin Pages
-    url(r'^admin/$', 'general.views.admin'),
-    url(r'^admin/static/$', 'general.views.edit_static_pages'),
-    url(r'^admin/static/(.*)/$', 'general.views.edit_static_pages'),
-
     # Backup Database
     url(r'^backup/$', 'general.views.backup_db'),
+    
+    # Catch all - Check if we have a static page with this url
+    url(r'^(.*)/$', 'general.views.static_page')
     
 )

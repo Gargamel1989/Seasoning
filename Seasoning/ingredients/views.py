@@ -148,70 +148,6 @@ def edit_ingredient(request, ingredient_id=None):
         raise PermissionDenied
     
     
-    # This is temporary because it makes ingredient input easier
-    class MonthWidget(Widget):
-        
-        month_field = '%s_month'
-        
-        def render(self, name, value, attrs=None):
-            try:
-                month_val = value.month
-            except AttributeError:
-                month_val = None
-            
-            output = []
-
-            if 'id' in self.attrs:
-                id_ = self.attrs['id']
-            else:
-                id_ = 'id_%s' % name
-    
-            month_choices = ((0, '---'),
-                             (1, 'Januari'), (2, 'Februari'), (3, 'Maart'), (4, 'April'), (5, 'Mei'), (6, 'Juni'),
-                             (7, 'Juli'), (8, 'Augustus'), (9, 'September'), (10, 'Oktober'), (11, 'November'), (12, 'December'))
-            local_attrs = self.build_attrs(id=self.month_field % id_)
-            s = Select(choices=month_choices)
-            select_html = s.render(self.month_field % name, month_val, local_attrs)
-            output.append(select_html)
-            
-            return mark_safe(u'\n'.join(output))
-    
-        def id_for_label(self, id_):
-            return '%s_month' % id_
-        id_for_label = classmethod(id_for_label)
-    
-        def value_from_datadict(self, data, files, name):
-            m = data.get(self.month_field % name)
-            if m == "0":
-                return None
-            if m:
-                return '%s-%s-%s' % (2000, m, 1)
-            return data.get(name, None)
-    
-    class LastOfMonthWidget(MonthWidget):
-        def value_from_datadict(self, data, files, name):
-            m = data.get(self.month_field % name)
-            if m == "0":
-                return None
-            if m:
-                return '%s-%s-%s' % (2000, m, calendar.monthrange(2000, int(m))[1])
-            return data.get(name, None)
-    
-    class AvailableInCountryForm(ModelForm):
-        class Meta:
-            model = AvailableInCountry
-            widgets= {'date_from': MonthWidget,
-                      'date_until': LastOfMonthWidget}
-    
-    class AvailableInSeaForm(ModelForm):
-        class Meta:
-            model = AvailableInSea
-            widgets= {'date_from': MonthWidget,
-                      'date_until': LastOfMonthWidget}
-        
-    #############################################################
-        
-    
     if ingredient_id:
         ingredient = Ingredient.objects.get(pk=ingredient_id)
         new = False
@@ -223,11 +159,9 @@ def edit_ingredient(request, ingredient_id=None):
     SynonymInlineFormSet = inlineformset_factory(Ingredient, Synonym, extra=1)
     CanUseUnitInlineFormset = inlineformset_factory(Ingredient, CanUseUnit, extra=1)
     
-    AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1,
-                                                            form=AvailableInCountryForm)
+    AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1)
     
-    AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1,
-                                                        form=AvailableInSeaForm)
+    AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1)
     
     if request.method == 'POST':
         ingredient_form = IngredientForm(request.POST, request.FILES, instance=ingredient)

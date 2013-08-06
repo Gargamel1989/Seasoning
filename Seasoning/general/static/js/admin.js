@@ -5,15 +5,19 @@ function check_ing_type() {
 	sel = $('#id_type');
 	
 	if (sel.val() == 1) {
-		$('.VE-fieldset').show();
+		$('.field-preservability').show();
+		$('.field-preservation_footprint').show();
+		$('#available_in_country-group').show();
 	} else {
-		$('.VE-fieldset').hide();
+		$('.field-preservability').hide();
+		$('.field-preservation_footprint').hide();
+		$('#available_in_country-group').hide();
 	}
 	
 	if (sel.val() == 2) {
-		$('.FI-fieldset').show();
+		$('#available_in_sea-group').show();
 	} else {
-		$('.FI-fieldset').hide();
+		$('#available_in_sea-group').hide();
 	}
 }
 
@@ -22,12 +26,28 @@ function check_ing_type() {
  */
 $(document).ready(function() {
 	/*
-	 * Edit Ingredient functions
+	 * Only applicable to Ingredient admin page
 	 */
-	// Show and hide certain parts of the form depending on the currently
-	// selected ingredient type
+	ing_reg = /\/admin\/ingredients\/ingredient\/\d*\//
+	if (ing_reg.test(window.location.href)) {
+		$('#body').css('width', '1200px');
+	}
+	$('<div id="synonym-row" class="form-row"></div>').insertAfter('div.field-plural_name');
+	$('#synonym-group').appendTo($('#synonym-row'));
+	
 	check_ing_type();	
 	$('#id_type').change(function() {
 		check_ing_type()
 	});
+	
+	/*
+	 * Only applicable to Static Pages admin page
+	 */
+	static_reg = /\/admin\/general\/staticpage\/\d*\//
+	if (static_reg.test(window.location.href)) {
+		$('<div class="clear-div"> </div><div id="preview-title">Preview:</div><div id="static-page-preview"></div>').insertAfter('#content-main');
+		$('#static-page-preview').html($('#id_body_html').val())
+	}
+		
+	
 });

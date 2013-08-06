@@ -37,7 +37,6 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from django.contrib.auth.hashers import make_password, check_password,\
     is_password_usable
 from django.core.exceptions import PermissionDenied
-import math
 
 
 class UserManager(BaseUserManager):
@@ -226,6 +225,45 @@ class User(models.Model):
         if not delete_recipes:
             self.recipes.all().update(author=None)
         super(User, self).delete(*args, **kwargs)
+        
+
+    def has_perm(self, perm, obj=None):
+        """
+        Returns True if the user has the specified permission. This method
+        queries all available auth backends, but returns immediately if any
+        backend returns True. Thus, a user who has permission from a single
+        auth backend is assumed to have permission in general. If an object is
+        provided, permissions for this specific object are checked.
+        """
+
+        # Active superusers have all permissions.
+        if self.is_active and self.is_superuser:
+            return True
+
+        # Otherwise we need to check the backends.
+        return False
+
+    def has_perms(self, perm_list, obj=None):
+        """
+        Returns True if the user has each of the specified permissions. If
+        object is passed, it checks if the user has all required perms for this
+        object.
+        """
+        for perm in perm_list:
+            if not self.has_perm(perm, obj):
+                return False
+        return True
+
+    def has_module_perms(self, app_label):
+        """
+        Returns True if the user has any permissions in the given app label.
+        Uses pretty much the same logic as has_perm, above.
+        """
+        # Active superusers have all permissions.
+        if self.is_active and self.is_superuser:
+            return True
+
+        return False
 
 try:
     from django.utils.timezone import now as datetime_now

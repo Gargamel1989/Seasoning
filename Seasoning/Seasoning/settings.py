@@ -165,6 +165,9 @@ INSTALLED_APPS = (
     'ingredients',
     'recipes',
     'faq',
+    
+    # Admin
+    'django.contrib.admin',
 )
 
 AUTH_USER_MODEL = 'authentication.User'

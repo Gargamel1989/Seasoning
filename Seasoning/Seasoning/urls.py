@@ -20,9 +20,6 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django.conf.urls import patterns, include
 
 urlpatterns = patterns('',
-    # General Pages
-    (r'^', include('general.urls')),
-
     # Core pages
     (r'^ingredients/', include('ingredients.urls')),
     (r'^recipes/', include('recipes.urls')),
@@ -35,6 +32,8 @@ urlpatterns = patterns('',
     # FAQ
     (r'^faq/', include('faq.urls')),
     
+    # General Pages
+    (r'^', include('general.urls')),
 )
 
 from django.conf import settings

@@ -10,10 +10,10 @@
 	</span>
 	<span class="ingredient-right">
 		<span class="ingredient-moreinfo-button">
-			<a href="#" title="Meer informatie over dit ingredient"><img src="{{ STATIC_URL }}img/icons/add.png" /></a>
+			<a href="#" title="Meer informatie over dit ingredient"><img src="/static/img/icons/add.png" /></a>
 		</span>
 		<span class="ingredient-footprint">
-			{{ uses.footprint }} kgCO2
+			{{ uses.footprint|floatformat:"3" }} kgCO2
 		</span>
 	</span>
 	<div class="clear-div"> </div>
