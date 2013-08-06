@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% block title %}Aanmelden{% endblock %}
 {% block page_name %}Aanmelden bij Seasoning{% endblock %}
 
 {% block content %}
@@ -26,7 +27,6 @@
 		
 		<div id="extra-login-links">		    		
 			<a href="/password/reset/" id="forgotpw">Wachtwoord vergeten?</a>
-			<a href="/register/" id="nyregistered">Nog niet geregistreerd?</a>
 		</div>
 		
 		<input type="submit" value="Aanmelden" id="login-submit"/>
@@ -38,12 +38,15 @@
 </div>
 
 <div id="social-login">
-	<a id="fb-login-btn" href="/auth/fb/{% if next %}?next={{ next }}{% endif %}">
-		<img id="fb-logo" src="{{ STATIC_URL }}img/fb-logo.png" />Aanmelden met Facebook
-	</a>
+	{% include "includes/fb-button.html" %}
 	<br/>
-	<a id="google-login-btn" href="/auth/google/{% if next %}?next={{ next }}{% endif %}">
-		<img id="google-logo" src="{{ STATIC_URL }}img/google-logo.png" />Aanmelden met Google
-	</a>
+    {% include "includes/google-button.html" %}
+</div>
+
+<div id="register">
+    <h2>
+        Nog niet geregistreerd?
+    </h2>
+    {% include "includes/registration-button.html" %}
 </div>
 {% endblock %}

@@ -31,12 +31,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import BaseUserManager
 from django.core import validators
 from imagekit.models.fields import ProcessedImageField
-from imagekit.processors.resize import ResizeToFit, AddBorder
+from imagekit.processors.resize import ResizeToFit
 from django.utils import timezone
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.contrib.auth.hashers import make_password, check_password,\
     is_password_usable
 from django.core.exceptions import PermissionDenied
+import math
 
 
 class UserManager(BaseUserManager):
@@ -148,6 +149,14 @@ class User(models.Model):
         # x.bit_length() - 1 = log2(x) (except for x=0 -> x.bit_length() = 0)
         rank_num = min(8, max(0, len(self.recipes.all()).bit_length() - 1))
         return self.RANKS[rank_num]
+    
+    def recipes_until_next_rank(self):
+        ao_recipes = len(self.recipes.all())
+        current_rank = min(8, max(0, ao_recipes.bit_length() - 1))
+        next_rank = current_rank + 1
+        if next_rank >= 8:
+            return 0
+        return 2**next_rank - ao_recipes
 
     def email_user(self, subject, message, from_email=None):
         """

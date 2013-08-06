@@ -1,0 +1,70 @@
+{% extends "authentication/account_settings.html" %}
+        {% block page_name %}Profiel Instellingen{% endblock %}
+        
+        {% block account_settings %}
+        <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+            <div class="field-wrapper tooltip-field">
+                <label for="id_surname">Naam</label>
+                {% if user.name_changed %}
+                <input id="id_surname" type="text" value="{{ user.surname }}" maxlength="50" disabled />
+                <input id="id_givenname" type="text" value="{{ user.givenname }}" maxlength="30" disabled />
+                {% else %}
+                {{ form.surname }}
+                {{ form.givenname }}
+                {% endif %}
+                <div class="tooltip">Opgelet, je mag je naam maar 1 keer veranderen!</div>
+                
+                {% if form.surname.errors or form.givenname.errors %}
+                <table id="name_errors">
+                    <tr>
+                        <td id="givenname_errors">       
+                            {{ form.givenname.errors }}
+                        </td>
+                        <td id="surname_errors">
+                            {{ form.surname.errors }}
+                        </td>
+                    </tr>
+                </table>
+                {% endif %}
+            </div>
+        
+            <div class="field-wrapper tooltip-field">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                <div class="tooltip">
+                    Wanneer je een nieuw email adres instelt, zal er naar dit adres een activatielink 
+                    verstuurd worden. Het nieuwe adres wordt pas actief wanneer deze link bezocht wordt.
+                </div>
+                
+                {% if form.email.errors %}        
+                    {{ form.email.errors }}
+                {% endif %}
+            </div>
+        
+            <div class="field-wrapper">
+                <label>Wachtwoord</label>
+                <p id="password_p">
+                    {% if user.password == "!" %}Geen wachtwoord ingesteld{% else %}***{% endif %}<br />
+                    <a href="/password/change/">(Wijzig)</a>
+                </p>
+                <div class="clear-div"> </div>
+            </div>
+        
+            <div class="field-wrapper">
+                {{ form.avatar.label_tag }}
+                <img id="avatar_img" src="{{ MEDIA_URL }}{{ user.avatar }}" />
+                <input id="id_avatar" type="file" name="avatar">
+                
+                {% if form.avatar.errors %}        
+                    {{ form.avatar.errors }}
+                {% endif %}
+            </div>
+        
+        <input type="submit" value="Wijzig Account" />
+        </form>
+        {% endblock %}
+        
+        {% block public_profile_active %}{% endblock %}
+        {% block profile_settings_active %}active{% endblock %}

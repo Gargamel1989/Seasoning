@@ -221,6 +221,7 @@ def edit_recipe(request, recipe_id=None):
         recipe_form = AddRecipeForm(instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(instance=recipe)
     
+    context['new_recipe'] = new
     context['recipe_form'] = recipe_form
     context['usesingredient_formset'] = usesingredient_formset
     return render(request, 'recipes/edit_recipe.html', context)

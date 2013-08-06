@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load comments %}
 
+{% block title %}Recept bekijken{% endblock %}
+
 {% block extra_link %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <style>
@@ -46,19 +48,22 @@
             width: 110,
             {% if user_vote %}score: {{ user_vote.score }},{% endif %}
             click: function(score, evt) {
+            	$("#rating-loader").show();
             	$.post('/recipes/vote/',
             		   {'recipe': {{ recipe.id }},
             		    'score': score})
             	.done(function(data) {
             		var new_rating_info = $.parseJSON(data);
             		$('#rating-display').raty('set', {score: parseFloat(new_rating_info['new_rating'])});
-            		$('#total-rating').text(parseFloat(new_rating_info['new_rating']));
+            		$('#total-rating').text(parseFloat(new_rating_info['new_rating']).toFixed(1));
             		$('#total-votes').text(parseInt(new_rating_info['new_novotes']));
+            		$('#rating-loader').hide();
             	});
            	},
         });
         
         $('#custom-portions-input').change(function() {
+        	$('#ingredients-loader').show();
         	$.post('/recipes/portions/',
         		   {'recipe': {{ recipe.id }},
         		    'portions': $('#custom-portions-input').val()})
@@ -71,23 +76,25 @@
         		var parsed_data = $.parseJSON(data);
         		$('#total-footprint').text(parsed_data['new_footprint']);
         		$('#ingredients').html(parsed_data['ingredient_list']);
+        		$('#ingredients-loader').hide();
         	});
         });
     });
 </script>
 {% endblock %}
 
-{% block title %}Recept Bekijken{% endblock %}
-{% block page_name %}{{ recipe.name }}{% endblock %}
-
-{% block content %}
-<div id="below-recipe-name">
+{% block page_name %}
+	{{ recipe.name }}
     <div id="recipe-actions">
         {% if recipe.author == user %}
         <a href="/recipes/edit/{{ recipe.id }}/" title="Wijzig dit recept"><img src="{{ STATIC_URL }}img/icons/edit.png" /></a>
         <a href="/recipes/delete/{{ recipe.id }}/" title="Verwijder dit recept" onclick="return confirm('Bent u zeker dat u dit recept wil verwijderen?')"><img src="{{ STATIC_URL }}img/icons/delete.png" /></a>
         {% endif %}
     </div>
+{% endblock %}
+
+{% block content %}
+<div id="below-recipe-name">
     
     <div id="add-info">
         <span id="author">Toegevoegd door <a href="/profile/{{ recipe.author.id }}/">{{ recipe.author.get_full_name }}</a></span><br />
@@ -100,14 +107,15 @@
     
 <div id="recipe">
     
-    <div id="img-and-basic-info-wrapper">
+    <div id="img-and-basic-user-options">
         <img id="recipe-img" src="{{ MEDIA_URL }}{{ recipe.image }}"/>
         
         <div id="rating">
             <strong>Populariteit</strong>
             <div id="current-rating">
                 <div id="rating-display"> </div>
-                <span id="rating-numbers">(<span id="total-rating">{% if recipe.rating != None %}{{ recipe.rating }}{% else %} - {% endif %}</span>, <span id="total-votes">{{ recipe.number_of_votes }}</span> ratings)</span>
+                <span id="rating-numbers">(<span id="total-rating">{% if recipe.rating != None %}{{ recipe.rating|floatformat:"-1" }}{% else %} - {% endif %}</span>, <span id="total-votes">{{ recipe.number_of_votes }}</span> ratings)</span>
+                <span id="loader-hider" style="margin-left:10px;height:16px;display:inline-block;"><span id="rating-loader" style="display:none;">{% include "includes/ajax-loader.html" %}</span></span>
             </div>
             <div id="user-rating">
             	Jouw rating: 
@@ -163,18 +171,28 @@
         </div>
     </div>
     
-    
+    <div id="basic-info">
     <p>Soort maaltijd: {{ recipe.get_course_display }}</p>
     <p>Keuken: {{ recipe.cuisine }}</p>
-    <p>Veganisme: {{ recipe.get_veganism_display }}</p>
-    <p>Beschrijving: {{ recipe.description }}</p>
+    <div id="veganism">
+    	<img {% if recipe.veganism == 2 %}class="active"{% endif %} src="{{ STATIC_URL }}img/vegan.png" />
+    	<img {% if recipe.veganism == 1 %}class="active"{% endif %} src="{{ STATIC_URL }}img/vegetarian.png" />
+    	<img {% if recipe.veganism == 0 %}class="active"{% endif %} src="{{ STATIC_URL }}img/non-vegetarian.png" />
+    	<div>Dit is een {{ recipe.get_veganism_display|lower }} recept</div>
+    </div>
     
-    <p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint }}</span> kgCO2 ({{ recipe.footprint_pp }} pp.)</p>
+	<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint }}</span> kgCO2 ({{ recipe.footprint_pp }} pp.)</p>
+    
+    <strong>Beschrijving</strong>
+    <p>{{ recipe.description|linebreaks }}</p>
+    
+    </div>
     
     <div class="clear-div"> </div>
     
     <div class="recipe-info-wrapper">
-    	<h2>Ingredienten</h2>
+    	<h2><span style="position:relative;">Ingredienten<div id="ingredients-loader" style="position:absolute;top:2px;right:-55px;height:50px;display:none;">{% include "includes/ajax-loader.html" %}</div></span></h2>
+    	
     	<div id="ingredients">
 			{% include "recipes/ingredient_list.html" %}
 		</div>

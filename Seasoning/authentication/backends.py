@@ -126,7 +126,7 @@ class RegistrationBackend(object):
             activated.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
             login(request, activated)
         return activated
-
+    
     def registration_allowed(self, request):
         """
         Indicate whether account registration is currently permitted,

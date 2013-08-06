@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Instellingen{% endblock %}
+
 {% block extra_link %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <style>
@@ -47,74 +49,34 @@ $(function() {
 <div id="account-settings-container">
     <div id="account-settings">
         {% block account_settings %}
-        <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        	<div class="field-wrapper tooltip-field">
-                <label for="id_surname">Naam</label>
-                {% if user.name_changed %}
-                <input id="id_surname" type="text" value="{{ user.surname }}" maxlength="50" disabled />
-                <input id="id_givenname" type="text" value="{{ user.givenname }}" maxlength="30" disabled />
-                {% else %}
-                {{ form.surname }}
-                {{ form.givenname }}
-                {% endif %}
-                <div class="tooltip">Opgelet, je mag je naam maar 1 keer veranderen!</div>
-                
-                {% if form.surname.errors or form.givenname.errors %}
-                <table id="name_errors">
-                    <tr>
-                        <td id="givenname_errors">       
-        			        {{ form.givenname.errors }}
-        			    </td>
-        			    <td id="surname_errors">
-                            {{ form.surname.errors }}
-                        </td>
-                    </tr>
-                </table>
-                {% endif %}
-        	</div>
-        
-        	<div class="field-wrapper tooltip-field">
-                {{ form.email.label_tag }}
-                {{ form.email }}
-                <div class="tooltip">
-                	Wanneer je een nieuw email adres instelt, zal er naar dit adres een activatielink 
-                	verstuurd worden. Het nieuwe adres wordt pas actief wanneer deze link bezocht wordt.
-                </div>
-                
-                {% if form.email.errors %}        
-        			{{ form.email.errors }}
-                {% endif %}
-        	</div>
-        
-        	<div class="field-wrapper">
-                <label>Wachtwoord</label>
-                <p id="password_p">
-                	{% if user.password == "!" %}Geen wachtwoord ingesteld{% else %}***{% endif %}<br />
-                	<a href="/password/change/">(Wijzig)</a>
-                </p>
-                <div class="clear-div"> </div>
-        	</div>
-        
-        	<div class="field-wrapper">
-                {{ form.avatar.label_tag }}
-                <img id="avatar_img" src="{{ MEDIA_URL }}{{ user.avatar }}" />
-                <input id="id_avatar" type="file" name="avatar">
-                
-                {% if form.avatar.errors %}        
-        			{{ form.avatar.errors }}
-                {% endif %}
-        	</div>
-        
-        <input type="submit" value="Wijzig Account" />
-        </form>
+        <p>
+            <img src="{{ MEDIA_URL }}{{ user.avatar }}"> Naam: {{ user.get_full_name }}
+        </p>
+        <p>
+            Rang: {{ user.rank }}<br />
+            Recepten toe te voegen tot volgende rang: {{ user.recipes_until_next_rank }}
+        </p>
+        <div>
+            Toegevoegde recepten: 
+            {% if not recipes %}
+            <p>
+                Deze gebruiker heeft nog geen recepten toegevoegd!
+            </p>
+            {% else %}
+            <p>
+                {% for recipe in recipes %}
+                <a href="/recipes/{{ recipe.id }}/">{{ recipe.name }}</a><br/>
+                {% endfor %}
+            </p>
+            {% endif %}
+        </div>
         {% endblock %}
     </div>
     <div id="account-settings-links">
     	<ul>
-    		<li class="{% block basic_settings_active %}active{% endblock %}"><a href="/account/settings/">Basis Instellingen</a></li>
-    		<li class="{% block social_settings_active %}{% endblock %}"><a href="/account/settings/social/">Sociale Netwerken</a></li>
+    		<li class="{% block public_profile_active %}active{% endblock %}"><a href="/account/settings/">Publiek Profiel</a></li>
+            <li class="{% block profile_settings_active %}{% endblock %}"><a href="/account/settings/profile/">Profiel Instellingen</a></li>
+            <li class="{% block social_settings_active %}{% endblock %}"><a href="/account/settings/social/">Sociale Netwerken</a></li>
     		<li class="{% block privacy_settings_active %}{% endblock %}"><a href="/account/settings/privacy/">Privacy Instellingen</a></li>
     	</ul>
     </div>

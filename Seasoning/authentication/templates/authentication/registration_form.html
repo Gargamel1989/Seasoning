@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Registreren{% endblock %}
+
 {% block extra_link %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <style>
@@ -36,7 +38,8 @@ $(function() {
     $('#id_date_of_birth').datepicker({ showAnim: "fadeIn",
                                         changeMonth: true,
                                         changeYear: true,
-                                        maxDate: -365
+                                        maxDate: -365,
+                                        dateFormat: "dd-mm-yy",
     });
     
 })
@@ -48,7 +51,7 @@ $(function() {
 {% block content %}
 
 <div id="seasoning-register">
-    <form action="/register/" method="post" class="account-form">
+    <form action="/register/" method="post" id="registration-form">
 	{% csrf_token %}
   	
 	{{ form.non_field_errors }}
@@ -134,8 +137,10 @@ $(function() {
         {% endif %}
         
     </div>
-  
-	<input type="submit" value="Registreer" id="register-submit" tabindex=9 />
+    
+    <div id="registration-submit-button" onclick="document.registration-form.submit()">
+        {% include "includes/registration-button.html" %}
+    </div>
 </form>
 
 <script type="text/javascript">
@@ -143,12 +148,8 @@ document.getElementById('username').focus()
 </script>
 </div>
 <div id="social-register">
-    <a id="fb-register-btn" href="/auth/fb/register/">
-        <img id="fb-logo" src="{{ STATIC_URL }}img/fb-logo.png" />Registreer via Facebook
-    </a>
+    {% include "includes/fb-button.html" with register=True %}
     <br/>
-    <a id="google-register-btn" href="/auth/google/register/">
-        <img id="google-logo" src="{{ STATIC_URL }}img/google-logo.png" />Registreer via Google
-    </a>
+    {% include "includes/google-button.html" with register=True %}
 </div>
 {% endblock %}
