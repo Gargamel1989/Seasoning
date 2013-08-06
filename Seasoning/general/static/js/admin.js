@@ -46,7 +46,10 @@ $(document).ready(function() {
 	static_reg = /\/admin\/general\/staticpage\/\d*\//
 	if (static_reg.test(window.location.href)) {
 		$('<div class="clear-div"> </div><div id="preview-title">Preview:</div><div id="static-page-preview"></div>').insertAfter('#content-main');
-		$('#static-page-preview').html($('#id_body_html').val())
+		$('#static-page-preview').html($('#id_body_html').val());
+		$('#id_body_html').change(function() {
+			$('#static-page-preview').html($('#id_body_html').val());
+		});
 	}
 		
 	
