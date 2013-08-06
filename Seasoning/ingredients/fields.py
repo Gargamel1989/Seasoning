@@ -110,5 +110,5 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
             return ingredient
         else:
             if self.required:
-                raise forms.ValidationError(self.error_message['required'])
+                raise forms.ValidationError(u"This field is required.")
             return None

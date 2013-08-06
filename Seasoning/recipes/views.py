@@ -188,7 +188,7 @@ def edit_recipe(request, recipe_id=None):
                         if not usesingredient_form.is_valid_before_ingrequest():
                             ok = False
                     if not ok:
-                        raise ValidationError
+                        raise ValidationError('Something went wrong...')
                     # All uses_ingredient forms should be valid when ingredients are added
                     if usesingredient_formset.is_valid():
                         # No ingredients have to be added, everything is fine!

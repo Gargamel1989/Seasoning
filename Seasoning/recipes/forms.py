@@ -52,7 +52,7 @@ class UsesIngredientForm(forms.ModelForm):
         if super(UsesIngredientForm, self).is_valid():
             # Check if the form is valid anyway
             return True
-        if not self.cleaned_data['recipe'] or not self.cleaned_data['amount'] or not self.cleaned_data['unit']:
+        if not 'amount' in self.cleaned_data or not 'unit' in self.cleaned_data:
             # Check if any fields except ingredient are invalid, if so, the form would be invalid anyway
             return False
         if not self['ingredient'].value() or len(self['ingredient'].value()) > 50:

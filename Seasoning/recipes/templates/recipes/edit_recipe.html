@@ -170,47 +170,48 @@
   
   <br /><br /><br /><br /><br /><br />
   
-  
-  {{ usesingredient_formset.management_form }}
-  <table id="uses-formset" class="formset">
-    {% for form in usesingredient_formset %}
-    {% if forloop.first %}
-    <tr>
-      <td><label>{{ form.ingredient.label }}</label></td>
-      <td><label>{{ form.amount.label }}</label></td>
-    </tr>
-    {% endif %}
-    <tr class="uses-form">
-    {{ form.id }}
-      <td>
-	{{ form.group.as_hidden }}
-	{{ form.ingredient }}
-      </td>
-      <td>
-	{{ form.amount }} {{ form.unit }}
-      </td>
-    </tr>    
-    {% if form.non_field_errors %}
-    <tr>
-    	<td colspan=2>
-    		{{ form.non_field_errors }}
-    	</td>
-	</tr>
-    {% endif %}
-    {% endfor %}
-    <tr class="empty uses-form">
-      <td>
-	{{ usesingredient_formset.empty_form.group.as_hidden }}
-	{{ usesingredient_formset.empty_form.ingredient }}
-      </td>
-      <td>
-	{{ usesingredient_formset.empty_form.amount }} {{ usesingredient_formset.empty_form.unit }}
-      </td>
-    </tr>
-                <tr>
-                    <td class="formset-button-container"> </td>
-                </tr>
-  </table>
+  <div id="uses-formset" class="formset">
+      {{ usesingredient_formset.management_form }}
+      <table>
+        {% for form in usesingredient_formset %}
+        {% if forloop.first %}
+        <tr>
+          <td><label>{{ form.ingredient.label }}</label></td>
+          <td><label>{{ form.amount.label }}</label></td>
+        </tr>
+        {% endif %}
+        <tr class="uses-form">
+        {{ form.id }}
+          <td>
+    	{{ form.group.as_hidden }}
+    	{{ form.ingredient }}
+          </td>
+          <td>
+    	{{ form.amount }} {{ form.unit }}
+          </td>
+        </tr>    
+        {% if form.non_field_errors %}
+        <tr>
+        	<td colspan=2>
+        		{{ form.non_field_errors }}
+        	</td>
+    	</tr>
+        {% endif %}
+        {% endfor %}
+        <tr class="empty uses-form">
+          <td>
+    	{{ usesingredient_formset.empty_form.group.as_hidden }}
+    	{{ usesingredient_formset.empty_form.ingredient }}
+          </td>
+          <td>
+    	{{ usesingredient_formset.empty_form.amount }} {{ usesingredient_formset.empty_form.unit }}
+          </td>
+        </tr>
+                    <tr>
+                        <td class="formset-button-container"> </td>
+                    </tr>
+      </table>
+  </div>
   <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
 </form>
 

@@ -74,7 +74,7 @@
         			$('#instructions-warning').fadeOut('1000');
         		}
         		var parsed_data = $.parseJSON(data);
-        		$('#total-footprint').text(parsed_data['new_footprint']);
+        		$('#total-footprint').text(parsed_data['new_footprint'].toFixed(3));
         		$('#ingredients').html(parsed_data['ingredient_list']);
         		adjust_footprint_percentages();
         		$('#ingredients-loader').hide();

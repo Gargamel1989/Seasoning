@@ -997,6 +997,9 @@ h1 #recipe-actions {
 	float: left;
 	font-size: 0.7em;
 	margin-left: 5px;
+	position: relative;
+	z-index: 4;
+	color: black;
 }
 
 .footprint-percentage .footprint-fill {
@@ -1049,12 +1052,11 @@ h1 #recipe-actions {
 	height: 16px;
 }
 
-#recipe .recipe-info-wrapper #extra-info {
+.recipe-info-wrapper #extra-info {
 	margin-top: 30px;
 }
-
 #recipe .recipe-info-wrapper p {
-	margin: 0 0 0 10px;
+	margin: 10px 0 0 10px;
 }
 
 #instructions #instructions-warning {

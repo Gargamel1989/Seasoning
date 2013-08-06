@@ -23,7 +23,7 @@ from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
 from imagekit.processors.resize import ResizeToFit
 import ingredients
-from ingredients.models import CanUseUnit, Ingredient
+from ingredients.models import CanUseUnit, Ingredient, Unit
 import datetime
 from django.core.validators import MaxValueValidator
 from django.db.models.fields import FloatField
@@ -175,8 +175,13 @@ class UsesIngredient(models.Model):
         return (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
     
     def clean(self):
-        if not self.unit in [useable_unit.unit for useable_unit in CanUseUnit.objects.all_useable_units(self.ingredient.pk)]:
-            raise ValidationError('This unit cannot be used for measuring this Ingredient.')
+        try:
+            all_useable_units = CanUseUnit.objects.all_useable_units(self.ingredient.pk)
+            if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:
+                return self
+        except Unit.DoesNotExist:
+            raise Exception('The ingredient ' + self.ingredient + ' does not have any useable units...')
+        raise ValidationError('This unit cannot be used for measuring this Ingredient.')
     
     def save(self, *args, **kwargs):
         if not self.save_allowed:

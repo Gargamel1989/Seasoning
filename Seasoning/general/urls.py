@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^$', 'general.views.home', name='home'),
     
     # Admin
+    url(r'^admin/ingredients/list/$', 'ingredients.views.list_ingredients', name='list_ingredients'),
     (r'^admin/', include(admin.site.urls)),
     
     # Backup Database
