@@ -207,11 +207,15 @@ form .tooltip {
 	padding-right: 20px;
 }
 
+#account-settings-link a {
+	position: relative;
+}
+
 #account-controls #account-settings-link #img-darkener {
 	background: #1E2F0F;
 	position: absolute;
 	left: -35px;
-	top: -5px;
+	bottom: -2px;
 }
 
 #account-controls #account-settings-link img {
@@ -302,7 +306,7 @@ form .tooltip {
 
 #footer-container #footer-links-container {
 	margin: 0;
-	padding: 0 150px 0 110px;
+	padding: 0 110px 0 110px;
 	overflow: hidden;
 	text-align: center;
 }
@@ -348,7 +352,7 @@ form .tooltip {
 }
 
 #footer-container #social-network-links a {
-	margin-left: 10px;
+	margin-left: 0px;
 	display: inline-block;
 }
 

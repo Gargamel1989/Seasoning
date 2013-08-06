@@ -20,9 +20,12 @@ def public_profile(request, user_id):
     
     return render(request, 'authentication/public_profile.html', {'viewed_user': user,
                                                                   'recipes': recipes})
-
 @login_required
 def account_settings(request):
+    return render(request, 'authentication/account_settings.html')
+
+@login_required
+def account_settings_profile(request):
     """
     Allow a user to change his account settings
     
@@ -57,7 +60,7 @@ def account_settings(request):
         pass
     
     context['form'] = form
-    return render(request, 'authentication/account_settings.html', context)
+    return render(request, 'authentication/account_settings_profile.html', context)
 
 @login_required
 def account_settings_social(request):
