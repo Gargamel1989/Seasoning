@@ -199,6 +199,7 @@
         {% endif %}
         {% endfor %}
         <tr class="empty uses-form">
+          {{ usesingredient_formset.empty_form.id }}
           <td>
     	{{ usesingredient_formset.empty_form.group.as_hidden }}
     	{{ usesingredient_formset.empty_form.ingredient }}

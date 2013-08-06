@@ -171,6 +171,7 @@ def edit_recipe(request, recipe_id=None):
     if request.method == 'POST':
         recipe_form = AddRecipeForm(request.POST, request.FILES, instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe)
+        print request.POST
         
         if 'stop-submit' in request.POST or 'normal-submit' in request.POST or 'ingrequest-submit' in request.POST:
             # User pressed a valid submit button
