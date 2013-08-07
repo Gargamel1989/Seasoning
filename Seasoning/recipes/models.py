@@ -96,6 +96,10 @@ class Recipe(models.Model):
     
     accepted = models.BooleanField(default=False)
     
+    
+    def __unicode__(self):
+        return self.name
+    
     # Set this to false if this object should not be saved (e.g. when certain fields have been 
     # overwritten for portions calculations)
     save_allowed = True

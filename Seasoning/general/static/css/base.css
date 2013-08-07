@@ -1052,6 +1052,16 @@ h1 #recipe-actions {
 	height: 16px;
 }
 
+.ingredient .moreinfo {
+	height: 50px;
+	position: relative;
+	display: none;
+}
+
+.moreinfo .ajax-loader {
+	margin-top: 30px;
+}
+
 .recipe-info-wrapper #extra-info {
 	margin-top: 30px;
 }

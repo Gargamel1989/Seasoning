@@ -1,6 +1,5 @@
 from django.conf.urls import patterns, url
-from faq.views import topic_list, topic_detail, question_detail,\
-    admin_list, admin_edit_question
+from faq.views import topic_list, topic_detail, question_detail
 
 urlpatterns = patterns('',
     url(regex = r'^$',

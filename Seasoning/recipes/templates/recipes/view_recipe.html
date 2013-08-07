@@ -78,10 +78,24 @@
         		$('#ingredients').html(parsed_data['ingredient_list']);
         		adjust_footprint_percentages();
         		$('#ingredients-loader').hide();
+        	}).fail(function() {
+        	   alert('Er is iets misgegaan bij het contacteren van de server. Probeer het later opnieuw...')
         	});
         });
         
         adjust_footprint_percentages();
+        
+        $('.ingredient-moreinfo-link').click(function() {
+            var $moreinfo = $(this).parents('.ingredient').find('.moreinfo');
+            if ($moreinfo.is(':hidden')) {
+                $(this).parents('.ingredient').find('.moreinfo').slideDown(500);
+                $(this).children('img').attr('src', '/static/img/icons/less.png');
+            } else {
+                $(this).parents('.ingredient').find('.moreinfo').slideUp(500);
+                $(this).children('img').attr('src', '/static/img/icons/add.png');
+            }
+            return false;
+        });
     });
     
     function adjust_footprint_percentages() {
