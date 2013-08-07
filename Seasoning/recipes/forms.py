@@ -22,7 +22,7 @@ from recipes.models import Recipe, UsesIngredient, Cuisine
 import recipes
 from django.forms.widgets import RadioSelect
 from ingredients.fields import AutoCompleteSelectIngredientField
-from ingredients.models import Ingredient
+from ingredients.models import Ingredient, Unit
 
 class AddRecipeForm(forms.ModelForm):
     

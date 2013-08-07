@@ -157,8 +157,8 @@ def view_recipe(request, recipe_id):
 def edit_recipe(request, recipe_id=None):
     context = {}
     if recipe_id:
-        recipe = Recipe.objects.get(pk=recipe_id)
-        if (not request.user == recipe.author) and not request.user.is_staff:
+        recipe = Recipe.objects.select_related().get(pk=recipe_id)
+        if (not request.user == recipe.author_id) and not request.user.is_staff:
             raise PermissionDenied
         new = False
     else:
@@ -193,8 +193,8 @@ def edit_recipe(request, recipe_id=None):
                     # All uses_ingredient forms should be valid when ingredients are added
                     if usesingredient_formset.is_valid():
                         # No ingredients have to be added, everything is fine!
-                        recipe_form.save(author=request.user)
                         usesingredient_formset.save()
+                        recipe_form.save(author=request.user)
                         if new:
                             messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
                         else:

@@ -34,6 +34,24 @@
             at: "right+10 top-2"
         },  
     }).off("mouseover mouseout");
+    
+    $(document).ready(function() {
+        $('.formset').formset({
+            newforms_callback: function(new_form) { 
+                new_form.find('input.autocomplete-ingredient').autocomplete({
+                    source: "/ingredients/ing_list/",
+                    minLength: 2
+                });
+            }
+        });
+        
+        $( "input.autocomplete-ingredient" ).each(function() {
+            $(this).autocomplete({
+                source: "/ingredients/ing_list/",
+                minLength: 2
+            });
+        });
+    });
 </script>
 {% endblock %}
 
@@ -189,6 +207,9 @@
           <td>
     	{{ form.amount }} {{ form.unit }}
           </td>
+          <td>
+            {{ form.DELETE }}
+          </td>
         </tr>    
         {% if form.non_field_errors %}
         <tr>
@@ -206,6 +227,9 @@
           </td>
           <td>
     	{{ usesingredient_formset.empty_form.amount }} {{ usesingredient_formset.empty_form.unit }}
+          </td>
+          <td>
+            {{ usesingredient_formset.empty_form.DELETE }}
           </td>
         </tr>
                     <tr>

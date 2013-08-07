@@ -21,14 +21,14 @@ function updateFormNumber($form, number) {
 	});
 }
 
-function add_form(formset_prefix) {
+function add_form(formset_prefix, newforms_callback) {
 	// Get the neccessary elements
 	var $formset = $('#' + formset_prefix + '-formset');
 	var $empty_form = $formset.find('.empty');
 	
 	// Find out what the new forms number is
 	var $form_counter = $formset.find('#id_' + formset_prefix + '-TOTAL_FORMS');
-	var new_form_number = parseInt($form_counter.val()) + 1;
+	var new_form_number = parseInt($form_counter.val());
 	
 	// Create the new form
 	var $new_form = $($empty_form).clone(false).removeClass('empty');
@@ -37,32 +37,28 @@ function add_form(formset_prefix) {
 	// Insert the new form before the empty form
 	$new_form.insertBefore($empty_form);
 	// Update the amount of forms
-	$form_counter.val(new_form_number);
+	$form_counter.val(new_form_number + 1);
+	
+	if (newforms_callback) {
+		newforms_callback($new_form);
+	}
 }
 
-
-$(document).ready(function() {
-	/*
-	 * Formset functions
-	 */
-	// Give every formset a button to add an extra form
-	$('form .formset').each(function() {
+$.fn.formset = function(args) {
+	if (!args) {
+		args = {};
+	}
+	$(this).each(function() {
 		var prefix = $(this).attr('id').replace('-formset', '');
-		var button = $('<a href="#" id="' + prefix + '-addbtn"><img src="http://us.cdn1.123rf.com/168nwm/djordjer/djordjer1103/djordjer110300027/9107139-plus-chrome-button.jpg"></a>')
+		
+		// Make sure the total-forms attribute has the correct value after refreshing
+		$(this).find('#id_' + prefix + '-TOTAL_FORMS').val($(this).find('.' + prefix + '-form').not('.empty').length)
+		
+		var button = $('<a href="#" id="' + prefix + '-addbtn"><img src="/static/img/icons/add.png"></a>')
 		button.click(function(event) {
-			add_form(prefix);
+			add_form(prefix, args['newforms_callback']);
 			return false;
 		})
 		$(this).find('.formset-button-container').append(button);
 	})
-	
-	/*
-	 * Autcomplete fields
-	 */
-	$( "input.autocomplete-ingredient" ).each(function() {
-		$(this).autocomplete({
-			source: "/ingredients/ing_list/",
-			minLength: 2
-		});
-	});
-});
+};

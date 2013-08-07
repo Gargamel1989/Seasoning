@@ -174,7 +174,12 @@ class Ingredient(models.Model):
     def available_in_active(self, available_in, date):
         normalized_date = date.replace(year=2000)
         
-        extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability)).replace(year=2000)
+        extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability))
+        if extended_until_date.year > 2000:
+            extended_until_date = extended_until_date.replace(year=2000)
+            if extended_until_date > available_in.date_from:
+                extended_until_date = available_in.date_from - datetime.timedelta(days=1)
+                
         if available_in.date_from < extended_until_date:
             # Inner interval
             if available_in.date_from <= normalized_date and normalized_date <= extended_until_date:
