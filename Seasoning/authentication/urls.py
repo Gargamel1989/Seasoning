@@ -74,7 +74,4 @@ urlpatterns = patterns('',
     url(r'^auth/(.*)/connect/', 'authentication.views.social_connect'),
     url(r'^auth/(.*)/disconnect/', 'authentication.views.social_disconnect'),
     url(r'^auth/(.*)/$', 'authentication.views.social_auth'),
-    
-    # Admin pages
-    url(r'^authentication/users/$', 'authentication.views.list_users'),
 )

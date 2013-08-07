@@ -141,7 +141,3 @@ def login(request):
     return django_login(request, template_name='authentication/login.html', 
                         authentication_form=CheckActiveAuthenticationForm,
                         extra_context={'next_string': next_string})
-    
-def list_users(request):
-    users = User.objects.all()
-    return render(request, 'admin/user_list.html', {'users': users})

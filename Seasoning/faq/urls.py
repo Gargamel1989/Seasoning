@@ -15,7 +15,4 @@ urlpatterns = patterns('',
         view = question_detail,
         name = 'faq_question_detail',
     ),
-    url(r'^admin/$', admin_list),
-    url(r'^admin/edit/$', admin_edit_question),
-    url(r'^admin/edit/(\d*)/$', admin_edit_question),
 )

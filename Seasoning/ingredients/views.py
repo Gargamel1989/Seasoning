@@ -17,15 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
-from django.shortcuts import render, redirect
-from ingredients.models import Ingredient, Synonym, CanUseUnit,\
-    AvailableInCountry, AvailableInSea, Unit
-from django.forms.models import inlineformset_factory, modelform_factory,\
-    ModelForm
+from django.shortcuts import render
+from ingredients.models import Ingredient, CanUseUnit
 from django.core.exceptions import PermissionDenied
-from django.utils.safestring import mark_safe
-from django.forms.widgets import Select, Widget
-import calendar
 from django.db import connection
 import json
 from django.http.response import HttpResponse, Http404
@@ -138,111 +132,3 @@ def list_ingredients(request):
     
     return render(request, 'admin/list_ingredients.html', {'ingredients': ingredients,
                                                            'perc_done': perc_done})
-
-def edit_ingredient(request, ingredient_id=None):
-    """
-    Edit an ingredient
-    
-    """
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    
-    
-    if ingredient_id:
-        ingredient = Ingredient.objects.get(pk=ingredient_id)
-        new = False
-    else:
-        new =True
-        ingredient = Ingredient()
-    
-    IngredientForm = modelform_factory(Ingredient)
-    SynonymInlineFormSet = inlineformset_factory(Ingredient, Synonym, extra=1)
-    CanUseUnitInlineFormset = inlineformset_factory(Ingredient, CanUseUnit, extra=1)
-    
-    AvailableInCountryInlineFormset = inlineformset_factory(Ingredient, AvailableInCountry, extra=1)
-    
-    AvailableInSeaInlineFormset = inlineformset_factory(Ingredient, AvailableInSea, extra=1)
-    
-    if request.method == 'POST':
-        ingredient_form = IngredientForm(request.POST, request.FILES, instance=ingredient)
-        synonym_formset = SynonymInlineFormSet(request.POST, instance=ingredient)
-        canuseunit_formset = CanUseUnitInlineFormset(request.POST, instance=ingredient)
-        
-        availinc_formset = AvailableInCountryInlineFormset(request.POST, instance=ingredient)
-        
-        availins_formset = AvailableInSeaInlineFormset(request.POST, instance=ingredient)
-            
-        models_valid = ingredient_form.is_valid() and synonym_formset.is_valid() and canuseunit_formset.is_valid()
-        
-        if models_valid and ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL:
-            models_valid = models_valid and availinc_formset.is_valid()
-        
-        if models_valid and ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL_SEA:
-            models_valid = models_valid and availins_formset.is_valid()
-        
-        if models_valid:
-            ingredient_form.save()
-            synonym_formset.save()
-            canuseunit_formset.save()
-            if ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL:
-                availinc_formset.save()
-            if ingredient_form.cleaned_data['type'] == Ingredient.SEASONAL_SEA:
-                availins_formset.save()
-            
-            return redirect(list_ingredients)
-        
-    else:
-        ingredient_form = IngredientForm(instance=ingredient)
-        synonym_formset = SynonymInlineFormSet(instance=ingredient)
-        canuseunit_formset = CanUseUnitInlineFormset(instance=ingredient)
-        
-        availinc_formset = AvailableInCountryInlineFormset(instance=ingredient)
-        
-        availins_formset = AvailableInSeaInlineFormset(instance=ingredient)
-    
-        
-        
-    return render(request, 'admin/edit_ingredient.html', {'new': new,
-                                                          'ingredient_form': ingredient_form,
-                                                          'synonym_formset': synonym_formset,
-                                                          'canuseunit_formset': canuseunit_formset,
-                                                          'availinc_formset': availinc_formset,
-                                                          'availins_formset': availins_formset})
-
-def list_units(request):
-    """
-    Displays a list with all available units in the database
-    
-    """
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    
-    units = Unit.objects.all()
-    
-    return render(request, 'admin/list_units.html', {'units': units})
-
-def edit_unit(request, unit_id=None):
-    """
-    Edit unit objects
-    
-    """
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    
-    if unit_id:
-        unit = Unit.objects.get(pk=unit_id)
-    else:
-        unit = Unit()
-    
-    UnitForm = modelform_factory(Unit)
-    
-    if request.method == 'POST':
-        unit_form = UnitForm(request.POST, instance=unit)
-        
-        if unit_form.is_valid():
-            unit_form.save()
-            return redirect(list_units)
-    else:
-        unit_form = UnitForm(instance=unit)
-    
-    return render(request, 'admin/edit_unit.html', {'unit_form': unit_form})
