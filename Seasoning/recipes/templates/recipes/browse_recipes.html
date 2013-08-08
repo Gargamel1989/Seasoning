@@ -18,22 +18,26 @@
 
 {% block content %}
 
-{% for recipe in recipes %}
-<a href="/recipes/{{ recipe.id }}/">
-    <div class="recipe-summary">
-        <div class="recipe-img">
-            <img src="{{ MEDIA_URL }}{{ recipe.image }}" />
-        </div>
-        <div class="recipe-text">
-            <div class="recipe-name">
-                {{ recipe.name }}
+<div id="recipe-summaries-wrapper">
+    <span id="recipe-summaries">
+        {% for recipe in recipes %}
+        <a href="/recipes/{{ recipe.id }}/">
+            <div class="recipe-summary">
+                <div class="recipe-img">
+                    <img src="{{ MEDIA_URL }}{{ recipe.image }}" />
+                </div>
+                <div class="recipe-text">
+                    <div class="recipe-name">
+                        {{ recipe.name }}
+                    </div>
+                    <div class="recipe-description">
+                        {{ recipe.description }}
+                    </div>
+                </div>
             </div>
-            <div class="recipe-description">
-                {{ recipe.description }}
-            </div>
-        </div>
-    </div>
-</a>
-{% endfor %}
+        </a>
+        {% endfor %}
+    </span>
+</div>
 
 {% endblock %}
