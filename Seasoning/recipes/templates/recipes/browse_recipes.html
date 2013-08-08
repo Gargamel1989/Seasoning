@@ -1,12 +1,43 @@
 {% extends "base.html" %}
 
 {% block title %}Recepten{% endblock %}
+
+{% block extra_head %}
+<script>
+    $(document).ready(function() {
+        $('.recipe-summary').hover(function() {
+            $(this).find('.recipe-description').slideDown(500);
+        }, function() {
+            $(this).find('.recipe-description').slideUp(500);
+        });
+    });
+</script>
+{% endblock %}
+
 {% block page_name %}Recepten{% endblock %}
 
 {% block content %}
 
-{% for recipe in recipes %}
-<p><a href="/recipes/{{ recipe.id }}/">{{ recipe.name }}</a></p>
-{% endfor %}
+<div id="recipe-summaries-wrapper">
+    <span id="recipe-summaries">
+        {% for recipe in recipes %}
+        <a href="/recipes/{{ recipe.id }}/">
+            <div class="recipe-summary">
+                <div class="recipe-img">
+                    <img src="{{ MEDIA_URL }}{{ recipe.image }}" />
+                </div>
+                <div class="recipe-text">
+                    <div class="recipe-name">
+                        {{ recipe.name }}
+                    </div>
+                    <div class="recipe-description">
+                        {{ recipe.description }}
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </span>
+</div>
 
 {% endblock %}

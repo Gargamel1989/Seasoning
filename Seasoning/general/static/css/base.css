@@ -1153,3 +1153,89 @@ transition:all .3s ease-out;
 	width: 80%;
 	text-align: justify;
 }
+
+
+/*
+ * Contribute pagina
+ */
+#help-seasoning > div {
+	background-color: rgba(118, 186, 59, 0.1);
+	border-radius: 10px;
+	padding: 1%;
+}
+
+#help-seasoning > div h2 {
+	border-bottom: 1px solid #5B6553;
+}
+
+#help-seasoning > div img {
+	width: 100px;
+	display: block;
+	margin: 10px auto;
+}
+
+#help-seasoning .help-type {
+	float: left;
+	width: 28%;
+	margin: 0 2% 20px 0;
+}
+
+#help-seasoning #help-donate {
+	float: right;
+	width: 34%;
+	height: 440px;
+}
+
+
+/*
+ * Browse Recipes
+ */
+#recipe-summaries-wrapper {
+	width: 100%;
+	text-align: center;
+}
+
+#recipe-summaries-wrapper #recipe-summaries {
+	display: inline-block;
+}
+
+#recipe-summaries .recipe-summary {
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+	position: relative;
+	color: #F4FAEF;
+	float: left;
+	margin: 5px;
+}
+
+.recipe-summary .recipe-img {
+	display: inline-block;
+	position: relative;
+	right: -50%;
+}
+
+.recipe-summary .recipe-img img {
+	min-width: 200px;
+	min-height: 240px;
+	position: relative;
+	left: -50%;
+}
+
+.recipe-summary .recipe-text {
+	position: absolute;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+.recipe-summary .recipe-text .recipe-name {
+	text-align: center;
+	padding: 5px;
+	width: 190px;
+}
+
+.recipe-summary .recipe-text .recipe-description {
+	border-top: 2px solid black;
+	padding: 5px;
+	display: none;
+}

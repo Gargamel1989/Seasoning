@@ -38,6 +38,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
+from random import randint
+from django.utils.translation import ugettext_lazy as _
 
 class Group:
     
@@ -53,9 +55,27 @@ def browse_recipes(request):
     Browse through recipes
     
     """
-    recipes = Recipe.objects.all()
+    recipe_list = Recipe.objects.all().exclude(image='images/ingredients/no_image.png').order_by('number_of_votes', 'extra_info')
+    paginator = Paginator(recipe_list, 12)
     
-    return render(request, 'recipes/browse_recipes.html', {'recipes': recipes})
+    if request.method == 'GET':
+        page = randint(1, paginator.num_pages)
+        return_function = lambda recipes: render(request, 'recipes/browse_recipes.html', {'recipes': recipes})
+    elif request.is_ajax() and request.method == 'POST':
+        page = request.POST.get('page', 1)
+        return_function = lambda recipes: HttpResponse(render_to_string('recipes/recipe_summaries.html', {'recipes': recipes }))
+    else:
+        return PermissionDenied
+    
+    try:
+        recipes = paginator.page(page)
+    except PageNotAnInteger:
+        recipes = paginator.page(1)
+    except EmptyPage:
+        recipes = paginator.page(paginator.num_pages)
+        
+    return return_function(recipes)
+    
 
 def search_recipes(request, sort_field=None):
     """"

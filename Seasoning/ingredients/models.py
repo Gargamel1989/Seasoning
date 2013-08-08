@@ -139,7 +139,7 @@ class Ingredient(models.Model):
     @property
     def primary_unit(self):
         try:
-            useable_units = self.useable_units.all()
+            useable_units = self.canuseunit_set.all()
             for useable_unit in useable_units:
                 if useable_unit.is_primary_unit:
                     return useable_unit
