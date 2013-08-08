@@ -1185,3 +1185,48 @@ transition:all .3s ease-out;
 	width: 34%;
 	height: 440px;
 }
+
+
+/*
+ * Recipe Summary
+ */
+.recipe-summary {
+	width: 200px;
+	height: 240px;
+	overflow: hidden;
+	position: relative;
+	color: #F4FAEF;
+	float: left;
+	margin-right: 10px;
+}
+
+.recipe-summary .recipe-img {
+	display: inline-block;
+	position: relative;
+	right: -50%;
+}
+
+.recipe-summary .recipe-img img {
+	min-width: 200px;
+	min-height: 240px;
+	position: relative;
+	left: -50%;
+}
+
+.recipe-summary .recipe-text {
+	position: absolute;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+.recipe-summary .recipe-text .recipe-name {
+	text-align: center;
+	padding: 5px;
+	width: 190px;
+}
+
+.recipe-summary .recipe-text .recipe-description {
+	border-top: 2px solid black;
+	padding: 5px;
+	display: none;
+}
