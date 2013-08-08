@@ -1153,3 +1153,35 @@ transition:all .3s ease-out;
 	width: 80%;
 	text-align: justify;
 }
+
+
+/*
+ * Contribute pagina
+ */
+#help-seasoning > div {
+	background-color: rgba(118, 186, 59, 0.1);
+	border-radius: 10px;
+	padding: 1%;
+}
+
+#help-seasoning > div h2 {
+	border-bottom: 1px solid #5B6553;
+}
+
+#help-seasoning > div img {
+	width: 100px;
+	display: block;
+	margin: 10px auto;
+}
+
+#help-seasoning .help-type {
+	float: left;
+	width: 28%;
+	margin: 0 2% 20px 0;
+}
+
+#help-seasoning #help-donate {
+	float: right;
+	width: 34%;
+	height: 440px;
+}

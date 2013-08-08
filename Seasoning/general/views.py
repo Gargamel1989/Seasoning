@@ -28,6 +28,9 @@ def home(request):
     recipe_otw = None#Recipe.objects.get(pk=1)
     return render(request, 'homepage.html', {'recipe_otw': recipe_otw})
 
+def contribute(request):
+    return render(request, 'contribute.html')
+
 def static_page(request, url):
     static_page = get_object_or_404(StaticPage, url=url)
     return render(request, 'static_page.html', {'title': static_page.name,

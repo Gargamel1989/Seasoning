@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Bijdragen{% endblock %}
+{% block page_name %}Bijdragen{% endblock %}
+
+{% block content %}
+
+<h2>Samen kunnen we een duurzamere en betere toekomst creëren</h2>
+
+<p>Seasoning wordt volledig door vrijwilligers ontwikkeld. Jij kan ons helpen!</p>
+
+<div id="help-seasoning">
+    <div class="help-type">
+        <h2>Voeg recepten toe</h2>
+        <img src="{{ STATIC_URL }}img/icons/meal.png" />
+        <p>
+            Door recepten toe te voegen, verhoog je de meerwaarde van Seasoning. Hierdoor zal ons gebruikersaantal
+            en bijgevolg ook onze algemene impact stijgen.
+        </p>
+    </div>
+    <div class="help-type">
+        <h2>Verbeter de site</h2>
+        <img src="{{ STATIC_URL }}img/icons/search.png" />
+        <p>
+            Als je een foutje ontdekt hebt, of meer/betere informatie hebt die we op Seasoning kunnen zetten, mag
+            je dit altijd laten weten via een mailtje naar info@seasoning.be 
+        </p>
+    </div>
+    <div id="help-donate">
+        <h2>Doneer</h2>
+        <img src="{{ STATIC_URL }}img/icons/money-bill.png" />
+        <p>
+            Door ons een kleine donatie te sturen, help je mee de hostingkosten van Seasoning te betalen.
+        </p>
+    </div>
+    <div class="help-type">
+        <h2>Nodig je vrienden uit</h2>
+        <img src="{{ STATIC_URL }}img/icons/users.png" />
+        <p>
+            Hoe meer zielen, hoe meer vreugd, hoe meer recepten, hoe meer gebruikers... :)
+        </p>
+    </div>
+    <div class="help-type">
+        <h2>Doe eens zot</h2>
+        <img src="{{ STATIC_URL }}img/icons/delete.png" />
+    </div>
+</div>
+
+{% endblock %}
