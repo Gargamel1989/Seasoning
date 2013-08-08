@@ -23,9 +23,10 @@ from django.conf import settings
 import time
 import os
 from general.models import StaticPage
+from recipes.models import Recipe
 
 def home(request):
-    recipe_otw = None#Recipe.objects.get(pk=1)
+    recipe_otw = Recipe.objects.get(pk=1)
     return render(request, 'homepage.html', {'recipe_otw': recipe_otw})
 
 def static_page(request, url):
