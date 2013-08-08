@@ -33,6 +33,41 @@ def get_image_filename(instance, old_filename):
     filename = str(time.time()) + '.png'
     return 'images/ingredients/' + filename
 
+class Unit(models.Model):
+    """
+    Represent a unit
+    
+    A unit can be dependent on a parent unit. This means that the
+    ratio between these units is independent of the ingredient.
+    
+    If a unit does has a parent unit, it cannot be selected as a
+    unit useable by any ingredient. It will, however, automatically
+    be available to any ingredient that can use its parent unit
+    
+    A unit with a parent unit can itself not be used as a parent unit,
+    to prevent infinite recursion and other nasty stuff
+    
+    The ratio is defined as follows:
+        1 this_unit = ratio parent_unit
+        
+    """
+    class Meta:
+        db_table = 'unit'
+        
+    name = models.CharField(max_length=30L, unique=True)
+    short_name = models.CharField(max_length=10L, blank=True)
+    
+    parent_unit = models.ForeignKey('self', related_name="derived_units", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
+    ratio = models.FloatField(null=True, blank=True)
+    
+    def __unicode__(self):
+        return self.name
+        
+    def short(self):
+        if self.short_name:
+            return self.short_name
+        return self.name
+    
 class Ingredient(models.Model):
     """
     This is the base class for ingredients. It is not an abstract class, as simple
@@ -96,6 +131,8 @@ class Ingredient(models.Model):
     image_source = models.TextField(blank=True)
     accepted = models.BooleanField(default=False)
     
+    useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
+    
     def __unicode__(self):
         return self.name
 
@@ -137,6 +174,10 @@ class Ingredient(models.Model):
         if current_date >= datetime.datetime(AvailableIn.BASE_YEAR, 12, 31):
             return True
         return False
+    
+    def can_use_unit(self, unit):
+        useable_units = Unit.objects.filter(models.Q(used_by__ingredient=self) | models.Q(parent_unit__used_by__ingredient=self))
+        return unit in useable_units
     
     def get_available_ins(self):
         """
@@ -263,41 +304,6 @@ class Synonym(models.Model):
     def __unicode__(self):
         return self.name
     
-class Unit(models.Model):
-    """
-    Represent a unit
-    
-    A unit can be dependent on a parent unit. This means that the
-    ratio between these units is independent of the ingredient.
-    
-    If a unit does has a parent unit, it cannot be selected as a
-    unit useable by any ingredient. It will, however, automatically
-    be available to any ingredient that can use its parent unit
-    
-    A unit with a parent unit can itself not be used as a parent unit,
-    to prevent infinite recursion and other nasty stuff
-    
-    The ratio is defined as follows:
-        1 this_unit = ratio parent_unit
-        
-    """
-    class Meta:
-        db_table = 'unit'
-        
-    name = models.CharField(max_length=30L, unique=True)
-    short_name = models.CharField(max_length=10L, blank=True)
-    
-    parent_unit = models.ForeignKey('self', related_name="derived_units", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
-    ratio = models.FloatField(null=True, blank=True)
-    
-    def __unicode__(self):
-        return self.name
-        
-    def short(self):
-        if self.short_name:
-            return self.short_name
-        return self.name
-    
 class UnitManager(models.Manager):
     #TODO: test
     
@@ -333,7 +339,7 @@ class CanUseUnit(models.Model):
         
     objects = UnitManager()
         
-    ingredient = models.ForeignKey('Ingredient', db_column='ingredient', related_name='useable_units')
+    ingredient = models.ForeignKey('Ingredient', db_column='ingredient')
     unit = models.ForeignKey('Unit', related_name='used_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
     is_primary_unit = models.BooleanField()

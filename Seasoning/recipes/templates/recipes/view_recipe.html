@@ -280,8 +280,7 @@
 </div>
 <h2>Reacties op dit recept:</h2>
 <div id="comment-list">
-	{% get_comment_list for recipe as comment_list %}
-	{% for comment in comment_list %}
+	{% for comment in comments %}
     <div id="comment-{{ forloop.counter }}" class="comment">
         <div class="commenter-img">
             <img src="{{ MEDIA_URL }}{{ comment.user.avatar }}" alt="De avatar van {{ comment.user.get_full_name }}"/>

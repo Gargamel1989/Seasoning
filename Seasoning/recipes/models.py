@@ -91,7 +91,7 @@ class Recipe(models.Model):
     thumbnail = ImageSpecField([ResizeToFit(250, 250)], image_field='image', format='PNG')
     
     # Derived Parameters
-    footprint = FloatField(null=True, editable=False)
+    footprint = FloatField(editable=False)
     veganism = models.PositiveSmallIntegerField(choices=Ingredient.VEGANISMS, editable=False)
     
     accepted = models.BooleanField(default=False)
@@ -120,7 +120,7 @@ class Recipe(models.Model):
         
         for uses in self.uses.all():
             # Add the footprint for this used ingredient to the total
-            self.footprint += uses.footprint()
+            self.footprint += uses.footprint
             
             # Check the veganism of this ingredient
             if uses.ingredient.veganism < self.veganism:
@@ -167,16 +167,12 @@ class UsesIngredient(models.Model):
     amount = models.FloatField(default=0)
     unit = models.ForeignKey(ingredients.models.Unit, db_column='unit')
     
+    # Derived Parameters
+    footprint = FloatField(null=True, editable=False)
+    
     # Set this to false if this object should not be saved (e.g. when certain fields have been 
     # overwritten for portions calculations)
     save_allowed = True
-    
-    def footprint(self):
-        unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
-        if self.unit.parent_unit:
-            unit_properties.unit = self.unit
-            unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
-        return (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
     
     def clean(self):
         try:
@@ -192,7 +188,14 @@ class UsesIngredient(models.Model):
             raise PermissionDenied('Saving this object has been disallowed')
         
         self.clean()
-        super(UsesIngredient, self).save(*args, **kwargs)
+        
+        unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
+        if self.unit.parent_unit:
+            unit_properties.unit = self.unit
+            unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
+        self.footprint = (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
+    
+        return super(UsesIngredient, self).save(*args, **kwargs)
 
 class UnknownIngredient(models.Model):
     class Meta:

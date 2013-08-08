@@ -36,6 +36,17 @@ from django.http.response import Http404, HttpResponse
 from django.utils import simplejson
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
+from django.contrib.comments.models import Comment
+from django.contrib.contenttypes.models import ContentType
+
+class Group:
+    
+    def __init__(self, name):
+        self.name = name
+        self.usess = []
+    
+    def append(self, uses):
+        self.usess.append(uses)
 
 def browse_recipes(request):
     """
@@ -157,19 +168,22 @@ def view_recipe(request, recipe_id):
     active_time_perc = (float(recipe.active_time) / total_time) * 100
     passive_time_perc = 100 - active_time_perc
     
+    comments = Comment.objects.filter(content_type=ContentType.objects.get_for_model(Recipe), object_pk=recipe.id).select_related('user')
+    
     return render(request, 'recipes/view_recipe.html', {'recipe': recipe,
                                                         'ingredient_groups': ingredient_groups,
                                                         'user_vote': user_vote,
                                                         'active_time_perc': active_time_perc,
                                                         'passive_time_perc': passive_time_perc,
-                                                        'total_time': total_time})
+                                                        'total_time': total_time,
+                                                        'comments': comments})
 
 
 @login_required
 def edit_recipe(request, recipe_id=None):
     context = {}
     if recipe_id:
-        recipe = Recipe.objects.select_related().get(pk=recipe_id)
+        recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=recipe_id)
         if (not request.user == recipe.author_id) and not request.user.is_staff:
             raise PermissionDenied
         new = False
@@ -286,16 +300,6 @@ def remove_vote(request, recipe_id):
 @csrf_exempt
 def get_recipe_portions(request):
     
-#     if portions and int(portions) != recipe.portions:
-#         ratio = float(portions)/recipe.portions
-#         recipe.save_allowed = False
-#         recipe.footprint = ratio * recipe.footprint
-#         recipe.original_portions = recipe.portions
-#         recipe.portions = float(portions)
-#         for uses in usess:
-#             uses.save_allowed = False
-#             uses.amount = ratio * uses.amount
-        
     if request.is_ajax() and request.method == 'POST':
         recipe_id = request.POST.get('recipe', None)
         portions = request.POST.get('portions', None)
@@ -313,6 +317,7 @@ def get_recipe_portions(request):
             for uses in usess:
                 uses.save_allowed = False
                 uses.amount = ratio * uses.amount
+                uses.footprint = ratio * uses.footprint
             
             groups = {}
             for uses in usess:
@@ -324,7 +329,7 @@ def get_recipe_portions(request):
                 groups[None].name = _('Remaining Ingredients')
             
             ingredient_groups = sorted(groups.values(), key=lambda x: x.name)
-        
+            
             data = {'ingredient_list': render_to_string('recipes/ingredient_list.html', {'ingredient_groups': ingredient_groups}),
                     'new_footprint': new_footprint}
             json_data = simplejson.dumps(data);
@@ -346,16 +351,5 @@ def delete_recipe_comment(request, recipe_id, comment_id):
 def my_recipes(request):
     recipes = request.user.recipes.all()
     
-    return render(request, 'recipes/my_recipes.html', {'recipes': recipes})
-
-
-class Group:
-    
-    def __init__(self, name):
-        self.name = name
-        self.usess = []
-    
-    def append(self, uses):
-        self.usess.append(uses)
-        
+    return render(request, 'recipes/my_recipes.html', {'recipes': recipes})        
     
