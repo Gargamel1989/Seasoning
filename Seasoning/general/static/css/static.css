@@ -1,0 +1,39 @@
+#content h2 {
+	margin: 25px 0 -5px 0;
+}
+
+#content hr {
+	margin-top: 40px;
+	border: 1px solid #5B6553;
+}
+
+#content img {
+	float: right;
+	height: 80px;
+	margin: 5px 10px 5px 0;
+}
+
+#content img#footprint-img {
+	height: 6em;
+	margin-right: 15px;
+	float: left;
+}
+
+#content img#mc-img {
+	float: left;
+}
+
+#content img#gv-img {
+	float: right;
+	clear: left;
+}
+
+#content ul {
+	margin-left: 150px;	
+}
+
+#content img.right {
+	float: right;
+	margin: 5px 0 5px 10px;
+	clear: right;
+}

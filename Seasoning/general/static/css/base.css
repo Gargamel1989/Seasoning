@@ -44,8 +44,7 @@ h1 {
 
 h2 {
 	margin:0;
-	font-size:1.2em;
-	font-family:Lobster, Verdana, Geneva, sans-serif;
+	font-size:1.1em;
 }
 
 a {
@@ -1193,15 +1192,57 @@ transition:all .3s ease-out;
 #recipe-summaries-wrapper {
 	width: 100%;
 	text-align: center;
+	min-height: 620px;
+	position: relative;
+}
+
+#recipe-summaries-wrapper .recipe-summaries-arrow {
+	position: absolute;
+	top: 50%;
+}
+
+.recipe-summaries-arrow.right {
+	right: 20px;
+}
+
+.recipe-summaries-arrow .filler {
+	height: 120px;
+}
+
+#recipe-summaries-wrapper .arrow-left {
+	width: 0; 
+	height: 0; 
+	border-top: 60px solid transparent;
+	border-bottom: 60px solid transparent; 
+	
+	border-right:20px solid black;
+	cursor: pointer;
+	position: absolute;
+	top: -50%;
+}
+
+#recipe-summaries-wrapper .arrow-right {
+	width: 0; 
+	height: 0; 
+	border-top: 60px solid transparent;
+	border-bottom: 60px solid transparent; 
+	
+	border-left:20px solid black;
+	cursor: pointer;
+	position: absolute;
+	top: -50%;
 }
 
 #recipe-summaries-wrapper #recipe-summaries {
 	display: inline-block;
+	max-width: 840px;
+	padding: 0 25px;
+	text-align: left;
 }
 
 #recipe-summaries .recipe-summary {
-	width: 200px;
-	height: 200px;
+	width: 185px;
+	height: 185px;
 	overflow: hidden;
 	position: relative;
 	color: #F4FAEF;

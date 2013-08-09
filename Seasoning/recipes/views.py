@@ -50,6 +50,7 @@ class Group:
     def append(self, uses):
         self.usess.append(uses)
 
+@csrf_exempt
 def browse_recipes(request):
     """
     Browse through recipes
@@ -63,7 +64,7 @@ def browse_recipes(request):
         return_function = lambda recipes: render(request, 'recipes/browse_recipes.html', {'recipes': recipes})
     elif request.is_ajax() and request.method == 'POST':
         page = request.POST.get('page', 1)
-        return_function = lambda recipes: HttpResponse(render_to_string('recipes/recipe_summaries.html', {'recipes': recipes }))
+        return_function = lambda recipes: HttpResponse(render_to_string('includes/recipe_summaries.html', {'recipes': recipes }))
     else:
         return PermissionDenied
     
@@ -350,7 +351,7 @@ def get_recipe_portions(request):
             
             ingredient_groups = sorted(groups.values(), key=lambda x: x.name)
             
-            data = {'ingredient_list': render_to_string('recipes/ingredient_list.html', {'ingredient_groups': ingredient_groups}),
+            data = {'ingredient_list': render_to_string('includes/ingredient_list.html', {'ingredient_groups': ingredient_groups}),
                     'new_footprint': new_footprint}
             json_data = simplejson.dumps(data);
             

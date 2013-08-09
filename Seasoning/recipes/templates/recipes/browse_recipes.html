@@ -4,11 +4,38 @@
 
 {% block extra_head %}
 <script>
-    $(document).ready(function() {
-        $('.recipe-summary').hover(function() {
+	function make_hover_effect() {
+		$('.recipe-summary').hover(function() {
             $(this).find('.recipe-description').slideDown(500);
         }, function() {
             $(this).find('.recipe-description').slideUp(500);
+        });
+	}
+	
+	function switch_to_recipes_page(page_num, num_pages) {
+		if (page_num > num_pages) {
+			page_num = 1;
+		} else if (page_num < 1) {
+			page_num = num_pages;
+		}
+		$.post('/recipes/',
+			   {'page': page_num})
+		.done(function(data) {
+			$("#recipe-summaries-include-wrapper").html(data);
+    		make_hover_effect();
+		});
+		$("#current-page").text(page_num);
+	};
+	
+    $(document).ready(function() {
+    	make_hover_effect();
+    	
+		var num_pages = parseInt($("#num-pages").text());
+        $('.recipe-summaries-arrow .arrow-left').click(function() {
+        	switch_to_recipes_page(parseInt($('#current-page').text()) - 1, num_pages);
+        });
+        $('.recipe-summaries-arrow .arrow-right').click(function() {
+        	switch_to_recipes_page(parseInt($('#current-page').text()) + 1, num_pages);
         });
     });
 </script>
@@ -19,25 +46,19 @@
 {% block content %}
 
 <div id="recipe-summaries-wrapper">
-    <span id="recipe-summaries">
-        {% for recipe in recipes %}
-        <a href="/recipes/{{ recipe.id }}/">
-            <div class="recipe-summary">
-                <div class="recipe-img">
-                    <img src="{{ MEDIA_URL }}{{ recipe.image }}" />
-                </div>
-                <div class="recipe-text">
-                    <div class="recipe-name">
-                        {{ recipe.name }}
-                    </div>
-                    <div class="recipe-description">
-                        {{ recipe.description }}
-                    </div>
-                </div>
-            </div>
-        </a>
-        {% endfor %}
-    </span>
+	<span id="current-page" style="display:none">{{ recipes.number }}</span>
+	<span id="num-pages" style="display:none">{{ recipes.paginator.num_pages }}</span>
+	<div class="recipe-summaries-arrow">
+		<div class="arrow-left"></div>
+		<div class="filler"></div>
+	</div>
+	<div id="recipe-summaries-include-wrapper">
+    	{% include "includes/recipe_summaries.html" %}
+    </div>
+    <div class="recipe-summaries-arrow right">
+    	<div class="arrow-right"></div>
+		<div class="filler"></div>
+    </div>
 </div>
 
 {% endblock %}
