@@ -7,33 +7,55 @@
 	border: 1px solid #5B6553;
 }
 
-#content img {
-	float: right;
-	height: 80px;
-	margin: 5px 10px 5px 0;
+/*
+ * about
+ */
+#content.about img {
+	margin-right: 10px;
+	height: 100%;
 }
 
-#content img#footprint-img {
+#content.about img.right {
+	margin-left: 10px;
+	float: right;
+}
+
+#content.about ul {
+	margin: 30px 0 0 20px;
+	line-height: 30px;
+}
+
+#content.about #impact-breakdown {
+	float: right;
+	margin-right: 10%;
+	width: 45%;
+}
+
+#content.about #impact-breakdown img {
+	width: 100%;
+	height: auto;
+}
+
+#content.about #labels {
+	height: 150px;
+	margin: 30px auto;
+	text-align: center;
+}
+
+#content.about img#mc-img {
 	height: 6em;
-	margin-right: 15px;
 	float: left;
+	margin: 0 30px 0 0;
 }
 
-#content img#mc-img {
-	float: left;
+#content.about img#gv-img {
+	height: 4em;
 }
 
-#content img#gv-img {
-	float: right;
-	clear: left;
+#content.about #tom1 {
+	height: 10em;
 }
 
-#content ul {
-	margin-left: 150px;	
-}
-
-#content img.right {
-	float: right;
-	margin: 5px 0 5px 10px;
-	clear: right;
+#content.about #tom2 {
+	height: 10em;
 }

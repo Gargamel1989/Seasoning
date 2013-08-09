@@ -25,9 +25,12 @@ color:#598c2c;
 						<div class="slide-content">
 							<h1>Gezond en bewust eten, volgens de seizoenen</h1>
 							<p>
-								Seasoning helpt je bewuster omgaan met je alledaagse
-								voeding. Dat is niet enkel goed voor het milieu, maar ook voor je
-								gezondheid!
+								Seasoning helpt je bewuster omgaan met je alledaagse voeding.
+								</p>
+								<p>
+								De ecologische voetafdruk van recepten wordt automatisch berekend 
+								en past zich aan naargelang het seizoen. </p><p>Geef smaak aan de 
+								seizoenen en hou rekening met het milieu én je gezondheid.
 							</p>
                         </div>
                         <div class="slide-image">
@@ -36,11 +39,12 @@ color:#598c2c;
 					</li>
 					<li id="slide-2" class="slide">
 						<div class="slide-content">
-							<h1>Bekijk je eigen recepten vanuit een andere hoek</h1>
+							<h1>Kies voor lokale seizoensproducten</h1>
 							<p>
-								Voeg je eigen recepten toe aan onze databank. Zo kan je
-								niet alleen ontdekken wat hun impact is op het milieu, maar geef
-								je ook terug aan onze community
+								Hoe dichter bij huis het voedsel is geproduceerd, hoe minder schadelijk 
+								de effecten op het leefmilieu. </p><p>De keuze voor voeding van hier betekent 
+								dus dat je best kiest voor seizoensproducten.</p><p>Seasoning gidst je doorheen 
+								de seizoenen!
 							</p>
                         </div>
                         <div class="slide-image">
@@ -49,8 +53,13 @@ color:#598c2c;
 					</li>
                     <li id="slide-3" class="slide">
                         <div class="slide-content">
-                            <h1>Eet je eigen kaka</h1>
-                            <p>Duurzamer als dat wordt het niet!</p>
+                            <h1>Maak je eigen profiel</h1>
+                            <p>
+                                Om het meeste uit Seasoning te halen, maak je best een eigen profiel aan.</p><p>
+                                Je kan meteen recepten en afbeeldingen plaatsen, reageren op andere recepten 
+                                en jouw voorkeuren bepalen.</p><p>Registreren op Seasoning gaat snel, is heel 
+                                eenvoudig en bovendien volledig gratis!
+                            </p>
                         </div>
                         <div class="slide-image">
                             <img src="{{ STATIC_URL }}img/gdf.bmp">
@@ -58,7 +67,8 @@ color:#598c2c;
                     </li>
                     <li id="slide-4" class="slide">
                         <div class="slide-content">
-                            <h1>Recept van de week:<br />{{ recipe_otw.name }}</h1>
+                            <h1>Recept van de week:</h1>
+                            <h2><a href="/recipes/{{ recipe_otw.id }}/">{{ recipe_otw.name }}</a></h2>
                             <p>{{ recipe_otw.description }}</p>
                         </div>
                         <div class="slide-image">

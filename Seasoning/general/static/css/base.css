@@ -384,14 +384,26 @@ form .tooltip {
 	font-size: 2.2em;
 	width:400px;
 	color:#F4FAEF;
+	margin-bottom: 10px;
+}
+
+#introbox h2 {
+	font-size: 1.3em;
+	width:400px;
+	margin-bottom: 10px;
+}
+
+#introbox h2 a {
+	color:#F4FAEF;
+	text-decoration: none;
 }
 
 #introbox #introbox-container {
 	max-width:960px;
 	min-width: 640px;
-	height:270px;
+	height:280px;
 	margin:auto;
-	padding:30px 10px 0 10px;
+	padding:20px 10px 0 10px;
 	position: relative;
 	overflow: hidden;
 }
@@ -418,8 +430,8 @@ form .tooltip {
 	color:#F4FAEF;
 	font-size:12px;
 	line-height:18px;
-	width:300px;
-	margin-top:10px;
+	width:350px;
+	margin:5px 0 0 0;
 }
 
 #introbox-container #slideshow .slide .slide-image {
@@ -474,8 +486,14 @@ form .tooltip {
 
 #content .homepage-column img {
 	width: 100px;
-	margin: auto;
+	margin: 0 auto 20px;
 	display: block;
+}
+
+#content .homepage-column h2 {
+	font-family:Lobster, Verdana, Geneva, sans-serif;
+	color: #76BA3B;
+	font-size: 1.4em;
 }
 
 #content #homepage-left-column {

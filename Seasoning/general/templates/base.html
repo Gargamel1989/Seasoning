@@ -1,7 +1,7 @@
 {% extends "skeleton.html" %}
 
 {% block body %}
-		<div id="content">
+		<div id="content" class="{% block content_class %}{% endblock %}">
 			{% if messages %}
 			<ul class="messages">
 				{% for message in messages %}

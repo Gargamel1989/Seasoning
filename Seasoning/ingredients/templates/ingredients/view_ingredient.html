@@ -59,7 +59,7 @@
         Dit ingredient is beschikbaar in {{ available_in.country.name }} ({{ available_in.country.distance }} km van Belgie) tussen {{ available_in.month_from }} en {{ available_in.month_until }}<br>
         Het wordt vervoerd via {{ available_in.transport_method.name }}<br>
         {% if available_in.production_type %}Het wordt geproduceerd adhv. {{ available_in.production_type }}<br>{% endif %}
-        Een ingredient van deze optie heeft een extra uitstoot van {{ available_in.extra_production_footprint }}<br>
+        Een ingredient van deze optie heeft een uitstoot van {{ available_in.footprint }}<br>
     </li>
     {% endfor %}
 </ul>
