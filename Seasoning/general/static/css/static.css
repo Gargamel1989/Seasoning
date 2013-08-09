@@ -11,7 +11,6 @@
  * about
  */
 #content.about {
-	text-align: justify;
 }
 
 #content.about img {
@@ -41,7 +40,7 @@
 }
 
 #content.about #labels {
-	height: 150px;
+	height: 140px;
 	margin: 30px auto;
 	text-align: center;
 }
@@ -62,4 +61,17 @@
 
 #content.about #tom2 {
 	height: 10em;
+}
+
+/*
+ * Contact
+ */
+#content.contact .contactdevs {
+	margin-left: 25px;
+}
+
+#content.contact #last-line {
+	margin-top: 40px;
+	padding-top: 20px;
+	border-top: 2px solid #5B6553;
 }
