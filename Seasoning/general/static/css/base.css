@@ -726,6 +726,31 @@ color:#598c2c;
 }
 
 /*
+ * Account Delete
+ */
+#account-delete-form .field-wrapper {
+	width: 30%;
+	margin: auto;
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+#account-delete-form .field-wrapper input {
+	width: 100%;
+	float: none;
+}
+
+#account-delete-form #submit-button {
+	text-align: center;
+}
+
+#account-delete-form #submit-button input {
+	float: none;
+	width: 30%;
+	height: 30px;
+}
+
+/*
  * Add Recipe Form
  */
 #add-recipe-form {
