@@ -608,6 +608,19 @@ form .tooltip {
 }
 
 /*
+ * Activation
+ */
+#resend-activation-email-form {
+	margin-top: 30px;
+	max-width: 400px;
+}
+
+#resend-activation-email-form input[type=submit] {
+	width: 52%;
+	margin-right: -2px;
+}
+
+/*
  * Account Settings
  */
 #account-settings-container {

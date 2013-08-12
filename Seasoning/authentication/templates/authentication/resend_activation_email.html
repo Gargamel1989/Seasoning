@@ -10,7 +10,7 @@
 	formuleer gebruiken om een nieuw exemplaar te verzenden.
 </p>
 
-<form action="/activate/resend/" method="post" class="account-form">
+<form action="/activate/resend/" method="post" id="resend-activation-email-form">
 	{% csrf_token %}
 	
 	<div class="field-wrapper">
@@ -19,7 +19,7 @@
 		{{ form.email.errors }}
 	</div>
 	
-	<input type="submit" value="Opnieuw Verzenden" id="account-submit" />
+	<input type="submit" value="Email Opnieuw Verzenden" id="account-submit" />
 </form>
 
 {% endblock %}
