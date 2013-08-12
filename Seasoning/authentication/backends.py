@@ -29,6 +29,7 @@ from urllib2 import HTTPError
 import urllib
 import datetime
 from django.core.exceptions import PermissionDenied
+from django.contrib.sites.models import RequestSite
 
 
 class RegistrationBackend(object):

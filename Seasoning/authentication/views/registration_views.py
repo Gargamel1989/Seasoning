@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render, render_to_response
 from authentication.forms import ResendActivationEmailForm
 from django.contrib.sites.models import RequestSite
 from django.template.context import RequestContext
+
 def register(request, backend, success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
              template_name='authentication/registration_form.html',
