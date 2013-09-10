@@ -18,7 +18,8 @@
 		 "portions": 4,
 		 "active_time": 20,
 		 "passive_time": 15,
-		 "instructions": "Do Something"
+		 "instructions": "Do Something",
+		 "footprint": 0
 		}
 	}
  
