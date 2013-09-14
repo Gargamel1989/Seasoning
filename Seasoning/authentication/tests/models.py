@@ -29,24 +29,23 @@ from django.conf import settings
 
 class AuthenticationModelsTestCase(TestCase):
     
-    user_info = {'username': 'testuser',
+    user_info = {'givenname': 'test',
+                 'surname': 'user',
                  'password': 'haha',
                  'email': 'testuser@test.be',
-                 'gender': User.MALE,
                  'date_of_birth': datetime.date.today()}
     
     def test_user_creation(self):
         User.objects.create_user(**self.user_info)
         new_user = User.objects.get(email="testuser@test.be")
-        self.assertEqual(new_user.username, 'testuser')
-        self.assertEqual(new_user.gender, User.MALE)
+        self.assertEqual(new_user.givenname, 'test')
+        self.assertEqual(new_user.surname, 'user')
         self.assertEqual(new_user.date_of_birth, datetime.date.today())
         self.assertEqual(new_user.avatar.url, '/media/images/users/no_image.png')
         self.assertEqual(new_user.is_active, True)
         self.assertEqual(new_user.is_staff, False)
         self.assertEqual(new_user.is_superuser, False)
-        User.objects.create_superuser("testsuperuser", "testsuperuser@test.be", 
-                                      User.MALE, datetime.date.today(), "haha")
+        User.objects.create_superuser("testsuperuser", "testsuperuser@test.be", datetime.date.today(), "haha")
         new_superuser = User.objects.get(email="testsuperuser@test.be")
         self.assertEqual(new_superuser.is_superuser, True)
     
@@ -86,7 +85,8 @@ class AuthenticationModelsTestCase(TestCase):
         """
         new_user = RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
                                                                     **self.user_info)
-        self.assertEqual(new_user.username, 'testuser')
+        self.assertEqual(new_user.givenname, 'test')
+        self.assertEqual(new_user.surname, 'user')
         self.assertEqual(new_user.email, 'testuser@test.be')
         self.failUnless(new_user.check_password('haha'))
         self.failIf(new_user.is_active)
@@ -170,7 +170,7 @@ class AuthenticationModelsTestCase(TestCase):
         self.failIf(isinstance(activated, User))
         self.failIf(activated)
 
-        new_user = User.objects.get(username='testuser')
+        new_user = User.objects.get(email='testuser@test.be')
         self.failIf(new_user.is_active)
 
         profile = RegistrationProfile.objects.get(user=new_user)
@@ -217,17 +217,17 @@ class AuthenticationModelsTestCase(TestCase):
         RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
                                                          **self.user_info)
         expired_user = RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
-                                                                        username='bob',
+                                                                        givenname='bob',
+                                                                        surname='smith',
                                                                         password='secret',
                                                                         email='bob@example.com',
-                                                                        gender=User.MALE,
                                                                         date_of_birth=datetime.date.today())
         expired_user.date_joined -= datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS + 1)
         expired_user.save()
 
         RegistrationProfile.objects.delete_expired_users()
         self.assertEqual(RegistrationProfile.objects.count(), 1)
-        self.assertRaises(User.DoesNotExist, User.objects.get, username='bob')
+        self.assertRaises(User.DoesNotExist, User.objects.get, email='bob@example.com')
 
     def test_management_command(self):
         """
@@ -238,17 +238,17 @@ class AuthenticationModelsTestCase(TestCase):
         RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
                                                          **self.user_info)
         expired_user = RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
-                                                                        username='bob',
+                                                                        givenname='bob',
+                                                                        surname='smith',
                                                                         password='secret',
                                                                         email='bob@example.com',
-                                                                        gender=User.MALE,
                                                                         date_of_birth=datetime.date.today())
         expired_user.date_joined -= datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS + 1)
         expired_user.save()
 
         management.call_command('cleanupregistration')
         self.assertEqual(RegistrationProfile.objects.count(), 1)
-        self.assertRaises(User.DoesNotExist, User.objects.get, username='bob')
+        self.assertRaises(User.DoesNotExist, User.objects.get, email='bob@example.com')
     
     def test_new_email(self):
         new_user = RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),

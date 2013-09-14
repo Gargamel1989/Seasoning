@@ -28,11 +28,11 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertTrue('form' in resp.context)
         self.assertEqual(resp.context['form'].__class__, EmailUserCreationForm)
         
-        resp = self.client.post('/register/', {'username': 'testuser',
+        resp = self.client.post('/register/', {'givenname': 'test',
+                                               'surname': 'user',
                                                'password': 'haha',
                                                'password2': 'hahaa',
                                                'email': 'testuser@test.be',
-                                               'gender': User.MALE,
                                                'date_of_birth': datetime.date.today(),
                                                'tos': False,
                                                'captcha': ''})
@@ -40,11 +40,11 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
         
         os.environ['RECAPTCHA_TESTING'] = 'True'
-        resp = self.client.post('/register/', {'username': 'testuser',
+        resp = self.client.post('/register/', {'givenname': 'test',
+                                               'surname': 'user',
                                                'password': 'haha',
                                                'password2': 'haha',
                                                'email': 'testuser@test.be',
-                                               'gender': User.MALE,
                                                'date_of_birth': datetime.date.today(),
                                                'tos': True,
                                                'recaptcha_response_field': 'PASSED'})
@@ -57,10 +57,10 @@ class AuthenticationViewsTestCase(TestCase):
         settings.REGISTRATION_OPEN = old_allowed
     
     def test_resend_activation_email_test(self):
-        RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
+        RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
+                                                            'surname': 'user',
                                                             'password': 'haha',
                                                             'email': 'testuser@test.be',
-                                                            'gender': User.MALE,
                                                             'date_of_birth': datetime.date.today(),
                                                             'site': Site.objects.get_current()})
         
@@ -79,10 +79,10 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 2)
     
     def test_activate_view(self):
-        user = RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
+        user = RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
+                                                                   'surname': 'user',
                                                                    'password': 'haha',
                                                                    'email': 'testuser@test.be',
-                                                                   'gender': User.MALE,
                                                                    'date_of_birth': datetime.date.today(),
                                                                    'site': Site.objects.get_current()})
         registration_profile = RegistrationProfile.objects.get(user=user)
@@ -98,10 +98,10 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertTrue(User.objects.get(email='testuser@test.be').is_active)
     
     def test_account_settings_view(self):
-        user = RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
+        user = RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
+                                                                   'surname': 'user',
                                                                    'password': 'haha',
                                                                    'email': 'testuser@test.be',
-                                                                   'gender': User.MALE,
                                                                    'date_of_birth': datetime.date.today(),
                                                                    'site': Site.objects.get_current()})
         RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
@@ -122,10 +122,10 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertTrue('new_email' in resp.context)
         
     def test_change_email_view(self):
-        user = RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
+        user = RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
+                                                                   'surname': 'user',
                                                                    'password': 'haha',
                                                                    'email': 'testuser@test.be',
-                                                                   'gender': User.MALE,
                                                                    'date_of_birth': datetime.date.today(),
                                                                    'site': Site.objects.get_current()})
         RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
@@ -139,10 +139,10 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertRedirects(resp, '/account/settings/', 302, 200)
         
     def test_change_password_view(self):
-        user = RegistrationProfile.objects.create_inactive_user(**{'username': 'testuser',
+        user = RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
+                                                                   'surname': 'user',
                                                                    'password': 'haha',
                                                                    'email': 'testuser@test.be',
-                                                                   'gender': User.MALE,
                                                                    'date_of_birth': datetime.date.today(),
                                                                    'site': Site.objects.get_current()})
         RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)

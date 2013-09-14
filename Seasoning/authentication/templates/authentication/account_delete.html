@@ -1,20 +1,91 @@
 {% extends "base.html" %}
 
 {% block title %}Account verwijderen{% endblock %}
+
+{% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<style>
+/*
+ * Tooltip styles
+ */
+.ui-tooltip {
+    position: absolute;
+}
+
+.ui-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: .75em;
+    color: #5B6553;
+}
+</style>
+{% endblock %}
+
+{% block extra_script %}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+$(function() {
+    $('.tooltip-field input').each(function() {
+        $(this).tooltip({ 
+            items: ".tooltip-field input", 
+            content:  function() {
+                return $(this).parent().children('.tooltip').text();
+            },
+            position: {
+                of: $(this).parent(),
+                my: "left top",
+                at: "right+10 top-2"
+            },
+        }).off("mouseover mouseout");
+    });
+    
+})
+</script>
+{% endblock %}
+
 {% block page_name %}Account verwijderen{% endblock %}
 
 {% block content %}
 
-<form action="" method="post" enctype="multipart/form-data">
+<form action="" method="post" enctype="multipart/form-data" id="account-delete-form">
 {% csrf_token %}
+
 <p>
-Checkstring (Geef hier 'DELETEME' in zonder de aanhalingstekens om je account te verwijderen): {{ form.checkstring }}
+    Met dit formulier kan u aangeven dat u uw account wil verwijderen. Wanneer het formulier doorgestuurd is,
+    zal uw account inactief worden. Indien u zich binnen de 7 dagen opnieuw aanmeld op Seasoning, zal het 
+    account opnieuw geactiveerd worden, en blijven al uw gegevens bewaard.
 </p>
 <p>
-{{ form.delete_recipes }} Verwijder ook al mijn gerechten :(
+    Een account dat meer dan 7 dagen inactief is, zal onomkeerbeer uit onze databank verwijderd worden. Wij houden
+    hierna geen informatie meer bij over uw profiel.
 </p>
-<input type="submit" value="Wijzig Account" />
+<br />
+<p>
+    Vul in onderstaande veld het woord 'DELETEME' (zonder aanhalingstekens) in om je account te verwijderen
+</p>
+    
+<div class="field-wrapper tooltip-field">
+    {{ form.checkstring }}
+    
+    <div class="tooltip">Vul hier het woord 'DELETEME' zonder aanhalingstekens in.</div>
+    
+</div>
+
+<p>
+    Duid onderstaande optie aan indien u ook al uw toegevoegde recepten van Seasoning wil verwijderen.
+    Recepten die toegevoegd werden door een gebruiker die zijn account verwijderd heeft, zullen als 
+    auteur 'Onbekend' krijgen.
+</p>
+    
+<div class="field-wrapper tooltip-field">
+    <span><strong>{{ form.delete_recipes.label }}</strong></span>
+    {{ form.delete_recipes }}
+    
+    <div class="tooltip">:(</div>
+</div>
+
+<div id="submit-button">
+    <input type="submit" value="Verwijder Account" />
+</div>
 </form>
-</p>
 
 {% endblock %}

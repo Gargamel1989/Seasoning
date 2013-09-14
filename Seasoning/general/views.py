@@ -34,8 +34,7 @@ def contribute(request):
 
 def static_page(request, url):
     static_page = get_object_or_404(StaticPage, url=url)
-    return render(request, 'static_page.html', {'title': static_page.name,
-                                                'body_html': static_page.body_html})
+    return render(request, 'static_page.html', {'page_info': static_page})
     
 @staff_member_required
 def backup_db(request):

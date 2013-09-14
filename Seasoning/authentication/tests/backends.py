@@ -11,10 +11,10 @@ class AuthenticationBackendsTestCase(TestCase):
         backend = RegistrationBackend()
         request = RequestFactory().get('/')
         
-        backend.register(request, **{'username': 'testuser',
+        backend.register(request, **{'email': 'testuser@test.be',
+                                     'givenname': 'test',
+                                     'surname': 'user',
                                      'password': 'haha',
-                                     'email': 'testuser@test.be',
-                                     'gender': User.MALE,
                                      'date_of_birth': datetime.date.today()})
         user = User.objects.get(email='testuser@test.be')
         registration_profile = RegistrationProfile.objects.get(user=user)

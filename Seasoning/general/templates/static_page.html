@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ page_info.name }}{% endblock %}
 
 {% block extra_link %}<link rel="stylesheet" href="{{ STATIC_URL }}css/static.css" />{% endblock %}
 
-{% block page_name %}{{ title }}{% endblock %}
+{% block page_name %}{{ page_info.name }}{% endblock %}
+
+{% block content_class %}{{ page_info.url }}{% endblock %}
 
 {% block content %}
 
-{{ body_html|safe }}
+{{ page_info.body_html|safe }}
 
 {% endblock %}

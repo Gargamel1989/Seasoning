@@ -240,8 +240,9 @@ def edit_recipe(request, recipe_id=None):
                     # All uses_ingredient forms should be valid when ingredients are added
                     if usesingredient_formset.is_valid():
                         # No ingredients have to be added, everything is fine!
-                        usesingredient_formset.save()
                         recipe_form.save(author=request.user)
+                        usesingredient_formset.save(commit=False)
+                        recipe.save()
                         if new:
                             messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
                         else:
