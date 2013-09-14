@@ -241,7 +241,6 @@ form .tooltip {
 }
 
 #body {
-	padding-bottom: 50px;
 }
 
 #body .messages {
@@ -375,14 +374,26 @@ form .tooltip {
 	font-size: 2.2em;
 	width:400px;
 	color:#F4FAEF;
+	margin-bottom: 10px;
+}
+
+#introbox h2 {
+	font-size: 1.3em;
+	width:400px;
+	margin-bottom: 10px;
+}
+
+#introbox h2 a {
+	color:#F4FAEF;
+	text-decoration: none;
 }
 
 #introbox #introbox-container {
 	max-width:960px;
 	min-width: 640px;
-	height:270px;
+	height:280px;
 	margin:auto;
-	padding:30px 10px 0 10px;
+	padding:20px 10px 0 10px;
 	position: relative;
 	overflow: hidden;
 }
@@ -409,8 +420,8 @@ form .tooltip {
 	color:#F4FAEF;
 	font-size:12px;
 	line-height:18px;
-	width:300px;
-	margin-top:10px;
+	width:350px;
+	margin:5px 0 0 0;
 }
 
 #introbox-container #slideshow .slide .slide-image {
@@ -464,9 +475,20 @@ form .tooltip {
 }
 
 #content .homepage-column img {
+<<<<<<< HEAD
 	width: 300px;
 	margin: auto;
+=======
+	width: 100px;
+	margin: 0 auto 20px;
+>>>>>>> branch 'master' of https://github.com/Gargamel1989/Seasoning.git
 	display: block;
+}
+
+#content .homepage-column h2 {
+	font-family:Lobster, Verdana, Geneva, sans-serif;
+	color: #76BA3B;
+	font-size: 1.4em;
 }
 
 #content #homepage-left-column {
@@ -579,6 +601,19 @@ form .tooltip {
 	float: right;
 	text-align: center;
 	padding-top: 10px;
+}
+
+/*
+ * Activation
+ */
+#resend-activation-email-form {
+	margin-top: 30px;
+	max-width: 400px;
+}
+
+#resend-activation-email-form input[type=submit] {
+	width: 52%;
+	margin-right: -2px;
 }
 
 /*
@@ -697,6 +732,31 @@ color:#598c2c;
 
 #account-settings-links li.active a {
 	font-weight: 600;
+}
+
+/*
+ * Account Delete
+ */
+#account-delete-form .field-wrapper {
+	width: 30%;
+	margin: auto;
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+#account-delete-form .field-wrapper input {
+	width: 100%;
+	float: none;
+}
+
+#account-delete-form #submit-button {
+	text-align: center;
+}
+
+#account-delete-form #submit-button input {
+	float: none;
+	width: 30%;
+	height: 30px;
 }
 
 /*
