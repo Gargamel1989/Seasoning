@@ -143,90 +143,76 @@ form .tooltip {
    position:relative;
 }
 
-#header {
-	height:65px;
+#container #nav-helper {
+	position: fixed;
+	width: 100%;
+	top: 0px;
+}
+
+#header-container {
+	height:330px;
 	min-width: 660px;
-	background-color:#76BA3B;
-	background-image:linear-gradient(to top,#629B31 0%,#76BA3B 94%);
+	background-color:#629B31;
+	/**background-image:linear-gradient(to top,#629B31 0%,#76BA3B 94%);**/
 	border-bottom:1px solid #5B6553;
 	box-shadow:0 1px 2px 0 rgba(0,0,0,0.3);
 	z-index:4;
 	position:relative;
 }
 
+#header {
+	z-index: 3;
+	height:100%;
+	min-width: 660px;
+	position:relative;
+}
+
+#header #logo {
+	margin:auto;
+	width: 352px;
+	height: 250px;
+}
+
+#logo img {
+	padding-top: 110px;
+}
+
 #header #nav-container {
 	max-width:960px;
 	min-width: 640px;
-	height:100%;
+	height:80px;
 	position:relative;
 	margin:auto;
 	padding:0 10px;
+	border-top: 1px solid #598c2c;
+	bottom: 0;
 }
 
 #nav-container ul {
 	list-style:none;
-	position:absolute;
 	padding:0;
-	margin:0;
+	margin:auto;
+	width: 929px;
+	height: 65px;
 }
 
 #nav-container li {
 	display:inline-block;
-	padding-right: 15px;
+	width: 150px;
+	text-align: center;
+	height: 21px;
+	font-size: 16px;
+	padding: 29px 0;
 }
 
 #nav-container a {
 	text-decoration:none;
 	color:#F4FAEF;
-}
-
-#nav-container a:hover {
-	color:#598c2c;
+	padding: 5px;
 }
 
 #nav-container #main-nav {
-	bottom:5px;
-}
-
-#nav-container #main-nav li {
-	padding-right:20px;
-}
-
-#nav-container #main-nav li a {
-	font-weight:700;
-}
-
-#nav-container #account-controls {
-	bottom:5px;
-	right:10px;
-}
-
-#account-controls #account-settings-link {
-	font-weight: 600;
-	padding-right: 20px;
-}
-
-#account-settings-link a {
-	position: relative;
-}
-
-#account-controls #account-settings-link #img-darkener {
-	background: #1E2F0F;
-	position: absolute;
-	left: -35px;
-	bottom: -2px;
-}
-
-#account-controls #account-settings-link img {
-	height: 30px;
-	width: 30px;
-	background: white;
-	transition:all .3s ease-out;
-}
-
-#account-controls #account-settings-link:hover img {
-	opacity: .5;
-	transition:all .3s ease-out;
+	margin: auto;
 }
 
 #nav-container .sub-nav {
@@ -248,6 +234,10 @@ form .tooltip {
 
 #nav-container .sub-nav li a:hover {
 	color:#598c2c;
+}
+
+#header-filler {
+	height: 330px;
 }
 
 #body {
@@ -370,6 +360,7 @@ form .tooltip {
  */
 
 #introbox {
+	display: none;
 	height:300px;
 	min-width: 660px;
 	background-color:#A0D373;
@@ -473,7 +464,7 @@ form .tooltip {
 }
 
 #content .homepage-column img {
-	width: 100px;
+	width: 300px;
 	margin: auto;
 	display: block;
 }

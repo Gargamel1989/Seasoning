@@ -3,14 +3,14 @@
 {% block extra_script %}<script src="{{ STATIC_URL }}js/homepage.js"></script>{% endblock %}
 
 {% block extra_head %}
-<style>
+<style>/**
 #nav-container .sub-nav li a {
 color:#F4FAEF;
 }
 
 #nav-container .sub-nav li a:hover {
 color:#598c2c;
-}
+}**/
 </style>
 {% endblock %}
 
@@ -89,7 +89,7 @@ color:#598c2c;
             {% endif %}
             
             <div id="homepage-left-column" class="homepage-column">
-                <img src="http://www.clker.com/cliparts/z/0/G/j/e/J/world-grey-md.png" />
+                <img src="{{ STATIC_URL }}img/Groenten.jpg" />
                 <h2>De duurzaamste recepten van het moment:</h2>
                 <p>
                     Er zijn momenteel nog geen recepten beschikbaar :(

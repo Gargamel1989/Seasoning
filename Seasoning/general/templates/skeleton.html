@@ -24,47 +24,42 @@
 		{% block extra_script %}{% endblock %}
 		
 		{% block extra_head %}{% endblock %}
+		<script>
+			$(window).scroll(function(){
+    			$("#nav-helper").css("top",Math.max(-250, -$(this).scrollTop()));
+			});
+		</script>
 	</head>
 	
 	<body class="{% block bodyclass %}{% endblock %}">
 		<div id="container">
-			<div id="header">
-				<div id="nav-container">
-				    <ul id="main-nav">
-				    	<a href="/"><img src="{{ STATIC_URL }}img/logo.png" style="width:58px;margin-bottom:-5px;" /></a>
-						<li><a id="main-nav-link-recipes" class="main-nav-link" href="/recipes/">RECEPTEN</a></li>
-						<li><a id="main-nav-link-info" class="main-nav-link" href="/information/">INFORMATIE</a></li>
-						{% if user.is_superuser %}
-						<li><a id="main-nav-link-admin" class="main-nav-link" href="/admin/">ADMIN</a></li>
-						{% endif %}
-					</ul>
-					<ul id="sub-nav-recipes" class="sub-nav {% active request "RECEPTEN" %}">
-						<li class="sub-nav-link"><a href="/recipes/search/">Recepten Zoeken</a></li>
-						<li class="sub-nav-link"><a href="/recipes/add/">Recepten	Toevoegen</a></li>
-						<li class="sub-nav-link"><a href="/recipes/mine/">Mijn Recepten</a></li>
-					</ul>
-					<ul id="sub-nav-info" class="sub-nav {% active request "INFORMATIE" %}">
-						<li class="sub-nav-link"><a href="/ingredients/">Ingredienten</a></li>
-						<li class="sub-nav-link"><a href="/news/">Nieuws</a></li>
-						<li class="sub-nav-link"><a href="/contribute/">Bijdragen</a></li>
-					</ul>
-					{% if user.is_superuser %}
-					<ul id="sub-nav-admin" class="sub-nav {% active request "ADMIN" %}">
-						<li class="sub-nav-link"><a href="/admin/ingredients/list/">Ingredienten</a></li>
-						<li class="sub-nav-link"><a href="/admin/general/staticpage/">Statische Paginas</a></li>
-						<li class="sub-nav-link"><a href="/backup/" >Backup Database</a></li>
-					</ul>
-					{% endif %}
-					<ul id="account-controls">
-						{% if user.is_authenticated %}
-						<li id="account-settings-link" class="account-controls-link"><a href="/account/settings/"><span id="img-darkener"><img src="{{ MEDIA_URL }}{{ user.avatar }}" /></span>{{ user.get_full_name }}</a></li>
-						<li class="account-controls-link"><a href="/logout/">Afmelden</a></li>
-						{% else %}
-						<li class="account-controls-link"><a href="/register/">Registreren</a></li>
-						<li class="account-controls-link"><a href="/login/">Aanmelden</a></li>
-						{% endif %}
-					</ul>
+			<div id="nav-helper">
+			<div id="header-container">
+				<div id="header">
+					<div id="logo">
+						<a href="/"><img src="{{ STATIC_URL }}img/logos/header.png" /></a>
+					</div>
+					<div id="nav-container">
+						<div id="nav">
+							<ul id="main-nav">
+								<li><a href="/recipes/">RECEPTEN</a></li>
+								<li><a href="/ingredients/">INGREDIENTEN</a></li>
+								<li><a href="/news/">NIEUWS</a></li>
+								<li><a href="/contribute/">BIJDRAGEN</a></li>
+								{% if user.is_authenticated %}
+									<li><a href="/account/settings/">MIJN ACCOUNT</a></li>
+									<li><a href="/logout/">AFMELDEN</a></li>
+								{% else %}
+									<li><a href="/register/">REGISTREREN</a></li>
+									<li><a href="/login/">AANMELDEN</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</div>
 				</div>
+			</div>
+			</div>
+			<div id="header-filler">
 			</div>
 			<div id="body">
 				{% block body %}{% endblock %}
