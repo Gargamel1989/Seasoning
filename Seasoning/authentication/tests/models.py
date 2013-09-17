@@ -25,6 +25,7 @@ from django.contrib.sites.models import Site
 from django.core import mail, management
 from django.utils.hashcompat import sha_constructor
 from django.conf import settings
+from recipes.models import Recipe, Cuisine
 
 
 class AuthenticationModelsTestCase(TestCase):
@@ -41,11 +42,11 @@ class AuthenticationModelsTestCase(TestCase):
         self.assertEqual(new_user.givenname, 'test')
         self.assertEqual(new_user.surname, 'user')
         self.assertEqual(new_user.date_of_birth, datetime.date.today())
-        self.assertEqual(new_user.avatar.url, '/media/images/users/no_image.png')
+        self.assertEqual(new_user.avatar.url, 'https://www.seasoning.be/media/images/users/no_image.png')
         self.assertEqual(new_user.is_active, True)
         self.assertEqual(new_user.is_staff, False)
         self.assertEqual(new_user.is_superuser, False)
-        User.objects.create_superuser("testsuperuser", "testsuperuser@test.be", datetime.date.today(), "haha")
+        User.objects.create_superuser("test", "superuser", "testsuperuser@test.be", datetime.date.today(), "haha")
         new_superuser = User.objects.get(email="testsuperuser@test.be")
         self.assertEqual(new_superuser.is_superuser, True)
     
@@ -289,3 +290,26 @@ class AuthenticationModelsTestCase(TestCase):
         self.assertEqual(updated_user.email, new_email.email)
         self.assertEqual(User.objects.get(pk=new_user.pk).email, new_email.email)
         self.assertRaises(NewEmail.DoesNotExist, NewEmail.objects.get, user=new_user)
+    
+    def test_rank(self):
+        user = RegistrationProfile.objects.create_inactive_user(site=Site.objects.get_current(),
+                                                                    **self.user_info)
+        
+        profile = RegistrationProfile.objects.get(user=user)
+        RegistrationProfile.objects.activate_user(profile.activation_key)
+        
+        self.assertEqual(user.rank(), User.RANKS[0])
+        self.assertEqual(user.recipes_until_next_rank(), 2)
+        
+        Cuisine(name="Andere").save()
+        for i in xrange(256):
+            if i == 100:
+                # 100 Recipes added
+                self.assertEqual(user.rank(), User.RANKS[6])
+                self.assertEqual(user.recipes_until_next_rank(), 28)
+            Recipe(name=str(i), author=user, course=0, 
+                   description='test', portions=1, active_time=1,
+                   passive_time=1, instructions='test').save()
+            
+        self.assertEqual(user.rank(), User.RANKS[8])
+        self.assertEqual(user.recipes_until_next_rank(), 0)

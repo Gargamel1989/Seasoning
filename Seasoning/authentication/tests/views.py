@@ -110,7 +110,7 @@ class AuthenticationViewsTestCase(TestCase):
         self.assertRedirects(resp, '/login/?next=/account/settings/', 302, 200)
         
         self.client.login(username='testuser@test.be', password='haha')
-        resp = self.client.get('/account/settings/')
+        resp = self.client.get('/account/settings/profile/')
         self.assertEqual(resp.status_code, 200)
         self.assertTrue('form' in resp.context)
         self.failIf('new_email' in resp.context)

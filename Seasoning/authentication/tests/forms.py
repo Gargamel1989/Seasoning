@@ -41,8 +41,8 @@ class AuthenticationFormsTestCase(TestCase):
                                                                 'tos': True,
                                                                 'captcha': 'something'})
         self.failIf(form.is_valid())
-        self.assertEqual(form.errors['givenname'], [u'Enter a valid username.'])
-        self.assertEqual(form.errors['surname'], [u'Enter a valid username.'])
+        self.assertFalse('givenname' in form.errors)
+        self.assertFalse('surname' in form.errors)
         self.assertEqual(form.errors['captcha'], [u'You must enter the correct ReCaptcha characters'])
         
         form = authentication.forms.EmailUserCreationForm(data={'givenname': 'test2',
@@ -113,14 +113,18 @@ class AuthenticationFormsTestCase(TestCase):
         
         # email doesn't change, empty avatar is possible
         form = authentication.forms.AccountSettingsForm(instance=user,
-                                                        data={'email': 'testuser@test.be',
+                                                        data={'givenname': 'test',
+                                                              'surname': 'user',
+                                                              'email': 'testuser@test.be',
                                                               'avatar': ''})
         self.assertTrue(form.is_valid())
         self.assertRaises(AttributeError, form.new_email)
         
         # New Email
         form = authentication.forms.AccountSettingsForm(instance=user,
-                                                        data={'email': 'othertestuser@test.be',
+                                                        data={'givenname': 'test',
+                                                              'surname': 'user',
+                                                              'email': 'othertestuser@test.be',
                                                               'avatar': 'test.png'})
         self.assertTrue(form.is_valid())
         self.assertEqual(form.new_email, 'othertestuser@test.be')
