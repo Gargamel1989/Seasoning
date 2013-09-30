@@ -1,42 +1,26 @@
-"""
-Copyright 2012, 2013 Driesen Joep
+import datetime, hashlib, random, re, time
 
-This file is part of Seasoning.
-
-Seasoning is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Seasoning is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
-    
-"""
-import datetime
-import hashlib
-import random
-import re
-import time
-
+from django.db import models, transaction
 from django.conf import settings
-from django.db import models
-from django.db import transaction
-from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.hashers import make_password, check_password, is_password_usable
 from django.contrib.auth.models import BaseUserManager
 from django.core import validators
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFit
-from django.utils import timezone
-from django.core.mail import send_mail, EmailMultiAlternatives
-from django.contrib.auth.hashers import make_password, check_password,\
-    is_password_usable
-from django.core.exceptions import PermissionDenied
+
+
+def get_image_filename(instance, old_filename):
+    """
+    Get a new filename for a user image
+    
+    """
+    filename = str(time.time()) + '.png'
+    return 'images/users/' + filename
 
 
 class UserManager(BaseUserManager):
@@ -45,6 +29,7 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a User with the given name, email, date of
         birth and password.
+        
         """
         user = self.model(givenname=givenname,
                           surname=surname,
@@ -59,6 +44,7 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
+        
         """
         user = self.create_user(givenname=givenname,
                                 surname=surname,
@@ -69,15 +55,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-def get_image_filename(instance, old_filename):
-    """
-    Get a new filename for a user image
-    
-    """
-    filename = str(time.time()) + '.png'
-    return 'images/users/' + filename
 
 class User(models.Model):
+    
     class Meta:
         db_table = 'user'
     
@@ -97,12 +77,12 @@ class User(models.Model):
     givenname = models.CharField(_('given name'), max_length=30,
                                 help_text=_('30 characters or fewer, only letters allowed. '
                                             'Your name will be used to identify you on Seasoning.'),
-                                validators=[validators.RegexValidator(re.compile('[a-zA-Z]{2,}'), _('Enter a valid Given Name.'), 'invalid')])
+                                validators=[validators.RegexValidator(re.compile('[a-zA-Z -]{2,}'), _('Enter a valid Given Name.'), 'invalid')])
     
     surname = models.CharField(_('surname'), max_length=50,
                                 help_text=_('50 characters or fewer, only letters allowed '
                                             'Your name will be used to identify you on Seasoning.'),
-                                validators=[validators.RegexValidator(re.compile('[a-zA-Z]{2,}'), _('Enter a valid Surname.'), 'invalid')])
+                                validators=[validators.RegexValidator(re.compile('[a-zA-Z -]{2,}'), _('Enter a valid Surname.'), 'invalid')])
     
     # Field to check if user has changed his name (name can only be changed once to avoid abuse)
     name_changed = models.BooleanField(default=False, editable=False)
@@ -114,7 +94,7 @@ class User(models.Model):
     
     date_of_birth = models.DateField()
         
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     
@@ -132,7 +112,8 @@ class User(models.Model):
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
         
-        # Theses should only be set by the save method!
+        # Theses should only be set by the save method! Used for checking
+        # if a users has changed his name.
         self.__cached_givenname__ = self.givenname
         self.__cached_surname__ = self.surname
 
@@ -165,7 +146,7 @@ class User(models.Model):
         send_mail(subject, message, from_email, [self.email])
 
     def __unicode__(self):
-        return self.email
+        return self.get_full_name()
 
     def natural_key(self):
         return (self.email,)
@@ -204,13 +185,32 @@ class User(models.Model):
     def has_usable_password(self):
         return is_password_usable(self.password)
     
+    def clean(self):
+        """
+        Checks if the user has changed his name. If so, this is only allowed if the user has
+        not changed his name before.
+        If the users' previous name was nothing, no change is counted. This can only occur before
+        the first save.
+        
+        """
+        if self.name_changed:
+            # This user has already changed his or her name
+            if not (self.__cached_givenname__ == '' and self.__cached_surname__ == ''):
+                # Check if the name of the user was changed
+                if self.givenname != self.__cached_givenname__ or self.surname != self.__cached_surname__:
+                    raise ValidationError('Name can only be changed once!')
+        
     def save(self, *args, **kwargs):
+        """
+        Checks if the user has changed his name. If so, this is only allowed if the user has
+        not changed his name before.
+        If the users' previous name was nothing, no change is counted. This can only occur before
+        the first save.
+        
+        """
+        self.full_clean()
         if self.givenname != self.__cached_givenname__ or self.surname != self.__cached_surname__:
-            # Check if the name of the user was changed
-            if self.name_changed:
-                # This user has already changed his or her name
-                raise PermissionDenied
-            else:
+            if not (self.__cached_givenname__ == '' and self.__cached_surname__ == ''):
                 self.name_changed = True
         super(User, self).save(*args, **kwargs);
         self.__cached_givenname__ = self.givenname
@@ -527,30 +527,7 @@ class NewEmailManager(models.Manager):
     """
     Custom manager for the ``NewEmail`` model
     
-    """    
-    def activate_email(self, user, activation_key):
-        """
-        Validate an activation key corresponding to a given user
-        
-        If the key is valid, return the new email addres after activating, and
-        delete the ``NewEmail`` object in the database and return the updated
-        ``User`` object.
-        
-        If the key is not valid, return ``False``.
-        
-        """
-        if SHA1_RE.search(activation_key):
-            try:
-                new_email = self.get(user=user, activation_key=activation_key)
-            except self.model.DoesNotExist:
-                return False
-            user = new_email.user
-            user.email = new_email.email
-            user.save()
-            new_email.delete()
-            return user
-        return False
-    
+    """
     def create_inactive_email(self, user, new_email, site, send_email=True):
         """
         Create a new, inactive email for a given user, generate a
@@ -582,6 +559,29 @@ class NewEmailManager(models.Manager):
             inactive_email.send_new_email_email(site)
 
         return inactive_email
+    
+    def activate_email(self, user, activation_key):
+        """
+        Validate an activation key corresponding to a given user
+        
+        If the key is valid, return the new email addres after activating, and
+        delete the ``NewEmail`` object in the database and return the updated
+        ``User`` object.
+        
+        If the key is not valid, return ``False``.
+        
+        """
+        if SHA1_RE.search(activation_key):
+            try:
+                new_email = self.get(user=user, activation_key=activation_key)
+            except self.model.DoesNotExist:
+                return False
+            user = new_email.user
+            user.email = new_email.email
+            user.save()
+            new_email.delete()
+            return user
+        return False
 
 class NewEmail(models.Model):
     """
@@ -623,3 +623,4 @@ class NewEmail(models.Model):
     
     def __unicode__(self):
         return self.email
+

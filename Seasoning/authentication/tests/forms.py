@@ -5,127 +5,109 @@ import datetime
 import os
 from authentication.backends import RegistrationBackend
 from django.contrib.sites.models import Site
+from django import forms
+from django_dynamic_fixture import G
 
-class AuthenticationFormsTestCase(TestCase):
+class RegistrationFormTestCase(TestCase):
     
-    def test_registration_form(self):
-        User.objects.create_user(**{'givenname': 'test',
-                                    'surname': 'user',
-                                    'password': 'haha',
-                                    'email': 'testuser@test.be',
-                                    'date_of_birth': datetime.date.today()})
-        os.environ['RECAPTCHA_TESTING'] = 'True'
+    def test_validation(self):        
+        form = authentication.forms.RegistrationForm(data={'givenname': 'test',
+                                                           'surname': 'user',
+                                                           'password': 'haha',
+                                                           'password2': 'haha2',
+                                                           'email': 'testuser@test.be',
+                                                           'date_of_birth': datetime.date.today(),
+                                                           'tos': False,
+                                                           'captcha': ''})
+        self.assertEqual(len(form.errors), 3)
+        self.assertTrue('captcha' in form.errors)
+        self.assertTrue('__all__' in form.errors)
+        self.assertTrue('tos' in form.errors)
 
-        form = authentication.forms.EmailUserCreationForm(data={'givenname': 'test',
-                                                                'surname': 'user',
-                                                                'password': 'haha',
-                                                                'password2': 'hahaa',
-                                                                'email': 'testuser@test.be',
-                                                                'date_of_birth': datetime.date.today(),
-                                                                'tos': False,
-                                                                'captcha': ''})
-        self.failIf(form.is_valid())        
-        self.assertFalse('givenname' in form.errors)
-        self.assertFalse('surname' in form.errors)
-        self.assertEqual(form.errors['__all__'], [u'The two password fields didn\'t match.'])
-        self.assertEqual(form.errors['email'], [u'User with this Email address already exists.'])
-        self.assertEqual(form.errors['tos'], [u'You must agree to the terms to register'])
-        self.assertEqual(form.errors['captcha'], [u'You must enter the correct ReCaptcha characters'])
-        
-        form = authentication.forms.EmailUserCreationForm(data={'givenname': 'test',
-                                                                'surname': 'user',
-                                                                'password': 'haha',
-                                                                'password2': 'haha',
-                                                                'email': 'testuser2@test.be',
-                                                                'date_of_birth': datetime.date.today(),
-                                                                'tos': True,
-                                                                'captcha': 'something'})
-        self.failIf(form.is_valid())
-        self.assertFalse('givenname' in form.errors)
-        self.assertFalse('surname' in form.errors)
-        self.assertEqual(form.errors['captcha'], [u'You must enter the correct ReCaptcha characters'])
-        
-        form = authentication.forms.EmailUserCreationForm(data={'givenname': 'test2',
-                                                                'surname': 'user2',
-                                                                'password': 'haha',
-                                                                'password2': 'haha',
-                                                                'email': 'testuser2@test.be',
-                                                                'date_of_birth': datetime.date.today(),
-                                                                'tos': True,
-                                                                'recaptcha_response_field': 'PASSED'})
-        self.assertTrue(form.is_valid())
-        
-    def test_resend_activation_email_form(self):
-        form = authentication.forms.ResendActivationEmailForm(data={'email': ''})
-        # Check invalid input
-        self.failIf(form.is_valid())
-        self.assertEqual(form.errors['email'], [u'Please enter a valid email address'])
-        
-        user = RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
-                                                                   'surname': 'user',
-                                                                   'password': 'haha',
-                                                                   'email': 'testuser@test.be',
-                                                                   'date_of_birth': datetime.date.today(),
-                                                                   'site': Site.objects.get_current()})
-        # Check for inactive user
-        form = authentication.forms.ResendActivationEmailForm(data={'email': user.email})
-        
-        self.assertTrue(form.is_valid())
-        
-        # Check for active user
-        RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
-        form = authentication.forms.ResendActivationEmailForm(data={'email': user.email})
-        
-        self.failIf(form.is_valid())
-        self.assertEqual(form.errors['email'], [u'The account corresponding to this email address has already been activated'])
-        
-        # Check for unknown user
-        form = authentication.forms.ResendActivationEmailForm(data={'email': 'unknown@example.com'})
-        
-        self.failIf(form.is_valid())
-        self.assertEqual(form.errors['email'], [u'The given email address was not found'])
+class SocialRegistrationFormTestCase(TestCase):
     
-    def test_check_activate_account_form(self):
-        RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
-                                                            'surname': 'user',
-                                                            'password': 'haha',
-                                                            'email': 'testuser@test.be',
-                                                            'date_of_birth': datetime.date.today(),
-                                                            'site': Site.objects.get_current()})
-        
-        form = authentication.forms.CheckActiveAuthenticationForm(data={'username': 'testuser@test.be',
-                                                                        'password': 'haha'})
-        
-        self.failIf(form.is_valid())
-        self.assertEqual(form.errors['__all__'], [u'This account has not been activated yet, so you may not log '
-                                                   'in at this time. If you haven\'t received an activation email for '
-                                                   '15 minutes after registering, you can use <a href="/activate/resend/">'
-                                                   'this form</a> to resend an activation email.'])
+    def test_validation(self):
+        form = authentication.forms.SocialRegistrationForm(data={'tos': True})
+        self.assertTrue(form.is_valid())
+        form = authentication.forms.SocialRegistrationForm(data={'tos': True,
+                                                                 'password': '1'})
+        self.assertEqual(len(form.errors), 1)
+        self.assertTrue('__all__' in form.errors)
+        form = authentication.forms.SocialRegistrationForm(data={'tos': True,
+                                                                 'password': '1',
+                                                                 'password2': '2'})
+        self.assertEqual(len(form.errors), 1)
+        self.assertTrue('__all__' in form.errors)
+        form = authentication.forms.SocialRegistrationForm(data={'tos': True,
+                                                                 'password': '1',
+                                                                 'password2': '1'})
+        self.assertTrue(form.is_valid())
+
+class ResendActivationEmailFormTestCase(TestCase):
     
-    def test_account_settings_form(self):
-        user = RegistrationProfile.objects.create_inactive_user(**{'givenname': 'test',
-                                                                   'surname': 'user',
-                                                                   'password': 'haha',
-                                                                   'email': 'testuser@test.be',
-                                                                   'date_of_birth': datetime.date.today(),
-                                                                   'site': Site.objects.get_current()})
-        RegistrationProfile.objects.activate_user(RegistrationProfile.objects.get(user=user).activation_key)
+    def test_validation(self):
+        form = authentication.forms.ResendActivationEmailForm(data={'email': 'test@test.com'})
+        self.assertEqual(len(form.errors), 1)
+        self.assertTrue('email' in form.errors)
         
-        # email doesn't change, empty avatar is possible
-        form = authentication.forms.AccountSettingsForm(instance=user,
-                                                        data={'givenname': 'test',
-                                                              'surname': 'user',
-                                                              'email': 'testuser@test.be',
-                                                              'avatar': ''})
+        profile = G(RegistrationProfile)
+        form = authentication.forms.ResendActivationEmailForm(data={'email': profile.user.email})
         self.assertTrue(form.is_valid())
-        self.assertRaises(AttributeError, form.new_email)
         
-        # New Email
+        profile.user.is_active = True
+        profile.user.save()
+        form = authentication.forms.ResendActivationEmailForm(data={'email': profile.user.email})
+        self.assertEqual(len(form.errors), 1)
+        self.assertTrue('email' in form.errors)
+        
+        profile.activation_key = RegistrationProfile.ACTIVATED
+        profile.save()
+        profile.user.is_active = False
+        profile.user.save()
+        form = authentication.forms.ResendActivationEmailForm(data={'email': profile.user.email})
+        self.assertEqual(len(form.errors), 1)
+        self.assertTrue('email' in form.errors)
+        
+class AccountSettingsFormTestCase(TestCase):
+    
+    def test_name_fields(self):
+        user = G(User)
+        user.name_changed = True
+        
         form = authentication.forms.AccountSettingsForm(instance=user,
-                                                        data={'givenname': 'test',
-                                                              'surname': 'user',
-                                                              'email': 'othertestuser@test.be',
-                                                              'avatar': 'test.png'})
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.new_email, 'othertestuser@test.be')
+                                                        data={'email': user.email})
+        self.assertFalse('givenname' in form.fields)
+        self.assertFalse('surname' in form.fields)
         
+    def test_validation(self):
+        user = G(User)
+        
+        form = authentication.forms.AccountSettingsForm(instance=user,
+                                                        data={'givenname': user.givenname,
+                                                              'surname': user.surname,
+                                                              'email': user.email})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.new_email, None)
+        
+        form = authentication.forms.AccountSettingsForm(instance=user,
+                                                        data={'givenname': user.givenname,
+                                                              'surname': user.surname,
+                                                              'email': user.email + 'extra'})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.new_email, user.email + 'extra')
+        form.cleaned_data['email'] = user.email
+    
+class DeleteAccountFormTestCase(TestCase):
+    
+    def test_validation(self):
+        form = authentication.forms.DeleteAccountForm(data={'checkstring': 'Wrong',
+                                                            'delete_recipes': True})
+        self.assertEqual(len(form.errors), 1)
+        self.assertTrue('checkstring' in form.errors)
+        
+        form = authentication.forms.DeleteAccountForm(data={'checkstring': 'DELETEME',
+                                                            'delete_recipes': True})
+        self.assertTrue(form.is_valid())
+        
+        form = authentication.forms.DeleteAccountForm(data={'checkstring': 'DELETEME'})
+        self.assertTrue(form.is_valid())

@@ -1,34 +1,13 @@
-"""
-Copyright 2012, 2013 Driesen Joep
-
-This file is part of Seasoning.
-
-Seasoning is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Seasoning is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
-    
-"""
+from authentication.models import User
+from captcha.fields import ReCaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
-from captcha.fields import ReCaptchaField
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.forms.models import ModelForm
 from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
-from authentication.models import User
-from django.core.exceptions import ValidationError
 
         
 class ShownImageInput(ClearableFileInput):
@@ -56,7 +35,7 @@ class ShownImageInput(ClearableFileInput):
 
         return mark_safe(template % substitutions)
 
-class EmailUserCreationForm(forms.ModelForm):
+class RegistrationForm(forms.ModelForm):
     """
     Form for registering a new user account.
     
@@ -118,7 +97,7 @@ class EmailUserCreationForm(forms.ModelForm):
         field.
         
         """
-        super(EmailUserCreationForm, self).clean()
+        super(RegistrationForm, self).clean()
         if 'password' in self.cleaned_data and 'password2' in self.cleaned_data:
             if self.cleaned_data['password'] != self.cleaned_data['password2']:
                 raise forms.ValidationError(_("The two password fields didn't match."))
@@ -127,7 +106,12 @@ class EmailUserCreationForm(forms.ModelForm):
 attrs_dict = {'class': 'required',
               'tabindex': '8'}
 
-class SocialUserCheckForm(forms.Form):
+class SocialRegistrationForm(forms.Form):
+    """
+    This form is used for registering users using a social network. The passwords
+    are optional
+    
+    """
     
     password = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
                                 label=_("Password"), required=False) 
@@ -146,8 +130,8 @@ class SocialUserCheckForm(forms.Form):
         field.
         
         """
-        super(SocialUserCheckForm, self).clean()
-        if 'password' in self.cleaned_data and 'password2' in self.cleaned_data:
+        super(SocialRegistrationForm, self).clean()
+        if 'password' in self.cleaned_data or 'password2' in self.cleaned_data:
             if self.cleaned_data['password'] != self.cleaned_data['password2']:
                 raise forms.ValidationError(_("The two password fields didn't match."))
         return self.cleaned_data
@@ -163,8 +147,9 @@ class ResendActivationEmailForm(forms.Form):
     
     If the given email address does correspond to an inactive account, the 
     cleaned email field will contain the registration profile of the account.
+    
     """    
-    email = forms.EmailField(label="E-mail", max_length=75,
+    email = forms.EmailField(label="E-mail", max_length=75, required=False,
                              error_messages = {'invalid': _("Please enter a valid email address"),
                                                'required': _("Please enter a valid email address")})
     
@@ -223,18 +208,6 @@ class AccountSettingsForm(ModelForm):
             del self.fields['givenname']
             del self.fields['surname']
         
-    def clean_givenname(self):
-        user = self.instance
-        if user.givenname != self.cleaned_data['givenname'] and user.name_changed:
-            raise ValidationError(_('Name can only be changed once!'))
-        return self.cleaned_data['givenname']
-    
-    def clean_surname(self):
-        user = self.instance
-        if user.surname != self.cleaned_data['surname'] and user.name_changed:
-            raise ValidationError(_('Name can only be changed once!'))
-        return self.cleaned_data['surname']
-    
     def clean_email(self):
         user = self.instance
         new_email = self.cleaned_data['email']
@@ -253,19 +226,11 @@ class DeleteAccountForm(forms.Form):
     added recipes.
     
     """
-    # TODO: Test
     checkstring = forms.CharField()
-    delete_recipes = forms.BooleanField()
+    delete_recipes = forms.BooleanField(required=False)
     
     def clean_checkstring(self):
         checkstring = self.cleaned_data['checkstring']
         if not checkstring == 'DELETEME':
             raise forms.ValidationError('You must provide the string \'DELETEME\' if you would like to delete your account')
         return checkstring
-
-class SocialPasswordChangeForm(PasswordChangeForm):
-    
-    def clean_old_password(self):
-        if self.user.password == '!':
-            return '!'
-        return super(SocialPasswordChangeForm, self).clean_old_password()

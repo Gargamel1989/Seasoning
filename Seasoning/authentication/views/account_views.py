@@ -13,6 +13,10 @@ from django.contrib.auth.views import login as django_login, logout
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
 
+def login(request):
+    return django_login(request, template_name='authentication/login.html', 
+                        authentication_form=CheckActiveAuthenticationForm)
+
 @login_required
 def public_profile(request, user_id):
     user = get_object_or_404(User, pk=user_id)
@@ -130,14 +134,3 @@ def account_delete(request):
     else:
         form = DeleteAccountForm()
     return render(request, 'authentication/account_delete.html', {'form': form})
-
-def login(request):
-    redirect_to = request.REQUEST.get('next', None)
-    
-    if redirect_to:
-        next_string = '&next=' + redirect_to
-    else:
-        next_string = ''
-    return django_login(request, template_name='authentication/login.html', 
-                        authentication_form=CheckActiveAuthenticationForm,
-                        extra_context={'next_string': next_string})

@@ -20,7 +20,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django.contrib.auth import login, load_backend
 from django.conf import settings
 from authentication import signals
-from authentication.forms import EmailUserCreationForm
+from authentication.forms import RegistrationForm
 from authentication.models import RegistrationProfile, User
 from django.contrib.auth.backends import ModelBackend
 import urllib2

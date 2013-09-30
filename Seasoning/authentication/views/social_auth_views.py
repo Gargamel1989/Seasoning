@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sites.models import get_current_site
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
-from authentication.forms import SocialUserCheckForm
+from authentication.forms import SocialRegistrationForm
 from django.core.exceptions import PermissionDenied
 
 BACKENDS = {'google': GoogleAuthBackend,

@@ -5,9 +5,9 @@ from authentication.models import User, RegistrationProfile
 import datetime
 from django.contrib.sessions.backends.db import SessionStore
 
-class AuthenticationBackendsTestCase(TestCase):
+class RegistrationBackendTestCase(TestCase):
     
-    def test_registration_and_activation(self):
+    def test_register_and_activate(self):
         backend = RegistrationBackend()
         request = RequestFactory().get('/')
         
@@ -25,3 +25,5 @@ class AuthenticationBackendsTestCase(TestCase):
         user = User.objects.get(email='testuser@test.be')
         self.assertTrue(user.is_active)
         self.assertTrue(user.is_authenticated())
+
+# TODO: Test Social backends, do not know how :(
