@@ -6,6 +6,7 @@ from authentication.forms import ResendActivationEmailForm
 from django.contrib.sites.models import RequestSite
 from django.template.context import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 def register(request, backend, success_url=None, form_class=None,
              disallowed_url='registration_disallowed',

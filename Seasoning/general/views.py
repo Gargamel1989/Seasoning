@@ -26,7 +26,10 @@ from general.models import StaticPage
 from recipes.models import Recipe
 
 def home(request):
-    recipe_otw = Recipe.objects.get(pk=1)
+    try:
+        recipe_otw = Recipe.objects.get(pk=1)
+    except Recipe.DoesNotExist:
+        recipe_otw = None
     return render(request, 'homepage.html', {'recipe_otw': recipe_otw})
 
 def contribute(request):

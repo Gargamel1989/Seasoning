@@ -148,7 +148,7 @@ class RegistrationBackend(object):
         Return the default form class used for user registration.
         
         """
-        return EmailUserCreationForm
+        return RegistrationForm
 
     def post_registration_redirect(self, request, user):
         """

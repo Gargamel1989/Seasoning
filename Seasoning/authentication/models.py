@@ -591,7 +591,7 @@ class NewEmail(models.Model):
     class Meta:
         db_table = 'newemail'
     
-    user = models.ForeignKey(User, primary_key=True)
+    user = models.ForeignKey(User, primary_key=True, related_name='new_emails')
     activation_key = models.CharField(_('activation key'), unique=True, max_length=40)
     email = models.EmailField(
         max_length=255,

@@ -47,7 +47,7 @@ def account_settings_profile(request):
         form = AccountSettingsForm(request.POST, request.FILES, instance=user)
         
         if form.is_valid():
-            if form.new_email:
+            if form.new_email is not None:
                 # Send an activation email to the new email
                 NewEmail.objects.create_inactive_email(user, form.new_email, RequestSite(request))
                 messages.add_message(request, messages.INFO, _('An email has been sent to the new email address provided by you. Please follow the instructions '
@@ -92,8 +92,7 @@ def change_email(request, activation_key):
 @login_required
 def change_password(request,
                     template_name='authentication/password_change_form.html',
-                    password_change_form=PasswordChangeForm,
-                    current_app=None, extra_context=None):
+                    password_change_form=PasswordChangeForm):
     """
     Provides a form where the users password can be changed.
     
@@ -109,13 +108,7 @@ def change_password(request,
             return redirect(account_settings)
     
     form = password_change_form(user=request.user)
-    context = {
-        'form': form,
-    }
-    if extra_context is not None:
-        context.update(extra_context)
-    return TemplateResponse(request, template_name, context,
-                            current_app=current_app)
+    return render(request, template_name, {'form': form})
 
 @login_required
 def account_delete(request):
@@ -123,7 +116,6 @@ def account_delete(request):
     Provides a method for deleting the users account
     
     """
-    # TODO: test
     if request.method == 'POST':
         form = DeleteAccountForm(request.POST)
         if form.is_valid():
