@@ -49,7 +49,7 @@ class Unit(models.Model):
     
     The ratio is defined as follows:
         1 this_unit = ratio parent_unit
-        
+    
     """
     class Meta:
         db_table = 'unit'
@@ -57,7 +57,7 @@ class Unit(models.Model):
     name = models.CharField(max_length=30L, unique=True)
     short_name = models.CharField(max_length=10L, blank=True)
     
-    parent_unit = models.ForeignKey('self', related_name="derived_units", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None))
+    parent_unit = models.ForeignKey('self', related_name="derived_units", null=True, blank=True, limit_choices_to=models.Q(parent_unit__exact=None), default=None)
     ratio = models.FloatField(null=True, blank=True)
     
     def __unicode__(self):
@@ -142,38 +142,10 @@ class Ingredient(models.Model):
             useable_units = self.canuseunit_set.all()
             for useable_unit in useable_units:
                 if useable_unit.is_primary_unit:
-                    return useable_unit
+                    return useable_unit.unit
             return None
         except CanUseUnit.DoesNotExist:
             return None
-    
-    def always_available(self):
-        """
-        Check if this Ingredient is always available somewhere
-        
-        """
-        try:
-            available_ins_cache = self.get_available_ins()
-        except self.BasicIngredientException:
-            return True
-        
-        available_ins = []
-        start_date = datetime.datetime(AvailableIn.BASE_YEAR, 1, 1)
-        current_date = start_date
-        
-        while available_ins_cache and current_date > start_date:
-            available_ins = available_ins_cache
-            available_ins_cache = []
-            for available_in in available_ins:
-                if self.available_in_active(available_in, current_date):
-                    start_date = current_date
-                    current_date = available_in.date_until
-                    break
-                available_ins_cache.append(available_in)
-        
-        if current_date >= datetime.datetime(AvailableIn.BASE_YEAR, 12, 31):
-            return True
-        return False
     
     def can_use_unit(self, unit):
         useable_units = Unit.objects.filter(models.Q(used_by__ingredient=self) | models.Q(parent_unit__used_by__ingredient=self))
@@ -208,29 +180,10 @@ class Ingredient(models.Model):
         
         active_available_ins = []
         for available_in in self.get_available_ins():
-            if self.available_in_active(available_in, today):
+            if available_in.is_active(today, date_until_extension=self.preservability):
                 active_available_ins.append(available_in)
         return active_available_ins
     
-    def available_in_active(self, available_in, date):
-        normalized_date = date.replace(year=2000)
-        
-        extended_until_date = (available_in.date_until + datetime.timedelta(days=self.preservability))
-        if extended_until_date.year > 2000:
-            extended_until_date = extended_until_date.replace(year=2000)
-            if extended_until_date > available_in.date_from:
-                extended_until_date = available_in.date_from - datetime.timedelta(days=1)
-                
-        if available_in.date_from < extended_until_date:
-            # Inner interval
-            if available_in.date_from <= normalized_date and normalized_date <= extended_until_date:
-                return True
-        else:
-            # Outer interval (date_from < extended_until_date) -> crosses newyear
-            if available_in.date_from <= normalized_date or normalized_date <= extended_until_date:
-                return True
-        return False
-        
     def get_available_in_with_smallest_footprint(self):
         """
         Return the AvailableIn with the smallest footprint of the currently active
@@ -258,6 +211,39 @@ class Ingredient(models.Model):
             raise ObjectDoesNotExist('No active AvailableIn object was found for ingredient ' + str(self))
         return smallest_available_in
         
+    def always_available(self):
+        """
+        Check if this Ingredient is always available somewhere
+        
+        """
+        # TODO: test for preservability extensions
+        try:
+            available_ins = self.get_available_ins()
+        except self.BasicIngredientException:
+            return True
+        
+        current_date = datetime.date(AvailableIn.BASE_YEAR, 1, 1)
+        
+        while available_ins:
+            for index in xrange(len(available_ins)):
+                # Find an available in that is currently active
+                avail = available_ins[index]
+                if avail.is_active(current_date, date_until_extension=self.preservability):
+                    if avail.date_until < avail.date_from:
+                        # avail has an outer interval, which means the ingredient will be available
+                        # from the current_date until the end of the year
+                        return True
+                    else:
+                        current_date = avail.date_until + datetime.timedelta(days=self.preservability + 1)
+                        if current_date.year > AvailableIn.BASE_YEAR:
+                            # If the extended until date goes beyond the current year, the ingredient will be available
+                            # from the current_date until the end of the year
+                            return True
+                        # We don't need this avail anymore
+                        del available_ins[index]
+                        break
+            return False
+    
     def footprint(self):
         """
         Return the current (minimal available) footprint of this ingredient
@@ -282,7 +268,7 @@ class Ingredient(models.Model):
             return self.base_footprint
     
     def save(self):
-        if not self.type == 1:
+        if not self.type == Ingredient.SEASONAL:
             self.preservability = 0
             self.preservation_footprint = 0 
         super(Ingredient, self).save()
@@ -348,7 +334,6 @@ class CanUseUnit(models.Model):
     
     def __unicode__(self):
         return self.ingredient.name + ' can use ' + self.unit.name
-
 
 class Country(models.Model):
     """
@@ -434,13 +419,39 @@ class AvailableIn(models.Model):
     def month_until(self):
         return self.date_until.strftime('%B')
     
+    def is_active(self, date=None, date_until_extension=0):
+        """
+        Returns if this available in is currently active. This means the
+        ingredient can be supplied using these parameters today.
+        
+        """
+        if date is None:
+            date = datetime.date.today().replace(year=self.BASE_YEAR)
+        else:
+            date = date.replace(year=self.BASE_YEAR)
+        
+        if date < self.date_from:
+            date = date.replace(year=self.BASE_YEAR + 1)
+            
+        if self.date_from <= self.date_until:
+            # 2000      from          until  2001
+            # |---------[-------------]------|
+            extended_until_date = (self.date_until + datetime.timedelta(days=date_until_extension))
+        else:
+            # 2000      until         from   2001
+            # |---------]-------------[------|
+            date_until = self.date_until.replace(year=self.BASE_YEAR + 1)
+            extended_until_date = (date_until + datetime.timedelta(days=date_until_extension))
+            
+        return date <= extended_until_date
+    
     def save(self, *args, **kwargs):
         self.footprint = self.ingredient.base_footprint + self.extra_production_footprint + self.location.distance*self.transport_method.emission_per_km
         
         self.date_from = self.date_from.replace(year=self.BASE_YEAR)
         self.date_until = self.date_until.replace(year=self.BASE_YEAR)
         
-        models.Model.save(self, *args, **kwargs)
+        super(AvailableIn, self).save(*args, **kwargs)
     
 
     
