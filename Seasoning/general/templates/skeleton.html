@@ -26,14 +26,13 @@
 		{% block extra_head %}{% endblock %}
 		<script>
 			$(window).scroll(function(){
-    			$("#nav-helper").css("top",Math.max(-250, -$(this).scrollTop()));
+    			$("#header-container").css("top",Math.max(-160, -$(this).scrollTop()));
 			});
 		</script>
 	</head>
 	
 	<body class="{% block bodyclass %}{% endblock %}">
 		<div id="container">
-			<div id="nav-helper">
 			<div id="header-container">
 				<div id="header">
 					<div id="logo">
@@ -42,24 +41,31 @@
 					<div id="nav-container">
 						<div id="nav">
 							<ul id="main-nav">
-								<li><a href="/recipes/">RECEPTEN</a></li>
-								<li><a href="/ingredients/">INGREDIENTEN</a></li>
-								<li><a href="/news/">NIEUWS</a></li>
-								<li><a href="/contribute/">BIJDRAGEN</a></li>
+								<li>
+									<a href="/recipes/">RECEPTEN</a>
+								</li><li>
+									<a href="/ingredients/">INGREDIENTEN</a>
+								</li><li>
+									<a href="/news/">NIEUWS</a>
+								</li><li>
+									<a href="/contribute/">BIJDRAGEN</a>
 								{% if user.is_authenticated %}
-									<li><a href="/account/settings/">MIJN ACCOUNT</a></li>
-									<li><a href="/logout/">AFMELDEN</a></li>
+								</li><li>
+									<a href="/account/settings/"><!-- <img id="user-avatar-nav" src="{{ MEDIA_URL }}{{ user.avatar }}" />  -->MIJN ACCOUNT</a>
+								</li><li>
+									<a href="/logout/">AFMELDEN</a>
+								</li>
 								{% else %}
-									<li><a href="/register/">REGISTREREN</a></li>
-									<li><a href="/login/">AANMELDEN</a></li>
+								</li><li>
+									<a href="/login/">AANMELDEN</a>
+								</li><li>
+									<a href="/register/">REGISTREREN</a>
+								</li>
 								{% endif %}
 							</ul>
 						</div>
 					</div>
 				</div>
-			</div>
-			</div>
-			<div id="header-filler">
 			</div>
 			<div id="body">
 				{% block body %}{% endblock %}

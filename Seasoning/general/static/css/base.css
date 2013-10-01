@@ -143,47 +143,39 @@ form .tooltip {
    position:relative;
 }
 
-#container #nav-helper {
-	position: fixed;
-	width: 100%;
-	top: 0px;
-}
-
 #header-container {
-	height:330px;
-	min-width: 660px;
+	width: 100%;
 	background-color:#629B31;
 	/**background-image:linear-gradient(to top,#629B31 0%,#76BA3B 94%);**/
 	border-bottom:1px solid #5B6553;
 	box-shadow:0 1px 2px 0 rgba(0,0,0,0.3);
-	z-index:4;
-	position:relative;
+	position:fixed;
+	top: 0;
+	z-index: 999;
 }
 
 #header {
 	z-index: 3;
 	height:100%;
+	max-width: 960px;
 	min-width: 660px;
 	position:relative;
+	margin: auto;
 }
 
 #header #logo {
 	margin:auto;
-	width: 352px;
-	height: 250px;
+	width: 336px;
 }
 
 #logo img {
-	padding-top: 110px;
+	padding: 22px 0;
 }
 
 #header #nav-container {
-	max-width:960px;
-	min-width: 640px;
-	height:80px;
+	width: 100%;
+	height:60px;
 	position:relative;
-	margin:auto;
-	padding:0 10px;
 	border-top: 1px solid #598c2c;
 	bottom: 0;
 }
@@ -192,23 +184,36 @@ form .tooltip {
 	list-style:none;
 	padding:0;
 	margin:auto;
-	width: 929px;
+	width: 100%;
 	height: 65px;
 }
 
 #nav-container li {
 	display:inline-block;
-	width: 150px;
+	width: 16.6%;
 	text-align: center;
-	height: 21px;
+	height: 20px;
 	font-size: 16px;
-	padding: 29px 0;
+	padding: 20px 0;
+	line-height: 18px;
+	transition:all .8s ease-out;
+}
+
+#nav-container li:hover {
+	background-color: rgb(30, 47, 15);
+	background-color: rgba(30, 47, 15, 0.2);
 }
 
 #nav-container a {
 	text-decoration:none;
 	color:#F4FAEF;
 	padding: 5px;
+}
+
+#nav-container a img#user-avatar-nav {
+	width: 15%;
+	position: absolute;
+	z-index: 999;
 }
 
 #nav-container #main-nav {
@@ -236,11 +241,8 @@ form .tooltip {
 	color:#598c2c;
 }
 
-#header-filler {
-	height: 330px;
-}
-
 #body {
+	margin-top: 261px;
 }
 
 #body .messages {
@@ -475,14 +477,8 @@ form .tooltip {
 }
 
 #content .homepage-column img {
-<<<<<<< HEAD
 	width: 300px;
-	margin: auto;
-=======
-	width: 100px;
-	margin: 0 auto 20px;
->>>>>>> branch 'master' of https://github.com/Gargamel1989/Seasoning.git
-	display: block;
+	height: 250px;
 }
 
 #content .homepage-column h2 {
