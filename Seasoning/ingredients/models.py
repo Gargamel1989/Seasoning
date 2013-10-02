@@ -198,10 +198,9 @@ class Ingredient(models.Model):
         """
         smallest_footprint = None
         for available_in in self.get_active_available_ins():
-            today_normalized = datetime.date.today().replace(year=2000)
-            if today_normalized > available_in.date_until:
+            if available_in.is_active(date_until_extension=0):
                 # This means this available in is currently under preservation
-                footprint = available_in.footprint + (today_normalized - available_in.date_until).days*self.preservation_footprint
+                footprint = available_in.footprint + available_in.days_apart()*self.preservation_footprint
             else:
                 footprint = available_in.footprint
             if not smallest_footprint or smallest_footprint > footprint:
@@ -217,6 +216,7 @@ class Ingredient(models.Model):
         
         """
         # TODO: test for preservability extensions
+        # TODO: take out BASE_YEAR
         try:
             available_ins = self.get_available_ins()
         except self.BasicIngredientException:
@@ -256,11 +256,10 @@ class Ingredient(models.Model):
         
         """
         try:
-            today_normalized = datetime.date.today().replace(year=2000)
             available_in = self.get_available_in_with_smallest_footprint()
-            if today_normalized > available_in.date_until:
+            if not available_in.is_active(date_until_extension=0):
                 # This means this available in is currently under preservation
-                footprint = available_in.footprint + (today_normalized - available_in.date_until).days*self.preservation_footprint
+                footprint = available_in.footprint + available_in.days_apart()*self.preservation_footprint
             else:
                 footprint = available_in.footprint
             return footprint
@@ -452,6 +451,26 @@ class AvailableIn(models.Model):
         self.date_until = self.date_until.replace(year=self.BASE_YEAR)
         
         super(AvailableIn, self).save(*args, **kwargs)
+    
+    def days_apart(self, date=None):
+        """
+        Returns the amount of days between the date_until of this available in object
+        and the given date.
+        If the given date is between date_from and date_until, 0 is returned
+        
+        """
+        if date is None:
+            date = datetime.date.today().replace(year=self.BASE_YEAR)
+        else:
+            date = date.replace(year=self.BASE_YEAR)
+        
+        if self.is_active(date):
+            return 0
+        
+        if date < self.date_until:
+            date = date.replace(year=self.BASE_YEAR + 1)
+        
+        return (date - self.date_until).total_seconds() // (24*60*60)
     
 
     

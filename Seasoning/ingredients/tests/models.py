@@ -96,6 +96,30 @@ class AvailableInModelTestCase(TestCase):
         self.assertTrue(avail.is_active(date_until_extension=4))
         self.assertTrue(avail.is_active(date_until_extension=40))
         self.assertTrue(avail.is_active(date_until_extension=400))
+    
+    def test_days_apart(self):
+        avail = G(AvailableInCountry,
+                  date_from=datetime.date(2013, 5, 1),
+                  date_until=datetime.date(2013, 5, 1))
+        
+        date = datetime.date(2010, 5, 5)
+        self.assertEqual(avail.days_apart(date), 4)
+        
+        date = datetime.date(2010, 5, 1)
+        self.assertEqual(avail.days_apart(date), 0)
+        
+        date = datetime.date(2010, 4, 30)
+        self.assertEqual(avail.days_apart(date), 364)
+        
+        avail = G(AvailableInCountry,
+                  date_from=datetime.date(2013, 5, 10),
+                  date_until=datetime.date(2013, 5, 1))
+        
+        date = datetime.date(2010, 5, 5)
+        self.assertEqual(avail.days_apart(date), 4)
+        
+        date = datetime.date(2010, 5, 1)
+        self.assertEqual(avail.days_apart(date), 0)
 
 class IngredientModelTestCase(TestCase):
     
@@ -224,17 +248,17 @@ class IngredientModelTestCase(TestCase):
                    date_until=datetime.date(2013, 7, 7))        
         self.assertEqual(sing.footprint(), avail1.footprint)
         
-#        avail2 = G(AvailableInCountry, ingredient=sing, location=country,
-#                   transport_method=tpm, extra_production_footprint=0,
-#                   date_from=datetime.date(2013, 7, 1),
-#                   date_until=datetime.date(2013, 12, 1))
-#        self.assertEqual(sing.footprint(), avail2.footprint + 156*sing.preservation_footprint)
+        avail2 = G(AvailableInCountry, ingredient=sing, location=country,
+                   transport_method=tpm, extra_production_footprint=0,
+                   date_from=datetime.date(2013, 7, 1),
+                   date_until=datetime.date(2013, 12, 1))
+        self.assertEqual(sing.footprint(), avail2.footprint + 155*sing.preservation_footprint)
         
-        avail3 = G(AvailableInCountry, ingredient=sing, location=country,
-                   transport_method=tpm, extra_production_footprint=100,
-                   date_from=datetime.date(2013, 2, 2),
-                   date_until=datetime.date(2013, 5, 1))
-        self.assertEqual(sing.footprint(), avail3.footprint + 4*sing.preservation_footprint)
+#         avail3 = G(AvailableInCountry, ingredient=sing, location=country,
+#                    transport_method=tpm, extra_production_footprint=100,
+#                    date_from=datetime.date(2013, 2, 2),
+#                    date_until=datetime.date(2013, 5, 1))
+#         self.assertEqual(sing.footprint(), avail3.footprint + 4*sing.preservation_footprint)
         
     
     def test_save(self):
