@@ -8,7 +8,7 @@ class IngredientsViewsTestCase(TestCase):
     def setUp(self):
         if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.mysql':
             raise Exception('Please use a MySQL Database for this test')
-        TestCase.setUp(self)
+        super(IngredientsViewsTestCase, self).setUp()
     
     def test_view_ingredient(self):
         resp = self.client.get('/ingredients/100/')
