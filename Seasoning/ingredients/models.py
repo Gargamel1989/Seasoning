@@ -215,8 +215,6 @@ class Ingredient(models.Model):
         Check if this Ingredient is always available somewhere
         
         """
-        # TODO: test for preservability extensions
-        # TODO: take out BASE_YEAR
         try:
             available_ins = self.get_available_ins()
         except self.BasicIngredientException:
@@ -289,11 +287,12 @@ class Synonym(models.Model):
     def __unicode__(self):
         return self.name
     
-class UnitManager(models.Manager):
-    #TODO: test
+class CanUseUnitManager(models.Manager):
     
-    def all_useable_units(self, ingredient_id):
-        
+    def useable_by(self, ingredient):
+        if isinstance(ingredient, Ingredient):
+            ingredient = ingredient.pk
+            
         query = ('(SELECT `canuseunit`.`id`, `canuseunit`.`ingredient`, `canuseunit`.`unit`, `canuseunit`.`is_primary_unit`, `canuseunit`.`conversion_factor` '
                  ' FROM unit '
                  ' LEFT JOIN canuseunit '
@@ -308,7 +307,7 @@ class UnitManager(models.Manager):
                  ' ON parent_unit.id=canuseunit.unit '
                  ' WHERE derived_unit.parent_unit_id IS NOT NULL '
                  ' AND ingredient=%s)')
-        return self.raw(query, [ingredient_id, ingredient_id])
+        return self.raw(query, [ingredient, ingredient])
         
 class CanUseUnit(models.Model):
     """
@@ -322,7 +321,7 @@ class CanUseUnit(models.Model):
     class Meta:
         db_table = 'canuseunit'
         
-    objects = UnitManager()
+    objects = CanUseUnitManager()
         
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient')
     unit = models.ForeignKey('Unit', related_name='used_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))

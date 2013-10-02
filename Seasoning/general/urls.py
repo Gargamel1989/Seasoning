@@ -19,6 +19,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django.conf.urls import patterns, url, include
 from django.contrib import admin
+from kaka import models
 
 admin.autodiscover()
 

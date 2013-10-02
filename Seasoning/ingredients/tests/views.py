@@ -1,15 +1,12 @@
 from django.test import TestCase
 from django.conf import settings
 from django.utils import simplejson
+from general.decorators import mysqldb_required
 
 class IngredientsViewsTestCase(TestCase):
     fixtures = ['ingredients.json']
     
-    def setUp(self):
-        if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.mysql':
-            raise Exception('Please use a MySQL Database for this test')
-        super(IngredientsViewsTestCase, self).setUp()
-    
+    @mysqldb_required
     def test_view_ingredient(self):
         resp = self.client.get('/ingredients/100/')
         self.assertEqual(resp.status_code, 404)
@@ -19,6 +16,7 @@ class IngredientsViewsTestCase(TestCase):
         
         self.assertNumQueries(4, lambda: self.client.get('/ingredients/1/'))
         
+    @mysqldb_required
     def test_ajax_ingredient_name_list(self):
         # get requests shouldn't be answered
         resp = self.client.get('/ingredients/ing_list/a/')

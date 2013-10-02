@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django_dynamic_fixture import G
 from ingredients.tests import test_datetime
+from general.decorators import mysqldb_required
 
 # All calls to datetime.date.today within ingredients.models will
 # return 2013-05-05 as the current date
@@ -14,20 +15,44 @@ ingredients.models.datetime = test_datetime.TestDatetime()
 class UnitModelTestCase(TestCase):
     pass
 
-class SynonymModelTestcase(TestCase):
+class SynonymModelTestCase(TestCase):
     pass
 
-class CountryModelTestcase(TestCase):
+class CountryModelTestCase(TestCase):
     pass
 
-class SeaModelTestcase(TestCase):
+class SeaModelTestCase(TestCase):
     pass
 
-class TransportMethodModelTestcase(TestCase):
+class TransportMethodModelTestCase(TestCase):
     pass
 
-class CanUseUnitModelTestcase(TestCase):
+class CanUseUnitModelTestCase(TestCase):
     pass
+
+class CanUseUnitManagerTestCase(TestCase):
+    
+    @mysqldb_required
+    def test_useable_by(self):
+        punit = G(Unit)        
+        cunit = G(Unit, parent_unit=punit)
+        unit = G(Unit)
+        G(Unit)
+        
+        cuu = G(CanUseUnit, unit=punit)
+        ing = cuu.ingredient
+        G(CanUseUnit, ingredient=ing, unit=unit)
+        
+        cuus = CanUseUnit.objects.useable_by(cuu.ingredient.pk)
+        
+        self.assertEqual(len(list(cuus)), 3)
+        self.assertTrue(punit in [x.unit for x in cuus])
+        self.assertTrue(cunit in [x.unit for x in cuus])
+        self.assertTrue(unit in [x.unit for x in cuus])
+        
+        cuus = CanUseUnit.objects.useable_by(cuu.ingredient)
+        
+        self.assertEqual(len(list(cuus)), 3)
 
 class AvailableInModelTestCase(TestCase):
         
@@ -134,7 +159,7 @@ class IngredientModelTestCase(TestCase):
         self.assertEqual(ing.primary_unit, pu)
     
     def test_can_use_unit(self):
-        punit = G(Unit) # More like G(Unot) amirite?
+        punit = G(Unit)
         unit = G(Unit, parent_unit=punit)
         ing = G(Ingredient)
         self.assertFalse(ing.can_use_unit(punit))

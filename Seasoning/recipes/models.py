@@ -141,7 +141,7 @@ class Recipe(models.Model):
             vote = self.votes.get(user=user)
             vote.score = score
         except Vote.DoesNotExist:
-            # The given user has not voted on thiik s recipe yet
+            # The given user has not voted on this recipe yet
             vote = Vote(recipe=self, user=user, score=score)
         vote.save()
     
@@ -176,9 +176,9 @@ class UsesIngredient(models.Model):
     
     def clean(self):
         try:
-            all_useable_units = CanUseUnit.objects.all_useable_units(self.ingredient.pk)
+            all_useable_units = list(CanUseUnit.objects.useable_by(self.ingredient.pk))
             if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:
-                return self
+                return self 
         except Unit.DoesNotExist:
             raise Exception('The ingredient ' + self.ingredient + ' does not have any useable units...')
         raise ValidationError('This unit cannot be used for measuring this Ingredient.')
@@ -187,7 +187,7 @@ class UsesIngredient(models.Model):
         if not self.save_allowed:
             raise PermissionDenied('Saving this object has been disallowed')
         
-        self.clean()
+        self.full_clean()
         
         unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
         if self.unit.parent_unit:
@@ -214,11 +214,11 @@ class Vote(models.Model):
     recipe = models.ForeignKey(Recipe, related_name='votes')
     user = models.ForeignKey(User)
     score = models.PositiveIntegerField(validators=[MaxValueValidator(5)])
-    date_added = models.DateTimeField(default=datetime.datetime.now, editable=False)
-    date_changed = models.DateTimeField(default=datetime.datetime.now, editable=False)
+    time_added = models.DateTimeField(default=datetime.datetime.now, editable=False)
+    time_changed = models.DateTimeField(default=datetime.datetime.now, editable=False)
     
     def save(self, *args, **kwargs):
-        self.date_changed = datetime.datetime.now()
+        self.time_changed = datetime.datetime.now()
         super(Vote, self).save(*args, **kwargs)
         self.recipe.calculate_and_set_rating()
     
