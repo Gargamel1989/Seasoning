@@ -53,11 +53,55 @@ class UsesIngredientModelTestCase(TestCase):
         ui = N(UsesIngredient, ingredient=cuu.ingredient, unit=cuu.unit)
         self.assertEqual(ui.clean(), ui)
     
+    @mysqldb_required
     def test_save(self):
-        pass
+        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50)
+        cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
+        uses = G(UsesIngredient, ingredient=ing, unit=cuu.unit, amount=1)
+        
+        self.assertEqual(uses.footprint, 50)
 
 class RecipeModelTestCase(TestCase):
-    pass
+    
+    def setUp(self):
+        G(Cuisine, name='Andere')
+    
+    @mysqldb_required
+    def test_save(self):
+        recipe = G(Recipe, footprint=10)
+        self.assertEqual(recipe.footprint, 0)
+        self.assertEqual(recipe.veganism, Ingredient.VEGAN)
+        
+        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50, veganism=Ingredient.VEGETARIAN)
+        cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
+        G(UsesIngredient, recipe=recipe, ingredient=ing, unit=cuu.unit, amount=1)
+        recipe.save()
+        
+        self.assertEqual(recipe.footprint, 50)
+        self.assertEqual(recipe.veganism, Ingredient.VEGETARIAN)
+    
+    @mysqldb_required
+    def test_footprint_pp(self):
+        recipe = G(Recipe, portions=5)
+        self.assertEqual(recipe.footprint_pp(), 0)
+        
+#        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50)
+#        cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
+#        G(UsesIngredient, recipe=recipe, ingredient=ing, unit=cuu.unit, amount=1)
+#        recipe.save()
+#        self.assertEqual(recipe.footprint_pp(), 10)
+    
+    @mysqldb_required
+    def test_vote(self):
+        pass
+    
+    @mysqldb_required
+    def test_unvote(self):
+        pass
+    
+    @mysqldb_required
+    def test_calculate_and_set_rating(self):
+        pass
 
 #class RecipeModelsTestCase(TestCase):
 #    fixtures = ['users.json', 'ingredients.json', 'recipes.json', ]
