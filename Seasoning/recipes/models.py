@@ -21,7 +21,7 @@ import os, time
 from django.db import models
 from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
-from imagekit.processors.resize import ResizeToFit
+from imagekit.processors.resize import ResizeToFit, SmartResize
 import ingredients
 from ingredients.models import CanUseUnit, Ingredient, Unit
 import datetime
@@ -87,7 +87,7 @@ class Recipe(models.Model):
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png',
                                 help_text=_('An image of this recipe. Please do not use copyrighted images, these will be removed as quick as possible.'))
-    thumbnail = ImageSpecField([ResizeToFit(250, 250)], image_field='image', format='PNG')
+    thumbnail = ImageSpecField([SmartResize(230, 230)], image_field='image', format='PNG')
     
     # Derived Parameters
     footprint = FloatField(editable=False)
@@ -98,6 +98,10 @@ class Recipe(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    @property
+    def total_time(self):
+        return self.active_time + self.passive_time
     
     # Set this to false if this object should not be saved (e.g. when certain fields have been 
     # overwritten for portions calculations)

@@ -45,6 +45,13 @@
 
 {% block content %}
 
+<form class="keywords" action="">
+    <input id="keywords-searchbar" type="text" value="" placeholder="Zoek Recepten">
+    <button id="keywords-submit" class="nochrome" type="submit">
+        <span class="submit-icon"></span>
+    </button>
+</form>
+<hr>
 <div id="recipe-summaries-wrapper">
 	{% for recipe in recipes %}
     	{% include "includes/recipe_summary.html" %}
