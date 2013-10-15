@@ -85,23 +85,46 @@ class RecipeModelTestCase(TestCase):
         recipe = G(Recipe, portions=5)
         self.assertEqual(recipe.footprint_pp(), 0)
         
-#        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50)
-#        cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
-#        G(UsesIngredient, recipe=recipe, ingredient=ing, unit=cuu.unit, amount=1)
-#        recipe.save()
-#        self.assertEqual(recipe.footprint_pp(), 10)
+        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50)
+        cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
+        G(UsesIngredient, recipe=recipe, ingredient=ing, unit=cuu.unit, amount=1)
+        recipe.save()
+        self.assertEqual(recipe.footprint_pp(), 10)
     
     @mysqldb_required
     def test_vote(self):
-        pass
+        recipe = G(Recipe)
+        
+        self.assertRaises(Vote.DoesNotExist, lambda: Vote.objects.get(recipe=recipe, user=recipe.author))
+        recipe.vote(recipe.author, 5)
+        
+        vote = Vote.objects.get(recipe=recipe, user=recipe.author)
+        self.assertEqual(vote.score, 5)
+        self.assertEqual(recipe.rating, 5)
+        
+        recipe.vote(recipe.author, 3)
+        vote = Vote.objects.get(recipe=recipe, user=recipe.author)
+        self.assertEqual(vote.score, 3)
+        self.assertEqual(recipe.rating, 3)
+        
+        
     
     @mysqldb_required
     def test_unvote(self):
-        pass
+        recipe = G(Recipe)
+        recipe.vote(recipe.author, 5)
+        recipe.unvote(recipe.author)
+        self.assertRaises(Vote.DoesNotExist, lambda: Vote.objects.get(recipe=recipe, user=recipe.author))
     
     @mysqldb_required
     def test_calculate_and_set_rating(self):
-        pass
+        recipe = G(Recipe)
+        G(Vote, score=2)
+        G(Vote, score=4)
+        
+        self.assertEqual(recipe.rating, None)
+        recipe.calculate_and_set_rating()
+        self.assertEqual(recipe.rating, 3)
 
 #class RecipeModelsTestCase(TestCase):
 #    fixtures = ['users.json', 'ingredients.json', 'recipes.json', ]
