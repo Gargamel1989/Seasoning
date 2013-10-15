@@ -168,6 +168,9 @@ INSTALLED_APPS = (
     
     # Admin
     'django.contrib.admin',
+    
+    # Images
+    'imagekit',
 )
 
 AUTH_USER_MODEL = 'authentication.User'

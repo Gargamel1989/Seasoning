@@ -1,19 +1,141 @@
-{% extends "skeleton.html" %}
+{% load home_extras %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
-{% block body %}
-		<div id="content" class="{% block content_class %}{% endblock %}">
-			{% if messages %}
-			<ul class="messages">
-				{% for message in messages %}
-				<li class="{{ message.tags }}">
-					{{ message }}
-				</li>
-				{% endfor %}
-			</ul>
-			{% endif %}
+	<head>
+		<title>Seasoning | {% block title %}Geef smaak aan de seizoenen{% endblock %}</title>
+		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="en-us" />
+		<meta name="ROBOTS" content="ALL" />
+		<meta name="Copyright" content="Seasoning" />
+		<meta name="keywords" content="Duurzaam, Eten, Koken" />
+		<meta name="description" content="Seasoning tracht het bewustzijn omtrent de duurzaamheid van onze voedselconsumptie 
+		                                  te vergroten. Daarom biedt Seasoning een interactief platform aan om de duurzaamheid 
+		                                  van recepten doorheen het jaar met elkaar te vergelijken. Seasoning geeft smaak aan de seizoenen!" />
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+        <link rel="icon" href="{{ STATIC_URL }}img/favicon.ico" type="image/x-icon" />
+		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/skeleton.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css">
+		{% block extra_link %}{% endblock %}
+		
+		<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>
+		<script src="{{ STATIC_URL }}js/base.js" type="text/javascript"></script>
+		{% block extra_script %}{% endblock %}
+		
+		{% block extra_head %}{% endblock %}
+		<script>
+			function setHeader() {
+			    if ($(this).width() >= 750) {
+                    $("#header").css("top",Math.max(-160, -$(this).scrollTop()));
+    			} else {
+    			    $("#header").css("top", 0);
+    			}
+			};
 			
-			<h1>{% block page_name %}Naamloze pagina{% endblock %}</h1>
-
-			{% block content %}{% endblock %}
+			$(window).scroll(setHeader);
+			$(window).resize(setHeader);
+		</script>
+	</head>
+	
+	<body class="{% block bodyclass %}{% endblock %}">
+	    <div id="header">
+	        <div id="header-container" class="container">
+	            <div id="logo">
+                    <a href="/"><img src="{{ STATIC_URL }}img/logos/header.png" /></a>
+                </div>
+                <div id="nav-container">
+                    <a href="/recipes/"><div class="navlink three columns alpha omega">RECEPTEN</div></a>
+                    <a href="/ingredients/"><div class="navlink three columns alpha omega">INGREDIENTEN</div></a>
+                    <a href="/news/"><div class="navlink three columns alpha omega">NIEUWS</div></a>
+                    <a href="/contribute/"><div class="navlink three columns alpha omega">BIJDRAGEN</div></a>
+                    {% if user.is_authenticated %}
+                    <a href="/account/"><div class="navlink three columns alpha omega">MIJN ACCOUNT</div></a>
+                    <a href="/logout/"><div class="navlink three columns alpha omega">AFMELDEN</div></a>
+                    {% else %}
+                    <a href="/register/"><div class="navlink three columns alpha omega">REGISTREREN</div></a>
+                    <a href="/login/"><div class="navlink three columns alpha omega">AANMELDEN</div></a>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div id="content">
+            <div id="content-container" class="container">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li class="{{ message.tags }}">
+                        {{ message }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% block content %}{% endblock %}
+			</div>
+			<div class="push"> </div>
 		</div>
-{% endblock %}
+        
+        <div id="footer">
+			<div id="footer-container" class="container">
+			    <div id="cc-license" class="small-screen-hidden three columns">
+                    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl" target="_blank"><img alt="Creative Commons Licentie" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a>
+                </div>
+                <div id="footer-links" class="ten columns small-screen-hidden">
+                    <ul>
+                        <li class="first">
+                            <a href="/about/">Over Seasoning</a>
+                        </li>
+                        <li>
+                            <a href="/contact/">Contact</a>
+                        </li>
+                        <li>
+                            <a href="/help/">Help</a>
+                        </li>
+                        <li>
+                            <a href="/sitemap/">Sitemap</a>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <a href="/terms/">Voorwaarden</a>
+                        </li>
+                        <li>
+                            <a href="/privacypolicy/">Privacybeleid</a>
+                        </li>
+                    </ul>
+                </div>
+                <div id="social-icons" class="three columns">
+                    <a href="#" id="bookmark-link"><img src="{{ STATIC_URL }}img/social/favorite-us.png" class="social-logo" alt="Voeg Seasoning toe aan je Favorieten!" /></a>
+                    <a href="http://www.facebook.com/Seasoningbelgium" target="_blank"><img src="{{ STATIC_URL }}img/social/fb-logo-2.png" class="social-logo" alt="De Facebookpagina van Seasoning" /></a>
+                    <a href="http://www.twitter.com/Seasoningbe" target="_blank"><img src="{{ STATIC_URL }}img/social/tw-logo.png" class="social-logo" alt="De Twitterpagina van Seasoning" /></a>
+                </div>
+                <div id="footer-links-responsive">
+				    <div class="two columns omega">
+    				    <a href="/about/">Over Seasoning</a>
+    				</div>
+        			<div class="two columns alpha omega">
+        				<a href="/contact/">Contact</a>
+        			</div>
+        			<div class="two columns alpha omega">
+        				<a href="/help/">Help</a>
+        			</div>
+        			<div class="two columns alpha omega">
+        				<a href="/terms/">Voorwaarden</a>
+        			</div>
+        			<div class="two columns alpha omega">
+        				<a href="/privacypolicy/">Privacybeleid</a>
+        			</div>
+        			<div class="two columns alpha">
+        				<a href="/sitemap/">Sitemap</a>
+        			</div>
+                </div>
+   			</div>
+		</div>
+	</body>
+</html>

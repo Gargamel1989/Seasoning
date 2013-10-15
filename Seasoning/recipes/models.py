@@ -31,8 +31,7 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import ugettext_lazy as _
 
 def get_image_filename(instance, old_filename):
-    extension = os.path.splitext(old_filename)[1]
-    filename = str(time.time()) + extension
+    filename = str(time.time()) + '.png'
     return 'images/recipes/' + filename
 
 class Cuisine(models.Model):

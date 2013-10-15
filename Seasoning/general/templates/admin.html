@@ -1,4 +1,4 @@
-{% extends "skeleton.html" %}
+{% extends "base.html" %}
 
 {% block title %}Administratie{% endblock %}
 
@@ -6,20 +6,3 @@
 
 {% block extra_script %}<script src="{{ STATIC_URL }}js/admin.js" type="text/javascript"></script>{% endblock %}
 
-{% block body %}
-		<div id="content">
-			{% if messages %}
-			<ul class="messages">
-				{% for message in messages %}
-				<li class="{{ message.tags }}">
-					{{ message }}
-				</li>
-				{% endfor %}
-			</ul>
-			{% endif %}
-			
-			<h1>Administratie: {% block page_name %}Naamloze pagina{% endblock %}</h1>
-
-			{% block content %}{% endblock %}
-		</div>
-{% endblock %}

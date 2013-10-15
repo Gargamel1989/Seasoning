@@ -1,0 +1,235 @@
+/*
+* Skeleton V1.2
+* Copyright 2011, Dave Gamache
+* www.getskeleton.com
+* Free to use under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+* 6/20/2012
+*/
+
+/* Table of Content
+==================================================
+	#Site Styles
+	#Page Styles
+	#Media Queries
+	#Font-Face */
+
+/* #Site Styles
+================================================== */
+	* {
+		margin: 0;
+	}
+	
+	html, body {
+		height: 100%;
+	}
+	
+	body {
+		font: 14px/21px Verdana,Geneva,sans-serif;
+	}
+	
+	#header {
+		width: 100%;
+		background-color: #629B31;
+		display: block;
+		height: 210px; 
+		border-bottom:1px solid #5B6553;
+		box-shadow:0 1px 2px 0 rgba(0,0,0,0.3);
+		margin-bottom: 20px;
+		position: fixed;
+		top: 0;
+		z-index: 999;
+	}
+	
+	#header #header-container {
+		height: 100%;
+		position: relative;
+	}
+	
+	#header-container #logo {
+		width: 334px;
+		margin: auto;
+		padding: 20px 0;
+	}
+	
+	#header-container #nav-container {
+		position: absolute;
+		bottom: 0;
+		border-top: 1px solid #598c2c;
+	}
+	
+	#nav-container .navlink {
+		height: 50px;
+		text-align: center;
+		line-height: 50px;
+		color: #F4FAEF;
+	}
+	
+	#nav-container .navlink:hover {
+		background-color: rgb(30, 47, 15);
+		background-color: rgba(30, 47, 15, 0.2);
+		transition: all .8s ease-out;
+	}
+	
+	#content {
+		min-height: 100%;
+		height: auto !important;
+		height: 100%;
+		margin: 230px auto -51px;
+	}
+	
+	.push {
+		height: 50px;
+	}
+	
+	#footer {
+		width: 100%;
+		height: 50px;
+		background-color: #2F2F2F;
+		background-image: url("/static/img/bg.jpg");
+		border-top:1px solid #5B6553;
+		box-shadow:0 -1px 2px 0 rgba(0,0,0,0.3);
+	}
+	
+	#footer #footer-container {
+		position: relative;
+		height: 100%;
+	}
+	
+	#footer-container {
+		text-align: center;
+	}
+	
+	#footer-container a {
+		color: white;
+		font-size: 0.7em;
+		text-decoration: none;
+	}
+	
+	#footer-container #cc-license {
+		height: 50px;
+	}
+	
+	#footer-container #cc-license img {
+	 	margin: 8px 0;
+	}
+
+	#footer-container ul {
+		margin: 0;
+		padding: 0;
+		display: block;
+		clear: both;
+	}
+
+	#footer-container ul li {
+		margin: 0 10px; 
+		display: inline;
+		color: white;
+		font-size: 13px;
+	}
+	
+	#footer-container #social-icons {
+		height: 50px;
+	}
+	
+	#footer-container #social-icons img {
+		width: 30px;
+	 	border-radius: 5px;
+	 	margin: 8px 0;
+	}
+	
+	#footer-container #footer-links-responsive {
+		display: none;
+	}
+	
+	#footer-container #footer-links-responsive div {
+		margin-bottom: 10px;
+	}
+	
+	
+	
+	
+	p.author {
+		margin: -10px 0 10px 2px;
+		font-size: 10px;
+	}
+
+/* #Page Styles
+================================================== */
+
+	.column-image {
+		width: 100%;
+		border: ridge 2px black;
+
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-ms-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+
+/* #Media Queries
+================================================== */
+
+	/* Smaller than standard 960 (devices and browsers) */
+	@media only screen and (max-width: 959px) {}
+
+	/* Tablet Portrait size to standard 960 (devices and browsers) */
+	@media only screen and (min-width: 768px) and (max-width: 959px) {}
+
+	/* All Mobile Sizes (devices and browser) */
+	@media only screen and (max-width: 767px) {
+		#header {
+			height: 460px;
+			position: relative;
+		}
+	
+		#content {
+			margin-top: 0;
+		}
+		
+		#footer {
+			height: auto;
+		}
+		
+		#footer #footer-links-responsive {
+			display: inline;
+		}
+		
+		.small-screen-hidden {
+			display: none !important;
+		}
+	}
+
+	/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+	@media only screen and (min-width: 480px) and (max-width: 767px) {}
+
+	/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+	@media only screen and (max-width: 479px) {
+		#header-container #logo {
+			width: 100%;
+			padding-top: 30px;
+		}
+			
+		#header-container #logo img {
+			width: 100%;
+		}
+	}
+
+
+/* #Font-Face
+================================================== */
+/* 	This is the proper syntax for an @font-face file
+		Just create a "fonts" folder at the root,
+		copy your FontName into code below and remove
+		comment brackets */
+
+/*	@font-face {
+	    font-family: 'FontName';
+	    src: url('../fonts/FontName.eot');
+	    src: url('../fonts/FontName.eot?iefix') format('eot'),
+	         url('../fonts/FontName.woff') format('woff'),
+	         url('../fonts/FontName.ttf') format('truetype'),
+	         url('../fonts/FontName.svg#webfontZam02nTh') format('svg');
+	    font-weight: normal;
+	    font-style: normal; }
+*/
