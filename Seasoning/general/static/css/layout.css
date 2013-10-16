@@ -33,6 +33,10 @@
 		margin-bottom: 10px;
 	}
 	
+	.empty-form {
+		display: none;
+	}
+	
 	#header {
 		width: 100%;
 		background-color: #629B31;

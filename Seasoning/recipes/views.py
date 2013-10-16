@@ -39,6 +39,8 @@ from django.template.loader import render_to_string
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 class Group:
     
@@ -63,12 +65,18 @@ def browse_recipes(request):
         exclude_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='exclude')
         if search_form.is_valid() and include_ingredients_formset.is_valid() and exclude_ingredients_formset.is_valid():
             data = search_form.cleaned_data
+            include_ingredient_names = [form.cleaned_data['name'] for form in include_ingredients_formset if 'name' in form.cleaned_data]
+            exclude_ingredient_names = [form.cleaned_data['name'] for form in exclude_ingredients_formset if 'name' in form.cleaned_data]
             recipes_list = Recipe.objects.query(search_string=data['search_string'], advanced_search=data['advanced_search'],
-                                                sort_field=data['sort_field'], sort_order=data['sort_order'],
-                                                ven=data['ven'], veg=data['veg'], nveg=data['nveg'],
-                                                cuisines=data['cuisine'], courses=data['course'])
+                                                sort_field=data['sort_field'], sort_order=data['sort_order'], ven=data['ven'], 
+                                                veg=data['veg'], nveg=data['nveg'], cuisines=data['cuisine'], courses=data['course'], 
+                                                include_ingredients_operator=data['include_ingredients_operator'],
+                                                include_ingredient_names=include_ingredient_names, exclude_ingredient_names=exclude_ingredient_names)
         else:
             recipes_list = []
+        
+        if request.is_ajax():
+            return render(request, 'includes/recipe_summaries.html', {'recipes': recipes_list})
     else:
         search_form = SearchRecipeForm()
         include_ingredients_formset = IngredientInRecipeFormset(prefix='include')

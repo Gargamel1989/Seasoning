@@ -49,13 +49,20 @@ class RecipeManager(models.Manager):
     
     def query(self, search_string='', advanced_search=False, sort_field='', 
               sort_order='', ven=True, veg=True, nveg=True, cuisines=[], 
-              courses=[]):
+              courses=[], include_ingredients_operator='and', include_ingredient_names=[],
+              exclude_ingredient_names=[]):
+        
+        recipes_list = Recipe.objects
+        
         name_query = models.Q(name__icontains=search_string)
             
         veg_filter = models.Q()
+        incl_ingredient_filter = models.Q()
+        excl_ingredient_filter = models.Q()
         additional_filters = models.Q()
         
         if advanced_search:
+            # Filter for Veganism
             if ven:
                 veg_filter = veg_filter | models.Q(veganism=Ingredient.VEGAN)
             if veg:
@@ -63,14 +70,23 @@ class RecipeManager(models.Manager):
             if nveg:
                 veg_filter = veg_filter | models.Q(veganism=Ingredient.NON_VEGETARIAN)
             
+            # Filter for included en excluded ingredients
+            if include_ingredients_operator == 'and':
+                for ingredient_name in include_ingredient_names:
+                    incl_ingredient_filter = incl_ingredient_filter & models.Q(ingredients__name__icontains=ingredient_name)
+            elif include_ingredients_operator == 'or':
+                for ingredient_name in include_ingredient_names:
+                    incl_ingredient_filter = incl_ingredient_filter | models.Q(ingredients__name__icontains=ingredient_name)            
+            for ingredient_name in exclude_ingredient_names:
+                recipes_list = recipes_list.exclude(ingredients__name__icontains=ingredient_name)
             
             if cuisines:
                 additional_filters = additional_filters & models.Q(cuisine__in=cuisines)
             
             if courses:
                 additional_filters = additional_filters & models.Q(course__in=courses)
-                    
-        recipes_list = Recipe.objects.filter(name_query & veg_filter & additional_filters).distinct()
+                     
+        recipes_list = recipes_list.filter(name_query & veg_filter & incl_ingredient_filter & additional_filters).distinct()
         
         # SORTING
         if sort_field:

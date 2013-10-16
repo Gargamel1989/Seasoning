@@ -4,14 +4,28 @@
 
 {% block extra_head %}
 <script>
-	//function make_hover_effect() {
-	//	$('.recipe-summary').hover(function() {
-    //        $(this).find('.recipe-description').slideDown(500);
-    //    }, function() {
-    //        $(this).find('.recipe-description').slideUp(500);
-    //    });
-	//}
-	
+    // A function that detects if a user presses the enter key
+    // Consider moving this to somewhere more appropriate
+    $.fn.pressEnter = function(fn) {  
+
+        return this.each(function() {  
+            $(this).bind('enterPress', fn);
+            $(this).keydown(function(e) {
+                if(e.keyCode == 13)
+                {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            $(this).keyup(function(e){
+                if(e.keyCode == 13)
+                {
+                  $(this).trigger("enterPress");
+                }
+            });
+        });  
+     };
+     
 	function switch_to_recipes_page(page_num, num_pages) {
 		if (page_num > num_pages) {
 			page_num = 1;
@@ -27,7 +41,22 @@
 		$("#current-page").text(page_num);
 	};
 	
+	function update_recipes() {
+        var url = "/recipes/";
+        
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: $("form.keywords").serialize(),
+            success: function(data) {
+                $("#recipe-summaries-wrapper").html(data);
+            }
+        });
+        return false;
+    };
+	
     $(document).ready(function() {
+        // Show the Advanced Search Window
     	$("#advanced-link").click(function() {
     		if ($("#advanced-search").is(":visible")) {
     			$("#advanced-search").slideUp(1000, function() {
@@ -44,26 +73,23 @@
     		return false;
     	});
     	
+    	// Activate the buttons that change the order direction
     	$(".order-arrow").click(function() {
     	    if (!$(this).hasClass("active")) {
     	        var active_order_arrow = $(".order-arrow.active");
     	        active_order_arrow.removeClass("active");
     	        $(this).addClass("active");
-    	        var check, uncheck;
     	        if ($(this).hasClass("up")) {
-    	            check = $("#id_sort_order_0");
-    	            uncheck = $("#id_sort_order_1");
+    	            $("#id_sort_order_0").click();
     	        } else {
-                    check = $("#id_sort_order_1");
-                    uncheck = $("#id_sort_order_0");
+                    $("#id_sort_order_1").click();
     	        }
-                check.attr("checked", "checked");
-                uncheck.attr("checked", false);
     	    }
     	    return false;
     	})
     	
     	
+    	// Activate the buttons for veganism selection
     	$(".veg-choice").each(function() {
     	    if (!$(this).children("input:first").attr("checked")) {
     	        $(this).removeClass("active");
@@ -80,28 +106,73 @@
             });
     	});
     	
+    	// Activate the button for the include ingredients operator
     	$("#incl-ings .option").click(function() {
             if (!$(this).hasClass("active")) {
                 var active_option = $("#incl-ings .option.active");
                 active_option.removeClass("active");
                 $(this).addClass("active");
-                var check, uncheck;
                 if ($(this).hasClass("and")) {
-                    check = $("#id_include_ingredients_operator_0");
-                    uncheck = $("#id_include_ingredients_operator_1");
+                    $("#id_include_ingredients_operator_0").click();
                 } else {
-                    check = $("#id_include_ingredients_operator_1");
-                    uncheck = $("#id_include_ingredients_operator_0");
+                    $("#id_include_ingredients_operator_1").click();
                 }
-                check.attr("checked", "checked");
-                uncheck.attr("checked", false);
             }
             return false;
     	});
+        
+        // Activate the input field for including ingredients
+        $("#include-ingredients-input").pressEnter(function() {
+            if ($(this).val() != "") {
+                // If the user pressed enter while in the input field, and it contains text,
+                // add another ingredient to the filter
+                var current_form_num = parseInt($("#id_include-TOTAL_FORMS").val());
+                $("#id_include-TOTAL_FORMS").val(current_form_num + 1);
+                var empty_form = $("#id_include-__prefix__-name");
+                var new_form = empty_form.clone();
+                new_form.attr("id", new_form.attr("id").replace("__prefix__", current_form_num));
+                new_form.attr("name", new_form.attr("name").replace("__prefix__", current_form_num));
+                new_form.val($(this).val());
+                new_form.insertBefore(empty_form);
+                // Display the new ingredient as being in the filter
+                var new_ing = $('<a href="#"><div class="filtered-ingredient">' + $(this).val() + '</div></a>')
+                new_ing.click(function() {
+                    new_form.remove();
+                    $(this).remove();
+                    return false;
+                });
+                $("#included-ingredients").append(new_ing);
+            }
+        });
+        
+        // Activate the input field for excluding ingredients
+        $("#exclude-ingredients-input").pressEnter(function() {
+            if ($(this).val() != "") {
+                // If the user pressed enter while in the input field, and it contains text,
+                // add another ingredient to the filter
+                var current_form_num = parseInt($("#id_exclude-TOTAL_FORMS").val());
+                $("#id_exclude-TOTAL_FORMS").val(current_form_num + 1);
+                var empty_form = $("#id_exclude-__prefix__-name");
+                var new_form = empty_form.clone();
+                new_form.attr("id", new_form.attr("id").replace("__prefix__", current_form_num));
+                new_form.attr("name", new_form.attr("name").replace("__prefix__", current_form_num));
+                new_form.val($(this).val());
+                new_form.insertBefore(empty_form);
+                // Display the new ingredient as being in the filter
+                var new_ing = $('<a href="#"><div class="filtered-ingredient">' + $(this).val() + '</div></a>')
+                new_ing.click(function() {
+                    new_form.remove();
+                    $(this).remove();
+                    return false;
+                });
+                $("#excluded-ingredients").append(new_ing);
+            }
+        });
     	
+    	// TODO: Delete when finished with testing the advanced search
     	$("#advanced-link").click();
-    
-    	make_hover_effect();
+    	
+    	$("#ajax").click(update_recipes);
     	
 		var num_pages = parseInt($("#num-pages").text());
         $('.recipe-summaries-arrow .arrow-left').click(function() {
@@ -117,6 +188,7 @@
 {% block page_name %}Recepten{% endblock %}
 
 {% block content %}
+<a id="ajax" href="#">Click Me</a>
 
 <form class="keywords" action="" method="post">
     {% csrf_token %}
@@ -167,12 +239,24 @@
             {{ include_ingredients_formset.management_form }}
             <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
             {{ search_form.include_ingredients_operator }}
+            <input id="include-ingredients-input" class="ingredients-input"/>
+            <div id="included-ingredients">
+            </div>
+            <span class="empty-form">
+                {{ include_ingredients_formset.empty_form.name }}
+            </span>
         </div>
         <div id="excl-ings">
             <p>
                 Zonder Ingredienten:
             </p>
             {{ exclude_ingredients_formset.management_form }}
+            <input id="exclude-ingredients-input" class="ingredients-input"/>
+            <div id="excluded-ingredients">
+            </div>
+            <span class="empty-form">
+                {{ exclude_ingredients_formset.empty_form.name }}
+            </span>
         </div>
         <div id="extra-info">
             <p>
@@ -187,9 +271,7 @@
     </div>
 </form>
 <div id="recipe-summaries-wrapper">
-	{% for recipe in recipes %}
-    	{% include "includes/recipe_summary.html" %}
-    {% endfor %}
+	{% include "includes/recipe_summaries.html" %}
 </div>
 
 {% endblock %}
