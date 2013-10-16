@@ -56,17 +56,23 @@ def browse_recipes(request):
     Browse through recipes
     
     """
-    recipe_list = Recipe.objects.all().exclude(image='images/ingredients/no_image.png').order_by('number_of_votes', 'extra_info')
+    search_form = SearchRecipeForm()
+    
+    if request.method == 'POST' and 'query' in request.POST:
+        recipe_list = Recipe.objects.query(recipe_string=request.POST['query'])
+    else:
+        recipe_list = Recipe.objects.all().exclude(image='images/ingredients/no_image.png').order_by('time_added', 'number_of_votes', 'extra_info')
     paginator = Paginator(recipe_list, 12)
     
     if request.method == 'GET':
         page = randint(1, paginator.num_pages)
-        return_function = lambda recipes: render(request, 'recipes/browse_recipes.html', {'recipes': recipes})
+        return_function = lambda recipes: render(request, 'recipes/browse_recipes.html', {'recipes': recipes, 'form': search_form})
     elif request.is_ajax() and request.method == 'POST':
         page = request.POST.get('page', 1)
-        return_function = lambda recipes: HttpResponse(render_to_string('includes/recipe_summaries.html', {'recipes': recipes }))
+        return_function = lambda recipes: HttpResponse(render_to_string('includes/recipe_summaries.html', {'recipes': recipes, 'form': search_form }))
     else:
-        return PermissionDenied
+        page = randint(1, paginator.num_pages)
+        return_function = lambda recipes: render(request, 'recipes/browse_recipes.html', {'recipes': recipes, 'form': search_form})
     
     try:
         recipes = paginator.page(page)

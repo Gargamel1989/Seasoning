@@ -28,6 +28,20 @@
 	};
 	
     $(document).ready(function() {
+    	$("#advanced-link").click(function() {
+    		if ($("#advanced-search").is(":visible")) {
+    			$("#advanced-search").slideUp(1000, function() {
+    				$("#advanced-link").text("Geavanceerd Zoeken");
+    				$("#recipe-summaries-wrapper").css("width", "960px");
+    			});
+    		} else {
+    			$("#recipe-summaries-wrapper").css("width", "720px");
+    			$("#advanced-search").slideDown(1000);
+    			$("#advanced-link").text("Niet-geavanceerd Zoeken");
+    		}
+    		return false;
+    	});
+    
     	make_hover_effect();
     	
 		var num_pages = parseInt($("#num-pages").text());
@@ -45,13 +59,27 @@
 
 {% block content %}
 
-<form class="keywords" action="">
-    <input id="keywords-searchbar" type="text" value="" placeholder="Zoek Recepten">
-    <button id="keywords-submit" class="nochrome" type="submit">
-        <span class="submit-icon"></span>
-    </button>
-</form>
+<div id="basic-search">
+	<form class="keywords" action="" method="post">
+	    {{ form.search_string }}
+	    <button id="keywords-submit" class="nochrome" type="submit">
+	        <span class="submit-icon"></span>
+	    </button>
+	</form>
+	<a id="advanced-link" href="#">Geavanceerd Zoeken</a>
+	<span id="search-result-count">{{ recipes.start_index }}-{{ recipes.end_index }} van de {{ recipes.paginator.count }} resultaten</span>
+</div>
 <hr>
+<div id="advanced-search">
+	{{ form.sort_field }}
+	{{ form.sort_order }}
+	{{ form.ven }}
+	{{ form.veg }}
+	{{ form.nveg }}
+	{{ form.cuisine }}
+	{{ form.course }}
+	{{ form.include_ingredients_operator }}
+</div>
 <div id="recipe-summaries-wrapper">
 	{% for recipe in recipes %}
     	{% include "includes/recipe_summary.html" %}

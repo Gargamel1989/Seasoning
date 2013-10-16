@@ -45,10 +45,20 @@ class Cuisine(models.Model):
     def __unicode__(self):
         return self.name
 
+class RecipeManager(models.Manager):
+    
+    def query(self, recipe_string=None):
+        full_query = models.Q()
+        if recipe_string is not None:
+            full_query = full_query & models.Q(name__contains=recipe_string)
+        return Recipe.objects.filter(full_query).order_by('time_added', 'number_of_votes', 'extra_info')
+    
 class Recipe(models.Model):
     
     class Meta:
         db_table = 'recipe'
+        
+    objects = RecipeManager()
     
     ENTRY, BREAD, BREAKFAST, DESERT, DRINK, MAIN_COURSE, SALAD, SIDE_DISH, SOUP, MARINADE_AND_SAUCE = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
     COURSES = ((ENTRY,u'Voorgerecht'),
