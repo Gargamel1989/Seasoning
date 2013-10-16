@@ -47,11 +47,39 @@ class Cuisine(models.Model):
 
 class RecipeManager(models.Manager):
     
-    def query(self, recipe_string=None):
-        full_query = models.Q()
-        if recipe_string is not None:
-            full_query = full_query & models.Q(name__contains=recipe_string)
-        return Recipe.objects.filter(full_query).order_by('time_added', 'number_of_votes', 'extra_info')
+    def query(self, search_string='', advanced_search=False, sort_field='', 
+              sort_order='', ven=True, veg=True, nveg=True, cuisines=[], 
+              courses=[]):
+        name_query = models.Q(name__icontains=search_string)
+            
+        veg_filter = models.Q()
+        additional_filters = models.Q()
+        
+        if advanced_search:
+            if ven:
+                veg_filter = veg_filter | models.Q(veganism=Ingredient.VEGAN)
+            if veg:
+                veg_filter = veg_filter | models.Q(veganism=Ingredient.VEGETARIAN)
+            if nveg:
+                veg_filter = veg_filter | models.Q(veganism=Ingredient.NON_VEGETARIAN)
+            
+            
+            if cuisines:
+                additional_filters = additional_filters & models.Q(cuisine__in=cuisines)
+            
+            if courses:
+                additional_filters = additional_filters & models.Q(course__in=courses)
+                    
+        recipes_list = Recipe.objects.filter(name_query & veg_filter & additional_filters).distinct()
+        
+        # SORTING
+        if sort_field:
+            if 'tot_time' in sort_field:
+                recipes_list = recipes_list.extra(select={'tot_time': 'active_time + passive_time'})
+            sort_field = sort_order + sort_field
+            recipes_list = recipes_list.order_by(sort_field)
+        
+        return recipes_list
     
 class Recipe(models.Model):
     

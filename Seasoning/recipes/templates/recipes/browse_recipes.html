@@ -33,14 +33,73 @@
     			$("#advanced-search").slideUp(1000, function() {
     				$("#advanced-link").text("Geavanceerd Zoeken");
     				$("#recipe-summaries-wrapper").css("width", "960px");
+                    $("#id_advanced_search").val("False");
     			});
     		} else {
     			$("#recipe-summaries-wrapper").css("width", "720px");
     			$("#advanced-search").slideDown(1000);
     			$("#advanced-link").text("Niet-geavanceerd Zoeken");
+                $("#id_advanced_search").val("True");
     		}
     		return false;
     	});
+    	
+    	$(".order-arrow").click(function() {
+    	    if (!$(this).hasClass("active")) {
+    	        var active_order_arrow = $(".order-arrow.active");
+    	        active_order_arrow.removeClass("active");
+    	        $(this).addClass("active");
+    	        var check, uncheck;
+    	        if ($(this).hasClass("up")) {
+    	            check = $("#id_sort_order_0");
+    	            uncheck = $("#id_sort_order_1");
+    	        } else {
+                    check = $("#id_sort_order_1");
+                    uncheck = $("#id_sort_order_0");
+    	        }
+                check.attr("checked", "checked");
+                uncheck.attr("checked", false);
+    	    }
+    	    return false;
+    	})
+    	
+    	
+    	$(".veg-choice").each(function() {
+    	    if (!$(this).children("input:first").attr("checked")) {
+    	        $(this).removeClass("active");
+    	    }
+    	    $(this).click(function() {
+                if ($(this).hasClass("active")) {
+                    $(this).removeClass("active");
+                    $(this).children("input:first").attr("checked", false);
+                } else {
+                    $(this).addClass("active");
+                    $(this).children("input:first").attr("checked", "checked");
+                }
+                return false;
+            });
+    	});
+    	
+    	$("#incl-ings .option").click(function() {
+            if (!$(this).hasClass("active")) {
+                var active_option = $("#incl-ings .option.active");
+                active_option.removeClass("active");
+                $(this).addClass("active");
+                var check, uncheck;
+                if ($(this).hasClass("and")) {
+                    check = $("#id_include_ingredients_operator_0");
+                    uncheck = $("#id_include_ingredients_operator_1");
+                } else {
+                    check = $("#id_include_ingredients_operator_1");
+                    uncheck = $("#id_include_ingredients_operator_0");
+                }
+                check.attr("checked", "checked");
+                uncheck.attr("checked", false);
+            }
+            return false;
+    	});
+    	
+    	$("#advanced-link").click();
     
     	make_hover_effect();
     	
@@ -59,27 +118,74 @@
 
 {% block content %}
 
-<div id="basic-search">
-	<form class="keywords" action="" method="post">
-	    {{ form.search_string }}
+<form class="keywords" action="" method="post">
+    {% csrf_token %}
+    <div id="basic-search">
+        {{ search_form.search_string }}
 	    <button id="keywords-submit" class="nochrome" type="submit">
-	        <span class="submit-icon"></span>
+	        <span class="submit-icon"> </span>
 	    </button>
-	</form>
-	<a id="advanced-link" href="#">Geavanceerd Zoeken</a>
-	<span id="search-result-count">{{ recipes.start_index }}-{{ recipes.end_index }} van de {{ recipes.paginator.count }} resultaten</span>
-</div>
-<hr>
-<div id="advanced-search">
-	{{ form.sort_field }}
-	{{ form.sort_order }}
-	{{ form.ven }}
-	{{ form.veg }}
-	{{ form.nveg }}
-	{{ form.cuisine }}
-	{{ form.course }}
-	{{ form.include_ingredients_operator }}
-</div>
+	</div>
+	<a id="advanced-link" href="#">
+	    Geavanceerd Zoeken
+	</a>
+    {{ search_form.advanced_search.as_hidden }}
+    <span id="search-result-count">{{ recipes.start_index }}-{{ recipes.end_index }} van de {{ recipes.paginator.count }} resultaten</span>
+    <hr>
+    <div id="advanced-search">
+        <div id="sorting-options">
+            <p>
+                Sorteren op:
+            </p>
+        	{{ search_form.sort_field }}
+            <a class="order-arrow up{% if search_form.sort_order.0.is_checked %} active{% endif %}" href="#">
+                <img src="{{ STATIC_URL }}img/icons/add.png" title="Sorteer in oplopende volgorde" />
+            </a><a class="order-arrow down{% if search_form.sort_order.1.is_checked %} active{% endif %}" href="#">
+                <img src="{{ STATIC_URL }}img/icons/less.png" title="Sorteer in aflopende volgorde" />
+            </a>
+            {{ search_form.sort_order }}
+        </div>
+    	<div id="veg-options">
+    	    <p>
+                Veganisme:
+            </p>
+            <a class="veg-choice active" href="#">
+            	<img src="{{ STATIC_URL }}img/vegan.png" title="Zoek Veganistische Gerechten" />
+            	{{ search_form.ven }}
+            </a><a class="veg-choice active" href="#">
+                <img src="{{ STATIC_URL }}img/vegetarian.png" title="Zoek Vegetarische Gerechten" />
+                {{ search_form.veg }}
+            </a><a class="veg-choice active" href="#">
+            	<img src="{{ STATIC_URL }}img/non-vegetarian.png" title="Zoek Niet-vegetarische Gerechten" />
+            	{{ search_form.nveg }}
+            </a>
+        </div>
+        <div id="incl-ings">
+            <p>
+                Met Ingredienten:
+            </p>
+            {{ include_ingredients_formset.management_form }}
+            <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
+            {{ search_form.include_ingredients_operator }}
+        </div>
+        <div id="excl-ings">
+            <p>
+                Zonder Ingredienten:
+            </p>
+            {{ exclude_ingredients_formset.management_form }}
+        </div>
+        <div id="extra-info">
+            <p>
+                Soort Keuken:
+            </p>
+            {{ search_form.cuisine }}
+            <p>
+                Soort Maaltijd:
+            </p>
+    	   {{ search_form.course }}
+    	</div>
+    </div>
+</form>
 <div id="recipe-summaries-wrapper">
 	{% for recipe in recipes %}
     	{% include "includes/recipe_summary.html" %}

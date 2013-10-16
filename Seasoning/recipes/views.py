@@ -38,7 +38,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
-from random import randint
 from django.utils.translation import ugettext_lazy as _
 
 class Group:
@@ -50,30 +49,36 @@ class Group:
     def append(self, uses):
         self.usess.append(uses)
 
-@csrf_exempt
 def browse_recipes(request):
     """
-    Browse through recipes
+    Browse or search through recipes
     
     """
-    search_form = SearchRecipeForm()
+    # This is a formset for inputting ingredients to be included or excluded in the recipe search
+    IngredientInRecipeFormset = formset_factory(IngredientInRecipeSearchForm, extra=1)
     
-    if request.method == 'POST' and 'query' in request.POST:
-        recipe_list = Recipe.objects.query(recipe_string=request.POST['query'])
+    if request.method == 'POST':
+        search_form = SearchRecipeForm(request.POST)
+        include_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='include')
+        exclude_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='exclude')
+        if search_form.is_valid() and include_ingredients_formset.is_valid() and exclude_ingredients_formset.is_valid():
+            data = search_form.cleaned_data
+            recipes_list = Recipe.objects.query(search_string=data['search_string'], advanced_search=data['advanced_search'],
+                                                sort_field=data['sort_field'], sort_order=data['sort_order'],
+                                                ven=data['ven'], veg=data['veg'], nveg=data['nveg'],
+                                                cuisines=data['cuisine'], courses=data['course'])
+        else:
+            recipes_list = []
     else:
-        recipe_list = Recipe.objects.all().exclude(image='images/ingredients/no_image.png').order_by('time_added', 'number_of_votes', 'extra_info')
-    paginator = Paginator(recipe_list, 12)
+        search_form = SearchRecipeForm()
+        include_ingredients_formset = IngredientInRecipeFormset(prefix='include')
+        exclude_ingredients_formset = IngredientInRecipeFormset(prefix='exclude')
+        recipes_list = Recipe.objects.query()
     
-    if request.method == 'GET':
-        page = randint(1, paginator.num_pages)
-        return_function = lambda recipes: render(request, 'recipes/browse_recipes.html', {'recipes': recipes, 'form': search_form})
-    elif request.is_ajax() and request.method == 'POST':
-        page = request.POST.get('page', 1)
-        return_function = lambda recipes: HttpResponse(render_to_string('includes/recipe_summaries.html', {'recipes': recipes, 'form': search_form }))
-    else:
-        page = randint(1, paginator.num_pages)
-        return_function = lambda recipes: render(request, 'recipes/browse_recipes.html', {'recipes': recipes, 'form': search_form})
+    # Split the result by 12
+    paginator = Paginator(recipes_list, 12)
     
+    page = request.GET.get('page')
     try:
         recipes = paginator.page(page)
     except PageNotAnInteger:
@@ -81,7 +86,10 @@ def browse_recipes(request):
     except EmptyPage:
         recipes = paginator.page(paginator.num_pages)
         
-    return return_function(recipes)
+    return render(request, 'recipes/browse_recipes.html', {'search_form': search_form,
+                                                           'include_ingredients_formset': include_ingredients_formset,
+                                                           'exclude_ingredients_formset': exclude_ingredients_formset,
+                                                           'recipes': recipes})
     
 
 def search_recipes(request, sort_field=None):

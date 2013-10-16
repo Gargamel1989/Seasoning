@@ -20,7 +20,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from recipes.models import Recipe, UsesIngredient, Cuisine
 import recipes
-from django.forms.widgets import RadioSelect
+from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from ingredients.fields import AutoCompleteSelectIngredientField
 from ingredients.models import Ingredient, Unit
 
@@ -81,6 +81,8 @@ class SearchRecipeForm(forms.Form):
     search_string = forms.CharField(required=False, label='Zoektermen',
                                     widget=forms.TextInput(attrs={'placeholder': 'Zoek Recepten', 'class': 'keywords-searchbar'}))
     
+    advanced_search = forms.BooleanField(initial=False, required=False)
+    
     sort_field = forms.ChoiceField(choices=SORT_CHOICES)
     sort_order = forms.ChoiceField(widget=RadioSelect, choices=SORT_ORDER_CHOICES, required=False)
     
@@ -88,9 +90,11 @@ class SearchRecipeForm(forms.Form):
     veg = forms.BooleanField(initial=True, required=False, label='Vegetarisch')
     nveg = forms.BooleanField(initial=True, required=False, label='Niet-Vegetarisch')
     
-    cuisine = forms.ModelMultipleChoiceField(queryset=Cuisine.objects.all(), required=False, label='Keuken')
+    cuisine = forms.ModelMultipleChoiceField(queryset=Cuisine.objects.all(), required=False, label='Keuken',
+                                             widget=CheckboxSelectMultiple())
     
-    course = forms.ChoiceField(required=False, choices=(((u'', u'Maakt niet uit'),) + recipes.models.Recipe.COURSES), label='Maaltijd')
+    course = forms.MultipleChoiceField(required=False, choices=recipes.models.Recipe.COURSES, label='Maaltijd',
+                                       widget=CheckboxSelectMultiple())
     
     include_ingredients_operator = forms.ChoiceField(widget=RadioSelect, choices=OPERATOR_CHOICES, label='', initial=OPERATOR_CHOICES[1][0])
 
