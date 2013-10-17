@@ -67,7 +67,7 @@
     		} else {
     			$("#recipe-summaries-wrapper").css("width", "720px");
     			$("#advanced-search").slideDown(1000);
-    			$("#advanced-link").text("Niet-geavanceerd Zoeken");
+    			$("#advanced-link").text("Niet-geavanceerd zoeken");
                 $("#id_advanced_search").val("True");
     		}
     		return false;
@@ -199,7 +199,7 @@
 	    </button>
 	</div>
 	<a id="advanced-link" href="#">
-	    Geavanceerd Zoeken
+	    Geavanceerd zoeken
 	</a>
     {{ search_form.advanced_search.as_hidden }}
     <span id="search-result-count">{{ recipes.start_index }}-{{ recipes.end_index }} van de {{ recipes.paginator.count }} resultaten</span>
@@ -219,22 +219,22 @@
         </div>
     	<div id="veg-options">
     	    <p>
-                Veganisme:
+                Voedingswijze:
             </p>
             <a class="veg-choice active" href="#">
-            	<img src="{{ STATIC_URL }}img/vegan.png" title="Zoek Veganistische Gerechten" />
+            	<img src="{{ STATIC_URL }}img/vegan.png" title="Veganistische Gerechten" />
             	{{ search_form.ven }}
             </a><a class="veg-choice active" href="#">
-                <img src="{{ STATIC_URL }}img/vegetarian.png" title="Zoek Vegetarische Gerechten" />
+                <img src="{{ STATIC_URL }}img/vegetarian.png" title="Vegetarische Gerechten" />
                 {{ search_form.veg }}
             </a><a class="veg-choice active" href="#">
-            	<img src="{{ STATIC_URL }}img/non-vegetarian.png" title="Zoek Niet-vegetarische Gerechten" />
+            	<img src="{{ STATIC_URL }}img/non-vegetarian.png" title="Niet-vegetarische Gerechten" />
             	{{ search_form.nveg }}
             </a>
         </div>
         <div id="incl-ings">
             <p>
-                Met Ingredienten:
+                Met ingredienten:
             </p>
             {{ include_ingredients_formset.management_form }}
             <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
@@ -248,7 +248,7 @@
         </div>
         <div id="excl-ings">
             <p>
-                Zonder Ingredienten:
+                Zonder ingredienten:
             </p>
             {{ exclude_ingredients_formset.management_form }}
             <input id="exclude-ingredients-input" class="ingredients-input"/>
@@ -260,11 +260,11 @@
         </div>
         <div id="extra-info">
             <p>
-                Soort Keuken:
+                Soort keuken:
             </p>
             {{ search_form.cuisine }}
             <p>
-                Soort Maaltijd:
+                Soort maaltijd:
             </p>
     	   {{ search_form.course }}
     	</div>

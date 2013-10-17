@@ -112,23 +112,32 @@
 </script>
 {% endblock %}
 
-{% block page_name %}
-	{{ recipe.name }}
-    <div id="recipe-actions">
-        {% if recipe.author == user %}
-        <a href="/recipes/edit/{{ recipe.id }}/" title="Wijzig dit recept"><img src="{{ STATIC_URL }}img/icons/edit.png" /></a>
-        <a href="/recipes/delete/{{ recipe.id }}/" title="Verwijder dit recept" onclick="return confirm('Bent u zeker dat u dit recept wil verwijderen?')"><img src="{{ STATIC_URL }}img/icons/delete.png" /></a>
-        {% endif %}
-    </div>
-{% endblock %}
-
 {% block content %}
-<div id="below-recipe-name">
+<div id="recipe-img" style="background-image: url('{{ MEDIA_URL }}{{ recipe.image }}')"> </div>
+<div id="recipe-info">
+    <h1>
+        {{ recipe.name }}
+        {% if recipe.author == user %}
+        <a href="/recipes/delete/{{ recipe.id }}/" title="Verwijder dit recept" class="recipe-action" onclick="return confirm('Bent u zeker dat u dit recept wil verwijderen?')"><img src="{{ STATIC_URL }}img/icons/delete.png" /></a>
+        <a href="/recipes/edit/{{ recipe.id }}/" title="Wijzig dit recept" class="recipe-action"><img src="{{ STATIC_URL }}img/icons/edit.png" /></a>
+        {% endif %}
+    </h1>
     
     <div id="add-info">
         <span id="author">Toegevoegd door <a href="/profile/{{ recipe.author.id }}/">{{ recipe.author.get_full_name }}</a></span><br />
         <span id="time-added">{{ recipe.time_added|date:"j F Y, G" }}u{{ recipe.time_added|date:"i" }}</span>
     </div>
+    
+    <div id="static-info" class="eight columns alpha">
+        <h4>Korte Beschrijving</h4>
+        {{ recipe.description }}
+    </div>
+    
+    <br class="clear" />
+    
+</div>
+<!--
+<div id="below-recipe-name">
     
     <div class="clear-div"> </div>
 </div>
@@ -137,8 +146,6 @@
 <div id="recipe">
     
     <div id="img-and-basic-user-options">
-        <img id="recipe-img" src="{{ MEDIA_URL }}{{ recipe.image }}"/>
-        
         <div id="rating">
             <strong>Populariteit</strong>
             <div id="current-rating">
@@ -244,7 +251,8 @@
     	</div>	
     </div>
 </div>
-
+-->
+<br><br><br><br><br><br><br><br><br><br>
 <div id="give-comment">
     <h2>Geef een reactie op dit recept:</h2>
 	<br>

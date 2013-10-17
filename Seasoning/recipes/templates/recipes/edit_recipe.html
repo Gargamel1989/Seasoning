@@ -55,10 +55,10 @@
 </script>
 {% endblock %}
 
-{% block page_name %}Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
-
 
 {% block content %}
+
+<h1>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
 
 <form id="add-recipe-form" action="" method="post" enctype="multipart/form-data">
   {% if unknown_ingredients %}
@@ -176,9 +176,15 @@
     {% endif %}
   </div>
   
+  <div class="field-wrapper">
+    {% if recipe_form.instance %}
+    <img id="recipe-image" src="{{ recipe_form.instance.image.url }}" />
+    {% endif %}
+  </div>
+  
   <div class="field-wrapper tooltip-field">
     {{ recipe_form.image.label_tag }}
-    {{ recipe_form.image }}
+    <input id="id_image" type="file" name="image">
     <div class="tooltip">{{ recipe_form.image.help_text }}</div>
     
     {% if recipe_form.image.errors %}        
@@ -186,30 +192,30 @@
     {% endif %}
   </div>
   
-  <br /><br /><br /><br /><br /><br />
+  <br /><br />
+  
+  <label>Ingredienten</label>
   
   <div id="uses-formset" class="formset">
       {{ usesingredient_formset.management_form }}
       <table>
-        {% for form in usesingredient_formset %}
-        {% if forloop.first %}
         <tr>
-          <td><label>{{ form.ingredient.label }}</label></td>
-          <td><label>{{ form.amount.label }}</label></td>
+          <td>Naam</td>
+          <td>Hoeveelheid</td>
         </tr>
-        {% endif %}
+        {% for form in usesingredient_formset %}
         <tr class="uses-form">
         {{ form.id }}
-          <td>
-    	{{ form.group.as_hidden }}
-    	{{ form.ingredient }}
-          </td>
-          <td>
-    	{{ form.amount }} {{ form.unit }}
-          </td>
-          <td>
-            {{ form.DELETE }}
-          </td>
+            <td>
+                {{ form.group.as_hidden }}
+                {{ form.ingredient }}
+            </td>
+            <td>
+    	       {{ form.amount }} {{ form.unit }}
+            </td>
+            <td>
+                {{ form.DELETE }}
+            </td>
         </tr>    
         {% if form.non_field_errors %}
         <tr>
