@@ -2,7 +2,12 @@
 
 {% block title %}Recepten{% endblock %}
 
-{% block extra_head %}
+{% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+{% endblock %}
+
+{% block extra_script %}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script>
     // A function that detects if a user presses the enter key
     // Consider moving this to somewhere more appropriate
@@ -274,11 +279,9 @@
             {{ include_ingredients_formset.management_form }}
             <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
             {{ search_form.include_ingredients_operator }}
-<<<<<<< HEAD
-            <input id="include-ingredients-input" class="ingredients-input" placeholder="Voer ingredienten in"/>
-=======
-            <input id="include-ingredients-input" class="ingredients-input autocomplete-ingredient"/>
->>>>>>> branch 'master' of https://github.com/Gargamel1989/Seasoning.git
+            
+            <input id="include-ingredients-input" class="ingredients-input autocomplete-ingredient" placeholder="Voer ingredienten in" />
+
             <div id="included-ingredients">
             </div>
             <span class="empty-form">
@@ -290,11 +293,8 @@
                 Zonder ingredienten:
             </p>
             {{ exclude_ingredients_formset.management_form }}
-<<<<<<< HEAD
-            <input id="exclude-ingredients-input" class="ingredients-input" placeholder="Voer ingredienten in"/>
-=======
-            <input id="exclude-ingredients-input" class="ingredients-input autocomplete-ingredient"/>
->>>>>>> branch 'master' of https://github.com/Gargamel1989/Seasoning.git
+            <input id="exclude-ingredients-input" class="ingredients-input autocomplete-ingredient"  placeholder="Voer ingredienten in" />
+
             <div id="excluded-ingredients">
             </div>
             <span class="empty-form">

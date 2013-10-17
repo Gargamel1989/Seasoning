@@ -22,7 +22,6 @@ from recipes.views import delete_recipe_comment
 
 urlpatterns = patterns('',
     url(r'^$', 'recipes.views.browse_recipes', name='recipe_browse'),
-    url(r'^search/$', 'recipes.views.search_recipes', name='recipe_search'),
     url(r'^(\d*)/$', 'recipes.views.view_recipe', name='recipe_view'),
    
     url(r'^portions/$', 'recipes.views.get_recipe_portions'),
