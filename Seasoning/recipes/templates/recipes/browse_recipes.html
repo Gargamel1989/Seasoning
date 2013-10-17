@@ -168,6 +168,13 @@
                 $("#excluded-ingredients").append(new_ing);
             }
         });
+        
+        $("input.autocomplete-ingredient").each(function() {
+            $(this).autocomplete({
+                source: "/ingredients/ing_list/",
+                minLength: 2
+            });
+        });
     	
     	// TODO: Delete when finished with testing the advanced search
     	$("#advanced-link").click();
@@ -239,7 +246,7 @@
             {{ include_ingredients_formset.management_form }}
             <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
             {{ search_form.include_ingredients_operator }}
-            <input id="include-ingredients-input" class="ingredients-input"/>
+            <input id="include-ingredients-input" class="ingredients-input autocomplete-ingredient"/>
             <div id="included-ingredients">
             </div>
             <span class="empty-form">
@@ -251,7 +258,7 @@
                 Zonder ingredienten:
             </p>
             {{ exclude_ingredients_formset.management_form }}
-            <input id="exclude-ingredients-input" class="ingredients-input"/>
+            <input id="exclude-ingredients-input" class="ingredients-input autocomplete-ingredient"/>
             <div id="excluded-ingredients">
             </div>
             <span class="empty-form">
