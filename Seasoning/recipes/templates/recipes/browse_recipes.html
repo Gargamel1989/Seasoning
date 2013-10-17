@@ -54,6 +54,10 @@
         });
         return false;
     };
+    
+    
+    // Make a timer for search_string updating
+    var timer;
 	
     $(document).ready(function() {
         // Show the Advanced Search Window
@@ -85,6 +89,7 @@
                     $("#id_sort_order_1").click();
     	        }
     	    }
+    	    update_recipes();
     	    return false;
     	})
     	
@@ -97,11 +102,12 @@
     	    $(this).click(function() {
                 if ($(this).hasClass("active")) {
                     $(this).removeClass("active");
-                    $(this).children("input:first").attr("checked", false);
+                    $(this).children("input").prop('checked', false);
                 } else {
                     $(this).addClass("active");
-                    $(this).children("input:first").attr("checked", "checked");
+                    $(this).children("input").prop('checked', true);
                 }
+    	    	update_recipes();
                 return false;
             });
     	});
@@ -118,6 +124,7 @@
                     $("#id_include_ingredients_operator_1").click();
                 }
             }
+    	   	update_recipes();
             return false;
     	});
         
@@ -139,9 +146,12 @@
                 new_ing.click(function() {
                     new_form.remove();
                     $(this).remove();
+                	update_recipes();
                     return false;
                 });
                 $("#included-ingredients").append(new_ing);
+                $(this).val("");
+    	   		update_recipes();
             }
         });
         
@@ -163,16 +173,35 @@
                 new_ing.click(function() {
                     new_form.remove();
                     $(this).remove();
+                	update_recipes();
                     return false;
                 });
                 $("#excluded-ingredients").append(new_ing);
+                $(this).val("");
+                update_recipes();
             }
         });
+        
+        // Update recipe list on filter change
+        $("#id_sort_field").change(update_recipes);
+        $("input[name='cuisine']").change(update_recipes);
+        $("input[name='course']").change(update_recipes);
+        
+        $("#id_search_string").keyup(function() {
+        	if ($(this).val().length >= 3) {
+        		timer = setTimeout(update_recipes, 1000);
+        	}
+        });
+        $("#id_search_string").keydown(function() {
+        	clearTimeout(timer);
+       	});
+       	$("#id_search_string").pressEnter(function() {
+       		update_recipes;
+       		timer = clearTimeout(timer);
+       	});
     	
     	// TODO: Delete when finished with testing the advanced search
     	$("#advanced-link").click();
-    	
-    	$("#ajax").click(update_recipes);
     	
 		var num_pages = parseInt($("#num-pages").text());
         $('.recipe-summaries-arrow .arrow-left').click(function() {
@@ -188,7 +217,6 @@
 {% block page_name %}Recepten{% endblock %}
 
 {% block content %}
-<a id="ajax" href="#">Click Me</a>
 
 <form class="keywords" action="" method="post">
     {% csrf_token %}
@@ -211,9 +239,9 @@
             </p>
         	{{ search_form.sort_field }}
             <a class="order-arrow up{% if search_form.sort_order.0.is_checked %} active{% endif %}" href="#">
-                <img src="{{ STATIC_URL }}img/icons/add.png" title="Sorteer in oplopende volgorde" />
+                <img src="{{ STATIC_URL }}img/icons/up.png" title="Sorteer in oplopende volgorde" />
             </a><a class="order-arrow down{% if search_form.sort_order.1.is_checked %} active{% endif %}" href="#">
-                <img src="{{ STATIC_URL }}img/icons/less.png" title="Sorteer in aflopende volgorde" />
+                <img src="{{ STATIC_URL }}img/icons/down.png" title="Sorteer in aflopende volgorde" />
             </a>
             {{ search_form.sort_order }}
         </div>
@@ -239,7 +267,7 @@
             {{ include_ingredients_formset.management_form }}
             <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
             {{ search_form.include_ingredients_operator }}
-            <input id="include-ingredients-input" class="ingredients-input"/>
+            <input id="include-ingredients-input" class="ingredients-input" placeholder="Voer ingredienten in"/>
             <div id="included-ingredients">
             </div>
             <span class="empty-form">
@@ -251,7 +279,7 @@
                 Zonder Ingredienten:
             </p>
             {{ exclude_ingredients_formset.management_form }}
-            <input id="exclude-ingredients-input" class="ingredients-input"/>
+            <input id="exclude-ingredients-input" class="ingredients-input" placeholder="Voer ingredienten in"/>
             <div id="excluded-ingredients">
             </div>
             <span class="empty-form">
