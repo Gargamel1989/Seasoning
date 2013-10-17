@@ -375,9 +375,9 @@
 			#advanced-search #sorting-options .order-arrow img {
 				opacity: 0.4;
 				filter: alpha(opacity=40);
-				height: 25px;
+				height: 20px;
 				position: relative;
-				top: -4px;
+				margin-right: 5px;
 			}
 			
 			#advanced-search #sorting-options .order-arrow.active img {
@@ -424,6 +424,7 @@
 				display: inline-block;
 				text-align: center;
 				line-height: 15px;
+				margin-bottom: 10px;
 			}
 			
 			#advanced-search #incl-ings .option.active {
@@ -448,6 +449,49 @@
 			
 			#advanced-search #incl-ings ul {
 				display: none;
+			}
+			
+			#advanced-search .ingredients-input {
+				width: 200px;
+				margin: 0 0 10px 0;	
+			}
+			
+			#advanced-search #included-ingredients a {
+				display: block;
+				margin-bottom: 5px;
+				text-decoration: none;
+			}
+			
+			#advanced-search #excluded-ingredients a {
+				display: block;
+				margin-bottom: 5px;
+				text-decoration: none;
+			}
+			
+			#advanced-search .filtered-ingredient {
+				background-color: #EAF2E9;
+				-moz-border-radius: 6px;
+				border-radius: 6px;
+				padding: 4px 0 7px 6px;
+				width: 200px;
+				display: table-cell;
+				vertical-align: middle;
+				line-height: 10px;
+				border: 1px solid transparent;
+			    transition: all 0.25s ease-in-out;
+			    -webkit-transition: all 0.25s ease-in-out;
+			    -moz-transition: all 0.25s ease-in-out;
+			    background-image: url("/static/img/icons/delete.png");
+			    background-size: 20px 20px;
+			    background-repeat: no-repeat;
+			    background-position: 98% 0%;
+			}
+			
+			#advanced-search .filtered-ingredient:hover {
+			    box-shadow: 0 0 2px rgba(0,0,0, 1);
+			    -webkit-box-shadow: 0 0 2px rgba(0,0,0, 1); 
+			    -moz-box-shadow: 0 0 2px rgba(0,0,0, 1);
+			    border:1px solid rgba(0,0,0, 0.5); 
 			}
 			
 			#advanced-search #extra-info ul {

@@ -58,7 +58,6 @@ class RecipeManager(models.Manager):
             
         veg_filter = models.Q()
         incl_ingredient_filter = models.Q()
-        excl_ingredient_filter = models.Q()
         additional_filters = models.Q()
         
         if advanced_search:
@@ -73,7 +72,7 @@ class RecipeManager(models.Manager):
             # Filter for included en excluded ingredients
             if include_ingredients_operator == 'and':
                 for ingredient_name in include_ingredient_names:
-                    incl_ingredient_filter = incl_ingredient_filter & models.Q(ingredients__name__icontains=ingredient_name)
+                    recipes_list = recipes_list.filter(ingredients__name__icontains=ingredient_name)
             elif include_ingredients_operator == 'or':
                 for ingredient_name in include_ingredient_names:
                     incl_ingredient_filter = incl_ingredient_filter | models.Q(ingredients__name__icontains=ingredient_name)            
@@ -86,7 +85,7 @@ class RecipeManager(models.Manager):
             if courses:
                 additional_filters = additional_filters & models.Q(course__in=courses)
                      
-        recipes_list = recipes_list.filter(name_query & veg_filter & incl_ingredient_filter & additional_filters).distinct()
+        recipes_list = recipes_list.filter(name_query & veg_filter & incl_ingredient_filter & additional_filters)
         
         # SORTING
         if sort_field:
@@ -95,7 +94,7 @@ class RecipeManager(models.Manager):
             sort_field = sort_order + sort_field
             recipes_list = recipes_list.order_by(sort_field)
         
-        return recipes_list
+        return recipes_list.distinct()
     
 class Recipe(models.Model):
     
