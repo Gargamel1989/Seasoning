@@ -37,12 +37,13 @@ class AddRecipeForm(forms.ModelForm):
         recipe.author = author
         return recipe.save()
 
-class UsesIngredientForm(forms.ModelForm):
-
-    ingredient = AutoCompleteSelectIngredientField()
-    
+class UsesIngredientForm(forms.ModelForm):    
     class Meta:
         model = UsesIngredient
+
+    ingredient = AutoCompleteSelectIngredientField()
+    group = forms.CharField(max_length=100, widget=forms.HiddenInput(attrs={'class': 'group'}))
+    amount = forms.FloatField(initial=0, widget=forms.TextInput(attrs={'class': 'amount'}))
     
     def is_valid_before_ingrequest(self):
         """

@@ -24,6 +24,30 @@
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script src="{{ STATIC_URL }}js/forms.js"></script>
 <script>
+    function insert_group_lis() {
+        // Insert the elements that inform the user a new ingredient group starts below it
+        var previous_group = ""
+        $("#sortable-ingredients li.ingredient").each(function() {
+           var group = $(this).find("input.group").val();
+           if (group != previous_group) {
+               // Insert a new group element
+               previous_group = group;
+           }
+            
+        });
+    }
+    
+    function group_ingredients() {
+        var group_name = "";
+        $("#sortable-ingredients li").each(function() {
+            if ($(this).hasClass("group")) {
+                group_name = $(this).text();
+            } else if ($(this).hasClass("ingredient")) {
+                $(this).find("input").val(group_name);
+            }
+        });
+    }
+    
     $(document).tooltip({ 
         items: ".tooltip-field input,select,textarea", 
         content:  function() {
@@ -45,20 +69,26 @@
             }
         });
         
-        $( "input.autocomplete-ingredient" ).each(function() {
+        $("input.autocomplete-ingredient").each(function() {
             $(this).autocomplete({
                 source: "/ingredients/ing_list/",
                 minLength: 2
             });
         });
+        
+        $( "#sortable-ingredients" ).sortable({
+            stop: group_ingredients
+        });
+        $( "#sortable" ).disableSelection();
+        group_ingredients();
     });
 </script>
 {% endblock %}
 
-{% block page_name %}Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}{% endblock %}
-
 
 {% block content %}
+
+<h1>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
 
 <form id="add-recipe-form" action="" method="post" enctype="multipart/form-data">
   {% if unknown_ingredients %}
@@ -176,9 +206,15 @@
     {% endif %}
   </div>
   
+  <div class="field-wrapper">
+    {% if recipe_form.instance %}
+    <img id="recipe-image" src="{{ recipe_form.instance.image.url }}" />
+    {% endif %}
+  </div>
+  
   <div class="field-wrapper tooltip-field">
     {{ recipe_form.image.label_tag }}
-    {{ recipe_form.image }}
+    <input id="id_image" type="file" name="image">
     <div class="tooltip">{{ recipe_form.image.help_text }}</div>
     
     {% if recipe_form.image.errors %}        
@@ -186,31 +222,18 @@
     {% endif %}
   </div>
   
-  <br /><br /><br /><br /><br /><br />
+  <br /><br />
+  
+  <label>Ingredienten</label>
   
   <div id="uses-formset" class="formset">
       {{ usesingredient_formset.management_form }}
-      <table>
-        {% for form in usesingredient_formset %}
-        {% if forloop.first %}
-        <tr>
-          <td><label>{{ form.ingredient.label }}</label></td>
-          <td><label>{{ form.amount.label }}</label></td>
-        </tr>
-        {% endif %}
-        <tr class="uses-form">
-        {{ form.id }}
-          <td>
-    	{{ form.group.as_hidden }}
-    	{{ form.ingredient }}
-          </td>
-          <td>
-    	{{ form.amount }} {{ form.unit }}
-          </td>
-          <td>
-            {{ form.DELETE }}
-          </td>
-        </tr>    
+      <ul id="sortable-ingredients">
+          {% for form in usesingredient_formset %}
+          <li class="ingredient">{{ form.id }}{{ form.group }}{{ form.ingredient }}{{ form.amount }}{{ form.unit }}{{ form.DELETE.as_hidden }}</li>
+          {% endfor %}
+          <li class="group empty-form"> </li>
+      </ul>  
         {% if form.non_field_errors %}
         <tr>
         	<td colspan=2>
@@ -218,8 +241,7 @@
         	</td>
     	</tr>
         {% endif %}
-        {% endfor %}
-        <tr class="empty uses-form">
+        <tr class="empty-form uses-form">
           {{ usesingredient_formset.empty_form.id }}
           <td>
     	{{ usesingredient_formset.empty_form.group.as_hidden }}
