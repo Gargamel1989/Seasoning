@@ -516,6 +516,13 @@
 			#recipe-summaries-wrapper .recipe-summary {
 				float: left;
 			}
+			
+			#recipe-summaries-wrapper p.sorry {
+				max-width: 500px;
+				margin: 30px auto;
+				text-align: center;
+				font-weight: bold;
+			}
 		
 		/* #View Recipe
 		================================================== */

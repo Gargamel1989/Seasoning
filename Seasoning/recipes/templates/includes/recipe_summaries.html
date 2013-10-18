@@ -19,4 +19,8 @@
             <span class="recipe-rating">{{ recipe.rating }}</span>
         </div>
     </div>
+{% empty %}
+<p class="sorry">
+    Sorry! Er werden geen recepten gevonden in onze databank die aan jouw criteria voldoen...
+</p>
 {% endfor %}

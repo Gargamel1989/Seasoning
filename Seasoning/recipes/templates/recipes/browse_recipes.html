@@ -101,7 +101,7 @@
     	
     	// Activate the buttons for veganism selection
     	$(".veg-choice").each(function() {
-    	    if (!$(this).children("input:first").attr("checked")) {
+    	    if (!$(this).children("input").prop("checked")) {
     	        $(this).removeClass("active");
     	    }
     	    $(this).click(function() {
@@ -280,7 +280,7 @@
             <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
             {{ search_form.include_ingredients_operator }}
             
-            <input id="include-ingredients-input" class="ingredients-input autocomplete-ingredient" placeholder="Voer ingredienten in" />
+            <input id="include-ingredients-input" class="ingredients-input autocomplete-ingredient" type="text" placeholder="Voer ingredienten in" />
 
             <div id="included-ingredients">
             </div>
@@ -293,7 +293,7 @@
                 Zonder ingredienten:
             </p>
             {{ exclude_ingredients_formset.management_form }}
-            <input id="exclude-ingredients-input" class="ingredients-input autocomplete-ingredient"  placeholder="Voer ingredienten in" />
+            <input id="exclude-ingredients-input" class="ingredients-input autocomplete-ingredient" type="text" placeholder="Voer ingredienten in" />
 
             <div id="excluded-ingredients">
             </div>
@@ -303,13 +303,13 @@
         </div>
         <div id="extra-info">
             <p>
-                Soort keuken:
-            </p>
-            {{ search_form.cuisine }}
-            <p>
                 Soort maaltijd:
             </p>
     	   {{ search_form.course }}
+            <p>
+                Soort keuken:
+            </p>
+            {{ search_form.cuisine }}
     	</div>
     </div>
 </form>
