@@ -74,9 +74,6 @@ def browse_recipes(request):
                                                 include_ingredient_names=include_ingredient_names, exclude_ingredient_names=exclude_ingredient_names)
         else:
             recipes_list = []
-        
-        if request.is_ajax():
-            return render(request, 'includes/recipe_summaries.html', {'recipes': recipes_list})
     else:
         search_form = SearchRecipeForm()
         include_ingredients_formset = IngredientInRecipeFormset(prefix='include')
@@ -93,6 +90,9 @@ def browse_recipes(request):
         recipes = paginator.page(1)
     except EmptyPage:
         recipes = paginator.page(paginator.num_pages)
+    
+    if request.method == 'POST' and request.is_ajax():
+        return render(request, 'includes/recipe_summaries.html', {'recipes': recipes})
         
     return render(request, 'recipes/browse_recipes.html', {'search_form': search_form,
                                                            'include_ingredients_formset': include_ingredients_formset,

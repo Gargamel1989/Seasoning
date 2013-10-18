@@ -209,7 +209,54 @@
 	
 		/* #Recipe Summary
 		================================================== */
-		
+			
+			.page-controls {
+				height: 20px;
+				font-size: 13px;
+				font-weight: bold;
+				margin-top: 5px;
+			}
+			
+			.page-controls .page-control {
+				opacity: 0.4;
+				filter: alpha(opacity=40);
+				line-height: 20px;
+			    transition: all 0.25s ease-in-out;
+			    -webkit-transition: all 0.25s ease-in-out;
+			    -moz-transition: all 0.25s ease-in-out;
+			    cursor: pointer;
+			}
+			
+			.page-controls .page-control.active {
+				opacity: 1;
+				filter: alpha(opacity=100);
+			}
+			
+			.page-controls .page-control.active:hover {
+				opacity: 0.6;
+				filter: alpha(opacity=60);
+			}
+			
+			.page-controls .prev-page {
+				float: left;
+			}
+			
+			.page-controls .next-page {
+				float: right;
+			}
+			
+			.page-controls .next-page img {
+				width: 20px;
+				margin-left: 5px;
+				float: right;
+			}
+			
+			.page-controls .prev-page img {
+				width: 20px;
+				margin-right: 5px;
+				float: left;
+			}
+			
 			.recipe-summary {
 				width: 216px;
 				margin: 10px;
@@ -334,6 +381,29 @@
 				right: 0;
 				top: 40px;
 				font-size: 12px;
+			}
+			
+			#add-recipe-button {
+				position: absolute;
+				right: 0;
+				top: 0;
+				text-decoration: none;
+				background-color: #DDDDDD;
+				padding: 0 8px 0 3px;
+				border-radius: 10px;
+				-moz-border-radius: 10px;
+			    transition: all 0.5s ease-in-out;
+			    border: 1px solid #CCCCCC;
+			}
+			
+			#add-recipe-button:hover {
+				background-color: #CCCCCC;
+			}
+			
+			#add-recipe-button img {
+				float: left;
+				width: 16px;
+				margin: 2px 2px;
 			}
 			
 			#advanced-search {

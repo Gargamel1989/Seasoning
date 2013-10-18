@@ -31,23 +31,14 @@
         });  
      };
      
-	function switch_to_recipes_page(page_num, num_pages) {
-		if (page_num > num_pages) {
-			page_num = 1;
-		} else if (page_num < 1) {
-			page_num = num_pages;
-		}
-		$.post('/recipes/',
-			   {'page': page_num})
-		.done(function(data) {
-			$("#recipe-summaries-include-wrapper").html(data);
-    	//	make_hover_effect();
-		});
-		$("#current-page").text(page_num);
-	};
-	
-	function update_recipes() {
-        var url = "/recipes/";
+     function update_recipes(page) {
+        
+        var url;
+        if (page) {
+            url = "/recipes/?page=" + page;
+        } else {
+            url = "/recipes/";
+        }
         
         $.ajax({
             type: "POST",
@@ -241,7 +232,7 @@
 	    Geavanceerd zoeken
 	</a>
     {{ search_form.advanced_search.as_hidden }}
-    <span id="search-result-count">{{ recipes.start_index }}-{{ recipes.end_index }} van de {{ recipes.paginator.count }} resultaten</span>
+    <a href="/recipes/add/" id="add-recipe-button"><img src="{{ STATIC_URL }}img/icons/add.png" />Voeg een nieuw recept toe</a>
     <hr>
     <div id="advanced-search">
         <div id="sorting-options">

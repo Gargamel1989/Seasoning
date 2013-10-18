@@ -1,26 +1,58 @@
+<span id="search-result-count">{{ recipes.start_index }}-{{ recipes.end_index }} van de {{ recipes.paginator.count }} resultaten</span>
+
+<div class="page-controls">
+    {% if recipes.has_previous %}
+    <a href="#" onclick="update_recipes({{ recipes.previous_page_number }})"><div class="page-control prev-page active"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div></a>
+    {% else %}
+    <div class="page-control prev-page"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div>
+    {% endif %}
+    
+    
+    {% if recipes.has_next %}
+    <a href="#" onclick="update_recipes({{ recipes.next_page_number }})"><div class="page-control next-page active">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div></a>
+    {% else %}
+    <div class="page-control next-page">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div>
+    {% endif %}  
+</div>
+
 {% for recipe in recipes %}
-    <div class="recipe-summary">
-        <a class="recipe-image-link" href="/recipes/{{ recipe.id }}/">
-            <img alt="{{ recipe.name }}" src="{{ recipe.thumbnail.url }}" />
-        </a>
-        <div class="recipe-title">
-            <span title="De voetafdruk van dit recept" class="footprint">{{ recipe.footprint|floatformat:2 }}</span>
-            <div class="title">
-                <a href="/recipes/{{ recipe.id }}/">
-                    <h4>{{ recipe.name|truncatechars:50 }}</h4>
-                </a>
-            </div>
-        </div>
-        <div class="recipe-description">
-            {{ recipe.description|truncatewords:10 }}
-        </div>
-        <div class="recipe-meta-inf">
-            <span class="recipe-time">{{ recipe.total_time }} min</span>
-            <span class="recipe-rating">{{ recipe.rating }}</span>
+<div class="recipe-summary">
+    <a class="recipe-image-link" href="/recipes/{{ recipe.id }}/">
+        <img alt="{{ recipe.name }}" src="{{ recipe.thumbnail.url }}" />
+    </a>
+    <div class="recipe-title">
+        <span title="De voetafdruk van dit recept" class="footprint">{{ recipe.footprint|floatformat:2 }}</span>
+        <div class="title">
+            <a href="/recipes/{{ recipe.id }}/">
+                <h4>{{ recipe.name|truncatechars:50 }}</h4>
+            </a>
         </div>
     </div>
+    <div class="recipe-description">
+        {{ recipe.description|truncatewords:10 }}
+    </div>
+    <div class="recipe-meta-inf">
+        <span class="recipe-time">{{ recipe.total_time }} min</span>
+        <span class="recipe-rating">{{ recipe.rating }}</span>
+    </div>
+</div>
 {% empty %}
 <p class="sorry">
     Sorry! Er werden geen recepten gevonden in onze databank die aan jouw criteria voldoen...
 </p>
 {% endfor %}
+
+<div class="page-controls">
+    {% if recipes.has_previous %}
+    <a href="#" onclick="update_recipes({{ recipes.previous_page_number }})"><div class="page-control prev-page active"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div></a>
+    {% else %}
+    <div class="page-control prev-page"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div>
+    {% endif %}
+    
+    
+    {% if recipes.has_next %}
+    <a href="#" onclick="update_recipes({{ recipes.next_page_number }})"><div class="page-control next-page active">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div></a>
+    {% else %}
+    <div class="page-control next-page">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div>
+    {% endif %}  
+</div>
