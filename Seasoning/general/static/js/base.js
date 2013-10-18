@@ -1,23 +1,11 @@
 /**
- * Function executed when the page is ready (but maybe not fully loaded)
+ * Functions that should be executed on every page
  */
 $(document).ready(function() {
 	/*
 	 * Base functions
 	 */
-	// Show subnavigation when hovering over main navigation element
-	$('.main-nav-link').each(function() {
-		var link_name = $(this).attr('id').replace('main-nav-link-', '');
-		$(this).mouseenter(function() {
-			$('.sub-nav').each(function() {
-				if ($(this).attr('id') != 'sub-nav-' + link_name) {
-					$(this).removeClass('active');
-				}
-			});
-			$('#sub-nav-' + link_name).addClass('active');
-		});
-	});
-	
+	// Make bookmark link
 	$('#bookmark-link').click(function() {
         if (window.sidebar && window.sidebar.addPanel) { // Mozilla Firefox Bookmark
             window.sidebar.addPanel(document.title,window.location.href,'');

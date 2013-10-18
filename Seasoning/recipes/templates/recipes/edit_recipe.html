@@ -228,36 +228,25 @@
   
   <div id="uses-formset" class="formset">
       {{ usesingredient_formset.management_form }}
+      {{ form.non_field_errors }}
+      <div class="add-group-button">Ingredientengroep toevoegen</div>
+      <div class="add-ingredient-button">Ingredient toevoegen</div>
       <ul id="sortable-ingredients">
           {% for form in usesingredient_formset %}
           <li class="ingredient">{{ form.id }}{{ form.group }}{{ form.ingredient }}{{ form.amount }}{{ form.unit }}{{ form.DELETE.as_hidden }}</li>
           {% endfor %}
           <li class="group empty-form"> </li>
-      </ul>  
-        {% if form.non_field_errors %}
-        <tr>
-        	<td colspan=2>
-        		{{ form.non_field_errors }}
-        	</td>
-    	</tr>
-        {% endif %}
-        <tr class="empty-form uses-form">
-          {{ usesingredient_formset.empty_form.id }}
-          <td>
-    	{{ usesingredient_formset.empty_form.group.as_hidden }}
-    	{{ usesingredient_formset.empty_form.ingredient }}
-          </td>
-          <td>
-    	{{ usesingredient_formset.empty_form.amount }} {{ usesingredient_formset.empty_form.unit }}
-          </td>
-          <td>
-            {{ usesingredient_formset.empty_form.DELETE }}
-          </td>
-        </tr>
-                    <tr>
-                        <td class="formset-button-container"> </td>
-                    </tr>
-      </table>
+          <li class="ingredient empty-form">
+              {{ usesingredient_formset.empty_form.id }}
+              {{ usesingredient_formset.empty_form.group }}
+              {{ usesingredient_formset.empty_form.ingredient }}
+              {{ usesingredient_formset.empty_form.amount }}
+              {{ usesingredient_formset.empty_form.unit }}
+              {{ usesingredient_formset.empty_form.DELETE }}
+          </li>
+      </ul>
+      <div class="add-group-button">Ingredientengroep toevoegen</div>
+      <div class="add-ingredient-button">Ingredient toevoegen</div>
   </div>
   <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
 </form>

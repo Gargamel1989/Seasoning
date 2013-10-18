@@ -44,6 +44,36 @@ function add_form(formset_prefix, newforms_callback) {
 	}
 }
 
+/**
+ * Functions for autocomplete fields
+ * 
+ * To make an input field autocomplete ingredient names, give it the following attributes:
+ * 
+ * 	Class: autocomplete-ingredient
+ */
+$(document).ready(function() {
+	/*
+	 * Autcomplete Ingredient field
+	 */
+	$( "input.autocomplete-ingredient" ).each(function() {
+		$(this).autocomplete({
+			source: "/ingredients/ing_list/",
+			minLength: 2
+		});
+	});
+});
+
+
+
+
+/**
+ * -------- Extended Jquery Functions
+ */
+
+
+/**
+ * A function that makes an element into a dynamically extensible formset
+ */
 $.fn.formset = function(args) {
 	if (!args) {
 		args = {};
@@ -62,3 +92,26 @@ $.fn.formset = function(args) {
 		$(this).find('.formset-button-container').append(button);
 	})
 };
+
+/**
+ * A function that detects if a user presses the enter key when in the applied element
+ */
+$.fn.pressEnter = function(fn) {
+
+    return this.each(function() {  
+        $(this).bind('enterPress', fn);
+        $(this).keydown(function(e) {
+            if(e.keyCode == 13)
+            {
+                e.preventDefault();
+                return false;
+            }
+        });
+        $(this).keyup(function(e){
+            if(e.keyCode == 13)
+            {
+              $(this).trigger("enterPress");
+            }
+        });
+    });  
+ };

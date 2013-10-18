@@ -140,6 +140,7 @@ def view_recipe(request, recipe_id):
 @login_required
 def edit_recipe(request, recipe_id=None):
     context = {}
+    
     if recipe_id:
         recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=recipe_id)
         if (not request.user == recipe.author_id) and not request.user.is_staff:
