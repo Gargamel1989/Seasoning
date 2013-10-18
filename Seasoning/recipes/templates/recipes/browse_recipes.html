@@ -72,12 +72,14 @@
     				$("#advanced-link").text("Geavanceerd Zoeken");
     				$("#recipe-summaries-wrapper").css("width", "960px");
                     $("#id_advanced_search").val("False");
+                    update_recipes();
     			});
     		} else {
     			$("#recipe-summaries-wrapper").css("width", "720px");
     			$("#advanced-search").slideDown(1000);
     			$("#advanced-link").text("Niet-geavanceerd zoeken");
                 $("#id_advanced_search").val("True");
+                update_recipes();
     		}
     		return false;
     	});
@@ -211,9 +213,6 @@
                 minLength: 2
             });
         });
-    	
-    	// TODO: Delete when finished with testing the advanced search
-    	$("#advanced-link").click();
     	
 		var num_pages = parseInt($("#num-pages").text());
         $('.recipe-summaries-arrow .arrow-left').click(function() {

@@ -59,7 +59,6 @@ class RecipeManager(models.Manager):
         veg_filter = models.Q()
         incl_ingredient_filter = models.Q()
         additional_filters = models.Q()
-        
         if advanced_search:
             # Filter for Veganism
             if ven:

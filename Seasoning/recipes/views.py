@@ -65,7 +65,6 @@ def browse_recipes(request):
         exclude_ingredients_formset = IngredientInRecipeFormset(request.POST, prefix='exclude')
         if search_form.is_valid() and include_ingredients_formset.is_valid() and exclude_ingredients_formset.is_valid():
             data = search_form.cleaned_data
-            print 'Ven: %s, Veg: %s, Nveg: %s' % (data['ven'], data['veg'], data['nveg'])
             include_ingredient_names = [form.cleaned_data['name'] for form in include_ingredients_formset if 'name' in form.cleaned_data]
             exclude_ingredient_names = [form.cleaned_data['name'] for form in exclude_ingredients_formset if 'name' in form.cleaned_data]
             recipes_list = Recipe.objects.query(search_string=data['search_string'], advanced_search=data['advanced_search'],
