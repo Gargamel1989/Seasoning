@@ -32,8 +32,10 @@ urlpatterns = patterns('',
     
     # Backup Database
     url(r'^backup/$', 'general.views.backup_db'),
+    url(r'^upload/img/$', 'general.views.upload_static_image'),
     
     url(r'^contribute/$', 'general.views.contribute'),
+    
     # Catch all - Check if we have a static page with this url
     url(r'^(.*)/$', 'general.views.static_page')
     

@@ -48,7 +48,15 @@
 	            <div id="logo">
                     <a href="/"><img src="{{ STATIC_URL }}img/logos/header2.png" /></a>
                 </div>
-                <div id="grass"> </div>
+                {% if user.is_staff %}
+                <a href="/admin/" style="position:absolute;top:0;right:0;">Admin Pages</a>
+                <a href="/admin/ingredients/list/" style="position:absolute;top:20px;right:0;">Ingredient List</a>
+                <a href="/backup/" style="position:absolute;top:40px;right:0;">Backup Database</a>
+                <a href="/upload/img/" style="position:absolute;top:60px;right:0;">Upload Image</a>
+                {% endif %}
+                <span id="grass-end-left"> </span>
+                <span id="grass"> </span>
+                <span id="grass-end-right"> </span>
                 <div id="nav-container">
                     <a href="/recipes/"><div class="active navlink three columns alpha omega">RECEPTEN</div></a>
                     <a href="/ingredients/"><div class="navlink three columns alpha omega">INGREDIENTEN</div></a>
@@ -67,8 +75,13 @@
         </div>
         
         <div id="content">
-            <div id="content-container" class="container">
-                {% if messages %}
+        	{% block header-margin %}
+        	<div id="header-margin"> </div>
+        	{% endblock %}
+        	
+        	<div id="content-container" class="container">
+                {% block messages %}
+            	{% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
                     <li class="{{ message.tags }}">
@@ -77,6 +90,7 @@
                     {% endfor %}
                 </ul>
                 {% endif %}
+                {% endblock %}
                 {% block content %}{% endblock %}
 			</div>
 			<div class="push"> </div>

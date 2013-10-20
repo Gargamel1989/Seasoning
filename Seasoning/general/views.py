@@ -24,6 +24,7 @@ import time
 import os
 from general.models import StaticPage
 from recipes.models import Recipe
+from django import forms
 
 def home(request):
     try:
@@ -50,3 +51,26 @@ def backup_db(request):
     os.popen(cmd)
     
     return redirect(home)
+
+@staff_member_required
+def upload_static_image(request):
+    """
+    Upload a picture into the static folder
+    
+    """
+    class UploadStaticImageForm(forms.Form):
+        image = forms.FileField()
+    
+    def handle_uploaded_file(f):
+        with open('%s/img/static/%s' % (settings.STATIC_ROOT, f.name), 'wb+') as destination:
+            for chunck in f.chuncks():
+                destination.write(chunck)
+    
+    if request.method == 'POST':
+        form = UploadStaticImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['image'])
+            return redirect('/admin/')
+    form = UploadStaticImageForm()
+    return render(request, 'admin/upload_image.html', {'form': form})
+    

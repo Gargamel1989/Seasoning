@@ -25,7 +25,7 @@ from imagekit.processors.resize import ResizeToFit, SmartResize
 import ingredients
 from ingredients.models import CanUseUnit, Ingredient, Unit
 import datetime
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.fields import FloatField
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import ugettext_lazy as _
@@ -133,7 +133,7 @@ class Recipe(models.Model):
     number_of_votes = models.PositiveIntegerField(default=0, editable=False)
     
     ingredients = models.ManyToManyField(ingredients.models.Ingredient, through='UsesIngredient', editable=False)
-    extra_info = models.TextField(default='',
+    extra_info = models.TextField(default='', blank=True,
                                   help_text=_('Extra info about the ingredients or needed tools (e.g. "You will need a mixer for this recipe" or "Use big potatoes")'))
     instructions = models.TextField(help_text=_('Detailed instructions for preparing this recipe.'))
     
@@ -219,7 +219,7 @@ class UsesIngredient(models.Model):
     ingredient = models.ForeignKey(ingredients.models.Ingredient, db_column='ingredient')
     
     group = models.CharField(max_length=100, blank=True)
-    amount = models.FloatField(default=0)
+    amount = models.FloatField(default=0, validators=[MinValueValidator(0.00001)])
     unit = models.ForeignKey(ingredients.models.Unit, db_column='unit')
     
     # Derived Parameters
@@ -229,7 +229,9 @@ class UsesIngredient(models.Model):
     # overwritten for portions calculations)
     save_allowed = True
     
-    def clean(self):
+    def clean(self, *args, **kwargs):
+        if self.ingredient_id is None:
+            raise Exception('Something is wrong, the form should not be saved...')
         try:
             all_useable_units = list(CanUseUnit.objects.useable_by(self.ingredient.pk))
             if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:

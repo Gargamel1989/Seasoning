@@ -4,7 +4,6 @@
 {% block title %}Recept bekijken{% endblock %}
 
 {% block extra_link %}
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <style>
 /*
  * Tooltip styles
@@ -23,8 +22,9 @@
 
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/raty.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script>
+/**
     $(document).ready(function() {
         $('#portions-slider').slider({
             min: 1,
@@ -108,14 +108,13 @@
                 width: percentage + "%"
             }, 1000);
         });
-    }
+    }*/
 </script>
 {% endblock %}
 
+{% block header-margin %}{% endblock %}
 {% block content %}
-<div id="recipe-img" style="background-image: url('{{ MEDIA_URL }}{{ recipe.image }}')"> </div>
-<div id="recipe-info">
-    <h1>
+<h1>
         {{ recipe.name }}
         {% if recipe.author == user %}
         <a href="/recipes/delete/{{ recipe.id }}/" title="Verwijder dit recept" class="recipe-action" onclick="return confirm('Bent u zeker dat u dit recept wil verwijderen?')"><img src="{{ STATIC_URL }}img/icons/delete.png" /></a>
@@ -123,22 +122,8 @@
         {% endif %}
     </h1>
     
-    <div id="add-info">
-        <span id="author">Toegevoegd door <a href="/profile/{{ recipe.author.id }}/">{{ recipe.author.get_full_name }}</a></span><br />
-        <span id="time-added">{{ recipe.time_added|date:"j F Y, G" }}u{{ recipe.time_added|date:"i" }}</span>
-    </div>
     
-    <div id="static-info" class="eight columns alpha">
-        <h4>Korte Beschrijving</h4>
-        {{ recipe.description }}
-    </div>
-    
-    <br class="clear" />
-    
-</div>
-<!--
 <div id="below-recipe-name">
-    
     <div class="clear-div"> </div>
 </div>
 
@@ -251,7 +236,7 @@
     	</div>	
     </div>
 </div>
--->
+
 <br><br><br><br><br><br><br><br><br><br>
 <div id="give-comment">
     <h2>Geef een reactie op dit recept:</h2>
