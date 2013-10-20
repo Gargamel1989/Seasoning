@@ -4,6 +4,7 @@
 {% block title %}Recept bekijken{% endblock %}
 
 {% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <style>
 /*
  * Tooltip styles
@@ -24,7 +25,6 @@
 <script src="{{ STATIC_URL }}js/raty.min.js"></script>
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script>
-/**
     $(document).ready(function() {
         $('#portions-slider').slider({
             min: 1,
@@ -108,22 +108,29 @@
                 width: percentage + "%"
             }, 1000);
         });
-    }*/
+    }
 </script>
 {% endblock %}
 
-{% block header-margin %}{% endblock %}
 {% block content %}
-<h1>
-        {{ recipe.name }}
+
+<h1 class="recipe-title">
+	{{ recipe.name }}
+    <div id="recipe-actions">
         {% if recipe.author == user %}
-        <a href="/recipes/delete/{{ recipe.id }}/" title="Verwijder dit recept" class="recipe-action" onclick="return confirm('Bent u zeker dat u dit recept wil verwijderen?')"><img src="{{ STATIC_URL }}img/icons/delete.png" /></a>
-        <a href="/recipes/edit/{{ recipe.id }}/" title="Wijzig dit recept" class="recipe-action"><img src="{{ STATIC_URL }}img/icons/edit.png" /></a>
+        <a href="/recipes/delete/{{ recipe.id }}/" title="Verwijder dit recept" onclick="return confirm('Bent u zeker dat u dit recept wil verwijderen?')"><img src="{{ STATIC_URL }}img/icons/delete.png" /></a>
+        <a href="/recipes/edit/{{ recipe.id }}/" title="Wijzig dit recept"><img src="{{ STATIC_URL }}img/icons/edit.png" /></a>
         {% endif %}
-    </h1>
-    
-    
+    </div>
+</h1>
+
 <div id="below-recipe-name">
+    
+    <div id="add-info">
+        <span id="author">Toegevoegd door <a href="/profile/{{ recipe.author.id }}/">{{ recipe.author.get_full_name }}</a></span><br />
+        <span id="time-added">{{ recipe.time_added|date:"j F Y, G" }}u{{ recipe.time_added|date:"i" }}</span>
+    </div>
+    
     <div class="clear-div"> </div>
 </div>
 
@@ -131,6 +138,8 @@
 <div id="recipe">
     
     <div id="img-and-basic-user-options">
+        <img id="recipe-img" src="{{ MEDIA_URL }}{{ recipe.image }}"/>
+        
         <div id="rating">
             <strong>Populariteit</strong>
             <div id="current-rating">
@@ -193,23 +202,21 @@
     </div>
     
     <div id="basic-info">
-    <p>Soort maaltijd: {{ recipe.get_course_display }}</p>
-    <p>Keuken: {{ recipe.cuisine }}</p>
-    <div id="veganism">
-    	<img {% if recipe.veganism == 2 %}class="active"{% endif %} src="{{ STATIC_URL }}img/vegan.png" />
-    	<img {% if recipe.veganism == 1 %}class="active"{% endif %} src="{{ STATIC_URL }}img/vegetarian.png" />
-    	<img {% if recipe.veganism == 0 %}class="active"{% endif %} src="{{ STATIC_URL }}img/non-vegetarian.png" />
-    	<div>Dit is een {{ recipe.get_veganism_display|lower }} recept</div>
-    </div>
+    	<p class="vague-description">{{ recipe.get_veganism_display }} {{ recipe.cuisine }} {{ recipe.get_course_display }}</p>
+    	<div id="veganism">
+    		{% if recipe.veganism == 2 %}<img src="{{ STATIC_URL }}img/vegan.png" />{% endif %}
+    		{% if recipe.veganism == 1 %}<img src="{{ STATIC_URL }}img/vegetarian.png" />{% endif %}
+    		{% if recipe.veganism == 0 %}<img src="{{ STATIC_URL }}img/non-vegetarian.png" />{% endif %}
+    	</div>
     
-	<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint|floatformat:"3" }}</span> kgCO2 ({{ recipe.footprint_pp|floatformat:"3" }} kgCO2 pp.)</p>
+		<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint|floatformat:"3" }}</span> kgCO2 ({{ recipe.footprint_pp|floatformat:"3" }} kgCO2 pp.)</p>
     
-    <strong>Beschrijving</strong>
-    <p>{{ recipe.description|linebreaks }}</p>
+    	<strong>Beschrijving</strong>
+    	<p>{{ recipe.description|linebreaks }}</p>
     
     </div>
     
-    <div class="clear-div"> </div>
+    <br class="clear" />
     
     <div class="recipe-info-wrapper">
     	<h2><span style="position:relative;">Ingredienten<div id="ingredients-loader" style="position:absolute;top:2px;right:-55px;height:50px;display:none;">{% include "includes/ajax-loader.html" %}</div></span></h2>
@@ -237,7 +244,6 @@
     </div>
 </div>
 
-<br><br><br><br><br><br><br><br><br><br>
 <div id="give-comment">
     <h2>Geef een reactie op dit recept:</h2>
 	<br>
