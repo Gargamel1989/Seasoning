@@ -23,30 +23,72 @@
 {% block extra_script %}
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script src="{{ STATIC_URL }}js/forms.js"></script>
-<script>
-    function insert_group_lis() {
-        // Insert the elements that inform the user a new ingredient group starts below it
-        var previous_group = ""
-        $("#sortable-ingredients li.ingredient").each(function() {
-           var group = $(this).find("input.group").val();
-           if (group != previous_group) {
-               // Insert a new group element
-               previous_group = group;
-           }
-            
-        });
-    }
-    
-    function group_ingredients() {
+<script type="text/javascript">
+	function add_ingredient() {
+		var empty_form = $("#uses-formset .ingredient.empty-form");
+		var new_form = empty_form.clone();
+		var total_forms = $("#id_uses-TOTAL_FORMS");
+		new_form_number = parseInt(total_forms.val()) + 1;
+		total_forms.val(new_form_number);
+		updateFormNumber(new_form, new_form_number);
+		new_form.removeClass('empty-form');
+		var last_not_empty_form = $('#uses-formset li:not(".empty-form")').last();
+		new_form.insertAfter(last_not_empty_form);
+		fix_ingredient_list();
+		return false;
+	}
+	
+	function add_group() {
+		var empty_group = $("#uses-formset .group.empty-form");
+		var new_group = empty_group.clone();
+		new_group.removeClass("empty-form");
+		var last_not_empty_form = $('#uses-formset li:not(".empty-form")').last();
+		new_group.insertAfter(last_not_empty_form);
+		fix_ingredient_list();
+		return false;
+	}
+	
+	function fix_ingredient_list() {
+		var lis = $("#uses-formset #sortable-ingredients li:not('.column-labels, .empty-form')");
+		if (!lis.first().hasClass("group")) {
+			$("#uses-formset #sortable-ingredients .column-labels").show();
+		}
         var group_name = "";
-        $("#sortable-ingredients li").each(function() {
+        var found_group = false;
+		lis.each(function() {
             if ($(this).hasClass("group")) {
-                group_name = $(this).text();
+                group_name = $(this).find(".group-name").val();
+                found_group = true;
             } else if ($(this).hasClass("ingredient")) {
-                $(this).find("input").val(group_name);
+                $(this).find("input.group").val(group_name);
+	            if (found_group) {
+	            	$(this).css('padding-left', '50px');
+	            } else {
+	            	$(this).css('padding-left', '30px');
+	            }
             }
         });
-    }
+        $("#sortable-ingredients .group input").pressEnter(function() {
+        	$(this).blur();
+        	fix_ingredient_list();
+        });
+        $("#sortable-ingredients .delete-button").click(function() {
+        	var delete_checkbox = $(this).children("input");
+        	if (delete_checkbox) {
+        		$(this).parent("li").hide()
+        	} else {
+        		$(this).parent("li").remove();
+        	}
+        	return false;
+        });
+        
+        $("input.autocomplete-ingredient").each(function() {
+            $(this).autocomplete({
+                source: "/ingredients/ing_list/",
+                minLength: 2
+            });
+        });
+	}	
     
     $(document).tooltip({ 
         items: ".tooltip-field input,select,textarea", 
@@ -60,27 +102,21 @@
     }).off("mouseover mouseout");
     
     $(document).ready(function() {
-        $('.formset').formset({
-            newforms_callback: function(new_form) { 
-                new_form.find('input.autocomplete-ingredient').autocomplete({
-                    source: "/ingredients/ing_list/",
-                    minLength: 2
-                });
-            }
-        });
-        
-        $("input.autocomplete-ingredient").each(function() {
-            $(this).autocomplete({
-                source: "/ingredients/ing_list/",
-                minLength: 2
-            });
-        });
-        
         $( "#sortable-ingredients" ).sortable({
-            stop: group_ingredients
+            stop: fix_ingredient_list,
+            items: "li:not(.sorting-disabled)",
+            handle: ".move-handle"
         });
         $( "#sortable" ).disableSelection();
-        group_ingredients();
+        
+        // Sort the ingredient list according to groups, and insert group tags
+        fix_ingredient_list();
+        
+        $(".add-ingredient-button").click(add_ingredient);
+        $(".add-ingredientgroup-button").click(add_group);
+        // TODO: voeg deze functie toe op nieuw toegevoegde elementen en roep fix_ing_list() aan als
+        // een nieuwe groep toegevoegd wordt
+        
     });
 </script>
 {% endblock %}
@@ -88,167 +124,206 @@
 
 {% block content %}
 
-<h1>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
-
-<form id="add-recipe-form" action="" method="post" enctype="multipart/form-data">
-  {% if unknown_ingredients %}
-  <p>
-  	U hebt ingredienten opgegeven in het recept die niet teruggevonden werden in onze databank:
-  	<ul>
-  		{% for unknown_ingredient in unknown_ingredients %}
-  		<li>{{ unknown_ingredient }}</li>
-  		{% endfor %}
-  	</ul>
-  	U hebt 3 mogelijkheden:
-  	<ol>
-  		<li>Het recept niet toevoegen</li>
-  		<li>De ongekende ingredienten vervangen door andere, gelijkaardige ingredient die wel in onze databank terug
-  			te vinden zijn</li>
-  		<li>De ongekende ingredienten aanvragen. Uw recept zal opgeslagen worden, maar niet zichtbaar zijn voor andere
-  			gebruikers, tot wij alle ongekende ingredienten in onze databank gestoken hebben. Let op dat dit geen simpel
-  			proces is, en nogal wat tijd in beslag kan nemen.
-  		</li>
-  	</ol>
-  	<input type="submit" value="Annuleren" name="stop-submit" /><input type="submit" value="Ingredienten Aanvragen" name="ingrequest-submit" />
-  </p>
-  {% endif %}
-  
-  {% csrf_token %}
-  {{ form.non_field_errors }}
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.name.label_tag }}
-    {{ recipe_form.name }}
-    <div class="tooltip">{{ recipe_form.name.help_text }}</div>
-    
-    {% if recipe_form.name.errors %}        
-        {{ recipe_form.name.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.course.label_tag }}
-    {{ recipe_form.course }}
-    <div class="tooltip">{{ recipe_form.course.help_text }}</div>
-    
-    {% if recipe_form.course.errors %}        
-        {{ recipe_form.course.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.cuisine.label_tag }}
-    {{ recipe_form.cuisine }}
-    <div class="tooltip">{{ recipe_form.cuisine.help_text }}</div>
-    
-    {% if recipe_form.cuisine.errors %}        
-        {{ recipe_form.cuisine.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.description.label_tag }}
-    {{ recipe_form.description }}
-    <div class="tooltip">{{ recipe_form.description.help_text }}</div>
-    
-    {% if recipe_form.description.errors %}        
-        {{ recipe_form.description.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.portions.label_tag }}
-    {{ recipe_form.portions }}
-    <div class="tooltip">{{ recipe_form.portions.help_text }}</div>
-    
-    {% if recipe_form.portions.errors %}        
-        {{ recipe_form.portions.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.active_time.label_tag }}
-    {{ recipe_form.active_time }}
-    <div class="tooltip">{{ recipe_form.active_time.help_text }}</div>
-    
-    {% if recipe_form.active_time.errors %}        
-        {{ recipe_form.active_time.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.passive_time.label_tag }}
-    {{ recipe_form.passive_time }}
-    <div class="tooltip">{{ recipe_form.passive_time.help_text }}</div>
-    
-    {% if recipe_form.passive_time.errors %}        
-        {{ recipe_form.passive_time.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.extra_info.label_tag }}
-    {{ recipe_form.extra_info }}
-    <div class="tooltip">{{ recipe_form.extra_info.help_text }}</div>
-    
-    {% if recipe_form.extra_info.errors %}        
-        {{ recipe_form.extra_info.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.instructions.label_tag }}
-    {{ recipe_form.instructions }}
-    <div class="tooltip">{{ recipe_form.instructions.help_text }}</div>
-    
-    {% if recipe_form.instructions.errors %}        
-        {{ recipe_form.instructions.errors }} 
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper">
-    {% if recipe_form.instance %}
-    <img id="recipe-image" src="{{ recipe_form.instance.image.url }}" />
-    {% endif %}
-  </div>
-  
-  <div class="field-wrapper tooltip-field">
-    {{ recipe_form.image.label_tag }}
-    <input id="id_image" type="file" name="image">
-    <div class="tooltip">{{ recipe_form.image.help_text }}</div>
-    
-    {% if recipe_form.image.errors %}        
-        {{ recipe_form.image.errors }} 
-    {% endif %}
-  </div>
-  
-  <br /><br />
-  
-  <label>Ingredienten</label>
-  
-  <div id="uses-formset" class="formset">
-      {{ usesingredient_formset.management_form }}
-      {{ form.non_field_errors }}
-      <div class="add-group-button">Ingredientengroep toevoegen</div>
-      <div class="add-ingredient-button">Ingredient toevoegen</div>
-      <ul id="sortable-ingredients">
-          {% for form in usesingredient_formset %}
-          <li class="ingredient">{{ form.id }}{{ form.group }}{{ form.ingredient }}{{ form.amount }}{{ form.unit }}{{ form.DELETE.as_hidden }}</li>
-          {% endfor %}
-          <li class="group empty-form"> </li>
-          <li class="ingredient empty-form">
-              {{ usesingredient_formset.empty_form.id }}
-              {{ usesingredient_formset.empty_form.group }}
-              {{ usesingredient_formset.empty_form.ingredient }}
-              {{ usesingredient_formset.empty_form.amount }}
-              {{ usesingredient_formset.empty_form.unit }}
-              {{ usesingredient_formset.empty_form.DELETE }}
-          </li>
-      </ul>
-      <div class="add-group-button">Ingredientengroep toevoegen</div>
-      <div class="add-ingredient-button">Ingredient toevoegen</div>
-  </div>
-  <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
-</form>
-
+<div id="edit-recipe">
+	<h1>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
+	
+	<form id="add-recipe-form" action="" method="post" enctype="multipart/form-data">
+	  {% if unknown_ingredients %}
+	  <p>
+	  	U hebt ingredienten opgegeven in het recept die niet teruggevonden werden in onze databank:
+	  	<ul>
+	  		{% for unknown_ingredient in unknown_ingredients %}
+	  		<li>{{ unknown_ingredient }}</li>
+	  		{% endfor %}
+	  	</ul>
+	  	U hebt 3 mogelijkheden:
+	  	<ol>
+	  		<li>Het recept niet toevoegen</li>
+	  		<li>De ongekende ingredienten vervangen door andere, gelijkaardige ingredient die wel in onze databank terug
+	  			te vinden zijn</li>
+	  		<li>De ongekende ingredienten aanvragen. Uw recept zal opgeslagen worden, maar niet zichtbaar zijn voor andere
+	  			gebruikers, tot wij alle ongekende ingredienten in onze databank gestoken hebben. Let op dat dit geen simpel
+	  			proces is, en nogal wat tijd in beslag kan nemen.
+	  		</li>
+	  	</ol>
+	  	<input type="submit" value="Annuleren" name="stop-submit" /><input type="submit" value="Ingredienten Aanvragen" name="ingrequest-submit" />
+	  </p>
+	  {% endif %}
+	  
+	  {% csrf_token %}
+	  {{ form.non_field_errors }}
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.name.label_tag }}
+	    {{ recipe_form.name }}
+	    <div class="tooltip">{{ recipe_form.name.help_text }}</div>
+	    
+	    {% if recipe_form.name.errors %}        
+	        {{ recipe_form.name.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.course.label_tag }}
+	    {{ recipe_form.course }}
+	    <div class="tooltip">{{ recipe_form.course.help_text }}</div>
+	    
+	    {% if recipe_form.course.errors %}        
+	        {{ recipe_form.course.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.cuisine.label_tag }}
+	    {{ recipe_form.cuisine }}
+	    <div class="tooltip">{{ recipe_form.cuisine.help_text }}</div>
+	    
+	    {% if recipe_form.cuisine.errors %}        
+	        {{ recipe_form.cuisine.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.description.label_tag }}
+	    {{ recipe_form.description }}
+	    <div class="tooltip">{{ recipe_form.description.help_text }}</div>
+	    
+	    {% if recipe_form.description.errors %}        
+	        {{ recipe_form.description.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.portions.label_tag }}
+	    {{ recipe_form.portions }}
+	    <div class="tooltip">{{ recipe_form.portions.help_text }}</div>
+	    
+	    {% if recipe_form.portions.errors %}        
+	        {{ recipe_form.portions.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.active_time.label_tag }}
+	    {{ recipe_form.active_time }}
+	    <div class="tooltip">{{ recipe_form.active_time.help_text }}</div>
+	    
+	    {% if recipe_form.active_time.errors %}        
+	        {{ recipe_form.active_time.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.passive_time.label_tag }}
+	    {{ recipe_form.passive_time }}
+	    <div class="tooltip">{{ recipe_form.passive_time.help_text }}</div>
+	    
+	    {% if recipe_form.passive_time.errors %}        
+	        {{ recipe_form.passive_time.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.extra_info.label_tag }}
+	    {{ recipe_form.extra_info }}
+	    <div class="tooltip">{{ recipe_form.extra_info.help_text }}</div>
+	    
+	    {% if recipe_form.extra_info.errors %}        
+	        {{ recipe_form.extra_info.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.instructions.label_tag }}
+	    {{ recipe_form.instructions }}
+	    <div class="tooltip">{{ recipe_form.instructions.help_text }}</div>
+	    
+	    {% if recipe_form.instructions.errors %}        
+	        {{ recipe_form.instructions.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper">
+	    {% if recipe_form.instance %}
+	    <img id="recipe-image" src="{{ recipe_form.instance.image.url }}" />
+	    {% endif %}
+	  </div>
+	  
+	  <div class="field-wrapper tooltip-field">
+	    {{ recipe_form.image.label_tag }}
+	    <input id="id_image" type="file" name="image">
+	    <div class="tooltip">{{ recipe_form.image.help_text }}</div>
+	    
+	    {% if recipe_form.image.errors %}        
+	        {{ recipe_form.image.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <br /><br />
+	  
+	  <label>Ingredienten</label>
+	  
+	  <div class="button-group">
+		<a href="/recipes/add/" class="add-button add-ingredient-button">Ingredient toevoegen</a>
+		<a href="/recipes/add/" class="add-button add-ingredientgroup-button">Ingredientengroep toevoegen</a>
+	  </div>
+	  
+	  <div id="uses-formset" class="formset">
+	  	  {% regroup usesingredient_formset by group.value as usesingredient_groups %}
+	      {{ usesingredient_formset.management_form }}
+	      <ul id="sortable-ingredients">
+	          <li class="column-labels sorting-disabled">
+	          	<span class="name-label">Naam</span>
+	          	<span class="amount-label">Hoeveelheid</span>
+	          	<span class="unit-label">Eenheid</span>
+	          	<span class="delete-label">Verwijderen</span>
+	          </li>
+	          {% for group in usesingredient_groups %}
+	      	  {% if group.grouper != "" and group.grouper != None %}
+	          <li class="group">
+	          	<span class="move-handle"> </span>
+	          	<strong>Ingredientgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" value="{{ group.grouper }}" /><br />
+	          	<span class="name-label">Naam</span>
+	          	<span class="amount-label">Hoeveelheid</span>
+	          	<span class="unit-label">Eenheid</span>
+	          	<span class="delete-label">Verwijderen</span>
+	          </li>
+	          {% endif %}
+	          {% for form in group.list %}
+	      	  {{ form.non_field_errors }}
+	          <li class="ingredient">
+	          	<span class="move-handle"> </span>
+	          	{{ form.id }}{{ form.group }}{{ form.ingredient }}{{ form.amount }}{{ form.unit }}<a href="#" class="delete-button">{{ form.DELETE.as_hidden }}</a>
+	          	{{ form.group.errors }}{{ form.ingredient.errors }}{{ form.amount.errors }}{{ form.unit.errors }}
+	          </li>
+	          {% endfor %}
+	          {% endfor %}
+	          <li class="group empty-form">
+	          	<span class="move-handle"> </span>
+	          	<strong>Ingredientgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" /><br />
+	          	<span class="name-label">Naam</span>
+	          	<span class="amount-label">Hoeveelheid</span>
+	          	<span class="unit-label">Eenheid</span>
+	          	<span class="delete-label">Verwijderen</span>
+	          </li>
+	          <li class="colum-labels empty-form">
+	          	<span>Naam</span>
+	          	<span>Hoeveelheid</span>
+	          	<span>Eenheid</span>
+	          	<span>Verwijderen</span>
+	          </li>
+	          <li class="ingredient empty-form">
+	          	  <span class="move-handle"> </span>
+	              {{ usesingredient_formset.empty_form.id }}{{ usesingredient_formset.empty_form.group }}{{ usesingredient_formset.empty_form.ingredient }}{{ usesingredient_formset.empty_form.amount }}{{ usesingredient_formset.empty_form.unit }}
+	              <span class="delete-button"> </span>
+	          </li>
+	      </ul>
+	  </div>
+	      <div class="button-group">
+		      <a href="/recipes/add/" class="add-button add-ingredient-button">Ingredient toevoegen</a>
+		      <a href="/recipes/add/" class="add-button add-ingredientgroup-button">Ingredientengroep toevoegen</a>
+		  </div>
+	  <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
+	</form>
+</div>
 {% endblock %}

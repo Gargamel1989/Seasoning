@@ -155,8 +155,7 @@ def edit_recipe(request, recipe_id=None):
     
     if request.method == 'POST':
         recipe_form = AddRecipeForm(request.POST, request.FILES, instance=recipe)
-        usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe)
-        print request.POST
+        usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
         
         if 'stop-submit' in request.POST or 'normal-submit' in request.POST or 'ingrequest-submit' in request.POST:
             # User pressed a valid submit button
@@ -179,7 +178,7 @@ def edit_recipe(request, recipe_id=None):
                     if usesingredient_formset.is_valid():
                         # No ingredients have to be added, everything is fine!
                         recipe_form.save(author=request.user)
-                        usesingredient_formset.save(commit=False)
+                        usesingredient_formset.save()
                         recipe.save()
                         if new:
                             messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
@@ -206,7 +205,7 @@ def edit_recipe(request, recipe_id=None):
                 pass
     else:
         recipe_form = AddRecipeForm(instance=recipe)
-        usesingredient_formset = UsesIngredientInlineFormSet(instance=recipe)
+        usesingredient_formset = UsesIngredientInlineFormSet(instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
     
     context['new_recipe'] = new
     context['recipe_form'] = recipe_form

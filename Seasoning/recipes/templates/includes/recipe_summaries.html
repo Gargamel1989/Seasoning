@@ -16,26 +16,7 @@
 </div>
 
 {% for recipe in recipes %}
-<div class="recipe-summary">
-    <a class="recipe-image-link" href="/recipes/{{ recipe.id }}/">
-        <img alt="{{ recipe.name }}" src="{{ recipe.thumbnail.url }}" />
-    </a>
-    <div class="recipe-title">
-        <span title="De voetafdruk van dit recept" class="footprint">{{ recipe.footprint|floatformat:2 }}</span>
-        <div class="title">
-            <a href="/recipes/{{ recipe.id }}/">
-                <h4>{{ recipe.name|truncatechars:50 }}</h4>
-            </a>
-        </div>
-    </div>
-    <div class="recipe-description">
-        {{ recipe.description|truncatewords:10 }}
-    </div>
-    <div class="recipe-meta-inf">
-        <span class="recipe-time">{{ recipe.total_time }} min</span>
-        <span class="recipe-rating">{{ recipe.rating }}</span>
-    </div>
-</div>
+{% include "includes/recipe_summary.html" %}
 {% empty %}
 <p class="sorry">
     Sorry! Er werden geen recepten gevonden in onze databank die aan jouw criteria voldoen...

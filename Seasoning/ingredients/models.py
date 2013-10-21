@@ -438,7 +438,13 @@ class AvailableIn(models.Model):
         else:
             # 2000      until         from   2001
             # |---------]-------------[------|
-            date_until = self.date_until.replace(year=self.BASE_YEAR + 1)
+            try:
+                date_until = self.date_until.replace(year=self.BASE_YEAR + 1)
+            except ValueError:
+                if self.date_until.month == 2 and self.date_until.day == 29:
+                    date_until = self.date_until.replace(day=28, year=self.BASE_YEAR + 1)
+                else:
+                    raise
             extended_until_date = (date_until + datetime.timedelta(days=date_until_extension))
             
         return date <= extended_until_date

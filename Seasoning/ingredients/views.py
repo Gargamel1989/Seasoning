@@ -127,7 +127,7 @@ def list_ingredients(request):
     if not request.user.is_superuser:
         raise PermissionDenied
    
-    ingredients = Ingredient.objects.all().order_by('accepted', 'name').prefetch_related('useable_units', 'available_in_country', 'available_in_sea')
+    ingredients = Ingredient.objects.all().order_by('accepted', 'name').prefetch_related('canuseunit_set__unit', 'useable_units', 'available_in_country', 'available_in_sea')
     perc_done = int(len(ingredients)/7)
     
     return render(request, 'admin/list_ingredients.html', {'ingredients': ingredients,

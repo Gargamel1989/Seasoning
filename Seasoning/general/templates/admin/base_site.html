@@ -2,20 +2,28 @@
 {% load i18n %}
 
 {% block base_styles %}{% endblock %}
+
 {% block extra_link %}
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{{ STATIC_URL }}admin/css/base.css{% endblock %}" />
 {% block extrastyle %}{% endblock %}
 {% endblock %}
+
+
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/admin.js"></script>
 {% endblock %}
-{% block extra_head %}{% block extrahead %}{% endblock %}{% endblock %}
+
+{% block extra_head %}
+{% block extrahead %}{% endblock %}
+{% endblock %}
 
 {% block pretitle %}{% endblock %}
-            {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
-            
-            {% block sidebar %}{% endblock %}
-            <br class="clear" />
-        <!-- END Content -->
-        
-		<div class="clear-div"> </div>
+
+{% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+
+
+        	{% block header-margin %}
+        	<div id="header-margin" style="margin-top: 250px;"> </div>
+        	{% endblock %}
+        	
+{% block sidebar %}{% endblock %}
