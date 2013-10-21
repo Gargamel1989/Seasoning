@@ -61,8 +61,10 @@ def upload_static_image(request):
     class UploadStaticImageForm(forms.Form):
         image = forms.FileField()
     
+    static_img_dir = '%s/img/static' % settings.STATIC_ROOT
+    
     def handle_uploaded_file(f):
-        with open('%s/img/static/%s' % (settings.STATIC_ROOT, f.name), 'wb+') as destination:
+        with open('%s/%s' % (static_img_dir, f.name), 'wb+') as destination:
             for chunck in f.chunks():
                 destination.write(chunck)
     
@@ -73,5 +75,9 @@ def upload_static_image(request):
             return redirect('/admin/')
     else:
         form = UploadStaticImageForm()
-    return render(request, 'admin/upload_image.html', {'form': form})
+        
+    images = os.listdir(static_img_dir)
+    
+    return render(request, 'admin/upload_image.html', {'form': form,
+                                                       'images': images})
     
