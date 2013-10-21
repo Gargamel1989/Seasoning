@@ -33,12 +33,6 @@
 		margin-bottom: 10px;
 	}
 	
-	input[type="text"]:focus {
-		border: 1px solid #AAAAAA;
-	    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.2);
-	    color: #444444;
-	}
-	
 	.button-group {
 		position: relative;
 		height: 24px;
@@ -170,7 +164,7 @@
 	}
 	
 	#header-margin {
-		margin-top: 230px;
+		padding-top: 230px;
 		clear: both;
 	}
 	
@@ -179,7 +173,7 @@
 		min-height: 100%;
 		height: auto !important;
 		height: 100%;
-		margin: 210px auto -51px;
+		margin: 0 auto -51px;
 		width: 100%;
 	}
 	
@@ -218,13 +212,14 @@
 	}
 	
 	#footer-container #cc-license img {
-	 	margin: 8px 0;
+		margin: 8px 0;
 	}
 	
 	#footer-container #footer-links {
 		position: absolute;
 		top: 5px;
-		width: 100%;
+		width: 60%;
+		margin: 0 20%;
 	}
 
 	#footer-container ul {
@@ -578,6 +573,282 @@
 		-ms-box-sizing: border-box;
 		box-sizing: border-box;
 	}
+	
+	
+	/* #Auth Styles
+	================================================== */
+	
+		/* #Login
+		================================================== */
+		
+			#seasoning-login {
+		        width: 50%;
+		        float: left;
+		        border-right: 1px solid #DDD;
+		        position: relative;
+			}
+			
+			#seasoning-login form {
+		        margin-bottom: 0;
+			}
+			
+			#seasoning-login input[type="text"],
+			#seasoning-login input[type="password"] {
+				width: 60%;
+			}
+			
+			#seasoning-login #extra-login-links a {
+			    display: block;
+			    font-size: .75em;
+			    position: absolute;
+			    left: 0;
+			    top: 120px;
+			}
+			
+			#seasoning-login input[type="submit"] {
+				margin-top: 10px;
+			}
+			
+			#social-login {
+			    width:45%;
+			    float: right;
+			    text-align: center;
+			    margin-top: 25px;
+			}		
+			
+			#login-page-register {
+				text-align: center;
+			    padding-top: 50px;
+			}
+			
+			#login-page-register #register-button {
+				margin-top: 10px;
+				font-size: 20px;
+			}
+	
+	
+		/* #Registration
+		================================================== */
+		
+			#seasoning-register {
+		        width: 50%;
+		        float: left;
+		        border-right: 1px solid #DDD;
+		        position: relative;
+			}
+			
+			#seasoning-register input[type="text"],
+			#seasoning-register input[type="password"] {
+				width: 60%;
+			}
+			
+			#seasoning-register #captcha-wrapper {
+				margin: 10px 0;
+				min-height: 120px;
+			    height:auto !important; 
+			    height:120px;
+			    width: 100px;
+			}
+			
+			#captcha-wrapper #recaptcha_area {
+				margin: auto;
+			}
+			
+			#captcha-wrapper input#recaptcha_response_field {
+				width: auto;
+				display: inline;
+			}
+			
+			#captcha-wrapper .errorlist {
+				float: none;
+				text-align: center;
+			}
+			
+			#seasoning-register #terms-wrapper input {
+				float: left;
+				width: 10px;
+				margin: 5px 5px 0 0;
+			}
+			
+			#seasoning-register #terms-wrapper label {
+				width: 90%;
+				float: left;
+			}
+			
+			#seasoning-register #registration-submit-button {
+				margin: auto;
+				width: 250px;
+				display: block;
+				clear: both;
+				text-align: center;
+			}
+			
+			#social-register {
+				width:45%;
+				float: right;
+				text-align: center;
+				margin-top: 20px;
+			}
+			
+			#seasoning-register #register-button {
+				margin: 30px 0 0 -1px;
+				font-size: 20px;
+			}
+	
+		/* #Activation Summary
+		================================================== */
+			
+			#resend-activation-email-form {
+				margin-top: 30px;
+				max-width: 400px;
+			}
+			
+			#resend-activation-email-form input[type=submit] {
+				width: 52%;
+				margin-right: -2px;
+			}
+	
+		/* #Account Settings
+		================================================== */
+		
+			#account-settings-container {
+				position: relative;
+			}
+			
+			#account-settings-container #account-settings {
+				width: 65%;
+				margin: 0 20px 0 0;
+				float: left;
+			}
+			
+			#account-settings #id_givenname {
+				width: 20%;
+				margin-right: 4%;
+			}
+			
+			#account-settings #id_surname {
+				width: 25%;
+			}
+			
+			#account-settings #name_errors {
+				float: right;
+				clear: right;
+				width: 60%;
+			}
+			
+			#name_errors #givenname_errors {
+				width: 50%;
+			}
+			
+			#name_errors #surname_errors {
+				width: 49%;
+			}
+			
+			#name_errors ul {
+				padding: 0;
+				margin: 5px 0 15px 0;
+			}
+			
+			#account-settings #password_p {
+				margin: 0;
+				float: right;
+				text-align: right;
+			}
+			
+			#account-settings img#avatar_img {
+				width: 240px;
+				float: right;
+				margin-bottom: 10px;
+			}
+			
+			#account-settings input#id_avatar {
+				float: right;
+				clear: right;
+				text-align: right;
+				margin-bottom: 10px;
+				width: 300px;
+			}
+			
+			#account-settings-container #account-settings-links {
+				width: 180px;
+				float: right;
+				border-left: 1px solid #D5EBC1;
+				padding: 35px 0 0 10px;
+				position: absolute;
+				right: 0;
+				top: -20px;
+				bottom: 0;
+			}
+			
+			#account-settings .social-connection {
+				margin-bottom: 20px;
+			}
+			
+			#account-settings .social-connection img {
+				width: 100px;
+				float: left;
+				border-radius: 5px;
+				margin: 14px 0;
+				height: 34px;
+			}
+			
+			#account-settings .social-connection p {
+				line-height: 20px;
+				border-radius: 5px;
+				margin: 10px 0 10px 110px;
+				padding: 10px 0;
+			}
+			
+			#account-settings .social-connection p.active {
+				color:#76BA3B;
+			}
+			
+			#account-settings-links ul {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#account-settings-links li {
+				list-style: none;
+				margin-bottom: 10px;
+			}
+			
+			#account-settings-links li a {
+			color:#76BA3B;
+			text-decoration: none;
+			}
+			
+			#account-settings-links li a:hover {
+			color:#598c2c;
+			}
+			
+			#account-settings-links li.active a {
+				font-weight: 600;
+			}
+	
+		/* #Account Delete
+		================================================== */
+			#account-delete-form .field-wrapper {
+				width: 30%;
+				margin: auto;
+				text-align: center;
+				margin-bottom: 30px;
+			}
+			
+			#account-delete-form .field-wrapper input {
+				width: 100%;
+				float: none;
+			}
+			
+			#account-delete-form #submit-button {
+				text-align: center;
+			}
+			
+			#account-delete-form #submit-button input {
+				float: none;
+				width: 30%;
+				height: 30px;
+			}
 	
 	
 	/* #Recipe Styles

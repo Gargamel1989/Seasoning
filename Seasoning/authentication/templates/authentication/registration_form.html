@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block extra_script %}
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script>
 $(function() {
     $(document).tooltip({ 
@@ -46,106 +46,102 @@ $(function() {
 </script>
 {% endblock %}
 
-{% block page_name %}Registreren bij Seasoning{% endblock %}
-
 {% block content %}
 
 <div id="seasoning-register">
     <form action="/register/" method="post" id="registration-form">
-	{% csrf_token %}
-  	
-	{{ form.non_field_errors }}
-	
-	<div class="field-wrapper tooltip-field">
-        {{ form.givenname.label_tag }}
-        {{ form.givenname }}
-        <div class="tooltip">{{ form.givenname.help_text }}</div>
+    	{% csrf_token %}
+      	
+    	{{ form.non_field_errors }}
+    	
+    	<div class="field-wrapper tooltip-field">
+            {{ form.givenname.label_tag }}
+            {{ form.givenname }}
+            <div class="tooltip">{{ form.givenname.help_text }}</div>
+            
+            {% if form.givenname.errors %}        
+    			{{ form.givenname.errors }}	
+            {% endif %}
+    	</div>
+    	
+    	<div class="field-wrapper tooltip-field">
+            {{ form.surname.label_tag }}
+            {{ form.surname }}
+            <div class="tooltip">{{ form.surname.help_text }}</div>
+            
+            {% if form.surname.errors %}        
+    			{{ form.surname.errors }}
+            {% endif %}
+    	</div>
+    	
+    	<div class="spacer"> </div>
+    	
+    	<div class="field-wrapper tooltip-field">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            <div class="tooltip">{{ form.email.help_text }}</div>
+            
+            {% if form.email.errors %}        
+    			{{ form.email.errors }}	
+            {% endif %}
+    	</div>
         
-        {% if form.givenname.errors %}        
-			{{ form.givenname.errors }}	
-        {% endif %}
-	</div>
-	
-	<div class="field-wrapper tooltip-field">
-        {{ form.surname.label_tag }}
-        {{ form.surname }}
-        <div class="tooltip">{{ form.surname.help_text }}</div>
+        <div class="spacer"> </div>
+    	
+    	<div class="field-wrapper">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            
+            {% if form.password.errors %}        
+    			{{ form.password.errors }}	
+            {% endif %}
+    	</div>
+    	
+    	<div class="field-wrapper tooltip-field">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            <div class="tooltip">{{ form.password2.help_text }}</div>
+            
+            {% if form.password2.errors %}        
+    			{{ form.password2.errors }}	
+            {% endif %}
+    	</div>
         
-        {% if form.surname.errors %}        
-			{{ form.surname.errors }}
-        {% endif %}
-	</div>
-	
-	<div class="spacer"> </div>
-	
-	<div class="field-wrapper tooltip-field">
-        {{ form.email.label_tag }}
-        {{ form.email }}
-        <div class="tooltip">{{ form.email.help_text }}</div>
+        <div class="spacer"> </div>
+    	
+    	<div class="field-wrapper tooltip-field">
+            {{ form.date_of_birth.label_tag }}
+            {{ form.date_of_birth }}
+            <div class="tooltip">{{ form.date_of_birth.help_text }}</div>
+            
+            {% if form.date_of_birth.errors %}        
+    			{{ form.date_of_birth.errors }}
+            {% endif %}
+    	</div>
         
-        {% if form.email.errors %}        
-			{{ form.email.errors }}	
-        {% endif %}
-	</div>
-    
-    <div class="spacer"> </div>
-	
-	<div class="field-wrapper">
-        {{ form.password.label_tag }}
-        {{ form.password }}
+        <div class="spacer"> </div>
+    	
+    	<div class="field-wrapper" id="captcha-wrapper">
+            {{ form.captcha }}
+            {{ form.captcha.errors }}
+    	</div>
+    	
+    	<div class="field-wrapper" id="terms-wrapper">
+            {{ form.tos }}
+            {{ form.tos.label_tag}}
+    	   
+    	   {% if form.tos.errors %}        
+                {{ form.tos.errors }}
+            {% endif %}
+            
+        </div>
         
-        {% if form.password.errors %}        
-			{{ form.password.errors }}	
-        {% endif %}
-	</div>
-	
-	<div class="field-wrapper tooltip-field">
-        {{ form.password2.label_tag }}
-        {{ form.password2 }}
-        <div class="tooltip">{{ form.password2.help_text }}</div>
-        
-        {% if form.password2.errors %}        
-			{{ form.password2.errors }}	
-        {% endif %}
-	</div>
-    
-    <div class="spacer"> </div>
-	
-	<div class="field-wrapper tooltip-field">
-        {{ form.date_of_birth.label_tag }}
-        {{ form.date_of_birth }}
-        <div class="tooltip">{{ form.date_of_birth.help_text }}</div>
-        
-        {% if form.date_of_birth.errors %}        
-			{{ form.date_of_birth.errors }}
-        {% endif %}
-	</div>
-    
-    <div class="spacer"> </div>
-	
-	<div class="field-wrapper" id="captcha-wrapper">
-        {{ form.captcha }}
-        {{ form.captcha.errors }}
-	</div>
-	
-	<div class="field-wrapper" id="terms-wrapper">
-        {{ form.tos }}
-        {{ form.tos.label_tag}}
-	   
-	   {% if form.tos.errors %}        
-            {{ form.tos.errors }}
-        {% endif %}
-        
-    </div>
-    
-    <div id="registration-submit-button" onclick="document.registration-form.submit()">
-        {% include "includes/registration-button.html" %}
-    </div>
-</form>
+        <input id="register-button" type="submit" value="Registreer Nu!" />
+    </form>
 
-<script type="text/javascript">
-document.getElementById('username').focus()
-</script>
+    <script type="text/javascript">
+    document.getElementById('username').focus()
+    </script>
 </div>
 <div id="social-register">
     {% include "includes/fb-button.html" with register=True %}

@@ -43,10 +43,14 @@
     {% include "includes/google-button.html" %}
 </div>
 
-<div id="register">
+<br class="clear" />
+
+<div id="login-page-register">
     <h2>
         Nog niet geregistreerd?
     </h2>
-    {% include "includes/registration-button.html" %}
+    <form action="/register/" method="get">
+        <input id="register-button" type="submit" value="Registreer Nu!" />
+    </form>
 </div>
 {% endblock %}

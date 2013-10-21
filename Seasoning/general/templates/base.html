@@ -63,7 +63,7 @@
                     <a href="/news/"><div class="navlink three columns alpha omega">NIEUWS</div></a>
                     <a href="/contribute/"><div class="navlink three columns alpha omega">BIJDRAGEN</div></a>
                     {% if user.is_authenticated %}
-                    <a href="/account/"><div class="navlink three columns alpha omega">MIJN ACCOUNT</div></a>
+                    <a href="/account/settings/"><div class="navlink three columns alpha omega">MIJN ACCOUNT</div></a>
                     <a href="/logout/"><div class="navlink three columns alpha omega">AFMELDEN</div></a>
                     {% else %}
                     <a href="/register/"><div class="navlink three columns alpha omega">REGISTREREN</div></a>
@@ -101,7 +101,9 @@
         <div id="footer">
 			<div id="footer-container" class="container">
 			    <div id="cc-license" class="small-screen-hidden">
-                    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl" target="_blank"><img alt="Creative Commons Licentie" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a>
+                    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.nl" target="_blank">
+                        <img alt="Creative Commons Licentie" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" />
+                    </a>
                 </div>
                 <div id="footer-links" class="small-screen-hidden">
                     <ul>
