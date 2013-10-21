@@ -63,7 +63,7 @@ def upload_static_image(request):
     
     def handle_uploaded_file(f):
         with open('%s/img/static/%s' % (settings.STATIC_ROOT, f.name), 'wb+') as destination:
-            for chunck in f.chuncks():
+            for chunck in f.chunks():
                 destination.write(chunck)
     
     if request.method == 'POST':
