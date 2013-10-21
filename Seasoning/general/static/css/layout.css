@@ -86,6 +86,7 @@
 		position: fixed;
 		top: 0;
 		z-index: 999;
+		font-size: 12px;
 	}
 	
 	#header #header-container {
@@ -708,11 +709,29 @@
 				margin-right: -2px;
 			}
 	
+		/* #Public Profile
+		================================================== */
+		
+			#account-settings #account-image {
+				float: left;
+				margin-right: 20px;
+			}
+			
+			#account-settings #account-info #account-name {
+				font-weight: bold;
+				display: block;
+			}
+			
+			#account-settings #account-recipes {
+				clear: both;
+			}
+	
 		/* #Account Settings
 		================================================== */
 		
 			#account-settings-container {
 				position: relative;
+				min-height: 400px;
 			}
 			
 			#account-settings-container #account-settings {
@@ -721,13 +740,19 @@
 				float: left;
 			}
 			
+			#account-settings #account-settings-form {
+				float: left;
+			}
+			
 			#account-settings #id_givenname {
-				width: 20%;
-				margin-right: 4%;
+				width: 150px;
+				margin-right: 20px;
+				float: left;
 			}
 			
 			#account-settings #id_surname {
-				width: 25%;
+				width: 200px;
+				float: left;
 			}
 			
 			#account-settings #name_errors {
@@ -744,28 +769,33 @@
 				width: 49%;
 			}
 			
+			#account-settings #id_email {
+				width: 380px;
+			}
+			
 			#name_errors ul {
 				padding: 0;
 				margin: 5px 0 15px 0;
 			}
 			
 			#account-settings #password_p {
-				margin: 0;
-				float: right;
-				text-align: right;
+				margin: 0 0 20px 0;
+				float: left;
+			}
+			
+			#account-settings #password_p #password_span {
+				margin-right: 20px;
 			}
 			
 			#account-settings img#avatar_img {
 				width: 240px;
-				float: right;
 				margin-bottom: 10px;
+				display: block;
 			}
 			
 			#account-settings input#id_avatar {
-				float: right;
-				clear: right;
-				text-align: right;
-				margin-bottom: 10px;
+				clear: left;
+				margin-bottom: 30px;
 				width: 300px;
 			}
 			
@@ -778,6 +808,10 @@
 				right: 0;
 				top: -20px;
 				bottom: 0;
+			}
+			
+			#account-settings-links ul {
+				display: block;
 			}
 			
 			#account-settings .social-connection {
@@ -824,6 +858,16 @@
 			
 			#account-settings-links li.active a {
 				font-weight: 600;
+			}
+			
+			#account-settings #goto-account-delete {
+				width: 120%;
+				text-align: center;
+			}
+			
+			#account-settings #goto-account-delete-button {
+				margin: 30px auto;
+				font-size: 17px;
 			}
 	
 		/* #Account Delete
@@ -930,7 +974,7 @@
 			.recipe-summary .recipe-title {
 				height: 80px;
 				display: block;
-				padding: 10px 10px 0;
+				padding: 25px 10px 0;
 				background-color: #333333;
 				border-bottom: 1px solid #BBB;
 				position: relative;
@@ -1119,7 +1163,7 @@
 			#advanced-search #incl-ings .option {
 				font-size: 12px;
 				padding: 0;
-				border: 2px ridge black;
+				border: 2px solid #BBB;
 				width: 80px;
 				display: inline-block;
 				text-align: center;

@@ -2,9 +2,11 @@
         {% block page_name %}Sociale Netwerk Instellingen{% endblock %}
         
         {% block account_settings %}
-        <p>
-            <a href="/account/delete/">Verwijder mijn gegevens van Seasoning</a>
-        </p>
+        <form action="/account/delete/" method="get">
+            <div id="goto-account-delete">
+                <input type="submit" id="goto-account-delete-button" value="Verwijder mijn gegevens van Seasoning" />
+            </div>
+        </form>
         {% endblock %}
         
         {% block public_profile_active %}{% endblock %}

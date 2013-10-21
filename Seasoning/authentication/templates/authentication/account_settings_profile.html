@@ -2,7 +2,7 @@
         {% block page_name %}Profiel Instellingen{% endblock %}
         
         {% block account_settings %}
-        <form action="" method="post" enctype="multipart/form-data">
+        <form action="" method="post" enctype="multipart/form-data" id="account-settings-form">
         {% csrf_token %}
         
             <div class="field-wrapper tooltip-field">
@@ -11,8 +11,8 @@
                 <input id="id_surname" type="text" value="{{ user.surname }}" maxlength="50" disabled />
                 <input id="id_givenname" type="text" value="{{ user.givenname }}" maxlength="30" disabled />
                 {% else %}
-                {{ form.surname }}
                 {{ form.givenname }}
+                {{ form.surname }}
                 {% endif %}
                 <div class="tooltip">Opgelet, je mag je naam maar 1 keer veranderen!</div>
                 
@@ -29,7 +29,9 @@
                 </table>
                 {% endif %}
             </div>
-        
+            
+            <br class="clear" />
+            
             <div class="field-wrapper tooltip-field">
                 {{ form.email.label_tag }}
                 {{ form.email }}
@@ -46,10 +48,10 @@
             <div class="field-wrapper">
                 <label>Wachtwoord</label>
                 <p id="password_p">
-                    {% if user.password == "!" %}Geen wachtwoord ingesteld{% else %}***{% endif %}<br />
+                    <span id="password_span">{% if user.password == "!" %}Geen wachtwoord ingesteld{% else %}***{% endif %}</span>
                     <a href="/password/change/">(Wijzig)</a>
                 </p>
-                <div class="clear-div"> </div>
+                <br class="clear" />
             </div>
         
             <div class="field-wrapper">

@@ -131,7 +131,7 @@
         <span id="time-added">{{ recipe.time_added|date:"j F Y, G" }}u{{ recipe.time_added|date:"i" }}</span>
     </div>
     
-    <div class="clear-div"> </div>
+    <br class="clear" />
 </div>
 
     
@@ -195,7 +195,7 @@
                      </div>
                 </div>
                 <div id="portions-slider"> </div>
-                <div class="clear-div"> </div>
+                <br class="clear" />
             </div>
             <input id="custom-portions-input" type="text" value="{{ recipe.portions }}"/>
         </div>
@@ -269,10 +269,10 @@
                     </form>
                 </div>
             </div>
-            <div class="clear-div"> </div>
+            <br class="clear" />
         </div>
 	    
-	    <div class="clear-div"> </div>
+	    <br class="clear" />
 	{% else %}
 	    <p><a href="{% url 'login' %}?next={{ request.path  }}">Meld je aan</a> om een reactie te geven.</p>
 	{% endif %}
@@ -292,7 +292,7 @@
                 {{ comment.comment }}
             </div>
         </div>
-        <div class="clear-div"> </div>
+        <br class="clear" />
     </div>
     {% empty %}
     <div id="no-comments">

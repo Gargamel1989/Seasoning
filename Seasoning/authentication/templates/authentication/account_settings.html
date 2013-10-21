@@ -49,14 +49,17 @@ $(function() {
 <div id="account-settings-container">
     <div id="account-settings">
         {% block account_settings %}
-        <p>
-            <img src="{{ MEDIA_URL }}{{ user.avatar }}"> Naam: {{ user.get_full_name }}
-        </p>
-        <p>
-            Rang: {{ user.rank }}<br />
-            Recepten toe te voegen tot volgende rang: {{ user.recipes_until_next_rank }}
-        </p>
-        <div>
+        <div id="account-image">
+            <img src="{{ MEDIA_URL }}{{ user.avatar }}">
+        </div>
+        
+        <div id="account-info">
+            <span id="account-name">{{ user.get_full_name }}</span>
+            <span id="account-rank">Rang: {{ user.rank }}</span>
+            <span id="account-nextrank">Recepten toe te voegen tot volgende rang: {{ user.recipes_until_next_rank }}</span>
+        </div>
+        
+        <div id="account-recipes">
             Toegevoegde recepten: 
             {% if not recipes %}
             <p>
@@ -72,6 +75,7 @@ $(function() {
         </div>
         {% endblock %}
     </div>
+    
     <div id="account-settings-links">
     	<ul>
     		<li class="{% block public_profile_active %}active{% endblock %}"><a href="/account/settings/">Publiek Profiel</a></li>
@@ -80,6 +84,6 @@ $(function() {
     		<li class="{% block privacy_settings_active %}{% endblock %}"><a href="/account/settings/privacy/">Privacy Instellingen</a></li>
     	</ul>
     </div>
-    <div class="clear-div"> </div>
+    <br class="clear" />
 </div>
 {% endblock %}
