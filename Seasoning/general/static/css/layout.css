@@ -174,11 +174,13 @@
 		clear: both;
 	}
 	
-	#content {
+	#content, 
+	.dashboard div#content {
 		min-height: 100%;
 		height: auto !important;
 		height: 100%;
 		margin: 210px auto -51px;
+		width: 100%;
 	}
 	
 	.push {
