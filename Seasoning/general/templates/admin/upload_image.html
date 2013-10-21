@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "admin/base_site.html" %}
 
 {% block title %}Afbeelding Uploaden{% endblock %}
 
 {% block content %}
 
-<form action="" method="post">
+<form enctype="multipart/form-data" action="" method="post">
 {% csrf_token %}
 {{ form }}
 <br /><br />

@@ -71,6 +71,7 @@ def upload_static_image(request):
         if form.is_valid():
             handle_uploaded_file(request.FILES['image'])
             return redirect('/admin/')
-    form = UploadStaticImageForm()
+    else:
+        form = UploadStaticImageForm()
     return render(request, 'admin/upload_image.html', {'form': form})
     
