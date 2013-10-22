@@ -305,10 +305,4 @@ def delete_recipe_comment(request, recipe_id, comment_id):
         return redirect(view_recipe, recipe_id)
     else:
         raise PermissionDenied
-
-@login_required
-def my_recipes(request):
-    recipes = request.user.recipes.all()
-    
-    return render(request, 'recipes/my_recipes.html', {'recipes': recipes})        
     

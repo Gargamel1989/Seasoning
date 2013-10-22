@@ -32,6 +32,4 @@ urlpatterns = patterns('',
     url(r'^add/$', 'recipes.views.edit_recipe'),
     url(r'^edit/(\d*)/$', 'recipes.views.edit_recipe'),
     url(r'^delete/(\d*)/$', 'recipes.views.delete_recipe'),
-    
-    url(r'mine/$', 'recipes.views.my_recipes'),
 )

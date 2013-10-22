@@ -54,6 +54,7 @@ def account_settings_profile(request):
                                                                'in this email to complete the changing of your email address.'))
             # New email address has been replaced by old email address in the form, so it will not be saved until activated
             form.save()
+            user = get_user_model().objects.get(id=request.user.id)
     else:
         form = AccountSettingsForm(instance=user)
     
@@ -64,6 +65,7 @@ def account_settings_profile(request):
         pass
     
     context['form'] = form
+    context['user'] = user
     return render(request, 'authentication/account_settings_profile.html', context)
 
 @login_required
