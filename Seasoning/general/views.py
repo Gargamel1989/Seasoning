@@ -25,6 +25,7 @@ import os
 from general.models import StaticPage
 from recipes.models import Recipe
 from django import forms
+from django.http.response import Http404
 
 def home(request):
     try:
@@ -81,3 +82,8 @@ def upload_static_image(request):
     return render(request, 'admin/upload_image.html', {'form': form,
                                                        'images': images})
     
+def test_500(request):
+    if not request.user.is_staff():
+        raise Http404
+    
+    return 1/0

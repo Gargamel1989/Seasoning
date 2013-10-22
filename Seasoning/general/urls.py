@@ -36,6 +36,9 @@ urlpatterns = patterns('',
     
     url(r'^contribute/$', 'general.views.contribute'),
     
+    # Only for testing purposes
+    url(r'^500/$', 'general.views.test_500'),
+    
     # Catch all - Check if we have a static page with this url
     url(r'^(.*)/$', 'general.views.static_page')
     
