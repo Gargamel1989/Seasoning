@@ -1,1 +1,1 @@
-Account Activatie op {{ site }}
+Activatie van uw account op {{ site }}

@@ -602,8 +602,8 @@
 			    display: block;
 			    font-size: .75em;
 			    position: absolute;
-			    left: 0;
-			    top: 120px;
+			    left: 2px;
+			    bottom: 62px;
 			}
 			
 			#seasoning-login input[type="submit"] {

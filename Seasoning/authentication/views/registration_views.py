@@ -188,5 +188,5 @@ def activate(request, backend, **kwargs):
     if account:
         messages.add_message(request, messages.INFO, _('Your account has been successfully activated. Have fun!'))            
         return redirect(home)
-    raise Http404
+    return render(request, 'authentication/activate_unsuccessfull.html')
 
