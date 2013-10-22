@@ -25,6 +25,10 @@ from Seasoning import secrets
 DEBUG = secrets.DEBUG
 TEMPLATE_DEBUG = secrets.DEBUG
 
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ['www.seasoning.be', 'seasoning.be']
+
 # The directory containing this file
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
