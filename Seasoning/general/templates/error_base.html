@@ -4,21 +4,25 @@
 {% block title %}500{% endblock %}
 
 {% block default_static_stuff %}
-        <link rel="icon" href="{% get_static_prefix %}img/favicon.ico" type="image/x-icon" />
-		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{% get_static_prefix %}css/base.css">
-        <link rel="stylesheet" href="{% get_static_prefix %}css/skeleton.css">
-        <link rel="stylesheet" href="{% get_static_prefix %}css/layout.css">
-		{% block extra_link %}{% endblock %}
+<link rel="icon" href="{% get_static_prefix %}img/favicon.ico" type="image/x-icon" />
+<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="{% get_static_prefix %}css/base.css">
+<link rel="stylesheet" href="{% get_static_prefix %}css/skeleton.css">
+<link rel="stylesheet" href="{% get_static_prefix %}css/layout.css">
+{% block extra_link %}{% endblock %}
 		
-		<script src="{% get_static_prefix %}js/jquery.min.js" type="text/javascript"></script>
-		<script src="{% get_static_prefix %}js/base.js" type="text/javascript"></script>
+<script src="{% get_static_prefix %}js/jquery.min.js" type="text/javascript"></script>
+<script src="{% get_static_prefix %}js/base.js" type="text/javascript"></script>
 {% endblock %}
 
 
-{% block content_wrapper %}
+{% block content-wrapper %}
 <h1>Fout</h1>
+
+{% with "/static/" as STATIC_URL %}
 
 {% block content %}
 {% endblock %}
+
+{% endwith %}
 {% endblock %}
