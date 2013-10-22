@@ -22,8 +22,8 @@ import os
 from Seasoning import secrets
 
 # Debug settings
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+DEBUG = secrets.DEBUG
+TEMPLATE_DEBUG = secrets.DEBUG
 
 # The directory containing this file
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
