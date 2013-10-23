@@ -42,8 +42,6 @@ $(function() {
 </script>
 {% endblock %}
 
-{% block page_name %}Publiek Profiel{% endblock %}
-
 {% block content %}
 
 <div id="account-settings-container">
@@ -59,6 +57,8 @@ $(function() {
             <span id="account-nextrank">Recepten toe te voegen tot volgende rang: {{ user.recipes_until_next_rank }}</span>
         </div>
         
+        <br class="clear" />
+        
         <div id="account-recipes">
             Toegevoegde recepten: 
             {% if not recipes %}
@@ -68,7 +68,7 @@ $(function() {
             {% else %}
             <p>
                 {% for recipe in recipes %}
-                <a href="/recipes/{{ recipe.id }}/">{{ recipe.name }}</a><br/>
+                {% include "includes/recipe_summary.html" %}
                 {% endfor %}
             </p>
             {% endif %}

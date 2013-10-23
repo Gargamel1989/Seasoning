@@ -25,8 +25,17 @@ def public_profile(request, user_id):
     return render(request, 'authentication/public_profile.html', {'viewed_user': user,
                                                                   'recipes': recipes})
 @login_required
-def account_settings(request):
-    return render(request, 'authentication/account_settings.html')
+def account_settings(request, user_id=None):
+    viewing_self = False
+    if user_id is None or user_id == request.user.id:
+        user = request.user
+        viewing_self = True
+    else:
+        user = get_object_or_404(User, pk=user_id)
+    recipes = user.recipes.all()
+    return render(request, 'authentication/account_settings.html', {'viewed_user': user,
+                                                                    'viewing_self': viewing_self,
+                                                                    'recipes': recipes})
 
 @login_required
 def account_settings_profile(request):
