@@ -13,6 +13,7 @@ from django.contrib.auth.views import login as django_login, logout
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models.aggregates import Avg, Count
 
 def login(request):
     return django_login(request, template_name='authentication/login.html', 
@@ -21,12 +22,17 @@ def login(request):
 @login_required
 def account_settings(request, user_id=None):
     viewing_self = False
-    if user_id is None or user_id == request.user.id:
-        user = request.user
-        viewing_self = True
-    else:
-        user = get_object_or_404(User, pk=user_id)
+    try:
+        if user_id is None or user_id == request.user.id:
+            user = get_user_model().objects.prefetch_related('recipes').get(id=request.user.id)
+            viewing_self = True
+        else:
+            user = get_user_model().objects.prefetch_related('recipes').get(id=user_id)
+    except get_user_model().DoesNotExist:
+        raise Http404
     recipes_list = user.recipes.all().order_by('-rating')
+    averages = user.recipes.all().aggregate(Avg('footprint'), Avg('rating'))
+    most_used_veganism = max(user.recipes.values('veganism').annotate(dcount=Count('veganism')), key=lambda i: i['dcount'])['veganism']
     
     # Split the result by 9
     paginator = Paginator(recipes_list, 9)
@@ -44,7 +50,10 @@ def account_settings(request, user_id=None):
     
     return render(request, 'authentication/account_settings.html', {'viewed_user': user,
                                                                     'viewing_other': not viewing_self,
-                                                                    'recipes': recipes})
+                                                                    'recipes': recipes,
+                                                                    'average_fp': averages['footprint__avg'],
+                                                                    'average_rating': averages['rating__avg'],
+                                                                    'most_used_veganism': most_used_veganism})
 
 @login_required
 def account_settings_profile(request):

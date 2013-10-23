@@ -54,10 +54,10 @@ $(function() {
         
         <div id="account-info">
             <span id="account-name">{{ viewed_user.get_full_name }}</span>
-            <span id="account-rank">Rang: {{ viewed_user.rank }}</span>
-            {% if not viewing_other %}
-            <span id="account-nextrank">Recepten toe te voegen tot volgende rang: {{ viewed_user.recipes_until_next_rank }}</span>
-            {% endif %}
+            <span id="account-rank">Rang: {{ viewed_user.rank }}{% if not viewing_other %} ({{ viewed_user.recipes_until_next_rank }} recepten tot volgende rang){% endif %}</span>
+            <span>Gemiddelde voetafdruk van toegevoegde recepten: {{ average_fp }}</span>
+            <span>Gemiddelde rating van toegevoegde recepten: {{ average_rating }}</span>
+            <span>Meeste gebruikte eetstijl: {{ most_used_veganism }}</span>
         </div>
     </div>
         
