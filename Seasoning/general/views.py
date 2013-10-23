@@ -82,8 +82,24 @@ def upload_static_image(request):
     return render(request, 'admin/upload_image.html', {'form': form,
                                                        'images': images})
     
+    
+# TEST VIEWS FOR TEMPLATE INSPECTION
 def test_500(request):
     if not request.user.is_staff():
         raise Http404
-    
     return 1/0
+
+def test_activation_email(request):
+    if not request.user.is_staff():
+        raise Http404
+    return render('authentication/activation_email.html')
+
+def test_change_email_email(request):
+    if not request.user.is_staff():
+        raise Http404
+    return render('authentication/change_email_email.html')
+
+def test_password_reset_email(request):
+    if not request.user.is_staff():
+        raise Http404
+    return render('authentication/password_reset_email.html')

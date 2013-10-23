@@ -36,7 +36,10 @@ urlpatterns = patterns('',
     
     url(r'^contribute/$', 'general.views.contribute'),
     
-    # Only for testing purposes
+    # TEST VIEWS
+    url('tae/', 'general.views.test_activation_email'),
+    url('tcee/', 'general.views.test_change_email_email'),
+    url('tpre/', 'general.views.test_password_reset_email'),
     url(r'^500/$', 'general.views.test_500'),
     
     # Catch all - Check if we have a static page with this url
