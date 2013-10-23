@@ -1,15 +1,15 @@
 <span id="search-result-count">{{ recipes.start_index }}-{{ recipes.end_index }} van de {{ recipes.paginator.count }} resultaten</span>
 
-<div class="page-controls">
+<div class="page-controls top">
     {% if recipes.has_previous %}
-    <a href="#" onclick="update_recipes({{ recipes.previous_page_number }})"><div class="page-control prev-page active"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div></a>
+    <a href="#" onclick="return update_recipes({{ recipes.previous_page_number }})"><div class="page-control prev-page active"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div></a>
     {% else %}
     <div class="page-control prev-page"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div>
     {% endif %}
     
     
     {% if recipes.has_next %}
-    <a href="#" onclick="update_recipes({{ recipes.next_page_number }})"><div class="page-control next-page active">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div></a>
+    <a href="#" onclick="return update_recipes({{ recipes.next_page_number }})"><div class="page-control next-page active">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div></a>
     {% else %}
     <div class="page-control next-page">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div>
     {% endif %}  
@@ -23,16 +23,16 @@
 </p>
 {% endfor %}
 
-<div class="page-controls">
+<div class="page-controls bottom">
     {% if recipes.has_previous %}
-    <a href="#" onclick="update_recipes({{ recipes.previous_page_number }})"><div class="page-control prev-page active"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div></a>
+    <a href="#" onclick="return update_recipes({{ recipes.previous_page_number }})"><div class="page-control prev-page active"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div></a>
     {% else %}
     <div class="page-control prev-page"><img src="{{ STATIC_URL }}img/icons/left.png" />Vorige resultaten</div>
     {% endif %}
     
     
     {% if recipes.has_next %}
-    <a href="#" onclick="update_recipes({{ recipes.next_page_number }})"><div class="page-control next-page active">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div></a>
+    <a href="#" onclick="return update_recipes({{ recipes.next_page_number }})"><div class="page-control next-page active">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div></a>
     {% else %}
     <div class="page-control next-page">Volgende resultaten<img src="{{ STATIC_URL }}img/icons/right.png" /></div>
     {% endif %}  

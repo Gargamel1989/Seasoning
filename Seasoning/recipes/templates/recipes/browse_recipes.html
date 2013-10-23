@@ -9,6 +9,7 @@
 <script src="{{ STATIC_URL }}js/forms.js"></script>
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script src="{{ STATIC_URL }}js/browse_recipes.js"></script>
+<script src="{{ STATIC_URL }}js/recipe_summaries.js"></script>
 <script>
 $(function() {
 	$("#id_search_string").focus();
@@ -103,8 +104,9 @@ $(function() {
 	    	</div>
 	    </div>
 	</form>
+	
 	<div id="recipe-summaries-wrapper">
-		{% include "includes/recipe_summaries.html" %}
+	   {% include "includes/recipe_summaries.html" %}
 	</div>
 </div>
 

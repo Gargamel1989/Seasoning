@@ -1,32 +1,4 @@
 /**
- * This function makes an ajax-post request to get an updated list of
- * recipes conforming to the users' search parameters
- * 
- * @param page
- * 	If present, the given page of results is shown
- * 	If not, the first page of results is shown
- */
-function update_recipes(page) {
-	var url;
-	if (page) {
-		url = "/recipes/?page=" + page;
-	} else {
-		url = "/recipes/";
-	}
-
-	$.ajax({
-		type : "POST",
-		url : url,
-		data : $("form.keywords").serialize(),
-		success : function(data) {
-			// The url returns full html
-			$("#recipe-summaries-wrapper").html(data);
-		}
-	});
-	return false;
-};
-
-/**
  * This timer will be reset after the user has typed his last character
  * in the search field. This prevents a buttload of queries when a user is
  * search for a long string.
