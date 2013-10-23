@@ -40,6 +40,7 @@ $(function() {
     
 })
 </script>
+<script src="{{ STATIC_URL }}js/recipe_summaries.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -56,25 +57,22 @@ $(function() {
             <span id="account-rank">Rang: {{ user.rank }}</span>
             <span id="account-nextrank">Recepten toe te voegen tot volgende rang: {{ user.recipes_until_next_rank }}</span>
         </div>
-        
-        <br class="clear" />
-        
-        <div id="account-recipes">
-            Toegevoegde recepten: 
-            {% if not recipes %}
-            <p>
-                Deze gebruiker heeft nog geen recepten toegevoegd!
-            </p>
-            {% else %}
-            <p>
-                {% for recipe in recipes %}
-                {% include "includes/recipe_summary.html" %}
-                {% endfor %}
-            </p>
-            {% endif %}
-        </div>
-        {% endblock %}
     </div>
+        
+    
+    <div id="account-recipes">
+        <h3>Toegevoegde recepten:</h3> 
+        {% if not recipes %}
+        <p>
+            Deze gebruiker heeft nog geen recepten toegevoegd!
+        </p>
+        {% else %}    
+        <div id="recipe-summaries-wrapper">
+           {% include "includes/recipe_summaries.html" %}
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
     
     <div id="account-settings-links">
     	<ul>

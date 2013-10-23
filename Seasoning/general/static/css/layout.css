@@ -722,8 +722,33 @@
 				display: block;
 			}
 			
-			#account-settings #account-recipes {
+			#account-settings-container #account-recipes {
 				clear: both;
+				padding-top: 20px;
+			}
+			
+			#account-recipes h3 {
+				border-bottom: 2px solid #333;
+				margin-right: 258px;
+			}
+			
+			#account-recipes #recipe-summaries-wrapper {
+				width: auto;
+				margin-right: 180px;
+				position: relative;
+			}
+			
+			#account-recipes #search-result-count {
+				top: -18px;
+				right: 78px;
+			}
+			
+			#account-recipes .page-controls {
+				margin: 0 80px 20px 10px;
+			}
+			
+			#account-recipes .page-controls.top {
+				display: none;
 			}
 	
 		/* #Account Settings
@@ -956,6 +981,7 @@
 			    transition: all 0.25s ease-in-out;
 			    -webkit-transition: all 0.25s ease-in-out;
 			    -moz-transition: all 0.25s ease-in-out;
+			    float: left;
 			}
 			
 			.recipe-summary:hover {
@@ -1255,10 +1281,6 @@
 				width: 960px;
 				float: right;
 				margin-top: -10px;
-			}
-			
-			#recipe-summaries-wrapper .recipe-summary {
-				float: left;
 			}
 			
 			#recipe-summaries-wrapper p.sorry {

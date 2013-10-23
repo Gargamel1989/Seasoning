@@ -12,6 +12,7 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.views import login as django_login, logout
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 def login(request):
     return django_login(request, template_name='authentication/login.html', 
@@ -32,7 +33,22 @@ def account_settings(request, user_id=None):
         viewing_self = True
     else:
         user = get_object_or_404(User, pk=user_id)
-    recipes = user.recipes.all()
+    recipes_list = user.recipes.all().order_by('-rating')
+    
+    # Split the result by 9
+    paginator = Paginator(recipes_list, 9)
+    
+    page = request.GET.get('page')
+    try:
+        recipes = paginator.page(page)
+    except PageNotAnInteger:
+        recipes = paginator.page(1)
+    except EmptyPage:
+        recipes = paginator.page(paginator.num_pages)
+    
+    if request.is_ajax():
+        return render(request, 'includes/recipe_summaries.html', {'recipes': recipes})
+    
     return render(request, 'authentication/account_settings.html', {'viewed_user': user,
                                                                     'viewing_self': viewing_self,
                                                                     'recipes': recipes})
