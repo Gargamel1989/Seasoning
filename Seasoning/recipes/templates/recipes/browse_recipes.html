@@ -70,7 +70,7 @@ $(function() {
 	            <a href="#"><span class="option and first{% if search_form.include_ingredients_operator.0.is_checked %} active{% endif %}">Allemaal</span></a><a href="#"><span class="option or last{% if search_form.include_ingredients_operator.1.is_checked %} active{% endif %}">Minstens 1</span></a>
 	            {{ search_form.include_ingredients_operator }}
 	            
-	            <input id="include-ingredients-input" class="ingredients-input autocomplete-ingredient" type="text" placeholder="Voer ingrediënten in" />
+	            <input id="include-ingredients-input" class="ingredients-input autocomplete-ingredient" type="text" placeholder="Voer ingrediÃ«nten in" />
 	
 	            <div id="included-ingredients">
 	            </div>
@@ -83,7 +83,7 @@ $(function() {
 	                Dit wil ik er niet bij:
 	            </p>
 	            {{ exclude_ingredients_formset.management_form }}
-	            <input id="exclude-ingredients-input" class="ingredients-input autocomplete-ingredient" type="text" placeholder="Voer ingrediënten in" />
+	            <input id="exclude-ingredients-input" class="ingredients-input autocomplete-ingredient" type="text" placeholder="Voer ingrediÃ«nten in" />
 	
 	            <div id="excluded-ingredients">
 	            </div>
