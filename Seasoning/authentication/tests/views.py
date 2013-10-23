@@ -54,7 +54,7 @@ class AccountViewsTestCase(TestCase):
             self.assertTrue(recipe.author == self.user.pk)
     
     def test_account_settings(self):
-        location = '/account/settings/'
+        location = '/profile/'
         resp = self.client.get(location)
         # Need to be logged in first
         self.assertRedirects(resp, '/login/?next=' + location, 302, 200)
@@ -138,7 +138,7 @@ class AccountViewsTestCase(TestCase):
         
         new_email = self.user.new_emails.all()[0]
         resp = self.client.get(location + '%s/' % new_email.activation_key)
-        self.assertRedirects(resp, '/account/settings/', 302, 200)
+        self.assertRedirects(resp, '/profile/', 302, 200)
         
     
     def test_change_password(self):
@@ -158,7 +158,7 @@ class AccountViewsTestCase(TestCase):
         resp = self.client.post(location, {'old_password': 'test',
                                            'new_password1': 'test',
                                            'new_password2': 'test'})
-        self.assertRedirects(resp, '/account/settings/', 302, 200)
+        self.assertRedirects(resp, '/profile/', 302, 200)
         
         # Bad input
         resp = self.client.post(location, {})
@@ -173,7 +173,7 @@ class AccountViewsTestCase(TestCase):
         
         resp = self.client.post(location, {'new_password1': 'test',
                                            'new_password2': 'test'})
-        self.assertRedirects(resp, '/account/settings/', 302, 200)
+        self.assertRedirects(resp, '/profile/', 302, 200)
     
     def test_account_delete(self):
         location = '/account/delete/'

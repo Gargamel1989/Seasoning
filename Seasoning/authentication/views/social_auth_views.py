@@ -169,7 +169,7 @@ def social_connect(request, backend):
                 return render(request, 'authentication/social_connect.html', context)
         
         messages.add_message(request, messages.INFO, _('An error occurred while checking your identity with ' + backend.name() + '. Please try again.'))
-        return redirect('/account/settings/')
+        return redirect('/profile/')
     
 @login_required
 def social_disconnect(request, backend):
@@ -183,7 +183,7 @@ def social_disconnect(request, backend):
     else:
         backend.disconnect_user(request.user)
         messages.add_message(request, messages.INFO, _('Your Seasoning account has been disconnected from your ' + backend.name() + ' account.'))
-    return redirect('/account/settings/')
+    return redirect('/profile/')
 
 
 @csrf_exempt

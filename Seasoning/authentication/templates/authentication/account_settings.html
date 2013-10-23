@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Instellingen{% endblock %}
+{% block title %}{% if viewing_other %}Publiek Profiel{% else %}Mijn Profiel{% endif %}{% endblock %}
 
 {% block extra_link %}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
@@ -49,13 +49,15 @@ $(function() {
     <div id="account-settings">
         {% block account_settings %}
         <div id="account-image">
-            <img src="{{ MEDIA_URL }}{{ user.avatar }}">
+            <img src="{{ MEDIA_URL }}{{ viewed_user.avatar }}">
         </div>
         
         <div id="account-info">
-            <span id="account-name">{{ user.get_full_name }}</span>
-            <span id="account-rank">Rang: {{ user.rank }}</span>
-            <span id="account-nextrank">Recepten toe te voegen tot volgende rang: {{ user.recipes_until_next_rank }}</span>
+            <span id="account-name">{{ viewed_user.get_full_name }}</span>
+            <span id="account-rank">Rang: {{ viewed_user.rank }}</span>
+            {% if not viewing_other %}
+            <span id="account-nextrank">Recepten toe te voegen tot volgende rang: {{ viewed_user.recipes_until_next_rank }}</span>
+            {% endif %}
         </div>
     </div>
         
@@ -64,7 +66,7 @@ $(function() {
         <h3>Toegevoegde recepten:</h3> 
         {% if not recipes %}
         <p>
-            Deze gebruiker heeft nog geen recepten toegevoegd!
+            {% if viewing_other %}Deze gebruiker heeft{% else %}Je hebt{% endif %} nog geen recepten toegevoegd!
         </p>
         {% else %}    
         <div id="recipe-summaries-wrapper">
@@ -74,6 +76,7 @@ $(function() {
     </div>
     {% endblock %}
     
+    {% if not viewing_other %}
     <div id="account-settings-links">
     	<ul>
     		<li class="{% block public_profile_active %}active{% endblock %}"><a href="/account/settings/">Publiek Profiel</a></li>
@@ -82,6 +85,8 @@ $(function() {
     		<li class="{% block privacy_settings_active %}{% endblock %}"><a href="/account/settings/privacy/">Privacy Instellingen</a></li>
     	</ul>
     </div>
+    {% endif %}
+    
     <br class="clear" />
 </div>
 {% endblock %}

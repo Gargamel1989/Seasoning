@@ -19,13 +19,6 @@ def login(request):
                         authentication_form=CheckActiveAuthenticationForm)
 
 @login_required
-def public_profile(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    recipes = user.recipes.all()
-    
-    return render(request, 'authentication/public_profile.html', {'viewed_user': user,
-                                                                  'recipes': recipes})
-@login_required
 def account_settings(request, user_id=None):
     viewing_self = False
     if user_id is None or user_id == request.user.id:
@@ -50,7 +43,7 @@ def account_settings(request, user_id=None):
         return render(request, 'includes/recipe_summaries.html', {'recipes': recipes})
     
     return render(request, 'authentication/account_settings.html', {'viewed_user': user,
-                                                                    'viewing_self': viewing_self,
+                                                                    'viewing_other': not viewing_self,
                                                                     'recipes': recipes})
 
 @login_required
