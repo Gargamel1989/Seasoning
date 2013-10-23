@@ -146,7 +146,7 @@
 	  			proces is, en nogal wat tijd in beslag kan nemen.
 	  		</li>
 	  	</ol>
-	  	<input type="submit" value="Annuleren" name="stop-submit" /><input type="submit" value="Ingredienten Aanvragen" name="ingrequest-submit" />
+	  	<input type="submit" value="Annuleren" name="stop-submit" /><input type="submit" value="Ingrediënten Aanvragen" name="ingrequest-submit" />
 	  </p>
 	  {% endif %}
 	  
@@ -263,11 +263,6 @@
 	  
 	  <label>Ingredienten</label>
 	  
-	  <div class="button-group">
-		<a href="/recipes/add/" class="add-button add-ingredient-button">Ingredient toevoegen</a>
-		<a href="/recipes/add/" class="add-button add-ingredientgroup-button">Ingredientengroep toevoegen</a>
-	  </div>
-	  
 	  <div id="uses-formset" class="formset">
 	  	  {% regroup usesingredient_formset by group.value as usesingredient_groups %}
 	      {{ usesingredient_formset.management_form }}
@@ -320,8 +315,8 @@
 	      </ul>
 	  </div>
 	      <div class="button-group">
-		      <a href="/recipes/add/" class="add-button add-ingredient-button">Ingredient toevoegen</a>
-		      <a href="/recipes/add/" class="add-button add-ingredientgroup-button">Ingredientengroep toevoegen</a>
+		      <a href="/recipes/add/" class="add-button add-ingredient-button">Ingrediënt toevoegen</a>
+		      <a href="/recipes/add/" class="add-button add-ingredientgroup-button">Ingrediëntengroep toevoegen</a>
 		  </div>
 	  <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
 	</form>
