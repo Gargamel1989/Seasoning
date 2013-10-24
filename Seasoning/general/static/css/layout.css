@@ -439,6 +439,19 @@
 				margin: -15px 0 0 5px;
 				clear: both;
 			}
+			
+			#seasoning-register.social {
+		        border: none;
+			}
+			
+			#seasoning-register.social #social-avatar {
+		        margin-bottom: 20px;
+			}
+			
+			#seasoning-register input[type="submit"] {
+				font-size: 20px;
+				margin: 30px 0 0 -1px;
+			}
 	
 		/* #Activation Summary
 		================================================== */
