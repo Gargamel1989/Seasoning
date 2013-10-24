@@ -699,8 +699,9 @@
 			}
 			
 			#social-account-summary {
-				background-color: #629B31;
-			    border-radius: 5px 5px 5px 5px;
+				background-color: #EAF2E9;
+			    border-radius: 5px;
+				-moz-border-radius: 5px;
 			    clear: right;
 			    float: left;
 			    padding: 5px;
@@ -715,6 +716,51 @@
 				float: left;
 				margin-left: 10px;
 				font-weight: bold;
+			}
+			
+	
+		/* #Contribute 
+		================================================== */
+		
+			#help-seasoning {
+				margin-bottom: 20px;
+			}
+			
+			#help-seasoning .help-type {
+				float: left;
+				width: 40%;
+				height: 400px;
+				margin-bottom: 30px;
+				background-color: #EAF2E9;
+			    border-radius: 15px;
+				-moz-border-radius: 15px;
+			}
+			
+			#help-seasoning .help-type.left {
+				margin-left: 7.5%;
+				margin-right: 5%;
+			}
+		
+			#help-seasoning .help-type img {
+				margin: 0 auto;
+				width: 100%;
+				height: 250px;
+			    border-top-right-radius: 15px;
+			    border-top-left-radius: 15px;
+				-moz-border-radius-topright: 15px;
+				-moz-border-radius-topleft: 15px;
+			}
+		
+			#help-seasoning .help-type .help-text {
+				padding: 10px;
+			}
+		
+			#help-seasoning .help-type .help-text h3 {
+				border-bottom: 1px solid #333;
+			}
+		
+			#help-seasoning .help-type .help-text p {
+				margin-bottom: 5px;
 			}
 	
 	/* #Recipe Styles
