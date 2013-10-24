@@ -3,7 +3,7 @@
 {% block title %}Registreren{% endblock %}
 
 {% block extra_link %}
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.css" />
 <style>
 /*
  * Tooltip styles
@@ -41,7 +41,6 @@ $(function() {
                                         maxDate: -365,
                                         dateFormat: "dd-mm-yy",
     });
-    
 })
 </script>
 {% endblock %}
@@ -138,10 +137,6 @@ $(function() {
         
         <input id="register-button" type="submit" value="Registreer Nu!" />
     </form>
-
-    <script type="text/javascript">
-    document.getElementById('username').focus()
-    </script>
 </div>
 <div id="social-register">
     {% include "includes/fb-button.html" with register=True %}
