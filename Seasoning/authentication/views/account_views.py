@@ -31,8 +31,14 @@ def account_settings(request, user_id=None):
     except get_user_model().DoesNotExist:
         raise Http404
     recipes_list = user.recipes.all().order_by('-rating')
-    averages = user.recipes.all().aggregate(Avg('footprint'), Avg('rating'))
-    most_used_veganism = max(user.recipes.values('veganism').annotate(dcount=Count('veganism')), key=lambda i: i['dcount'])['veganism']
+    
+    try:
+        averages = user.recipes.all().aggregate(Avg('footprint'), Avg('rating'))
+        most_used_veganism = max(user.recipes.values('veganism').annotate(dcount=Count('veganism')), key=lambda i: i['dcount'])['veganism']
+    except ValueError:
+        averages = {'footprint__avg': None,
+                    'rating__avg': None}
+        most_used_veganism = None
     
     # Split the result by 9
     paginator = Paginator(recipes_list, 9)

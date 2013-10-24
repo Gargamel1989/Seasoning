@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+
+<h1>Contact: {{ contact_type }}</h1>
+
+<form action="" method="post">
+    {% csrf_token %}
+    {% if user.is_authenticated %}
+    <label>{{ form.email.label }}</label>
+    {{ form.email }}
+    {% endif %}
+    
+    <label>{{ form.subject.label }}</label>
+    {{ form.subject }}
+    <label>{{ form.message.label }}</label>
+    {{ form.message }}
+    
+    <input type="submit" value="Verzenden" />
+</form>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "authentication/account_settings.html" %}
 
 {% block title %}Account verwijderen{% endblock %}
 
@@ -21,30 +21,23 @@
 {% endblock %}
 
 {% block extra_script %}
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script>
 $(function() {
-    $('.tooltip-field input').each(function() {
-        $(this).tooltip({ 
-            items: ".tooltip-field input", 
-            content:  function() {
-                return $(this).parent().children('.tooltip').text();
-            },
-            position: {
-                of: $(this).parent(),
-                my: "left top",
-                at: "right+10 top-2"
-            },
-        }).off("mouseover mouseout");
-    });
     
-})
+    $("#id_delete_recipes").click(function() {
+        if ($(this).prop("checked")) {
+            $("#dontdeleteplox").show();
+            $("#youisawesome").hide();
+        } else {
+            $("#dontdeleteplox").hide();
+            $("#youisawesome").show();
+        }
+    })
+});
 </script>
 {% endblock %}
 
-{% block page_name %}Account verwijderen{% endblock %}
-
-{% block content %}
+{% block account_settings %}
 
 <form action="" method="post" enctype="multipart/form-data" id="account-delete-form">
 {% csrf_token %}
@@ -52,7 +45,7 @@ $(function() {
 <p>
     Met dit formulier kan u aangeven dat u uw account wil verwijderen. Wanneer het formulier doorgestuurd is,
     zal uw account inactief worden. Indien u zich binnen de 7 dagen opnieuw aanmeld op Seasoning, zal het 
-    account opnieuw geactiveerd worden, en blijven al uw gegevens bewaard.
+    account opnieuw geactiveerd worden en blijven al uw gegevens bewaard.
 </p>
 <p>
     Een account dat meer dan 7 dagen inactief is, zal onomkeerbeer uit onze databank verwijderd worden. Wij houden
@@ -66,8 +59,6 @@ $(function() {
 <div class="field-wrapper tooltip-field">
     {{ form.checkstring }}
     
-    <div class="tooltip">Vul hier het woord 'DELETEME' zonder aanhalingstekens in.</div>
-    
 </div>
 
 <p>
@@ -76,11 +67,16 @@ $(function() {
     auteur 'Onbekend' krijgen.
 </p>
     
-<div class="field-wrapper tooltip-field">
+<div class="field-wrapper tooltip-field" style="position: relative;">
     <span><strong>{{ form.delete_recipes.label }}</strong></span>
     {{ form.delete_recipes }}
     
-    <div class="tooltip">:(</div>
+    <div id="dontdeleteplox" class="ui-tooltip ui-widget ui-corner-all ui-widget-content" style="right: 0; top: 0; display: none;">
+        <div class="ui-tooltip-content">:(</div>
+    </div>
+    <div id="youisawesome" class="ui-tooltip ui-widget ui-corner-all ui-widget-content" style="right: 0; top: 0; display: none;">
+        <div class="ui-tooltip-content">:D</div>
+    </div>
 </div>
 
 <div id="submit-button">
@@ -89,3 +85,6 @@ $(function() {
 </form>
 
 {% endblock %}
+
+{% block public_profile_active %}{% endblock %}
+{% block privacy_settings_active %}active{% endblock %}

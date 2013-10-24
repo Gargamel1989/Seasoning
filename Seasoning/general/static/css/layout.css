@@ -29,6 +29,10 @@
 		background-color: #F7F7F5;
 	}
 	
+	h1 {
+		border-bottom: 3px solid #333;
+	}
+	
 	hr {
 		margin-bottom: 10px;
 	}
@@ -264,6 +268,28 @@
 		margin: -10px 0 10px 2px;
 		font-size: 10px;
 	}
+	
+	
+	/* #Static pages
+	================================================== */
+	
+		#static-page-wrapper h1 {
+			border-bottom: 3px solid #333;
+		}
+		
+		#static-page-wrapper h2 {
+			margin-top: 30px;
+		}
+		
+		#static-page-wrapper ul {
+			list-style: disc inside;
+			margin: -10px 0 0 10px;
+		}
+		
+		#static-page-wrapper #last-line {
+			font-size: 12px;
+			line-height: 14px;
+		}
 	
 	
 	/* #Jquery UI Styles
@@ -725,7 +751,9 @@
 				margin-bottom: 5px;
 			}
 			
-			#account-settings #account-info 
+			#account-settings #account-info img {
+				height: 66px;
+			}
 			
 			#account-settings-container #account-recipes {
 				clear: both;
@@ -832,7 +860,7 @@
 			#account-settings-container #account-settings-links {
 				width: 180px;
 				float: right;
-				border-left: 1px solid #D5EBC1;
+				border-left: 1px solid #DDD;
 				padding: 35px 0 0 10px;
 				position: absolute;
 				right: 0;
@@ -878,12 +906,12 @@
 			}
 			
 			#account-settings-links li a {
-			color:#76BA3B;
-			text-decoration: none;
+				color:#629B31;
+				text-decoration: none;
 			}
 			
 			#account-settings-links li a:hover {
-			color:#598c2c;
+				color:#4E7A28;
 			}
 			
 			#account-settings-links li.active a {
@@ -902,6 +930,7 @@
 	
 		/* #Account Delete
 		================================================== */
+		
 			#account-delete-form .field-wrapper {
 				width: 30%;
 				margin: auto;
@@ -920,10 +949,17 @@
 			
 			#account-delete-form #submit-button input {
 				float: none;
-				width: 30%;
-				height: 30px;
+				font-size: 17px;
 			}
 	
+		/* #Misc Authentication Pages
+		================================================== */
+		
+			#password-reset-login-form {
+				width: 100%;
+				text-align: center;
+				font-size: 16px;
+			}	
 	
 	/* #Recipe Styles
 	================================================== */
