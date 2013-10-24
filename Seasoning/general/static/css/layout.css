@@ -266,6 +266,28 @@
 	}
 	
 	
+	/* #Static pages
+	================================================== */
+	
+		#static-page-wrapper h1 {
+			border-bottom: 3px solid #333;
+		}
+		
+		#static-page-wrapper h2 {
+			margin-top: 30px;
+		}
+		
+		#static-page-wrapper ul {
+			list-style: disc inside;
+			margin: -10px 0 0 10px;
+		}
+		
+		#static-page-wrapper #last-line {
+			font-size: 12px;
+			line-height: 14px;
+		}
+	
+	
 	/* #Jquery UI Styles
 	================================================== */
 	
@@ -919,6 +941,14 @@
 				height: 30px;
 			}
 	
+		/* #Misc Authentication Pages
+		================================================== */
+		
+			#password-reset-login-form {
+				width: 100%;
+				text-align: center;
+				font-size: 16px;
+			}	
 	
 	/* #Recipe Styles
 	================================================== */
