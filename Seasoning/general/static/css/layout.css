@@ -369,7 +369,7 @@
 			
 			#seasoning-register input[type="text"],
 			#seasoning-register input[type="password"] {
-				width: 60%;
+				width: 300px;
 			}
 			
 			#seasoning-register #captcha-wrapper {
@@ -403,6 +403,10 @@
 			#seasoning-register #terms-wrapper label {
 				width: 90%;
 				float: left;
+			}
+			
+			#ui-datepicker-div {
+				width: 300px
 			}
 			
 			#seasoning-register #registration-submit-button {
