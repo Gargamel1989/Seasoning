@@ -75,11 +75,40 @@
 	.empty-form, .tooltip {
 		display: none;
 	}
+			
+	.errorlist {
+		color: red;
+		font-size: 12px;
+		margin: -15px 0 0 5px;
+		clear: both;
+	}
 	
 	#impact-breakdown img {
 		width: 100%;	
 	}
 	
+	#captcha-wrapper {
+		margin: 10px 0;
+		min-height: 120px;
+	    height:auto !important; 
+	    height:120px;
+	    width: 100px;
+	}
+	
+	#captcha-wrapper #recaptcha_area {
+		margin: auto;
+	}
+	
+	#captcha-wrapper input#recaptcha_response_field {
+		width: auto;
+		display: inline;
+	}
+	
+	#captcha-wrapper .errorlist {
+		float: none;
+		text-align: center;
+	}
+		
 	#header {
 		width: 100%;
 		background-color: #629B31;
@@ -370,28 +399,6 @@
 			#seasoning-register input[type="text"],
 			#seasoning-register input[type="password"] {
 				width: 300px;
-			}
-			
-			#seasoning-register #captcha-wrapper {
-				margin: 10px 0;
-				min-height: 120px;
-			    height:auto !important; 
-			    height:120px;
-			    width: 100px;
-			}
-			
-			#captcha-wrapper #recaptcha_area {
-				margin: auto;
-			}
-			
-			#captcha-wrapper input#recaptcha_response_field {
-				width: auto;
-				display: inline;
-			}
-			
-			#captcha-wrapper .errorlist {
-				float: none;
-				text-align: center;
 			}
 			
 			#seasoning-register #terms-wrapper {
@@ -723,7 +730,7 @@
 		================================================== */
 		
 			#help-seasoning {
-				margin-bottom: 20px;
+				margin: 40px 0 20px;
 			}
 			
 			#help-seasoning .help-type {

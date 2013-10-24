@@ -54,16 +54,17 @@ def contact_form(request, contact_type):
     if contact_type not in TYPES:
         raise Http404
     
-    initial = {}
-    if request.user.is_authenticated():
-        initial['email'] = request.user.email
-        
     if request.method == 'POST':
-        form = ContactForm(request.POST, initial=initial)
+        form = ContactForm(request.POST, logged_in=request.user.is_authenticated())
         
         if form.is_valid():
+            if request.user.is_authenticated():
+                email = request.user.email
+            else:
+                email = form.fields['your_email']
+            
             ctx_dict = {'type': TYPES[contact_type]['title'],
-                        'email': form.cleaned_data['email'],
+                        'email': email,
                         'subject': form.cleaned_data['subject'],
                         'message': form.cleaned_data['message']}
             
@@ -75,15 +76,15 @@ def contact_form(request, contact_type):
             message_text_feedback = render_to_string('emails/contact_form_autoreply.txt')
     
             send_mail('Contact van gebruiker: %s' % subject, message_text_to_us, 
-                      form.cleaned_data['your_email'],
+                      email,
                       [TYPES[contact_type]['email']], fail_silently=True)
             send_mail('Contact met Seasoning.be', message_text_feedback, 
                       'noreply@seasoning.be',
-                      [form.cleaned_data['your_email']], fail_silently=True)
+                      [email], fail_silently=True)
             
             return redirect('/')
     else:
-        form = ContactForm(initial=initial)
+        form = ContactForm(logged_in=request.user.is_authenticated())
     
     return render(request, 'contact_form.html', {'form': form,
                                                  'contact_type': TYPES[contact_type]['title']})
