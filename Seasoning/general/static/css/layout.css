@@ -919,6 +919,7 @@
 	
 		/* #Account Delete
 		================================================== */
+		
 			#account-delete-form .field-wrapper {
 				width: 30%;
 				margin: auto;
@@ -937,8 +938,7 @@
 			
 			#account-delete-form #submit-button input {
 				float: none;
-				width: 30%;
-				height: 30px;
+				font-size: 17px;
 			}
 	
 		/* #Misc Authentication Pages
