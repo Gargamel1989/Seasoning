@@ -82,9 +82,12 @@ $(function() {
                     verstuurd worden. Het nieuwe adres wordt pas actief wanneer deze link bezocht wordt.
                 </div>
                 
-                {% if form.email.errors %}        
-                    {{ form.email.errors }}
-                {% endif %}
+                {{ form.email.errors }}
+            </div>
+            
+            <div class="field-wrapper">
+                <label>Geboortedatum</label>
+                <span id="user-birthday">{{ user.date_of_birth|date:"d E Y" }}</span>
             </div>
         
             <div class="field-wrapper">

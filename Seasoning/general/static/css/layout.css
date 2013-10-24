@@ -568,9 +568,9 @@
 				width: 380px;
 			}
 			
-			#name_errors ul {
-				padding: 0;
-				margin: 5px 0 15px 0;
+			#account-settings #user-birthday {
+				margin-bottom: 20px;
+				display: block;
 			}
 			
 			#account-settings #password_p {
