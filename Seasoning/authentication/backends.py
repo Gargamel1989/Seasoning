@@ -298,7 +298,7 @@ class GoogleAuthBackend(OAuth2Backend):
         google_info = self.get_unparsed_user_info(access_token)
         try:
             date_of_birth = datetime.datetime.strptime(google_info['birthday'], '%Y-%m-%d').date()
-        except ValueError:
+        except (ValueError, KeyError):
             date_of_birth = datetime.date.today()
         return {'id': google_info['id'],
                 'name': google_info['name'],

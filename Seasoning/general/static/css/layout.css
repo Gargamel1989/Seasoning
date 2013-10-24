@@ -616,7 +616,7 @@
 			}
 			
 			#account-settings .social-connection p.active {
-				color:#76BA3B;
+				color:#629B31;
 			}
 			
 			#account-settings-links ul {
@@ -683,7 +683,26 @@
 				width: 100%;
 				text-align: center;
 				font-size: 16px;
-			}	
+			}
+			
+			#social-account-summary {
+				background-color: #629B31;
+			    border-radius: 5px 5px 5px 5px;
+			    clear: right;
+			    float: left;
+			    padding: 5px;
+			}
+			
+			#social-account-summary img {
+				float: left;
+				height: 50px;
+			}
+			
+			#social-account-summary span {
+				float: left;
+				margin-left: 10px;
+				font-weight: bold;
+			}
 	
 	/* #Recipe Styles
 	================================================== */

@@ -123,6 +123,9 @@ class User(models.Model):
     def get_short_name(self):
         return self.givenname
     
+    def get_username(self):
+        return self.email
+    
     def rank(self):
         # Get the log2(recipes_added_by_user) rounded down. This is the current
         # rank of the user. Minimum rank is 0, maximum rank is 8
