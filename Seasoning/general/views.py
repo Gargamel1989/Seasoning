@@ -54,8 +54,9 @@ def contact_form(request, contact_type):
     if contact_type not in TYPES:
         raise Http404
     
+    initial = {}
     if request.user.is_authenticated():
-        initial = {'email': request.user.email}
+        initial['email'] = request.user.email
         
     if request.method == 'POST':
         form = ContactForm(request.POST, initial=initial)
