@@ -6,7 +6,8 @@
         {% csrf_token %}
         
             <div class="field-wrapper tooltip-field">
-                <label for="id_surname">Naam</label>
+                <label for="id_surname">Voornaam</label>
+                <label for="id_givenname">Naam</label>
                 {% if user.name_changed %}
                 <input id="id_surname" type="text" value="{{ user.surname }}" maxlength="50" disabled />
                 <input id="id_givenname" type="text" value="{{ user.givenname }}" maxlength="30" disabled />
