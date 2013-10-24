@@ -744,6 +744,12 @@
 				border: 2px ridge #333;
 			}
 			
+			#account-settings #givenname-label {
+				float: left;
+				margin-right: 20px;
+				width: 160px;
+			}
+			
 			#account-settings #account-info #account-name {
 				font-weight: bold;
 				font-size: 16px;

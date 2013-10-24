@@ -4,7 +4,7 @@
 {% block title %}Recept bekijken{% endblock %}
 
 {% block extra_link %}
-<!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />-->
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <style>
 /*
  * Tooltip styles
@@ -123,10 +123,7 @@
 {% block body-hook %}
 <div id="zoomed-recipe-image-container">
 	<div id="page-darkener"> </div>
-	<!--<div id="zoomed-recipe-image" style="background-image: url('{{ MEDIA_URL }}{{ recipe.image }}')">
-		<img src="{{ STATIC_URL }}img/icons/delete.png" />
-	</div>-->
-	<div id="zoomed-recipe-image" style="background-image: url('/static/img/logos/header2.png')" /> </div>
+	<div id="zoomed-recipe-image" style="background-image: url('{{ MEDIA_URL }}{{ recipe.image }}')" /> </div>
 </div>
 {% endblock %}
 
