@@ -53,11 +53,19 @@ $(function() {
         </div>
         
         <div id="account-info">
-            <span id="account-name">{{ viewed_user.get_full_name }}</span>
-            <span id="account-rank">Rang: {{ viewed_user.rank }}{% if not viewing_other %} ({{ viewed_user.recipes_until_next_rank }} recepten tot volgende rang){% endif %}</span>
-            <span>Gemiddelde voetafdruk van toegevoegde recepten: {{ average_fp }}</span>
-            <span>Gemiddelde rating van toegevoegde recepten: {{ average_rating }}</span>
-            <span>Meeste gebruikte eetstijl: {{ most_used_veganism }}</span>
+            <div id="account-name">{{ viewed_user.get_full_name }}</div>
+            <div id="account-rank">
+                Rang: {{ viewed_user.rank }}{% if not viewing_other %} ({{ viewed_user.recipes_until_next_rank }} recepten tot volgende rang){% endif %}
+            </div>
+            <div>Gemiddelde voetafdruk: {{ average_fp|floatformat }}</div>
+            <div>Gemiddelde rating: {{ average_rating }}</div>
+            {% if most_used_veganism == 2 %}
+            <img src="{{ STATIC_URL }}img/vegan.png" title="Deze persoon heeft vooral veganistische recepten toegevoegd" />
+            {% elif most_used_veganism == 1 %}
+            <img src="{{ STATIC_URL }}img/vegetarian.png" title="Deze persoon heeft vooral vegetarische recepten toegevoegd" />
+            {% elif most_used_veganism == 0 %}
+            <img src="{{ STATIC_URL }}img/non-vegetarian.png" title="Deze persoon heeft vooral niet-vegetarische recepten toegevoegd" />
+            {% endif %}
         </div>
     </div>
         
