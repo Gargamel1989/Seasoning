@@ -35,6 +35,7 @@ urlpatterns = patterns('',
     url(r'^upload/img/$', 'general.views.upload_static_image'),
     
     url(r'^contribute/$', 'general.views.contribute'),
+    url(r'^contact/form/(.*)/', 'general.views.contact_form'),
     
     # TEST VIEWS
     url(r'^500/$', 'general.views.test_500'),

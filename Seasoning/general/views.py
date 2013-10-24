@@ -26,6 +26,9 @@ from general.models import StaticPage
 from recipes.models import Recipe
 from django import forms
 from django.http.response import Http404
+from general.forms import ContactForm
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 def home(request):
     try:
@@ -40,6 +43,49 @@ def contribute(request):
 def static_page(request, url):
     static_page = get_object_or_404(StaticPage, url=url)
     return render(request, 'static_page.html', {'page_info': static_page})
+
+TYPES = {'info': {'title': 'Informatie, vragen en suggesties',
+                  'email': 'info@seasoning.be'},
+         'press': {'title': 'Media en partnerships',
+                  'email': 'bram@seasoning.be'},
+         'abuse': {'title': 'Technische problemen of misbruik',
+                  'email': 'joep@seasoning.be'},}
+def contact_form(request, contact_type):
+    if contact_type not in TYPES:
+        raise Http404
+    
+    if request.user.is_authenticated():
+        initial = {'email': request.user.email}
+        
+    if request.method == 'POST':
+        form = ContactForm(request.POST, initial=initial)
+        
+        if form.is_valid():
+            ctx_dict = {'type': TYPES[contact_type]['title'],
+                        'email': form.cleaned_data['email'],
+                        'subject': form.cleaned_data['subject'],
+                        'message': form.cleaned_data['message']}
+            
+            # Email subject *must not* contain newlines
+            subject = ''.join(form.cleaned_data['subject'])
+            
+            message_text_to_us = render_to_string('emails/contact_form_email.txt',
+                                                  ctx_dict)
+            message_text_feedback = render_to_string('emails/contact_form_autoreply.txt')
+    
+            send_mail('Contact van gebruiker: %s' % subject, message_text_to_us, 
+                      form.cleaned_data['your_email'],
+                      [TYPES[contact_type]['email']], fail_silently=True)
+            send_mail('Contact met Seasoning.be', message_text_feedback, 
+                      'noreply@seasoning.be',
+                      [form.cleaned_data['your_email']], fail_silently=True)
+            
+            return redirect('/')
+    else:
+        form = ContactForm(initial=initial)
+    
+    return render(request, 'contact_form.html', {'form': form,
+                                                 'contact_type': TYPES[contact_type]['title']})
     
 @staff_member_required
 def backup_db(request):
@@ -81,7 +127,6 @@ def upload_static_image(request):
     
     return render(request, 'admin/upload_image.html', {'form': form,
                                                        'images': images})
-    
     
 # TEST VIEWS FOR TEMPLATE INSPECTION
 def test_500(request):
