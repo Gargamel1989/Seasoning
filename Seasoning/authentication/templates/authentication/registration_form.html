@@ -51,8 +51,6 @@ $(function() {
     <form action="/register/" method="post" id="registration-form">
     	{% csrf_token %}
       	
-    	{{ form.non_field_errors }}
-    	
     	<div class="field-wrapper tooltip-field">
             {{ form.givenname.label_tag }}
             {{ form.givenname }}
@@ -104,6 +102,9 @@ $(function() {
             {% if form.password2.errors %}        
     			{{ form.password2.errors }}	
             {% endif %}
+            {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+            {% endif %}
     	</div>
         
         <div class="spacer"> </div>
@@ -122,8 +123,8 @@ $(function() {
     	
     	<div class="field-wrapper" id="captcha-wrapper">
             {{ form.captcha }}
-            {{ form.captcha.errors }}
     	</div>
+        {{ form.captcha.errors }}
     	
     	<div class="field-wrapper" id="terms-wrapper">
             {{ form.tos }}

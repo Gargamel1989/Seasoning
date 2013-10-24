@@ -394,6 +394,10 @@
 				text-align: center;
 			}
 			
+			#seasoning-register #terms-wrapper {
+				margin-top: 30px;
+			}
+			
 			#seasoning-register #terms-wrapper input {
 				float: left;
 				width: 10px;
@@ -427,6 +431,13 @@
 			#seasoning-register #register-button {
 				margin: 30px 0 0 -1px;
 				font-size: 20px;
+			}
+			
+			#seasoning-register .errorlist {
+				color: red;
+				font-size: 12px;
+				margin: -15px 0 0 5px;
+				clear: both;
 			}
 	
 		/* #Activation Summary
