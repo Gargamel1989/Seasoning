@@ -1,4 +1,45 @@
 {% extends "authentication/account_settings.html" %}
+
+{% block extra_link %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<style>
+/*
+ * Tooltip styles
+ */
+.ui-tooltip {
+    position: absolute;
+}
+
+.ui-widget {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: .75em;
+    color: #5B6553;
+}
+</style>
+{% endblock %}
+
+{% block extra_script %}
+<script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
+<script>
+$(function() {
+	$('.tooltip-field input').each(function() {
+		$(this).tooltip({ 
+        	items: ".tooltip-field input", 
+        	content:  function() {
+            	return $(this).parent().children('.tooltip').text();
+        	},
+        	position: {
+        		of: $(this).parent(),
+            	my: "left top",
+            	at: "right+10 top+18"
+        	},
+        }).off("mouseover mouseout");
+    });
+    
+})
+</script>
+{% endblock %}
+
         {% block page_name %}Profiel Instellingen{% endblock %}
         
         {% block account_settings %}
