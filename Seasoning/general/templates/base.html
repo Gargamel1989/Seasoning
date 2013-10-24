@@ -46,6 +46,9 @@
 	</head>
 	
 	<body class="{% block bodyclass %}{% endblock %}">
+        
+        {% block body-hook %}{% endblock %}
+        
 	    <div id="header">
 	        <div id="header-container" class="container">
 	            <div id="logo">

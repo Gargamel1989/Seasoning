@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}500{% endblock %}
-
 {% block default_static_stuff %}
 <link rel="icon" href="{% get_static_prefix %}img/favicon.ico" type="image/x-icon" />
 <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
@@ -17,12 +15,9 @@
 
 
 {% block content-wrapper %}
-<h1>Fout</h1>
-
-{% with "/static/" as STATIC_URL %}
+<h1>{% block page_name %}{% endblock %}</h1>
 
 {% block content %}
 {% endblock %}
 
-{% endwith %}
 {% endblock %}

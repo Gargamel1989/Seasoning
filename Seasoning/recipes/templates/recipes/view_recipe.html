@@ -112,8 +112,20 @@
 </script>
 {% endblock %}
 
-{% block content %}
+{% block body-hook %}
+<div id="zoomed-recipe-image-container">
+	<div id="page-darkener"> </div>
+	<!--<div id="zoomed-recipe-image" style="background-image: url('{{ MEDIA_URL }}{{ recipe.image }}')">
+		<img src="{{ STATIC_URL }}img/icons/delete.png" />
+	</div>-->
+	<div id="zoomed-recipe-image"">
+		<img src="/static/img/logos/header2.png" />
+		<img src="{{ STATIC_URL }}img/icons/delete.png" />
+	</div>
+</div>
+{% endblock %}
 
+{% block content %}
 <h1 class="recipe-title">
 	{{ recipe.name }}
     <div id="recipe-actions">
