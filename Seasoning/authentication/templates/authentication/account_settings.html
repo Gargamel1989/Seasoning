@@ -2,6 +2,8 @@
 
 {% block title %}{% if viewing_other %}Publiek Profiel{% else %}Mijn Profiel{% endif %}{% endblock %}
 
+{% block myaccount-active %}{% if not viewing_other %}active{% endif %}{% endblock %}
+
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/recipe_summaries.js"></script>
 {% endblock %}
