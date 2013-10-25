@@ -169,6 +169,7 @@ INSTALLED_APPS = (
     'ingredients',
     'recipes',
     'faq',
+    'news',
     
     # Admin
     'django.contrib.admin',

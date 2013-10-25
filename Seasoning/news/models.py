@@ -4,12 +4,16 @@ import time
 from imagekit.models.fields import ProcessedImageField
 from imagekit.processors.resize import ResizeToFill
 import datetime
+from django.utils.translation import ugettext_lazy as _
 
 def get_image_filename(instance, old_filename):
     filename = str(time.time()) + '.png'
     return 'images/news/' + filename
 
 class NewsItem(models.Model):
+    
+    class Meta:
+        db_table = 'newsitem'
     
     author = models.ForeignKey(get_user_model())
     time_published = models.DateTimeField(auto_now_add=True)
@@ -19,7 +23,7 @@ class NewsItem(models.Model):
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, processors=[ResizeToFill(500, 500)],
                                 help_text=_('An image of this news item.'))
     
-    visible = models.BooleanField(required=False, default=False)
+    visible = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
         # Update the publish time if this item was previously invisible and has now been made visible
