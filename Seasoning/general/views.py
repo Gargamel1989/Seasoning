@@ -38,7 +38,13 @@ def home(request):
     return render(request, 'homepage.html', {'recipe_otw': recipe_otw})
 
 def contribute(request):
-    return render(request, 'contribute.html')
+    return render(request, 'contribute/contribute.html')
+
+def donate(request):
+    return render(request, 'contribute/donate.html')
+
+def donate_success(request):
+    return render(request, 'contribute/donate_success.html')
 
 def static_page(request, url):
     static_page = get_object_or_404(StaticPage, url=url)

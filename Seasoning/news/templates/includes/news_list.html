@@ -1,0 +1,9 @@
+{% for news_item in news %}
+<div class="news-item-wrapper">
+    <img src="{{ news_item.image.url }}" />
+    <div>{{ news_item.author }}</div>
+    <div>{{ news_item.time_published }}</div>
+    <div>{{ news_item.subject }}</div>
+    <div>{{ news_item.content }}</div>
+</div>
+{% endfor %}
