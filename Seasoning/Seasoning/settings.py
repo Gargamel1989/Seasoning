@@ -27,7 +27,7 @@ TEMPLATE_DEBUG = secrets.DEBUG
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['www.seasoning.be', 'seasoning.be']
+ALLOWED_HOSTS = ['localhost', 'www.seasoning.be', 'seasoning.be']
 
 # The directory containing this file
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -239,8 +239,9 @@ SECRET_KEY = secrets.SECRET_KEY
 
 
 # Django-recaptcha
-RECAPTCHA_PUBLIC_KEY = '6LcgBtwSAAAAAGYLzvpNQ1tbir0HCabUNV56R1Gk'
+RECAPTCHA_PUBLIC_KEY = '6LcsROkSAAAAAE9JICOK0cLhDYWmpMRpOa7LNBWO'
 RECAPTCHA_PRIVATE_KEY = secrets.RECAPTCHA_PRIVATE_KEY
+RECAPTCHA_USE_SSL = True
 
 FACEBOOK_APP_ID = secrets.FACEBOOK_APP_ID
 FACEBOOK_SECRET = secrets.FACEBOOK_SECRET

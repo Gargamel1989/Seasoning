@@ -196,7 +196,7 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
         # The access token will provide us with the information from the users' social network account
         access_token = request.POST.get('access_token', None)
         # The form data will provide us with additional information
-        form = SocialUserCheckForm(request.POST)
+        form = SocialRegistrationForm(request.POST)
         if form.is_valid():
             # User agreed to tos, and if he provided password, they match
             if access_token:
@@ -251,7 +251,7 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
         else:
             # User has been redirected to the social network, and has come back with a code
             # We now need to exchange this code for an access token in our backend
-            form = SocialUserCheckForm()
+            form = SocialRegistrationForm()
         
             access_token = backend.get_access_token(code,
                                                     redirect_uri=redirect_uri)
@@ -274,7 +274,7 @@ def social_register(request, backend, disallowed_url='registration_disallowed'):
         try:
             # Check if a user with this Facebook email is already registered
             User.objects.get(email=user_info['email'])
-            messages.add_message(request, messages.INFO, _('A user has already registered on Seasoning with the email in your ' + backend.name() + '. If this is your account, would you like to connect it to your ' + backend.name() + 'account?'))
+            messages.add_message(request, messages.INFO, _('A user has already registered on Seasoning with the email in your ' + backend.name() + '. If this is your account, please log in to connect it to your ' + backend.name() + ' account?'))
             return redirect(backend.connect_url)
         except User.DoesNotExist:
             # A user with this Google email does not exist, so we will register a new one

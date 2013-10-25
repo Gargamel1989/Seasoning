@@ -4,7 +4,7 @@
 {% block title %}Recept bekijken{% endblock %}
 
 {% block extra_link %}
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.css" />
 <style>
 /*
  * Tooltip styles
@@ -26,6 +26,14 @@
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script>
     $(document).ready(function() {
+    	$("#recipe-img").click(function() {
+    		$("#zoomed-recipe-image-container").fadeIn(500);
+    	});
+    	
+    	$("#zoomed-recipe-image-container").click(function() {
+    		$("#zoomed-recipe-image-container").fadeOut(500);
+    	});
+    	
         $('#portions-slider').slider({
             min: 1,
             max: 8,
@@ -112,8 +120,16 @@
 </script>
 {% endblock %}
 
-{% block content %}
+{% block recipes-active %}active{% endblock %}
 
+{% block body-hook %}
+<div id="zoomed-recipe-image-container">
+	<div id="page-darkener"> </div>
+	<div id="zoomed-recipe-image" style="background-image: url('{{ MEDIA_URL }}{{ recipe.image }}')" /> </div>
+</div>
+{% endblock %}
+
+{% block content %}
 <h1 class="recipe-title">
 	{{ recipe.name }}
     <div id="recipe-actions">

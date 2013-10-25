@@ -3,7 +3,7 @@
 {% block title %}Ingredienten{% endblock %}
 
 {% block extra_link %}
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.css" />
 {% endblock %}
 
 {% block extra_script %}
@@ -11,7 +11,7 @@
 <script src="{{ STATIC_URL }}js/view_ingredients.js"></script>
 {% endblock %}
 
-{% block page_name %}Ingredienten{% endblock %}
+{% block ingredients-active %}active{% endblock %}
 
 {% block content %}
 <p>

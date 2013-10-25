@@ -17,9 +17,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		
 		{% block default_static_stuff %}
-        <link rel="icon" href="{{ STATIC_URL }}img/favicon.ico" type="image/x-icon" />
-		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css">
+        <link rel="icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/base.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}css/skeleton.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css">
 		{% block extra_link %}{% endblock %}
@@ -46,6 +45,9 @@
 	</head>
 	
 	<body class="{% block bodyclass %}{% endblock %}">
+        
+        {% block body-hook %}{% endblock %}
+        
 	    <div id="header">
 	        <div id="header-container" class="container">
 	            <div id="logo">
@@ -61,16 +63,16 @@
                 <span id="grass"> </span>
                 <span id="grass-end-right"> </span>
                 <div id="nav-container">
-                    <a href="/recipes/"><div class="active navlink three columns alpha omega">RECEPTEN</div></a>
-                    <a href="/ingredients/"><div class="navlink three columns alpha omega">INGREDIËNTEN</div></a>
-                    <a href="/news/"><div class="navlink three columns alpha omega">NIEUWS</div></a>
-                    <a href="/contribute/"><div class="navlink three columns alpha omega">BIJDRAGEN</div></a>
+                    <a href="/recipes/"><div class="{% block recipes-active %}{% endblock %} navlink three columns alpha omega">RECEPTEN</div></a>
+                    <a href="/ingredients/"><div class="{% block ingredients-active %}{% endblock %} navlink three columns alpha omega">INGREDIËNTEN</div></a>
+                    <a href="/news/"><div class="{% block news-active %}{% endblock %} navlink three columns alpha omega">NIEUWS</div></a>
+                    <a href="/contribute/"><div class="{% block contribute-active %}{% endblock %} navlink three columns alpha omega">BIJDRAGEN</div></a>
                     {% if user.is_authenticated %}
-                    <a href="/profile/"><div class="navlink three columns alpha omega">MIJN ACCOUNT</div></a>
+                    <a href="/profile/"><div class="{% block myaccount-active %}{% endblock %} navlink three columns alpha omega">MIJN ACCOUNT</div></a>
                     <a href="/logout/"><div class="navlink three columns alpha omega">AFMELDEN</div></a>
                     {% else %}
-                    <a href="/register/"><div class="navlink three columns alpha omega">REGISTREREN</div></a>
-                    <a href="/login/"><div class="navlink three columns alpha omega">AANMELDEN</div></a>
+                    <a href="/register/"><div class="{% block register-active %}{% endblock %} navlink three columns alpha omega">REGISTREREN</div></a>
+                    <a href="/login/"><div class="{% block login-active %}{% endblock %} navlink three columns alpha omega">AANMELDEN</div></a>
                     {% endif %}
                     
                 </div>
