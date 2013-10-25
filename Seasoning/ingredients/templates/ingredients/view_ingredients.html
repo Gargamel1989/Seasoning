@@ -14,12 +14,22 @@
 {% block ingredients-active %}active{% endblock %}
 
 {% block content %}
-<p>
-	Hier kan je onze uitgebreide ingredientendatabase raadplegen. Je kan met het onderstaande veld naar specifieke ingredienten zoeken, of gewoon
-	wat rondkijken. Als je op een ingredient klikt, verschijnt er meer informatie
-</p>
 
-{% csrf_token %}
-{{ form.as_p }}
+<div id="ingredient-search-container">
+	<p>
+		Hier kan je onze uitgebreide ingredientendatabase raadplegen. Je kan met het onderstaande veld naar specifieke ingredienten zoeken, of gewoon
+		wat rondkijken. Als je op een ingredient klikt, verschijnt er meer informatie
+	</p>
+	
+	<form target="" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+	</form>
+	
+	
+	<div id="ingredient-summaries-wrapper">
+	   {% include "includes/ingredient_summaries.html" %}
+	</div>
 
+</div>
 {% endblock %}

@@ -28,9 +28,37 @@ from django.db.models import Q
 from ingredients.forms import SearchIngredientForm
 
 def view_ingredients(request):
-    search_form = SearchIngredientForm()
     
-    return render(request, 'ingredients/view_ingredients.html', {'form': search_form})
+    if request.method == 'POST':
+        search_form = SearchIngredientForm(request.POST)
+        
+        if search_form.is_valid():
+            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_fields['name'])            
+        else:
+            ingredient_list = []
+    else:
+        search_form = SearchIngredientForm()
+    
+        ingredient_list = Ingredient.objects.filter(accepted=True).order_by('name')
+    
+    # Split the result by 12
+    paginator = Paginator(ingredient_list, 12)
+    
+    page = request.GET.get('page')
+    try:
+        ingredients = paginator.page(page)
+    except PageNotAnInteger:
+        ingredients = paginator.page(1)
+    except EmptyPage:
+        ingredients = paginator.page(paginator.num_pages)
+    
+    if request.method == 'POST' and request.is_ajax():
+        return render(request, 'includes/ingredient_summaries.html', {'ingredients': ingredients})
+    
+    # TODO: ajax aanpassen voor ingredients
+    
+    return render(request, 'ingredients/view_ingredients.html', {'form': search_form,
+                                                                 'ingredients': ingredients})
     
 def view_ingredient(request, ingredient_id):
     try:
