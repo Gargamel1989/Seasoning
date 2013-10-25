@@ -6,7 +6,7 @@
 *  If present, the given page of results is shown
 *  If not, the first page of results is shown
 */
-function update_recipes(page) {
+function update_page(page) {
    var url;
    if (page) {
        url = window.location + "?page=" + page;
@@ -21,7 +21,7 @@ function update_recipes(page) {
            url : url,
            success : function(data) {
                // The url returns full html
-               $("#recipe-summaries-wrapper").html(data);
+               $(".summaries-wrapper").html(data);
            }
        });
    } else {
@@ -31,10 +31,11 @@ function update_recipes(page) {
            data : $("form").serialize(),
            success : function(data) {
                // The url returns full html
-               $("#recipe-summaries-wrapper").html(data);
+               $(".summaries-wrapper").html(data);
            }
        });
    }
-   $('html,body').animate({scrollTop: $("#recipe-summaries-wrapper").offset().top - 80},'slow');
+   if ($(document).scrollTop() > $(".summaries-wrapper").offset().top - 80)
+	   $('html,body').animate({scrollTop: $(".summaries-wrapper").offset().top - 80},'slow');
    return false;
 };

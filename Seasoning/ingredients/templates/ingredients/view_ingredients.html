@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block extra_script %}
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script src="{{ STATIC_URL }}js/view_ingredients.js"></script>
+<script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
+<script src="{{ STATIC_URL }}js/paging.js"></script>
 {% endblock %}
 
 {% block ingredients-active %}active{% endblock %}
@@ -23,11 +23,17 @@
 	
 	<form target="" method="post">
 		{% csrf_token %}
-		{{ form.as_p }}
+		
+		<div id="basic-search">
+			{{ form.name }}
+			<button id="keywords-submit" class="nochrome" type="submit">
+				<span class="submit-icon"> </span>
+			</button>
+		</div>
 	</form>
 	
 	
-	<div id="ingredient-summaries-wrapper">
+	<div id="ingredient-summaries-wrapper" class="summaries-wrapper">
 	   {% include "includes/ingredient_summaries.html" %}
 	</div>
 

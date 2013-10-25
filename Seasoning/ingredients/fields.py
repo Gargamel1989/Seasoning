@@ -96,19 +96,24 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
     """
 
     def __init__(self, *args, **kwargs):
+        self.ingredient_must_exist = kwargs.pop('ingredient_must_exist', True)
+        
         widget = kwargs.get('widget', False)
         if not widget or not isinstance(widget, AutoCompleteSelectIngredientWidget):
-            kwargs['widget'] = AutoCompleteSelectIngredientWidget(attrs={'class': 'autocomplete-ingredient'})
+            kwargs['widget'] = AutoCompleteSelectIngredientWidget(attrs={'placeholder': 'Zoek Ingredienten', 'class': 'keywords-searchbar'})
         super(AutoCompleteSelectIngredientField, self).__init__(*args, **kwargs)
         
     def clean(self, value):
-        if value:
-            try:
-                ingredient = Ingredient.objects.get(name__exact=value)
-            except ObjectDoesNotExist:
-                raise forms.ValidationError(u"No ingredient found with name: %s" % value)
-            return ingredient
-        else:
-            if self.required:
-                raise forms.ValidationError(u"This field is required.")
+        if self.ingredient_must_exist:
+            if value:
+                try:
+                    ingredient = Ingredient.objects.get(name__exact=value)
+                except ObjectDoesNotExist:
+                    raise forms.ValidationError(u"No ingredient found with name: %s" % value)
+                return ingredient
+            else:
+                if self.required:
+                    raise forms.ValidationError(u"This field is required.")
             return None
+        return value
+            

@@ -33,14 +33,14 @@ def view_ingredients(request):
         search_form = SearchIngredientForm(request.POST)
         
         if search_form.is_valid():
-            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_fields['name'])            
+            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_data['name'])            
         else:
             ingredient_list = []
     else:
         search_form = SearchIngredientForm()
     
         ingredient_list = Ingredient.objects.filter(accepted=True).order_by('name')
-    
+        
     # Split the result by 12
     paginator = Paginator(ingredient_list, 12)
     
