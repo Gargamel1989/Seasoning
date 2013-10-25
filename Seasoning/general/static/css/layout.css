@@ -740,7 +740,18 @@
 				margin-bottom: 30px;
 				background-color: #EAF2E9;
 			    border-radius: 15px;
+				border: 1px solid transparent;
 				-moz-border-radius: 15px;
+			    transition: all 0.25s ease-in-out;
+			    -webkit-transition: all 0.25s ease-in-out;
+			    -moz-transition: all 0.25s ease-in-out;
+			}
+			
+			#help-seasoning .help-type:hover {
+			    box-shadow: 0 0 5px rgba(0,0,0, 1);
+			    -webkit-box-shadow: 0 0 5px rgba(0,0,0, 1); 
+			    -moz-box-shadow: 0 0 5px rgba(0,0,0, 1);
+			    border:1px solid rgba(0,0,0, 0.5); 
 			}
 			
 			#help-seasoning .help-type.left {
