@@ -1,9 +1,9 @@
 {% for news_item in news %}
 <div class="news-item-wrapper">
-    <img src="{{ news_item.image.url }}" />
-    <div>{{ news_item.author }}</div>
-    <div>{{ news_item.time_published }}</div>
-    <div>{{ news_item.subject }}</div>
-    <div>{{ news_item.content }}</div>
+    <div class="subject">{{ news_item.subject }}</div>
+    <div class="author">Gepost door {{ news_item.author.givenname }}</div>
+    <div class="publish-time">op {{ news_item.time_published|date:"d E Y, H" }}u{{ news_item.time_published|date:"i" }}</div>
+    <img class="news-image" src="{{ news_item.image.url }}" />
+    <div class="content">{{ news_item.content|linebreaks }}</div>
 </div>
 {% endfor %}
