@@ -18,6 +18,18 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
 from django.conf.urls import patterns, include
+from general.sitemaps import GeneralViewsSitemap, StaticViewSitemap
+from ingredients.sitemaps import IngredientViewsSitemap
+from news.sitemaps import NewsViewsSitemap
+from recipes.sitemaps import RecipeViewsSitemap
+
+sitemaps = {
+    'general': GeneralViewsSitemap,
+    'static': StaticViewSitemap,
+    'news': NewsViewsSitemap,
+    'ingredients': IngredientViewsSitemap,
+    'recipes': RecipeViewsSitemap,
+}
 
 urlpatterns = patterns('',
     # Core pages
@@ -33,7 +45,10 @@ urlpatterns = patterns('',
     (r'^faq/', include('faq.urls')),
     # News
     (r'^news/', include('news.urls')),
-        
+    
+    # Sitemap
+    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
+    
     # General Pages
     (r'^', include('general.urls')),
 )

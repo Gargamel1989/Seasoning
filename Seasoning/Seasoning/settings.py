@@ -158,6 +158,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.comments',
     'django.contrib.messages',
+    'django.contrib.sitemaps',
     
     # Authentication:
     'django.contrib.auth',

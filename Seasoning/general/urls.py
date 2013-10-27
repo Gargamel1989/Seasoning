@@ -34,8 +34,8 @@ urlpatterns = patterns('',
     url(r'^backup/$', 'general.views.backup_db'),
     url(r'^upload/img/$', 'general.views.upload_static_image'),
     
-    url(r'^contribute/$', 'general.views.contribute'),
-    url(r'^donate/$', 'general.views.donate'),
+    url(r'^contribute/$', 'general.views.contribute', name='contribute'),
+    url(r'^donate/$', 'general.views.donate', name='donate'),
     url(r'^donate/success/$', 'general.views.donate_success'),
     
     url(r'^contact/form/(.*)/', 'general.views.contact_form'),

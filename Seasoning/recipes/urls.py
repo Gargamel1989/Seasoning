@@ -21,8 +21,8 @@ from django.conf.urls import patterns, url
 from recipes.views import delete_recipe_comment
 
 urlpatterns = patterns('',
-    url(r'^$', 'recipes.views.browse_recipes', name='recipe_browse'),
-    url(r'^(\d*)/$', 'recipes.views.view_recipe', name='recipe_view'),
+    url(r'^$', 'recipes.views.browse_recipes', name='browse_recipes'),
+    url(r'^(\d*)/$', 'recipes.views.view_recipe', name='view_recipe'),
    
     url(r'^portions/$', 'recipes.views.get_recipe_portions'),
     url(r'^vote/$', 'recipes.views.vote'),
