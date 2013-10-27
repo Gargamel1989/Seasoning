@@ -2,63 +2,16 @@
 
 {% block title %}Nieuws{% endblock %}
 
-{% block extra_script %}
-<script>
-function loadMoreNews() {
-	var next_page = parseInt($("#news-pages-loaded").val()) + 1;
-	$("#news-pages-loaded").val(next_page);
-	
-	$.ajax({
-		type : "GET",
-		url : window.location + "?page=" + next_page,
-	    success : function(data) {
-	    	// The url returns full html
-			$(data).insertAfter($(".news-item-wrapper").last());
-			$(window).bind('scroll', bindScroll);
-	    },
-        error: function() {
-        	$("#loading-news").text("Er werd geen ouder nieuws gevonden...");
-        }
-	});
-}
-
-function bindScroll() {
-	if ($(window).scrollTop() + 2*$(window).height() > $("#news-list-wrapper").offset().top + $("#news-list-wrapper").height()) {
-		$(window).unbind('scroll', bindScroll);
-		loadMoreNews();
-	}
-}
-	
-			
-
-
-$(function() {
-	$(window).scroll(bindScroll);
-});
-</script>
-{% endblock %}
-
 {% block news-active %}active{% endblock %}
 
 {% block content %}
 
-<h1>Nieuws</h1>
-
-<div id="twitter-feed-wrapper">
-	<a class="twitter-timeline"  href="https://twitter.com/Seasoningbe"  data-widget-id="393881062192852992">Tweets van @Seasoningbe</a>
-	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-</div>
-
-<input id="news-pages-loaded" type="hidden" value="1" />
-<div id="news-list-wrapper">
-	{% include "includes/news_list.html" %}
-    
-    <div id="loading-news">
-    	Ouder nieuws word geladen...
-    	{% include "includes/big-ajax-loader.html" %}
-    	<br /><br />
-    	<br class="clear" />
-    </div>
+<div class="news-item-wrapper">
+    <div class="subject">{{ news_item.subject }}</div>
+    <div class="author">Gepost door {{ news_item.author.givenname }}</div>
+    <div class="publish-time">op {{ news_item.time_published|date:"d E Y, H" }}u{{ news_item.time_published|date:"i" }}</div>
+    <img class="news-image" src="{{ news_item.image.url }}" />
+    <div class="content">{{ news_item.content|linebreaks }}</div>
 </div>
 
 {% endblock %}
