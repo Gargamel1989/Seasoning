@@ -6,7 +6,7 @@ from django.http.response import HttpResponse
 from django.core.exceptions import PermissionDenied
 
 def topic_list(request):
-    topics = Topic.objects.all().prefetch_related()
+    topics = Topic.objects.all().order_by('id').prefetch_related()
     return render(request, 'faq/topic_list.html', {'topics': topics})
 
 def topic_detail(request, topic_id):

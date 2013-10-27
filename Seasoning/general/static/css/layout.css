@@ -83,6 +83,12 @@
 		clear: both;
 	}
 	
+	.anchor-link {
+		display: block;
+		margin: -50px 0 50px 0;
+		height: 1px;
+	}
+	
 	#impact-breakdown img {
 		width: 100%;	
 	}
@@ -864,6 +870,28 @@
 		
 			#help-seasoning .help-type .help-text p {
 				margin-bottom: 5px;
+			}
+	
+		/* #Faq
+		================================================== */
+		
+			.faq-question-wrapper {
+				margin-bottom: 40px;
+			}
+			
+			.faq-question-wrapper .faq-question {
+				margin-bottom: 10px;
+				border-bottom: 1px solid #DDD;
+			}
+			
+			.faq-question-wrapper .back-to-index-link {
+				float: right;
+				font-size: 12px;
+				background-image: url('/static/img/icons/up.png');
+				background-size: 12px 12px;
+				background-repeat: no-repeat;
+				background-position: left;
+				padding-left: 17px;
 			}
 	
 	/* #Recipe Styles
