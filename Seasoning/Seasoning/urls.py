@@ -47,7 +47,8 @@ urlpatterns = patterns('',
     (r'^news/', include('news.urls')),
     
     # Sitemap
-    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
+    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.index', {'sitemaps': sitemaps}),
+    (r'^sitemap-(?P<section>.+)\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     
     # General Pages
     (r'^', include('general.urls')),
