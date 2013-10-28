@@ -7,7 +7,7 @@ class GeneralViewsSitemap(sitemaps.Sitemap):
     changefreq = 'weekly'
     
     def items(self):
-        return ['home', 'contribute', 'donate']
+        return ['home', 'contribute', 'donate', 'faq']
     
     def location(self, item):
         return reverse(item)
