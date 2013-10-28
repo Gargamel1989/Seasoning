@@ -287,7 +287,7 @@ class Synonym(models.Model):
     name = models.CharField(max_length=50L, unique=True)
     plural_name = models.CharField(max_length=50L, blank=True)
     
-    ingredient = models.ForeignKey(Ingredient, related_name='synonym', null=True, db_column='ingredient', blank=True)
+    ingredient = models.ForeignKey(Ingredient, related_name='synonyms', null=True, db_column='ingredient', blank=True)
     
     def __unicode__(self):
         return self.name
