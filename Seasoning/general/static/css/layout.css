@@ -2052,6 +2052,7 @@
 			
 			#ingredient-availability {
 				position: relative;
+				margin-bottom: 30px;
 			}
 			
 			#ingredient-availability .month {
@@ -2066,15 +2067,16 @@
 			
 			#ingredient-availability .month.alpha {
 				margin-left: 100px;
-				border-left: none;
 			}
 			
 			#ingredient-availability .country-name {
 				width: 55px;
+				font-weight: bold;
 			}
 			
 			#ingredient-availability .available-in {
 				position: absolute;
+				width: 100%;
 			}
 			
 			#ingredient-availability .availability-indicator {
