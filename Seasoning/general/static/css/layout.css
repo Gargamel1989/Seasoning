@@ -754,7 +754,7 @@
 			    padding: 10px 0 10px 0;
 			}
 			
-			.news-item-wrapper:hover {
+			#news-list-wrapper .news-item-wrapper:hover {
 				background-color: rgba(118, 186, 59, 0.1);
 			}
 			
@@ -827,7 +827,7 @@
 			#help-seasoning .help-type {
 				float: left;
 				width: 40%;
-				height: 450px;
+				height: 440px;
 				margin-bottom: 30px;
 				background-color: #EAF2E9;
 			    border-radius: 15px;
@@ -871,6 +871,43 @@
 		
 			#help-seasoning .help-type .help-text p {
 				margin-bottom: 5px;
+			}
+	
+		/* #Donate
+		================================================== */
+			
+			.donate-method {
+				float: left;
+				width: 45%;
+				height: 250px;
+				margin: 0 0 30px 2%;
+				background-color: #EAF2E9;
+				padding: 5px;
+			    border-radius: 15px;
+				-moz-border-radius: 15px;
+				border: 1px solid transparent;
+				-moz-border-radius: 15px;
+			    transition: all 0.25s ease-in-out;
+			    -webkit-transition: all 0.25s ease-in-out;
+			    -moz-transition: all 0.25s ease-in-out;
+			}
+			
+			.donate-method#paypal-donate {
+				float: right;
+				margin: 0 2% 30px 0;
+			}
+			
+			.donate-method h3 {
+				border-bottom: 1px solid #333;
+			}
+			
+			.donate-method #account-nr {
+				text-align: center;
+				font-weight: bold;
+			}
+			
+			#paypal-donate form {
+				text-align: center;
 			}
 	
 		/* #Faq
