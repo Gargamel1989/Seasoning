@@ -19,6 +19,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django.conf.urls import patterns, url, include
 from django.contrib import admin
+from django.views.generic.base import TemplateView
 
 admin.autodiscover()
 
@@ -39,6 +40,9 @@ urlpatterns = patterns('',
     url(r'^donate/success/$', 'general.views.donate_success'),
     
     url(r'^contact/form/(.*)/', 'general.views.contact_form'),
+    
+    # ROBOTS
+    (r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
     
     # TEST VIEWS
     url(r'^500/$', 'general.views.test_500'),
