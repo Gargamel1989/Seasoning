@@ -33,7 +33,7 @@ def view_ingredients(request):
         search_form = SearchIngredientForm(request.POST)
         
         if search_form.is_valid():
-            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_data['name'])            
+            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_data['name']).order_by('name')       
         else:
             ingredient_list = []
     else:
