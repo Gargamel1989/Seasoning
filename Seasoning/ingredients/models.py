@@ -20,8 +20,8 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django.db import models
 import time
-from imagekit.models.fields import ProcessedImageField
-from imagekit.processors.resize import ResizeToFill
+from imagekit.models.fields import ProcessedImageField, ImageSpecField
+from imagekit.processors.resize import ResizeToFill, SmartResize
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -128,6 +128,8 @@ class Ingredient(models.Model):
     base_footprint = models.FloatField()
     
     image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
+    thumbnail = ImageSpecField([SmartResize(230, 230)], image_field='image', format='PNG')
+    
     image_source = models.TextField(blank=True)
     accepted = models.BooleanField(default=False)
     
