@@ -522,7 +522,8 @@
 			}
 			
 			#account-recipes #search-result-count {
-				top: -18px;
+				position: absolute;
+				top: -23px;
 				right: 78px;
 			}
 			
