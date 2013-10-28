@@ -131,7 +131,7 @@ class Ingredient(models.Model):
     image_source = models.TextField(blank=True)
     accepted = models.BooleanField(default=False)
     
-    useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
+    base_useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
     
     def __unicode__(self):
         return self.name
@@ -148,8 +148,11 @@ class Ingredient(models.Model):
             return None
     
     def can_use_unit(self, unit):
-        useable_units = Unit.objects.filter(models.Q(used_by__ingredient=self) | models.Q(parent_unit__used_by__ingredient=self))
+        useable_units = Unit.objects.filter(models.Q(useable_by__ingredient=self) | models.Q(parent_unit__useable_by__ingredient=self))
         return unit in useable_units
+    
+    def all_useable_units(self):
+        return CanUseUnit.objects.useable_by(self)
     
     def get_available_ins(self):
         """
@@ -324,7 +327,7 @@ class CanUseUnit(models.Model):
     objects = CanUseUnitManager()
         
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient')
-    unit = models.ForeignKey('Unit', related_name='used_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
+    unit = models.ForeignKey('Unit', related_name='useable_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
     is_primary_unit = models.BooleanField()
     
