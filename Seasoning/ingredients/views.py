@@ -33,7 +33,7 @@ def view_ingredients(request):
         search_form = SearchIngredientForm(request.POST)
         
         if search_form.is_valid():
-            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_data['name'])            
+            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_data['name']).order_by('name')       
         else:
             ingredient_list = []
     else:
@@ -63,18 +63,13 @@ def view_ingredients(request):
 def view_ingredient(request, ingredient_id):
     try:
         ingredient = Ingredient.objects.get(pk=ingredient_id)
-        useable_units = list(CanUseUnit.objects.all_useable_units(ingredient_id=ingredient_id))
-        primary_unit = ingredient.primary_unit
         try:
             available_ins = ingredient.get_available_ins().select_related()
         except Ingredient.BasicIngredientException:
             available_ins = []
     except Ingredient.DoesNotExist:
         raise Http404    
-    return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient,
-                                                                'useable_units': useable_units,
-                                                                'primary_unit': primary_unit,
-                                                                'available_ins': available_ins})
+    return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient})
 
 
 

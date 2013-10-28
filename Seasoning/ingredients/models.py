@@ -20,8 +20,8 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django.db import models
 import time
-from imagekit.models.fields import ProcessedImageField
-from imagekit.processors.resize import ResizeToFill
+from imagekit.models.fields import ProcessedImageField, ImageSpecField
+from imagekit.processors.resize import ResizeToFill, SmartResize
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -128,10 +128,12 @@ class Ingredient(models.Model):
     base_footprint = models.FloatField()
     
     image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
+    thumbnail = ImageSpecField([SmartResize(230, 230)], image_field='image', format='PNG')
+    
     image_source = models.TextField(blank=True)
     accepted = models.BooleanField(default=False)
     
-    useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
+    base_useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
     
     def __unicode__(self):
         return self.name
@@ -148,8 +150,11 @@ class Ingredient(models.Model):
             return None
     
     def can_use_unit(self, unit):
-        useable_units = Unit.objects.filter(models.Q(used_by__ingredient=self) | models.Q(parent_unit__used_by__ingredient=self))
+        useable_units = Unit.objects.filter(models.Q(useable_by__ingredient=self) | models.Q(parent_unit__useable_by__ingredient=self))
         return unit in useable_units
+    
+    def all_useable_units(self):
+        return CanUseUnit.objects.useable_by(self)
     
     def get_available_ins(self):
         """
@@ -282,7 +287,7 @@ class Synonym(models.Model):
     name = models.CharField(max_length=50L, unique=True)
     plural_name = models.CharField(max_length=50L, blank=True)
     
-    ingredient = models.ForeignKey(Ingredient, related_name='synonym', null=True, db_column='ingredient', blank=True)
+    ingredient = models.ForeignKey(Ingredient, related_name='synonyms', null=True, db_column='ingredient', blank=True)
     
     def __unicode__(self):
         return self.name
@@ -324,7 +329,7 @@ class CanUseUnit(models.Model):
     objects = CanUseUnitManager()
         
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient')
-    unit = models.ForeignKey('Unit', related_name='used_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
+    unit = models.ForeignKey('Unit', related_name='useable_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
     is_primary_unit = models.BooleanField()
     

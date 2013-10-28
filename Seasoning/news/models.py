@@ -25,6 +25,9 @@ class NewsItem(models.Model):
     
     visible = models.BooleanField(default=False)
     
+    def __unicode__(self):
+        return self.subject
+    
     def save(self, *args, **kwargs):
         # Update the publish time if this item was previously invisible and has now been made visible
         if self.id:

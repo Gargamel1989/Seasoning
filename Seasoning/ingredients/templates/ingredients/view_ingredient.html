@@ -2,75 +2,132 @@
 
 {% block title %}Ingredienten{% endblock %}
 
+{% block extra_script %}
+<script>
+$(function() {
+    $("#ingredient-availability").height(parseInt($("#number-of-groups").text())*30 + 30);
+    var offset_top = 30;
+    $(".available-in").each(function() {
+        $(this).css("top", offset_top);
+        offset_top = offset_top + 30;
+        $(this).children(".availability-indicator").each(function() {
+            var from = parseInt($(this).children(".available-from").text());
+            var until = parseInt($(this).children(".available-until").text());
+            var total_width = $(".month.alpha").width() * 12 + 11;
+            var from_point = total_width * (from/365);
+            var until_point = total_width * (until/365);
+            var left_margin = parseInt($(".month.alpha").css("margin-left").replace("px", ""));
+            $(this).html("");
+            if (from < until) {
+                $(this).css("left", from_point + left_margin)
+                $(this).css("width", until_point - from_point);
+            } else {
+                var second_indicator = $(this).clone();
+                $(this).css("left", left_margin);
+                $(this).css("width", until_point);
+                second_indicator.insertAfter($(this));
+                second_indicator.css("left", from_point + left_margin);
+                second_indicator.css("width", total_width - from_point);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
 {% block ingredients-active %}active{% endblock %}
 
 {% block content %}
 
+<h1>
+    {{ ingredient.name }}{% if ingredient.synonyms.all %}<span id="ingredient-synonyms">{% for synonym in ingredient.synonyms.all %}, {{ synonym.name }}{% endfor %}</span>{% endif %}
+</h1>
+
+<img id="ingredient-image" src="{{ ingredient.image.url }}">
+
 <p>
-    <strong>Namen:</strong> {{ ingredient.name }}{% if ingredient.plural_name %} ({{ ingredient.plural_name }}){% endif %}{% for syn in ingredient.synonyms %}, {{ syn.name }} ({{ syn.plural_name }}){% endfor %}
-</p>
-<strong>Categorie:</strong> {{ ingredient.get_category_display }}
-</p>
-<p>
-<strong>Veganisme:</strong> {{ ingredient.get_veganism_display }}
-</p>
-<p>
-    <strong>Thumbnail:</strong> <img src="{{ ingredient.image.url }}">
+    <strong>Categorie:</strong> {{ ingredient.get_category_display }}
 </p>
 <p>
-<p>
-<strong>Beschrijving:</strong><br />
-{{ ingredient.description|linebreaksbr }}
+    <strong>Veganisme:</strong> {{ ingredient.get_veganism_display }}
 </p>
 <p>
-<strong>Bewaringstip:</strong><br />
-{{ ingredient.conservation_tip|linebreaksbr }}
-</p>
-<p>
-<strong>Bereidingstip:</strong><br />
-{{ ingredient.preparation_tip|linebreaksbr }}
-</p>
-<p>
-<strong>Speciale Eigenschappen:</strong><br />
-{{ ingredient.properties|linebreaksbr }}
-</p>
-<p>
-<strong>Bruikbare eenheden:</strong><br>
-<ul>
-    {% for useable_unit in useable_units %}
-    <li>{{ useable_unit.name }} (Conversiefactor={{ useable_unit.conversion_factor }})</li>
-    {% endfor %}
-</ul>
-</p>
-<p>
-<strong>Basis voetafdruk:</strong> {{ ingredient.base_footprint }} kgCO2/{{ primary_unit.unit.short }}
+    <strong>Voetafdruk:</strong> {{ ingredient.footprint }} kgCO2/{{ ingredient.primary_unit.short }}
 </p>
 {% if ingredient.type == 1 or ingredient.type == 2 %}
 <p>
-<strong>Bewaarbaarheid:</strong> {{ ingredient.preservability }} dagen
+    <strong>Bewaarbaarheid:</strong> {{ ingredient.preservability }} dagen
 </p>
 <p>
-<strong>Uitstoot tijdens bewaring:</strong> {{ ingredient.preservation_footprint }} kgCO2/dag
+    <strong>Uitstoot tijdens bewaring:</strong> {{ ingredient.preservation_footprint|floatformat     }} kgCO2/dag
+</p>
+{% endif %}
+
+<br class="clear" />
+
+<p>
+    <strong>Beschrijving:</strong><br />
+    {{ ingredient.description|linebreaksbr }}
 </p>
 <p>
-<strong>Beschikbaar in:</strong> <br>
-<ul>
-    {% for available_in in available_ins %}
-    <li>
-        Dit ingredient is beschikbaar in {{ available_in.country.name }} ({{ available_in.country.distance }} km van Belgie) tussen {{ available_in.month_from }} en {{ available_in.month_until }}<br>
-        Het wordt vervoerd via {{ available_in.transport_method.name }}<br>
-        {% if available_in.production_type %}Het wordt geproduceerd adhv. {{ available_in.production_type }}<br>{% endif %}
-        Een ingredient van deze optie heeft een uitstoot van {{ available_in.footprint }}<br>
-    </li>
+    <strong>Bewaringstip:</strong><br />
+    {{ ingredient.conservation_tip|linebreaksbr }}
+</p>
+<p>
+    <strong>Bereidingstip:</strong><br />
+    {{ ingredient.preparation_tip|linebreaksbr }}
+</p>
+<p>
+    <strong>Speciale Eigenschappen:</strong><br />
+    {{ ingredient.properties|linebreaksbr }}
+</p>
+
+{% if ingredient.type == 1 or ingredient.type == 2 %}
+<div id="ingredient-availability">
+    <span class="month alpha">
+        Jan
+    </span><span class="month">
+        Feb
+    </span><span class="month">
+        Maa
+    </span><span class="month">
+        Apr
+    </span><span class="month">
+        Mei
+    </span><span class="month">
+        Jun
+    </span><span class="month">
+        Jul
+    </span><span class="month">
+        Aug
+    </span><span class="month">
+        Sep
+    </span><span class="month">
+        Okt
+    </span><span class="month">
+        Nov
+    </span><span class="month omega">
+        Dec
+    </span>
+    
+    {% regroup ingredient.get_available_ins by country.name as available_in_countries %}
+    <span id="number-of-groups" style="display:none;">{{ available_in_countries|length }}</span>
+    {% for available_in_country in available_in_countries %}
+    <div class="available-in" id="available-in-{{ available_in_country.grouper }}">
+        <span class="country-name">{{ available_in_country.grouper }}</span>
+        {% for available_in in available_in_country.list %}
+        <span class="availability-indicator">
+            <span class="available-from">{{ available_in.date_from.timetuple.tm_yday }}</span>
+            <span class="available-until">{{ available_in.date_until.timetuple.tm_yday }}</span>
+        </span>
+        {% endfor %}
+    </div>
     {% endfor %}
-</ul>
-</p>
+</div>
+
 <p>
-<strong>Geaccepteerd:</strong> {{ ingredient.accepted }}
-</p>
-<p>
-<strong>Bronnen:</strong><br />
-{{ ingredient.source|linebreaksbr }}
+    <strong>Bronnen:</strong><br />
+    {{ ingredient.source|linebreaks }}
 </p>
 
 {% endif %}

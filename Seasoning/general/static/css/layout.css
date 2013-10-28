@@ -213,7 +213,7 @@
 		min-height: 100%;
 		height: auto !important;
 		height: 100%;
-		margin: 0 auto -51px;
+		margin: 0 auto -54px;
 		width: 100%;
 	}
 	
@@ -308,6 +308,11 @@
 	/* #Static pages
 	================================================== */
 	
+		.edit-static-page-link {
+			position: absolute;
+			right: 0;			
+		}
+		
 		#static-page-wrapper h1 {
 			border-bottom: 3px solid #333;
 		}
@@ -755,7 +760,7 @@
 			    padding: 10px 0 10px 0;
 			}
 			
-			.news-item-wrapper:hover {
+			#news-list-wrapper .news-item-wrapper:hover {
 				background-color: rgba(118, 186, 59, 0.1);
 			}
 			
@@ -828,11 +833,11 @@
 			#help-seasoning .help-type {
 				float: left;
 				width: 40%;
-				height: 450px;
+				height: 440px;
 				margin-bottom: 30px;
 				background-color: #EAF2E9;
-			    border-radius: 15px;
 				border: 1px solid transparent;
+			    border-radius: 15px;
 				-moz-border-radius: 15px;
 			    transition: all 0.25s ease-in-out;
 			    -webkit-transition: all 0.25s ease-in-out;
@@ -873,9 +878,91 @@
 				margin-bottom: 5px;
 			}
 	
+		/* #Donate
+		================================================== */
+			
+			.donate-method {
+				float: left;
+				width: 45%;
+				height: 250px;
+				margin: 0 0 30px 2%;
+				background-color: #EAF2E9;
+				padding: 5px;
+			    border-radius: 15px;
+				-moz-border-radius: 15px;
+				border: 1px solid transparent;
+				-moz-border-radius: 15px;
+			    transition: all 0.25s ease-in-out;
+			    -webkit-transition: all 0.25s ease-in-out;
+			    -moz-transition: all 0.25s ease-in-out;
+			}
+			
+			.donate-method#paypal-donate {
+				float: right;
+				margin: 0 2% 30px 0;
+			}
+			
+			.donate-method h3 {
+				border-bottom: 1px solid #333;
+			}
+			
+			.donate-method #account-nr {
+				text-align: center;
+				font-weight: bold;
+			}
+			
+			#paypal-donate form {
+				text-align: center;
+			}
+	
 		/* #Faq
 		================================================== */
 		
+			#faq-index .index-topic-wrapper {
+				float: left;
+				width: 47%;
+				margin: 0 0 30px 0;
+				padding: 5px;
+				background-color: #EAF2E9;
+			    border-radius: 15px;
+				-moz-border-radius: 15px;
+				border: 1px solid transparent;
+				-moz-border-radius: 15px;
+			    transition: all 0.25s ease-in-out;
+			    -webkit-transition: all 0.25s ease-in-out;
+			    -moz-transition: all 0.25s ease-in-out;
+			}
+			
+			#faq-index .index-topic-wrapper.right {
+				float: right;
+				margin: 0 0 30px 0;
+			}
+			
+			#faq-index .index-topic-wrapper:hover {
+			    box-shadow: 0 0 5px rgba(0,0,0, 1);
+			    -webkit-box-shadow: 0 0 5px rgba(0,0,0, 1); 
+			    -moz-box-shadow: 0 0 5px rgba(0,0,0, 1);
+			    border:1px solid rgba(0,0,0, 0.5); 
+			}
+			
+			#faq-index .index-topic-name {
+				display: block;
+				margin-bottom: 5px;
+			}
+			
+			#faq-index .index-topic-question {
+				margin: 0 0 5px 10px;
+				line-height: 18px;
+			}
+			
+			#faq-index .index-topic-question a {
+				text-decoration: none;
+			}
+			
+			#faq-index .index-topic-question a:hover {
+				text-decoration: underline;
+			}
+			
 			.faq-question-wrapper {
 				margin-bottom: 40px;
 			}
@@ -1891,46 +1978,40 @@
 		================================================== */
 			
 			.ingredient-summary {
-				width: 216px;
+			    float: left;
+				width: 220px;
 				margin: 10px;
-				border: 1px solid transparent;
+				background-color: #333333;
+			    border-radius: 15px;
+				-moz-border-radius: 15px;
 			    transition: all 0.25s ease-in-out;
 			    -webkit-transition: all 0.25s ease-in-out;
 			    -moz-transition: all 0.25s ease-in-out;
-			    float: left;
-			    border-radius: 15px;
-				-moz-border-radius: 10px;
 			}
 			
 			.ingredient-summary:hover {
-			    box-shadow: 0 0 5px rgba(0,0,0, 1);
-			    -webkit-box-shadow: 0 0 5px rgba(0,0,0, 1); 
-			    -moz-box-shadow: 0 0 5px rgba(0,0,0, 1);
-			    border:1px solid rgba(0,0,0, 0.5); 
+			    box-shadow: 0 0 5px 2px rgba(0,0,0, 1);
+			    -webkit-box-shadow: 0 0 5px 2px rgba(0,0,0, 1); 
+			    -moz-box-shadow: 0 0 5px 2px rgba(0,0,0, 1);
 			}
 			
 			.ingredient-summary img {
-				display: block;
+				margin: 0 auto;
 				width: 100%;
 				height: 220px;
-			    border-top-right-radius: 10px;
-				-moz-border-radius-topright: 10px;
-			    border-top-left-radius: 10px;
-				-moz-border-radius-topleft: 10px;
+			    border-top-right-radius: 15px;
+			    border-top-left-radius: 15px;
+				-moz-border-radius-topright: 15px;
+				-moz-border-radius-topleft: 15px;
 			}
 			
 			.ingredient-summary .ingredient-title {
 				height: 80px;
 				display: block;
 				padding: 10px 10px 0;
-				background-color: #333333;
 				position: relative;
 				color: white;
 				font-size: 21px;
-			    border-bottom-right-radius: 10px;
-				-moz-border-radius-bottomright: 10px;
-			    border-bottom-left-radius: 10px;
-				-moz-border-radius-bottomleft: 10px;
 			}
 			
 			#ingredient-summaries-wrapper {
@@ -1953,6 +2034,72 @@
 				margin: 30px auto;
 				text-align: center;
 				font-weight: bold;
+			}
+	
+		/* #View Ingredient
+		================================================== */
+		
+			h1 #ingredient-synonyms {
+				font-size: 18px;
+			}
+			
+			#ingredient-image {
+				float: right;
+				width: 40%;
+				margin: 0 0 20px 20px;
+				border: 2px ridge #333;
+			}
+			
+			#ingredient-availability {
+				position: relative;
+			}
+			
+			#ingredient-availability .month {
+				display: inline-block;
+				width: 70px;
+				text-align: center;
+				border-left: 1px solid #DDD;
+				margin-bottom: 10px;
+				bottom: 0;
+				height: 100%;
+			}
+			
+			#ingredient-availability .month.alpha {
+				margin-left: 100px;
+				border-left: none;
+			}
+			
+			#ingredient-availability .country-name {
+				width: 55px;
+			}
+			
+			#ingredient-availability .available-in {
+				position: absolute;
+			}
+			
+			#ingredient-availability .availability-indicator {
+				position: absolute;
+				height: 20px;
+			    background-size:18px 18px;
+			    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+			                        transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+			                        transparent 75%, transparent);
+			    background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+			                        transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+			                        transparent 75%, transparent);
+			    background-image: -ms-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+			                        transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+			                        transparent 75%, transparent);
+			    background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+			                        transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+			                        transparent 75%, transparent);
+			    background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+			                        transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+			                        transparent 75%, transparent);
+			    box-shadow:inset 0px 2px 8px rgba(255, 255, 255, .5), inset -1px -1px 0px rgba(0, 0, 0, .2);
+				border-radius: 4px;
+				-moz-border-radius: 4px;
+			    background-color: #629B31;
 			}
 
 /* #Media Queries
