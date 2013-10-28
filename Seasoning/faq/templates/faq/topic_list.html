@@ -10,12 +10,21 @@
 
 <a class="anchor-link" id="faq-index-anchor"></a>
 <div id="faq-index">
-	<ul>
-		{% for topic in topics %}
-	    <li><a href="#{{ topic.name }}">{{ topic }}</a></li>
-		{% endfor %}
-	</ul>
+	{% for topic in topics %}
+	<div class="index-topic-wrapper{% cycle " left" " right" %}">
+	    <a class="index-topic-name" href="#{{ topic.name }}"><strong>{{ topic }}</strong></a>
+	    {% for question in topic.questions.all %}
+	    <div class="index-topic-question">
+	        <a href="#{{ question.text }}">
+	           {{ question.text }}
+	        </a>
+	    </div>
+        {% endfor %}
+	</div>
+	{% endfor %}
 </div>
+
+<br class="clear" />
 
 <div id="faq-wrapper">
 	{% for topic in topics %}
@@ -25,7 +34,8 @@
 		{% for question in topic.questions.all %}
 		<div class="faq-question-wrapper">
 			<div class="faq-question">
-				<strong>{{ question.text }}</strong>
+				<a class="anchor-link" id="{{ question.text }}"></a>
+                <strong>{{ question.text }}</strong>
 				<a href="#faq-index-anchor" class="back-to-index-link">Terug naar het overzicht</a>
 			</div>
 			<div>

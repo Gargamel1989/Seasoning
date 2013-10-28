@@ -831,6 +831,7 @@
 				margin-bottom: 30px;
 				background-color: #EAF2E9;
 			    border-radius: 15px;
+				-moz-border-radius: 15px;
 				border: 1px solid transparent;
 				-moz-border-radius: 15px;
 			    transition: all 0.25s ease-in-out;
@@ -875,6 +876,51 @@
 		/* #Faq
 		================================================== */
 		
+			#faq-index .index-topic-wrapper {
+				float: left;
+				width: 47%;
+				margin: 0 0 30px 0;
+				padding: 5px;
+				background-color: #EAF2E9;
+			    border-radius: 15px;
+				-moz-border-radius: 15px;
+				border: 1px solid transparent;
+				-moz-border-radius: 15px;
+			    transition: all 0.25s ease-in-out;
+			    -webkit-transition: all 0.25s ease-in-out;
+			    -moz-transition: all 0.25s ease-in-out;
+			}
+			
+			#faq-index .index-topic-wrapper.right {
+				float: right;
+				margin: 0 0 30px 0;
+			}
+			
+			#faq-index .index-topic-wrapper:hover {
+			    box-shadow: 0 0 5px rgba(0,0,0, 1);
+			    -webkit-box-shadow: 0 0 5px rgba(0,0,0, 1); 
+			    -moz-box-shadow: 0 0 5px rgba(0,0,0, 1);
+			    border:1px solid rgba(0,0,0, 0.5); 
+			}
+			
+			#faq-index .index-topic-name {
+				display: block;
+				margin-bottom: 5px;
+			}
+			
+			#faq-index .index-topic-question {
+				margin: 0 0 5px 10px;
+				line-height: 18px;
+			}
+			
+			#faq-index .index-topic-question a {
+				text-decoration: none;
+			}
+			
+			#faq-index .index-topic-question a:hover {
+				text-decoration: underline;
+			}
+			
 			.faq-question-wrapper {
 				margin-bottom: 40px;
 			}
