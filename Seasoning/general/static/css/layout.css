@@ -308,6 +308,11 @@
 	/* #Static pages
 	================================================== */
 	
+		.edit-static-page-link {
+			position: absolute;
+			right: 0;			
+		}
+		
 		#static-page-wrapper h1 {
 			border-bottom: 3px solid #333;
 		}
