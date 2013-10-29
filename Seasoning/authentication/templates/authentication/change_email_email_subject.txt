@@ -1,1 +1,1 @@
-E-mail adres wijzigen op {{ site }}
+E-mail adres wijzigen op Seasoning

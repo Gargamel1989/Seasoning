@@ -1,10 +1,15 @@
 {% load humanize %}
-Enkele ogenblikken geleden werd geprobeerd dit e-mail adres aan het account met gebruikersnaam {{ username }} te koppelen op
-{{ site }}. Indien u, de eigenaar van dit e-mail adres, dit gedaan hebt, kan u onderstaande 
-link gebruiken om het account te activeren:
+Enkele ogenblikken geleden werd geprobeerd dit e-mailadres aan het account van {{ user.givenname }} {{ user.surname }} te koppelen op
+{{ site }}. 
+
+Indien u dit gedaan hebt, kan u onderstaande link gebruiken om het account te activeren:
 
 
 {{ site }}/accounts/change/{{ activation_key }}/
 
-Indien u dit niet gedaan hebt, kan u deze e-mail gewoon negeren. Het account zal dan met het oorspronkelijke e-mail adres
+Indien u dit niet gedaan hebt, kan u deze e-mail gewoon negeren. Het account zal dan aan het oorspronkelijke e-mailadres
 gekoppeld blijven.
+
+Met vriendelijke groeten,
+
+Het Seasoning Team

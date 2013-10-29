@@ -510,7 +510,6 @@ class RegistrationProfile(models.Model):
 
         """
         ctx_dict = {'activation_key': self.activation_key,
-                    'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
                     'site': site}
         subject = render_to_string('authentication/activation_email_subject.txt',
                                    ctx_dict)
@@ -609,7 +608,8 @@ class NewEmail(models.Model):
         
         """
         ctx_dict = {'activation_key': self.activation_key,
-                    'site': site}
+                    'site': site,
+                    'user': self.user}
         subject = render_to_string('authentication/change_email_email_subject.txt',
                                    ctx_dict)
         # Email subject *must not* contain newlines

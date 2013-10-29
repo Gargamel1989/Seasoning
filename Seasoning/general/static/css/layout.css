@@ -480,7 +480,6 @@
 			}
 			
 			#resend-activation-email-form input[type=submit] {
-				width: 52%;
 				margin-right: -2px;
 			}
 	
@@ -686,6 +685,11 @@
 		/* #Account Delete
 		================================================== */
 		
+			#account-delete-form {
+				width: 720px;
+				display: block;
+			}
+			
 			#account-delete-form .field-wrapper {
 				width: 30%;
 				margin: auto;
