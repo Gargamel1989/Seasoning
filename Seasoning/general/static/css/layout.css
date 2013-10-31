@@ -498,15 +498,41 @@
 				width: 160px;
 			}
 			
+			#account-settings #account-info {
+				width: 720px;
+			}
+			
 			#account-settings #account-info #account-name {
 				font-weight: bold;
 				font-size: 16px;
 				display: block;
-				margin-bottom: 5px;
+				margin-bottom: 20px;
+			}
+			
+			#account-settings #account-info #account-rank {
+				margin-bottom: 60px;
+			}
+			
+			#account-settings #account-info .mean-wrapper {
+				position: relative;
+				font-size: 25px;
+				font-weight: bold;
 			}
 			
 			#account-settings #account-info img {
-				height: 66px;
+				height: 100px;
+				margin-right: 5px;
+			}
+			
+			#account-settings #account-info #mean-fp {
+				position: relative;
+				bottom: 40px;
+				right: 20px;
+				margin: auto;
+			}
+			
+			#account-settings #account-info #mean-rating {
+				position: absolute;
 			}
 			
 			#account-settings-container #account-recipes {
