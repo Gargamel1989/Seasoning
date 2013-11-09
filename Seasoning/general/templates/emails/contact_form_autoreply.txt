@@ -1,4 +1,4 @@
-U hebt zonet een contactformulier verstuurd op Seasoning.be met volgende gegevens:
+U hebt zonet een contactformulier verstuurd op Seasoning met de volgende gegevens:
 
 Type contact: {{ type }}
 
@@ -9,10 +9,11 @@ Boodschap:
 
 
 
-Wij proberen dit zo spoedig mogelijk te beantwoorden!
+Wij proberen dit zo spoedig mogelijk te behandelen!
 
 Bedankt voor uw geduld,
+
 Het Seasoning Team
 
 
-Dit is een automatisch gegenereerde email. Gelieve niet op dit adres te antwoorden.
+Dit is een automatisch gegenereerde email. Gelieve er niet op te antwoorden.

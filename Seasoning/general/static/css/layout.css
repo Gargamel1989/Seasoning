@@ -301,28 +301,29 @@ p.author {
 
 /* #Static pages
 	================================================== */
-.edit-static-page-link {
-	position: absolute;
-	right: 0;
-}
-
-#static-page-wrapper h1 {
-	border-bottom: 3px solid #333;
-}
-
-#static-page-wrapper h2 {
-	margin-top: 30px;
-}
-
-#static-page-wrapper ul {
-	list-style: disc inside;
-	margin: -10px 0 0 10px;
-}
-
-#static-page-wrapper #last-line {
-	font-size: 12px;
-	line-height: 14px;
-}
+	
+		.edit-static-page-link {
+			position: absolute;
+			right: 0;			
+		}
+		
+		#static-page-wrapper h1 {
+			border-bottom: 3px solid #333;
+		}
+		
+		#static-page-wrapper h2 {
+			margin-bottom: 20px;
+		}
+		
+		#static-page-wrapper ul {
+			list-style: disc inside;
+			margin: -10px 0 0 10px;
+		}
+		
+		#static-page-wrapper #last-line {
+			font-size: 12px;
+			line-height: 14px;
+		}		
 
 /* #Page Styles
 ================================================== */
@@ -470,8 +471,6 @@ p.author {
 	margin-right: -2px;
 }
 
-/* #Public Profile
-		================================================== */
 #account-settings #account-image {
 	float: left;
 	margin-right: 20px;
@@ -561,7 +560,7 @@ p.author {
 	display: none;
 }
 
-/* #Account Settings
+		/* #Account Settings
 		================================================== */
 #account-settings-container {
 	position: relative;
@@ -706,6 +705,7 @@ p.author {
 
 /* #Account Delete
 		================================================== */
+<<<<<<< HEAD
 #account-delete-form .field-wrapper {
 	width: 30%;
 	margin: auto;
@@ -728,6 +728,36 @@ p.author {
 }
 
 /* #Misc Authentication Pages
+=======
+		
+			#account-delete-form {
+				width: 720px;
+				display: block;
+			}
+			
+			#account-delete-form .field-wrapper {
+				width: 30%;
+				margin: auto;
+				text-align: center;
+				margin-bottom: 30px;
+			}
+			
+			#account-delete-form .field-wrapper input {
+				width: 100%;
+				float: none;
+			}
+			
+			#account-delete-form #submit-button {
+				text-align: center;
+			}
+			
+			#account-delete-form #submit-button input {
+				float: none;
+				font-size: 17px;
+			}
+	
+		/* #Misc Authentication Pages
+>>>>>>> branch 'master' of https://github.com/Gargamel1989/Seasoning.git
 		================================================== */
 #password-reset-login-form {
 	width: 100%;
