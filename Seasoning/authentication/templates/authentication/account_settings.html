@@ -36,13 +36,13 @@
             {% endif %}
             <span class="account-info-stat-img" title="De recepten toegevoegd door deze persoon hebben een gemiddelde score van {{ average_rating|floatformat:"-2" }}/5">{% mean_rating average_rating %}</span>
             
-            <span id="mean-footprint" class="account-info-stat-img" title="De recepten toegevoegd door deze persoon hebben een gemiddelde voetafdruk van {{ average_rating|floatformat:"-2" }}kgCO2 per portie"><span id="mean-footprint-text">{{ average_rating|floatformat:"-2" }}</span></span>
+            <span id="mean-footprint" class="account-info-stat-img" title="De recepten toegevoegd door deze persoon hebben een gemiddelde voetafdruk van {{ average_fp|floatformat:"-2" }}kgCO2 per portie"><span id="mean-footprint-text">{{ average_fp|floatformat:"-2" }}</span></span>
         </div>
     </div>
         
     
     <div id="account-recipes">
-        <h3>Toegevoegde recepten:</h3> 
+        <h3 class="title">Toegevoegde recepten:</h3> 
         {% if not recipes %}
         <p>
             {% if viewing_other %}Deze gebruiker heeft{% else %}Je hebt{% endif %} nog geen recepten toegevoegd!
