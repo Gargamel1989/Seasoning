@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ratings %}
 
 {% block title %}{% if viewing_other %}Publiek Profiel{% else %}Mijn Profiel{% endif %}{% endblock %}
 
@@ -23,15 +24,16 @@
             <div id="account-rank">
                 Rang: {{ viewed_user.rank }}{% if not viewing_other %} ({{ viewed_user.recipes_until_next_rank }} recepten tot volgende rang){% endif %}
             </div>
-            <div>Gemiddelde voetafdruk: {{ average_fp|floatformat }}</div>
-            <div>Gemiddelde rating: {{ average_rating }}</div>
             {% if most_used_veganism == 2 %}
-            <img src="{{ STATIC_URL }}img/vegan.png" title="Deze persoon heeft vooral veganistische recepten toegevoegd" />
+            <img class="account-info-stat-img" src="{{ STATIC_URL }}img/vegan.png" title="Deze persoon heeft vooral veganistische recepten toegevoegd" />
             {% elif most_used_veganism == 1 %}
-            <img src="{{ STATIC_URL }}img/vegetarian.png" title="Deze persoon heeft vooral vegetarische recepten toegevoegd" />
+            <img class="account-info-stat-img" src="{{ STATIC_URL }}img/vegetarian.png" title="Deze persoon heeft vooral vegetarische recepten toegevoegd" />
             {% elif most_used_veganism == 0 %}
-            <img src="{{ STATIC_URL }}img/non-vegetarian.png" title="Deze persoon heeft vooral niet-vegetarische recepten toegevoegd" />
+            <img class="account-info-stat-img" src="{{ STATIC_URL }}img/non-vegetarian.png" title="Deze persoon heeft vooral niet-vegetarische recepten toegevoegd" />
             {% endif %}
+            <span class="account-info-stat-img" title="De recepten toegevoegd door deze persoon hebben een gemiddelde score van {{ average_rating|floatformat:"-2" }}/5">{% mean_rating average_rating %}</span>
+            
+            <span id="mean-footprint" class="account-info-stat-img" title="De recepten toegevoegd door deze persoon hebben een gemiddelde voetafdruk van {{ average_rating|floatformat:"-2" }}kgCO2 per portie"><span id="mean-footprint-text">{{ average_rating|floatformat:"-2" }}</span></span>
         </div>
     </div>
         
