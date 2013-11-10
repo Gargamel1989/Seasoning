@@ -1,0 +1,13 @@
+*.log
+*.pot
+*.pyc
+.project
+.pydevproject
+.settings
+media/*
+*~
+\#*\#
+.\#*
+
+secrets.py
+initial_data.json
