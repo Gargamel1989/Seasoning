@@ -320,7 +320,8 @@
 			margin-bottom: 20px;
 		}
 		
-		#static-page-wrapper ul {
+		#static-page-wrapper ul,
+		#faq-wrapper ul {
 			list-style: disc inside;
 			margin: -10px 0 0 10px;
 		}
