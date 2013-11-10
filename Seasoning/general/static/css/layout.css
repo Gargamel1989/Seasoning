@@ -492,6 +492,11 @@
 				border: 2px ridge #333;
 			}
 			
+			#account-settings #account-image img {
+				width: 250px;
+				height: 250px;
+			}
+			
 			#account-settings #givenname-label {
 				float: left;
 				margin-right: 20px;
