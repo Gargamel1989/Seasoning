@@ -1,50 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-		<div class="one-third column">
-            <h3>Volg de seizoenen met deze recepten</h3>
-            <a href="">
-                <img src="https://www.seasoning.be/static/img/Groenten.jpg" class="column-image"/>
-                <h4>Rauwe Groentjes</h4>
-            </a>
-            <p class="author">Toegevoegd door: Joep</p>
-            <p>
-                Lekkere rauwe groentjes uit de moestuin zijn altijd volgens seizoen!
-            </p>
-            
-            <a href="">
-                <img src="https://www.seasoning.be/static/img/Groenten.jpg" class="column-image"/>
-                <h4>Rauwe Groentjes</h4>
-            </a>
-            <p class="author">Toegevoegd door: <a href="">Joep</a></p>
-            <p>
-                Lekkere rauwe groentjes uit de moestuin zijn altijd volgens seizoen!
-            </p>
-        </div>
-        
-        <div class="one-third column">
-            <h3>Wat is Seasoning?</h3>
-            <p>Seasoning biedt jou de volgende functionaliteit:</p>
-            <ul class="square">
-                <li><strong>Duurzamer eten zonder eindeloos afwegen</strong>: Vergelijk makkelijk de duurzaamheid van verschillende gerecht, en kies hetgene dat je het meeste aanspreekt</li>
-                <li><strong>Leer je eigen gerechten beter kennen</strong>: Voeg je eigen gerechten toe aan onze databank, en ontdek wat hun voetafdruk is, wat de grootste vervuilers zijn, en wanneer je het best kan eten.</li>
-                <li><strong>Voel je beter</strong>: Door seizoensgebonden te eten, zal ook je gezondheid verbeteren!</li>
-            </ul>
-        </div>
-        
-        <div class="one-third column">
-            <h3>Help Seasoning!</h3>
-            <p>
-                Wij zijn maar 2 vrienden, gepassioneerd door duurzaam en seizoensgebonden eten en leven. Als jij onze passie deelt en dit een leuk project vindt, kan je ons op tal van manieren helpen:
-            </p>
-            <ul class="square">
-                <li><strong>Voeg recepten toe</strong>: Door recepten toe te voegen aan onze databank, kunnen we onze gebruikers meet content bieden. Dit betekent dat we een grotere waarde kunnen bieden en
-                hopelijk dat we meer gebruikers aantrekken. Elke persoon die duurzamer eet is een stap dichter naar een mooiere toekomst!
-                </li>
-                <li><strong>Verbeter onze informatie</strong>: Als je fouten ziet, of zelf specifieke kennis hebt die volgens jou de site ten goede zal komen, mag je ons steeds contacteren!</li>
-                <li><strong>Doneren</strong>: Momenteel betalen wij de kosten om deze website op het internet te plaatsen zelf. Ook alle onderhoud en content wordt in onze vrije tijd gedaan. Door financiele
-                bijdragen te leveren, komen we uit de kosten, en kunnen we de site nog beter maken! Bovendien komt jouw naam op onze doneurs-pagina.
-                </li>
-            </ul>
-        </div>
+<div style="text-align: center; position: relative;">
+	<h1 style="border: none; margin: 20px 0 5px 0;">Gezond en bewust eten volgens de seizoenen</h1>
+	<h5>Scroll naar beneden en kom meer te weten over Seasoning</h5>
+	<div style="position: absolute; height: 20px; bottom: -10px; width: 100%; background-image: url('/static/img/logos/facebook icoon.png'); background-size: 30px; background-repeat: no-repeat; background-position: center;"> </div>
+	<hr style="margin-top: 20px;" />
+</div>
+<div style="margin-top: 20px;">
+	<div>
+		<img src="/static/img/Groenten2.jpg" style="width: 400px; float: left; margin-right: 40px; border: 1px solid #DDD" />
+		<div style="padding-top: 30px;">
+			<h3>Wat is Seasoning?</h3>
+			<p>
+				Seasoning is een interactief platform om de duurzaamheid van recepten doorheen het jaar met elkaar te vergelijken. De 
+				ecologische voetafdruk van recepten wordt automatisch berekend en past zich aan naargelang het seizoen. 
+			</p>
+			<p>
+				Geef smaak aan de seizoenen en hou op deze manier rekening met het milieu én je gezondheid.
+			</p>
+		</div>
+		<br class="clear" />
+	</div>
+	<div style="margin: 50px 0;">
+		<div style="position: relative; width: 400px; height: 250px; float: right; margin-left: 40px; background-image: url('/static/img/icons/cloud-big.png'); background-repeat: no-repeat; background-position: center; background-size: 200px;">
+			<span style="position: absolute; top: 115px; left: 155px; font-size: 35px; font-weight: bold;">5.38</span>
+			<img src="/static/img/arrow.png" style="position: absolute; left: -80px; top: 80px;">
+		</div>
+		<div style="padding-top: 0px; text-align: left;">
+			<h3>Hoe werkt het?</h3>
+			<p>
+				Recepten en ingrediënten worden met elkaar vergeleken op het vlak van duurzaamheid. Een heel aantal aspecten kunnen immers 
+				een invloed hebben op de milieu-impact: de keuze van ingrediënten, de productiewijze, het transport of de lokale beschikbaarheid.
+			</p>
+			<p>
+				Hoe dichter bij huis het voedsel is geproduceerd, hoe minder schadelijk de effecten op ons leefmilieu. Kiezen voor voeding van 
+				hier is dus kiezen voor seizoensproducten. Aan de hand van de ecologische voetafdruk maakt Seasoning duurzaam consumeren aangenamer 
+				en gemakkelijker dan het lijkt.
+			</p>
+		</div>
+		<br class="clear" />
+	</div>
+</div>
 {% endblock %}

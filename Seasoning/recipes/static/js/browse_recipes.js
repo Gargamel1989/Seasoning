@@ -168,4 +168,6 @@ $(document).ready(function() {
 		// Stop the timer when a search is being forced
 		timer = clearTimeout(timer);
 	});
+	
+	$("#advanced-link").click();
 });
