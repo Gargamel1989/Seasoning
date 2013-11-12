@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load markdown %}
 
 {% block title %}Help{% endblock %}
 
@@ -27,17 +28,17 @@
 <div id="faq-wrapper">
 	{% for topic in topics %}
 	<div class="faq-topic-wrapper">
-		<a class="anchor-link" id="{{ topic.name }}"></a>
+		<a class="anchor-link" id="{{ topic.name }}"> </a>
 		<h2>{{ topic.name }}</h2>
 		{% for question in topic.questions.all %}
 		<div class="faq-question-wrapper">
 			<div class="faq-question">
-				<a class="anchor-link" id="{{ question.text }}"></a>
+				<a class="anchor-link" id="{{ question.text }}"> </a>
                 <strong>{{ question.text }}</strong>
 				<a href="#faq-index-anchor" class="back-to-index-link">Terug naar het overzicht</a>
 			</div>
 			<div>
-				{{ question.answer|safe|linebreaks }}
+				{{ question.answer|markdown }}
 			</div>
 		</div>
 		{% endfor %}
