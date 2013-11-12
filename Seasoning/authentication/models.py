@@ -5,13 +5,13 @@ from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password, is_password_usable
 from django.contrib.auth.models import BaseUserManager
 from django.core import validators
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from imagekit.models.fields import ProcessedImageField
-from imagekit.processors.resize import ResizeToFit
+from imagekit.processors.resize import ResizeToFill
 
 
 def get_image_filename(instance, old_filename):
@@ -89,7 +89,7 @@ class User(models.Model):
     
     password = models.CharField(_('password'), max_length=128, null=True)
     
-    avatar = ProcessedImageField([ResizeToFit(250, 250)], format='PNG', \
+    avatar = ProcessedImageField([ResizeToFill(250, 250)], format='PNG', \
                                   upload_to=get_image_filename, default='images/users/no_image.png')
     
     date_of_birth = models.DateField()

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ratings %}
 
 {% block title %}{% if viewing_other %}Publiek Profiel{% else %}Mijn Profiel{% endif %}{% endblock %}
 
@@ -6,6 +7,7 @@
 
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/recipe_summaries.js"></script>
+<script src="{{ STATIC_URL }}js/paging.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -24,31 +26,23 @@
                 <br />
                 {{ viewed_user.rank }}{% if not viewing_other %} ({{ viewed_user.recipes_until_next_rank }} recepten tot volgende rang){% endif %}
             </div>
-            
+
             {% if most_used_veganism == 2 %}
-            <img src="{{ STATIC_URL }}img/vegan.png" title="Deze persoon heeft vooral veganistische recepten toegevoegd" />
+            <img class="account-info-stat-img" src="{{ STATIC_URL }}img/vegan.png" title="Deze persoon heeft vooral veganistische recepten toegevoegd" />
             {% elif most_used_veganism == 1 %}
-            <img src="{{ STATIC_URL }}img/vegetarian.png" title="Deze persoon heeft vooral vegetarische recepten toegevoegd" />
+            <img class="account-info-stat-img" src="{{ STATIC_URL }}img/vegetarian.png" title="Deze persoon heeft vooral vegetarische recepten toegevoegd" />
             {% elif most_used_veganism == 0 %}
-            <img src="{{ STATIC_URL }}img/non-vegetarian.png" title="Deze persoon heeft vooral niet-vegetarische recepten toegevoegd" />
+            <img class="account-info-stat-img" src="{{ STATIC_URL }}img/non-vegetarian.png" title="Deze persoon heeft vooral niet-vegetarische recepten toegevoegd" />
             {% endif %}
+            <span class="account-info-stat-img" title="De recepten toegevoegd door deze persoon hebben een gemiddelde score van {{ average_rating|floatformat:"-2" }}/5">{% mean_rating average_rating %}</span>
             
-            <span id="mean-fp-wrapper" class="mean-wrapper">
-                <img id="mean-fp-img" src="{{ STATIC_URL }}img/icons/cloud.png" />
-                <div id="mean-fp">{{ average_fp|floatformat }}</div>
-            </span>
-            
-            <span id="mean-rating-wrapper" class="mean-wrapper">
-                <img id="mean-rating-img" src="{{ STATIC_URL }}img/icons/favorite.png" />
-                <div id="mean-rating">{{ average_rating|floatformat:0 }}</div>
-            </span>
-            
+            <span id="mean-footprint" class="account-info-stat-img" title="De recepten toegevoegd door deze persoon hebben een gemiddelde voetafdruk van {{ average_fp|floatformat:"-2" }}kgCO2 per portie"><span id="mean-footprint-text">{{ average_fp|floatformat:"-2" }}</span></span>
         </div>
     </div>
         
     
     <div id="account-recipes">
-        <h3>Toegevoegde recepten:</h3> 
+        <h3 class="title">Toegevoegde recepten:</h3> 
         {% if not recipes %}
         <p>
             {% if viewing_other %}Deze gebruiker heeft{% else %}Je hebt{% endif %} nog geen recepten toegevoegd!

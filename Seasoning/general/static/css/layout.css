@@ -1,4 +1,3 @@
-
 /*
 * Skeleton V1.2
 * Copyright 2011, Dave Gamache
@@ -27,7 +26,6 @@
 	
 	body {
 		font: 14px/21px Verdana,Geneva,sans-serif;
-		background-color: #F7F7F5;
 	}
 	
 	h1 {
@@ -56,7 +54,7 @@
 	    -webkit-transition: all 0.5s ease-in-out;
 	    -moz-transition: all 0.5s ease-in-out;
 	    border: 1px solid #CCCCCC;
-	    background-image: url('/img/icons/add.png');
+	    background-image: url('/static/img/icons/add.png');
 	    background-size: 20px 20px;
 	    background-repeat: no-repeat;
 	    background-position: 2px 0;
@@ -322,9 +320,10 @@
 			margin-bottom: 20px;
 		}
 		
-		#static-page-wrapper ul {
-			list-style: disc outside;
-			margin: -10px 0 20px 20px;
+		#static-page-wrapper ul,
+		#faq-wrapper ul {
+			list-style: disc inside;
+			margin: -10px 0 0 10px;
 		}
 		
 		#static-page-wrapper #last-line {
@@ -493,6 +492,11 @@
 				border: 2px ridge #333;
 			}
 			
+			#account-settings #account-image img {
+				width: 250px;
+				height: 250px;
+			}
+			
 			#account-settings #givenname-label {
 				float: left;
 				margin-right: 20px;
@@ -509,39 +513,55 @@
 				display: block;
 				margin-bottom: 20px;
 			}
-			
-			#account-settings #account-info #account-rank {
-				margin-bottom: 60px;
-			}
-			
-			#account-settings #account-info .mean-wrapper {
-				position: relative;
-				font-size: 25px;
-				font-weight: bold;
-			}
-			
-			#account-settings #account-info img {
+
+			#account-settings #account-info .account-info-stat-img {
 				height: 100px;
-				margin-right: 5px;
+				width: 100px;
+				display: inline-block;
+				margin: 50px 20px 0 0;
 			}
 			
-			#account-settings #account-info #mean-fp {
+			.account-info-stat-img #account-mean-rank-on {
+				background-image: url('/static/img/raty/star-on-big.png');
+				background-size: 100px 100px;
+				height: 100%;
+				float: left;
+			}
+			
+			.account-info-stat-img #account-mean-rank-off {
+				background-image: url('/static/img/raty/star-off-big.png');
+				background-size: 100px 100px;
+				background-position: right; 
+				height : 100%;
+				float: right;
+				height: 100%;
+			}
+			
+			.account-info-stat-img#mean-footprint {
+				background-image: url('/static/img/icons/cloud.png');
+				background-size: 100px 80px;
+				background-repeat: no-repeat;
+				background-position: center bottom;
+				height: 100%;
 				position: relative;
-				bottom: 40px;
-				right: 20px;
-				margin: auto;
 			}
 			
-			#account-settings #account-info #mean-rating {
+			.account-info-stat-img#mean-footprint #mean-footprint-text {
 				position: absolute;
+				top: 48px;
+				left: 0;
+				width: 100%;
+				font-size: 18px;
+				font-weight: bold;
+				text-align: center;
 			}
 			
 			#account-settings-container #account-recipes {
 				clear: both;
-				padding-top: 20px;
+				padding-top: 60px;
 			}
 			
-			#account-recipes h3 {
+			#account-recipes .title {
 				border-bottom: 2px solid #333;
 				margin-right: 258px;
 			}
@@ -553,7 +573,8 @@
 			}
 			
 			#account-recipes #search-result-count {
-				top: -18px;
+				position: absolute;
+				top: -22px;
 				right: 78px;
 			}
 			
@@ -837,7 +858,7 @@
 				float: right;
 				padding: 0 0 20px 20px;
 				text-align: center;
-				background-color: #F7F7F5;
+				background-color: #FFF;
 			}
 			
 			#twitter-feed-wrapper a {
@@ -989,11 +1010,6 @@
 				text-decoration: none;
 			}
 			
-			#faq-wrapper ul {
-				list-style: disc outside;
-				margin: 10px 0 20px 20px;
-			}
-			
 			#faq-index .index-topic-question a:hover {
 				text-decoration: underline;
 			}
@@ -1079,6 +1095,8 @@
 			    -webkit-transition: all 0.25s ease-in-out;
 			    -moz-transition: all 0.25s ease-in-out;
 			    float: left;
+				border-radius: 16px;
+				-moz-border-radius: 16px;
 			}
 			
 			.recipe-summary:hover {
@@ -1092,14 +1110,17 @@
 				display: block;
 				width: 100%;
 				height: 220px;
+				border-top-right-radius: 15px;
+				border-top-left-radius: 15px;
+				-moz-border-radius-topright: 15px;
+				-moz-border-radius-topleft: 15px;
 			}
 			
 			.recipe-summary .recipe-title {
-				height: 80px;
+				height: 70px;
 				display: block;
 				padding: 25px 10px 0;
 				background-color: #333333;
-				border-bottom: 1px solid #BBB;
 				position: relative;
 			}
 			
@@ -1121,7 +1142,7 @@
 				margin-top: 10px;
 			}
 			
-			.recipe-title .title h4 {
+			.recipe-title .title h3 {
 				color: white;
 			}
 			
@@ -1131,16 +1152,21 @@
 				font-size: 11px;
 				line-height: 18px;
 				padding: 5px 10px;
-				background-color: white;
+				border-left: 1px solid #DDD;
+				border-right: 1px solid #DDD;
 			}
 			
 			.recipe-meta-inf {
 				display: block;
-				background-color: #EAF2E9;
+				background-color: #333333;
 				padding: 5px 10px;
 				font-size: 11px;
 				height: 20px;
-				border-top: 1px solid #DAE3D3;
+				border-bottom-right-radius: 15px;
+				border-bottom-left-radius: 15px;
+				-moz-border-radius-bottomright: 15px;
+				-moz-border-radius-bottomleft: 15px;
+				color: white;
 			}
 			
 			.recipe-meta-inf .recipe-time {
@@ -1150,6 +1176,30 @@
 			
 			.recipe-meta-inf .recipe-rating {
 				float: right;
+			}
+
+			.star-rating-wrapper {
+				width: 80px;
+				display: block;
+				margin-top: 1px;
+			}
+			
+			.star-rating-wrapper .star-rating-not {
+				background-image: url('/static/img/raty/star-off.png');
+				background-position: left;
+				height: 16px;
+				float: left;
+			}
+			
+			.star-rating-wrapper .star-rating {
+				background-image: url('/static/img/raty/star-on.png');
+				background-position: right;
+				height: 16px;
+				float: right;
+			}
+			
+			.no-rating-wrapper {
+				font-size: 8px;
 			}
 		
 		/* #Browse Recipes
@@ -1371,13 +1421,13 @@
 				font-weight: normal;
 			}
 			
-			#recipe-summaries-wrapper {
+			#browse-recipe-summaries-wrapper {
 				width: 960px;
 				float: right;
 				margin-top: -10px;
 			}
-			
-			#recipes-summaries-wrapper #search-result-count {
+
+			#browse-recipe-summaries-wrapper #search-result-count {
 				position: absolute;
 				right: 0;
 				top: 40px;
@@ -2041,12 +2091,14 @@
 			}
 			
 			.ingredient-summary .ingredient-title {
-				height: 80px;
+				height: 45px;
 				display: block;
-				padding: 10px 10px 0;
+				padding: 15px 10px 0;
 				position: relative;
 				color: white;
 				font-size: 21px;
+				text-align: center;
+				overflow: hidden;
 			}
 			
 			#ingredient-summaries-wrapper {
@@ -2110,7 +2162,6 @@
 			
 			#ingredient-availability .available-in {
 				position: absolute;
-				width: 100%;
 			}
 			
 			#ingredient-availability .availability-indicator {

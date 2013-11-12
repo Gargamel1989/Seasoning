@@ -5,11 +5,20 @@
 {% block extra_script %}
 <script>
 $(function() {
-    $("#ingredient-availability").height(parseInt($("#number-of-groups").text())*30 + 30);
-    var offset_top = 30;
+    $("#ingredient-availability").height(parseInt($("#number-of-groups").text())*30 + 25);
+    var offset_top = 20;
+    var first = true;
     $(".available-in").each(function() {
-        $(this).css("top", offset_top);
+    	$(this).css("top", offset_top);
         offset_top = offset_top + 30;
+        var extra_top = 0;
+        if (first) {
+    		$(this).css('border-top', '1px solid #DDD');
+    		$(this).css('padding-top', '10px');
+    		first = false;
+    		offset_top = offset_top + 10;
+    		extra_top = 10;
+    	}
         $(this).children(".availability-indicator").each(function() {
             var from = parseInt($(this).children(".available-from").text());
             var until = parseInt($(this).children(".available-until").text());
@@ -21,15 +30,19 @@ $(function() {
             if (from < until) {
                 $(this).css("left", from_point + left_margin)
                 $(this).css("width", until_point - from_point);
+            	$(this).css("top", extra_top + "px");
             } else {
                 var second_indicator = $(this).clone();
                 $(this).css("left", left_margin);
                 $(this).css("width", until_point);
+            	$(this).css("top", extra_top + "px");
                 second_indicator.insertAfter($(this));
                 second_indicator.css("left", from_point + left_margin);
                 second_indicator.css("width", total_width - from_point);
+            	second_indicator.css("top", extra_top + "px");
             }
         });
+        
     });
 });
 </script>
@@ -52,7 +65,7 @@ $(function() {
     <strong>Veganisme:</strong> {{ ingredient.get_veganism_display }}
 </p>
 <p>
-    <strong>Voetafdruk:</strong> {{ ingredient.footprint }} kgCO2/{{ ingredient.primary_unit.short }}
+    <strong>Voetafdruk:</strong> {{ ingredient.footprint|floatformat:2 }} kgCO2/{{ ingredient.primary_unit.short }}
 </p>
 {% if ingredient.type == 1 or ingredient.type == 2 %}
 <p>
@@ -63,26 +76,36 @@ $(function() {
 </p>
 {% endif %}
 
-<br class="clear" />
-
 <p>
     <strong>Beschrijving:</strong><br />
     {{ ingredient.description|linebreaksbr }}
 </p>
+
+<br class="clear" />
+
+{% if ingredient.conservation_tip %}
 <p>
     <strong>Bewaringstip:</strong><br />
     {{ ingredient.conservation_tip|linebreaksbr }}
 </p>
+{% endif %}
+
+{% if ingredient.preparation_tip %}
 <p>
     <strong>Bereidingstip:</strong><br />
     {{ ingredient.preparation_tip|linebreaksbr }}
 </p>
+{% endif %}
+
+{% if ingredient.properties %}
 <p>
     <strong>Speciale Eigenschappen:</strong><br />
     {{ ingredient.properties|linebreaksbr }}
 </p>
+{% endif %}
 
 {% if ingredient.type == 1 or ingredient.type == 2 %}
+<strong>Beschikbaarheidsdata:</strong>
 <div id="ingredient-availability">
     <span class="month alpha">
         Jan
@@ -116,7 +139,7 @@ $(function() {
     <div class="available-in" id="available-in-{{ available_in_country.grouper }}">
         <span class="country-name">{{ available_in_country.grouper }}</span>
         {% for available_in in available_in_country.list %}
-        <span class="availability-indicator">
+        <span class="availability-indicator" title="Dit ingredient is beschikbaar in {{ available_in.country }} van {{ available_in.month_from }} tot {{ available_in.month_until }}.{% if available_in.production_type %} Dit ingredient wordt op een speciale wijze geproduceerd: {{ available_in.production_type }}{% endif %}">
             <span class="available-from">{{ available_in.date_from.timetuple.tm_yday }}</span>
             <span class="available-until">{{ available_in.date_until.timetuple.tm_yday }}</span>
         </span>
