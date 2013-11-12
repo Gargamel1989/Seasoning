@@ -157,14 +157,8 @@
         <img id="recipe-img" src="{{ MEDIA_URL }}{{ recipe.image }}"/>
         
         <div id="rating">
-            <strong>Populariteit</strong>
-            <div id="current-rating">
-                <div id="rating-display"> </div>
-                <span id="rating-numbers">(<span id="total-rating">{% if recipe.rating != None %}{{ recipe.rating|floatformat:"-1" }}{% else %} - {% endif %}</span>, <span id="total-votes">{{ recipe.number_of_votes }}</span> ratings)</span>
-                <span id="loader-hider" style="margin-left:10px;height:16px;display:inline-block;"><span id="rating-loader" style="display:none;">{% include "includes/ajax-loader.html" %}</span></span>
-            </div>
+            <strong>Jouw waardering</strong>
             <div id="user-rating">
-            	Jouw rating: 
             	{% if user.is_authenticated %}
             	<div id="user-rating-display"> </div>
             	{% else %}
