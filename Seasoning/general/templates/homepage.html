@@ -22,12 +22,9 @@
 		</div>
 		<br class="clear" />
 	</div>
-	<div style="margin: 50px 0;">
-		<div style="position: relative; width: 400px; height: 250px; float: right; margin-left: 40px; background-image: url('/static/img/icons/cloud-big.png'); background-repeat: no-repeat; background-position: center; background-size: 200px;">
-			<span style="position: absolute; top: 115px; left: 155px; font-size: 35px; font-weight: bold;">5.38</span>
-			<img src="/static/img/arrow.png" style="position: absolute; left: -80px; top: 80px;">
-		</div>
-		<div style="padding-top: 0px; text-align: left;">
+	<div style="margin-top: 50px;">
+		<img src="/static/img/hp2.png" style="width: 400px; float: right; margin-left: 40px;" />
+        <div style="padding-top: 50px; text-align: left;">
 			<h3>Hoe werkt het?</h3>
 			<p>
 				Recepten en ingrediënten worden met elkaar vergeleken op het vlak van duurzaamheid. Een heel aantal aspecten kunnen immers 
@@ -35,25 +32,34 @@
 			</p>
 			<p>
 				Hoe dichter bij huis het voedsel is geproduceerd, hoe minder schadelijk de effecten op ons leefmilieu. Kiezen voor voeding van 
-				hier is dus kiezen voor seizoensproducten. Aan de hand van de ecologische voetafdruk maakt Seasoning duurzaam consumeren aangenamer 
+				hier is dus kiezen voor seizoensproducten. Aan de hand van de ecologische voetafdruk<span id="arrowstart"> </span> maakt Seasoning duurzaam consumeren aangenamer 
 				en gemakkelijker dan het lijkt.
 			</p>
 		</div>
 		<br class="clear" />
 	</div>
-    <div style="margin: 50px 0;">
-        <img src="/static/img/hp3.jpg" style="width: 400px; float: left; margin-right: 40px;" />
-        <div style="padding-top: 60px; text-align: left;">
-            <h3>Maak je eigen profiel</h3>
+    <div style="margin-top: 50px;">
+        <img src="http://www.primelinksolution.com/images/Green%20Community%20Involvement%20.jpg" style="height: 300px; float: left; margin-right: 40px;" />
+        <div style="padding-top: 50px; text-align: left;">
+            <h3>Maak je eigen profiel!</h3>
             <p>
                 Creër en beheer je eigen profiel. Je kan meteen recepten en afbeeldingen plaatsen, reageren op andere 
-                recepten en jouw voorkeuren bepalen. Registreren op Seasoning gaat snel en is heel eenvoudig!
+                recepten en jouw voorkeuren bepalen.
             </p>
             <p>
-                Registreer nu!
+                Registreren op Seasoning gaat snel en is heel eenvoudig!
             </p>
+            
+            <form action="/register/" method="get" style="text-align: center; margin-top: 40px;">
+                <input id="register-button" type="submit" value="Registreer Nu!" />
+            </form>
         </div>
         <br class="clear" />
     </div>
 </div>
+<div style="text-align: center; position: relative;">
+    <div style="position: absolute; height: 20px; bottom: -10px; width: 100%; background-image: url('/static/img/logos/facebook icoon.png'); background-size: 30px; background-repeat: no-repeat; background-position: center;"> </div>
+    <hr style="margin: 20px 0 50px;" />
+</div>
+
 {% endblock %}
