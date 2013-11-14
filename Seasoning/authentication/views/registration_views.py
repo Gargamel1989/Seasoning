@@ -91,6 +91,10 @@ def register(request, backend, success_url=None, form_class=None,
     argument.
     
     """
+    if request.user.is_authenticated():
+        messages.add_message(request, messages.INFO, _('You already have an account!'))
+        return redirect('/')
+    
     backend = backend()
     if not backend.registration_allowed(request):
         return redirect(disallowed_url)
