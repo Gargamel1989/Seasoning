@@ -15,7 +15,6 @@ $(document).ready(function() {
 				$("#advanced-link").text("Geavanceerd Zoeken");
 				$("#browse-recipe-summaries-wrapper").css("width", "960px");
 				$("#id_advanced_search").val("False");
-				update_page();
 			});
 		} else {
 			// Show
@@ -23,7 +22,6 @@ $(document).ready(function() {
 			$("#advanced-search").slideDown(1000);
 			$("#advanced-link").text("Niet-geavanceerd zoeken");
 			$("#id_advanced_search").val("True");
-			update_page();
 		}
 		return false;
 	});
@@ -168,6 +166,4 @@ $(document).ready(function() {
 		// Stop the timer when a search is being forced
 		timer = clearTimeout(timer);
 	});
-	
-	$("#advanced-link").click();
 });
