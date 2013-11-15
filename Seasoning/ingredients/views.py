@@ -20,7 +20,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django.shortcuts import render
 from ingredients.models import Ingredient, CanUseUnit
 from django.core.exceptions import PermissionDenied
-from django.db import connection
+from django.db import connection, models
 import json
 from django.http.response import HttpResponse, Http404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -33,7 +33,10 @@ def view_ingredients(request):
         search_form = SearchIngredientForm(request.POST)
         
         if search_form.is_valid():
-            ingredient_list = Ingredient.objects.filter(accepted=True, name__icontains=search_form.cleaned_data['name']).order_by('name')       
+            query_filter = models.Q(name__icontains=search_form.cleaned_data['name']) | models.Q(synonyms__name__icontains=search_form.cleaned_data['name'])
+            query_filter = query_filter & Q(accepted=True)
+            
+            ingredient_list = Ingredient.objects.filter(query_filter).order_by('name')       
         else:
             ingredient_list = []
     else:
@@ -63,10 +66,6 @@ def view_ingredients(request):
 def view_ingredient(request, ingredient_id):
     try:
         ingredient = Ingredient.objects.get(pk=ingredient_id)
-        try:
-            available_ins = ingredient.get_available_ins().select_related()
-        except Ingredient.BasicIngredientException:
-            available_ins = []
     except Ingredient.DoesNotExist:
         raise Http404    
     return render(request, 'ingredients/view_ingredient.html', {'ingredient': ingredient})

@@ -24,6 +24,8 @@ from ingredients.models import Ingredient
 from django.forms.widgets import Widget, Select
 from django.utils.safestring import mark_safe
 import calendar
+from django.core.exceptions import ValidationError
+from django.db import models
 
 class MonthWidget(Widget):
         
@@ -96,24 +98,16 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
     """
 
     def __init__(self, *args, **kwargs):
-        self.ingredient_must_exist = kwargs.pop('ingredient_must_exist', True)
-        
         widget = kwargs.get('widget', False)
         if not widget or not isinstance(widget, AutoCompleteSelectIngredientWidget):
             kwargs['widget'] = AutoCompleteSelectIngredientWidget(attrs={'placeholder': 'Zoek Ingredienten', 'class': 'keywords-searchbar'})
         super(AutoCompleteSelectIngredientField, self).__init__(*args, **kwargs)
-        
-    def clean(self, value):
-        if self.ingredient_must_exist:
-            if value:
-                try:
-                    ingredient = Ingredient.objects.get(name__exact=value)
-                except ObjectDoesNotExist:
-                    raise forms.ValidationError(u"No ingredient found with name: %s" % value)
-                return ingredient
-            else:
-                if self.required:
-                    raise forms.ValidationError(u"This field is required.")
-            return None
-        return value
+
+    def to_python(self, value):
+        try:
+            query_filter = models.Q(name__iexact=value) | models.Q(synonyms__name__iexact=value)
+            ingredient = Ingredient.objects.get(query_filter)
+        except (ValueError, Ingredient.DoesNotExist):
+            raise ValidationError('The given ingredient was not found.')
+        return ingredient
             

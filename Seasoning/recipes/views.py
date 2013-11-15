@@ -157,52 +157,76 @@ def edit_recipe(request, recipe_id=None):
         recipe_form = AddRecipeForm(request.POST, request.FILES, instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
         
-        if 'stop-submit' in request.POST or 'normal-submit' in request.POST or 'ingrequest-submit' in request.POST:
-            # User pressed a valid submit button
-            if 'stop-submit' in request.POST:
-                # User wants to discard all progress
-                return redirect(home)
-            
-            try: 
-                if recipe_form.is_valid():
-                    # Recipe form is valid
-                    ok = True
-                    for usesingredient_form in usesingredient_formset:
-                        # Check if all uses_ingredient forms would be valid if their used ingredients would be present in
-                        # the database
-                        if not usesingredient_form.is_valid_before_ingrequest():
-                            ok = False
-                    if not ok:
-                        raise ValidationError('Something went wrong...')
-                    # All uses_ingredient forms should be valid when ingredients are added
-                    if usesingredient_formset.is_valid():
-                        # No ingredients have to be added, everything is fine!
-                        recipe_form.save(author=request.user)
-                        usesingredient_formset.save()
-                        recipe.save()
-                        if new:
-                            messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
-                        else:
-                            messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast')
-                        return redirect('/recipes/' + str(recipe.id) + '/')
-                    else:
-                        # Unknown ingredients were used
-                        unknown_ingredients = []
-                        for usesingredient_form in usesingredient_formset:
-                            if not usesingredient_form.uses_existing_ingredient():
-                                unknown_ingredients.append(usesingredient_form['ingredient'].value())
-                        
-                        if 'ingrequest-submit' in request.POST:
-                            # Only when this button is pressed, should we add all the ingredients, otherwise, just show the dialog
-                            # about the unknown ingredients
-                            for ingredient in unknown_ingredients:
-                                # FIXME: request the ingredient -> send a mail to admins with all needed information
-                                pass
-                        elif 'normal-submit' in request.POST:
-                            context['unknown_ingredients'] = unknown_ingredients
-            
-            except ValidationError:
+        if 'stop-submit' in request.POST:
+            # User wants to discard all progress
+            return redirect(home)
+        elif 'normal-submit' in request.POST:
+            # User tried to submit a new recipe
+            if  recipe_form.is_valid() and usesingredient_formset.is_valid():
+                if new:
+                    messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
+                else:
+                    messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast')
+                return redirect('/recipes/' + str(recipe.id) + '/')
+            else:
+#                # Check if the formset is not valid because an unknown ingredient was given, or
+#                # because of a general input error
+#                try:
+#                    for usesingredient_form in usesingredient_formset:
+#                        if not usesingredient_form.is_valid_after_ingrequest():
+#                            raise ValidationError('haha')
+#                except ValidationError:
+#                    # An input error occured in the ingredient fields
+#                    pass
                 pass
+                    
+        elif 'ingrequest-submit' in request.POST:
+            pass
+#            # User pressed a valid submit button
+#            if 'stop-submit' in request.POST:
+#                # User wants to discard all progress
+#                return redirect(home)
+#            
+#            try: 
+#                if recipe_form.is_valid():
+#                    # Recipe form is valid
+#                    ok = True
+#                    for usesingredient_form in usesingredient_formset:
+#                        # Check if all uses_ingredient forms would be valid if their used ingredients would be present in
+#                        # the database
+#                        if not usesingredient_form.is_valid_before_ingrequest():
+#                            ok = False
+#                    if not ok:
+#                        raise ValidationError('Something went wrong...')
+#                    # All uses_ingredient forms should be valid when ingredients are added
+#                    if usesingredient_formset.is_valid():
+#                        # No ingredients have to be added, everything is fine!
+#                        recipe_form.save(author=request.user)
+#                        usesingredient_formset.save()
+#                        recipe.save()
+#                        if new:
+#                            messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
+#                        else:
+#                            messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast')
+#                        return redirect('/recipes/' + str(recipe.id) + '/')
+#                    else:
+#                        # Unknown ingredients were used
+#                        unknown_ingredients = []
+#                        for usesingredient_form in usesingredient_formset:
+#                            if not usesingredient_form.uses_existing_ingredient():
+#                                unknown_ingredients.append(usesingredient_form['ingredient'].value())
+#                        
+#                        if 'ingrequest-submit' in request.POST:
+#                            # Only when this button is pressed, should we add all the ingredients, otherwise, just show the dialog
+#                            # about the unknown ingredients
+#                            for ingredient in unknown_ingredients:
+#                                # FIXME: request the ingredient -> send a mail to admins with all needed information
+#                                pass
+#                        elif 'normal-submit' in request.POST:
+#                            context['unknown_ingredients'] = unknown_ingredients
+#                
+#            except ValidationError:
+#                pass
     else:
         recipe_form = AddRecipeForm(instance=recipe)
         usesingredient_formset = UsesIngredientInlineFormSet(instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))

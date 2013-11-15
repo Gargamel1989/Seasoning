@@ -9,6 +9,16 @@
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script src="{{ STATIC_URL }}js/paging.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("input.keywords-searchbar").each(function() {
+            $(this).autocomplete({
+                source: "/ingredients/ing_list/",
+                minLength: 2
+            });
+        });
+    });
+</script>
 {% endblock %}
 
 {% block ingredients-active %}active{% endblock %}

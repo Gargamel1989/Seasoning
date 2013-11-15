@@ -45,7 +45,7 @@ class UsesIngredientForm(forms.ModelForm):
     group = forms.CharField(max_length=100, required=False, widget=forms.HiddenInput(attrs={'class': 'group'}))
     amount = forms.FloatField(widget=forms.TextInput(attrs={'class': 'amount'}))
         
-    def is_valid_before_ingrequest(self):
+    def is_valid_after_ingrequest(self):
         """
         Check if this form would be valid if a known ingredient was used
         

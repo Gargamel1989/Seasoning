@@ -1,6 +1,5 @@
 from django import forms
-from ingredients.fields import AutoCompleteSelectIngredientField
 
 class SearchIngredientForm(forms.Form):
     
-    name = AutoCompleteSelectIngredientField(ingredient_must_exist=False)
+    name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Zoek Ingredienten', 'class': 'keywords-searchbar'}))

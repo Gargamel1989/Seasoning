@@ -230,8 +230,6 @@ class UsesIngredient(models.Model):
     save_allowed = True
     
     def clean(self, *args, **kwargs):
-        if self.ingredient_id is None:
-            raise Exception('Something is wrong, the form should not be saved...')
         try:
             all_useable_units = list(CanUseUnit.objects.useable_by(self.ingredient.pk))
             if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:
