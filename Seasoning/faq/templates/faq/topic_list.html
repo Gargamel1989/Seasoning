@@ -34,11 +34,11 @@
 		<div class="faq-question-wrapper">
 			<div class="faq-question">
 				<a class="anchor-link" id="{{ question.text }}"> </a>
-                <strong>{{ question.text }}</strong>
+                <strong>{{ question.text }}</strong> {% if user.is_staff %}<a href="/admin/faq/question/{{ question.id }}/">Aanpassen</a>{% endif %}
 				<a href="#faq-index-anchor" class="back-to-index-link">Terug naar het overzicht</a>
 			</div>
 			<div>
-				{{ question.answer|markdown }}
+				{{ question.answer|markdown|safe }}
 			</div>
 		</div>
 		{% endfor %}
