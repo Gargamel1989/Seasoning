@@ -2172,6 +2172,7 @@
 			
 			#ingredient-availability .available-in {
 				position: absolute;
+				width: 100%;
 			}
 			
 			#ingredient-availability .availability-indicator {
