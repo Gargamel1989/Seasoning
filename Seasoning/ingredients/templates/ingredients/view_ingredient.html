@@ -133,13 +133,13 @@ $(function() {
         Dec
     </span>
     
-    {% regroup ingredient.get_available_ins by country.name as available_in_countries %}
-    <span id="number-of-groups" style="display:none;">{{ available_in_countries|length }}</span>
-    {% for available_in_country in available_in_countries %}
-    <div class="available-in" id="available-in-{{ available_in_country.grouper }}">
-        <span class="country-name">{{ available_in_country.grouper }}</span>
-        {% for available_in in available_in_country.list %}
-        <span class="availability-indicator" title="Dit ingredient is beschikbaar in {{ available_in.country }} van {{ available_in.month_from }} tot {{ available_in.month_until }}.{% if available_in.production_type %} Dit ingredient wordt op een speciale wijze geproduceerd: {{ available_in.production_type }}{% endif %}">
+    {% regroup ingredient.get_available_ins by location.name as available_in_locations %}
+    <span id="number-of-groups" style="display:none;">{{ available_in_locations|length }}</span>
+    {% for available_in_location in available_in_locations %}
+    <div class="available-in" id="available-in-{{ available_in_location.grouper }}">
+        <span class="location-name">{{ available_in_location.grouper }}</span>
+        {% for available_in in available_in_location.list %}
+        <span class="availability-indicator" title="Dit ingredient is beschikbaar in {{ available_in.location }} van {{ available_in.month_from }} tot {{ available_in.month_until }}.{% if available_in.production_type %} Dit ingredient wordt op een speciale wijze geproduceerd: {{ available_in.production_type }}{% endif %}">
             <span class="available-from">{{ available_in.date_from.timetuple.tm_yday }}</span>
             <span class="available-until">{{ available_in.date_until.timetuple.tm_yday }}</span>
         </span>
