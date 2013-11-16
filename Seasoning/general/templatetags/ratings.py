@@ -33,7 +33,7 @@ def rating_display_stars(rating):
 @register.simple_tag
 def mean_rating(rating):
     if rating is None:
-        return '<span id="account-mean-rank-off" style="width: 100%"></span>'
+        return '<span id="account-mean-rank-on" style="width: 100%"></span>'
     width_percentage = int((rating/5.0)*100)
     return '<span id="account-mean-rank-on" style="width: %d%%"></span><span id="account-mean-rank-off" style="width: %d%%"></span>' % (width_percentage, 100-width_percentage)
 
