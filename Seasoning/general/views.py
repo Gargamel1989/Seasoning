@@ -31,11 +31,10 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 def home(request):
-    try:
-        recipe_otw = Recipe.objects.get(pk=1)
-    except Recipe.DoesNotExist:
-        recipe_otw = None
-    return render(request, 'homepage.html', {'recipe_otw': recipe_otw})
+    if request.user.is_authenticated():
+        recipes_otw = Recipe.objects.all()[:3]
+        return render(request, 'homepage_logged_in.html', {'recipes_otw': recipes_otw})
+    return render(request, 'homepage_not_logged_in.html')
 
 def contribute(request):
     return render(request, 'contribute/contribute.html')
