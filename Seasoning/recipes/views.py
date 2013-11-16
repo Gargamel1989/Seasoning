@@ -41,6 +41,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from recipes.forms import RequireOneFormSet
 
 class Group:
     
@@ -163,7 +164,7 @@ def edit_recipe(request, recipe_id=None):
         new = True
     
     UsesIngredientInlineFormSet = inlineformset_factory(Recipe, UsesIngredient, extra=1,
-                                                        form=UsesIngredientForm)
+                                                        form=UsesIngredientForm, formset=RequireOneFormSet)
     
     if request.method == 'POST':
         recipe_form = AddRecipeForm(request.POST, request.FILES, instance=recipe)
@@ -174,12 +175,16 @@ def edit_recipe(request, recipe_id=None):
             return redirect(home)
         elif 'normal-submit' in request.POST:
             # User tried to submit a new recipe
-            if  recipe_form.is_valid() and usesingredient_formset.is_valid():
+            if  recipe_form.is_valid() & usesingredient_formset.is_valid():
                 if new:
                     messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
                 else:
                     messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast')
                 return redirect('/recipes/' + str(recipe.id) + '/')
+            elif not usesingredient_formset.is_valid():
+                # Recipe input is fine, check if the ingredient input is fine. If so, this
+                # is a new ingredient to be added
+                pass
             else:
 #                # Check if the formset is not valid because an unknown ingredient was given, or
 #                # because of a general input error

@@ -23,6 +23,7 @@ import recipes
 from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from ingredients.fields import AutoCompleteSelectIngredientField
 from ingredients.models import Ingredient, Unit
+from django.forms.models import BaseInlineFormSet
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -69,7 +70,32 @@ class UsesIngredientForm(forms.ModelForm):
             return True
         except Ingredient.DoesNotExist:
             pass
-        return False        
+        return False
+
+class RequireOneFormSet(BaseInlineFormSet):
+    
+    def __init__(self, *args, **kwargs):
+        return super(RequireOneFormSet, self).__init__(*args, **kwargs)
+    """
+    Require at least one form in the formset to be completed.
+    
+    """
+    def clean(self):
+        # Check that at least one form has been completed.
+        super(RequireOneFormSet, self).clean()
+        for error in self.errors:
+            if error:
+                return
+        completed = 0
+        for cleaned_data in self.cleaned_data:
+            # form has data and we aren't deleting it.
+            if cleaned_data and not cleaned_data.get('DELETE', False):
+                completed += 1
+
+        if completed < 1:
+            raise forms.ValidationError("At least one %s is required." %
+                self.model._meta.object_name.lower())
+
             
 
 class SearchRecipeForm(forms.Form):

@@ -264,6 +264,11 @@
 	  
 	  <label>Ingrediënten</label>
 	  
+	  {% if usesingredient_formset.non_form_errors %}
+	  		<br style="margin-top: 20px;" />
+	  		{{ usesingredient_formset.non_form_errors }} 
+	  {% endif %}
+	  
 	  <div id="uses-formset" class="formset">
 	  	  {% regroup usesingredient_formset by group.value as usesingredient_groups %}
 	      {{ usesingredient_formset.management_form }}
