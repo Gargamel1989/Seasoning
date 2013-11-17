@@ -230,6 +230,10 @@ class UsesIngredient(models.Model):
     save_allowed = True
     
     def clean(self, *args, **kwargs):
+        if self.ingredient_id is None:
+            return self
+        if not self.ingredient.accepted:
+            return self
         try:
             all_useable_units = list(CanUseUnit.objects.useable_by(self.ingredient.pk))
             if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:
@@ -244,11 +248,14 @@ class UsesIngredient(models.Model):
         
         self.full_clean()
         
-        unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
-        if self.unit.parent_unit:
-            unit_properties.unit = self.unit
-            unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
-        self.footprint = (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
+        if self.ingredient.accepted:
+            unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
+            if self.unit.parent_unit:
+                unit_properties.unit = self.unit
+                unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
+            self.footprint = (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
+        else:
+            self.footprint = 0
     
         return super(UsesIngredient, self).save(*args, **kwargs)
 
