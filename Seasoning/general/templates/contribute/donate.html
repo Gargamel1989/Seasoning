@@ -41,9 +41,15 @@
    	Het gedoneerde geld wordt uitsluitend gebruikt om onze hosting- en domeinnaamkosten te dekken. Hieronder kan je onze jaarlijkse financiële verslagen downloaden wanneer deze uitkomen.
 </p>
 <ul style="margin-left: 20px;">
+	{% if financial_reports %}
+	{% for financial_report in financial_reports %}
+	<a href="{{ STATIC_URL }}docs/financial/{{ financial_report }}" />{{ financial_report }}</a>
+	{% endfor %}
+	{% else %}
 	<li>
 	    Er zijn nog geen financiële verslagen
 	</li>
+	{% endif %}
 </ul>
 {% endblock %}
 		

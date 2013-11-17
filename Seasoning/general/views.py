@@ -40,7 +40,9 @@ def contribute(request):
     return render(request, 'contribute/contribute.html')
 
 def donate(request):
-    return render(request, 'contribute/donate.html')
+    financial_reports_dir = '%s/docs/financial' % settings.STATIC_ROOT
+    financial_reports = os.listdir(financial_reports_dir)
+    return render(request, 'contribute/donate.html', {'financial_reports': financial_reports})
 
 def donate_success(request):
     return render(request, 'contribute/donate_success.html')
