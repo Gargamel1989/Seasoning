@@ -106,7 +106,7 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
     def to_python(self, value):
         try:
             query_filter = models.Q(name__iexact=value) | models.Q(synonyms__name__iexact=value)
-            ingredient = Ingredient.objects.get(query_filter)
+            ingredient = Ingredient.objects.distinct().get(query_filter)
         except (ValueError, Ingredient.DoesNotExist):
             raise ValidationError('The given ingredient was not found.')
         return ingredient

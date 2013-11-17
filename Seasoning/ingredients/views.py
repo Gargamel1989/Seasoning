@@ -36,13 +36,13 @@ def view_ingredients(request):
             query_filter = models.Q(name__icontains=search_form.cleaned_data['name']) | models.Q(synonyms__name__icontains=search_form.cleaned_data['name'])
             query_filter = query_filter & Q(accepted=True)
             
-            ingredient_list = Ingredient.objects.filter(query_filter).order_by('name')       
+            ingredient_list = Ingredient.objects.distinct().filter(query_filter).order_by('name')       
         else:
             ingredient_list = []
     else:
         search_form = SearchIngredientForm()
     
-        ingredient_list = Ingredient.objects.filter(accepted=True).order_by('name')
+        ingredient_list = Ingredient.objects.distinct().filter(accepted=True).order_by('name')
         
     # Split the result by 12
     paginator = Paginator(ingredient_list, 12)
