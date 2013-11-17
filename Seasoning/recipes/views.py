@@ -236,7 +236,7 @@ def edit_recipe(request, recipe_id=None):
                             # Save unknown ingredients
                             for ingredient_info in unknown_ingredients:
                                 unknowningredient = ingredient_info['unknown_ingredient_model']
-                                unknowningredient.recipe = recipe
+                                unknowningredient.for_recipe = recipe
                                 unknowningredient.save() 
                             return redirect('/recipes/' + str(recipe.id) + '/')
                         else:
