@@ -225,7 +225,7 @@ def edit_recipe(request, recipe_id=None):
                             send_mail('Aanvraag voor Ingredienten', render_to_string('emails/contact_form_email.txt', {'user': request.user,
                                                                                                                        'request_string': request_string}), 
                                       request.user.email,
-                                      'info@seasoning.be', fail_silently=True)
+                                      ['info@seasoning.be'], fail_silently=True)
             
                             # Save recipe
                             recipe_form.save(author=request.user)
