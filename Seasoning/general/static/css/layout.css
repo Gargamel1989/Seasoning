@@ -384,6 +384,10 @@
 		#static-page-wrapper #last-line {
 			font-size: 12px;
 			line-height: 14px;
+		}	
+		
+		#static-page-wrapper #cb-img {
+			margin-bottom: 20px;
 		}		
 
 /* #Page Styles
