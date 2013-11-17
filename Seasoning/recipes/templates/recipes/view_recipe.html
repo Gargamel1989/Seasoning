@@ -219,7 +219,7 @@
     		{% if recipe.veganism == 0 %}<img src="{{ STATIC_URL }}img/non-vegetarian.png" />{% endif %}
     	</div>
     
-		<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.footprint|floatformat:"3" }}</span> kgCO2 ({{ recipe.footprint_pp|floatformat:"3" }} kgCO2 pp.)</p>
+		<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.total_footprint|floatformat:"3" }}</span> kgCO2 ({{ recipe.footprint|floatformat:"3" }} kgCO2 pp.)</p>
     
     	<strong>Beschrijving</strong>
     	<p>{{ recipe.description|linebreaks }}</p>

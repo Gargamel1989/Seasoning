@@ -173,9 +173,10 @@ class Recipe(models.Model):
         self.footprint = 0
         self.veganism = Ingredient.VEGAN
         
+        total_footprint = 0
         for uses in self.uses.all():
             # Add the footprint for this used ingredient to the total
-            self.footprint += uses.footprint
+            total_footprint += uses.footprint
             
             # Check the veganism of this ingredient
             if uses.ingredient.veganism < self.veganism:
@@ -184,11 +185,13 @@ class Recipe(models.Model):
             # Check the state of this ingredient
             if not uses.ingredient.accepted:
                 self.accepted = False
+        self.footprint = total_footprint / self.portions
+        
                 
         super(Recipe, self).save(*args, **kwargs)
         
-    def footprint_pp(self):
-        return self.footprint / self.portions
+    def total_footprint(self):
+        return self.footprint * self.portions
     
     def vote(self, user, score):
         try:
