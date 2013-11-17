@@ -222,7 +222,7 @@ def edit_recipe(request, recipe_id=None):
                         usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
                         if usesingredient_formset.is_valid():
                             # Send mail
-                            send_mail('Aanvraag voor Ingredienten', render_to_string('emails/contact_form_email.txt', {'user': request.user,
+                            send_mail('Aanvraag voor Ingredienten', render_to_string('emails/request_ingredients_email.txt', {'user': request.user,
                                                                                                                        'request_string': request_string}), 
                                       request.user.email,
                                       ['info@seasoning.be'], fail_silently=True)

@@ -269,6 +269,9 @@ class UnknownIngredient(models.Model):
     
     real_ingredient = models.ForeignKey(Ingredient)
     
+    def __unicode__(self):
+        return self.name
+    
 class Vote(models.Model):
     class Meta:
         unique_together = (("recipe", "user"),)
