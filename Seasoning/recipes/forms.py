@@ -24,6 +24,7 @@ from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from ingredients.fields import AutoCompleteSelectIngredientField
 from ingredients.models import Ingredient, Unit
 from django.forms.models import BaseInlineFormSet
+from django.core.exceptions import ValidationError
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -45,6 +46,24 @@ class UsesIngredientForm(forms.ModelForm):
     ingredient = AutoCompleteSelectIngredientField()
     group = forms.CharField(max_length=100, required=False, widget=forms.HiddenInput(attrs={'class': 'group'}))
     amount = forms.FloatField(widget=forms.TextInput(attrs={'class': 'amount'}))
+
+    def _get_changed_data(self, *args, **kwargs):
+        super(UsesIngredientForm, self)._get_changed_data(*args, **kwargs)
+        # If group is in changed_data, but no other fields are filled in, remove group so
+        # the form will not be validated or saved
+        if 'group' in self._changed_data and len(self._changed_data) == 1:
+            contains_data = False
+            for name in ['ingredient', 'amount', 'unit']:
+                field = self.fields[name]
+                prefixed_name = self.add_prefix(name)
+                data_value = field.widget.value_from_datadict(self.data, self.files, prefixed_name)
+                if data_value:
+                    contains_data = True
+                    break
+            if not contains_data:
+                self._changed_data.remove('group')
+        return self._changed_data
+    changed_data = property(_get_changed_data)
         
     def is_valid_after_ingrequest(self):
         """

@@ -2034,9 +2034,8 @@
 			
 			#uses-formset #sortable-ingredients li {
 				clear: both;
-				height: 35px;
 				padding-left: 30px;
-				margin-bottom: 0;
+				margin-bottom: 10px;
 			}
 			
 			#uses-formset #sortable-ingredients .move-handle {
@@ -2064,9 +2063,9 @@
 			}
 			
 			#uses-formset #sortable-ingredients li input.amount {
-				width: 60px;
+				width: 100px;
 				text-align: right;
-				margin: 0 20px 0 20px;
+				margin: 0 20px 0 3px;
 			}
 			
 			#uses-formset #sortable-ingredients .amount-label {
@@ -2082,6 +2081,7 @@
 				margin-right: 20px;
 				height: 30px;
 				margin-top: -5px;
+				margin-bottom: 0px;
 				position: relative;
 				line-height: 1;
 				padding: 5px;
@@ -2090,6 +2090,37 @@
 			
 			#uses-formset #sortable-ingredients li select option {
 				padding-right: 6px;
+			}
+			
+			#uses-formset #sortable-ingredients li .ingredient-name-errors {
+				float: left;
+				display: block;
+				width: 500px;
+				min-height: 1px;
+			}
+			
+			#uses-formset #sortable-ingredients li .ingredient-amount-errors {
+				float: left;
+				display: block;
+				width: 120px;
+				min-height: 1px;
+				margin-right: 15px;
+			}
+			
+			#uses-formset #sortable-ingredients li .ingredient-unit-errors {
+				float: left;
+				display: block;
+				width: 100px;
+				min-height: 1px;
+			}
+			
+			#uses-formset #sortable-ingredients li .errorlist {
+				margin: 0;
+			}
+			
+			#uses-formset #sortable-ingredients li .errorlist li {
+				margin: 0;
+				padding: 0;
 			}
 			
 			#uses-formset #sortable-ingredients .unit-label {

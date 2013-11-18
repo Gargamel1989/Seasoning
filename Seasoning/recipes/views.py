@@ -185,6 +185,7 @@ def edit_recipe(request, recipe_id=None):
                 usesingredient_formset.save()
                 recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=recipe_form.instance.pk)
                 recipe.save()
+                
                 return redirect('/recipes/' + str(recipe.id) + '/')
             elif not usesingredient_formset.is_valid():
                 # Recipe input is fine, check if the ingredient input is fine. If this is the case,

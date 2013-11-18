@@ -28,11 +28,12 @@
 		var empty_form = $("#uses-formset .ingredient.empty-form");
 		var new_form = empty_form.clone();
 		var total_forms = $("#id_uses-TOTAL_FORMS");
-		new_form_number = parseInt(total_forms.val()) + 1;
-		total_forms.val(new_form_number);
+		var new_form_number = parseInt(total_forms.val());
+		total_forms.val(new_form_number + 1);
 		updateFormNumber(new_form, new_form_number);
 		new_form.removeClass('empty-form');
-		var last_not_empty_form = $('#uses-formset li:not(".empty-form")').last();
+		new_form.removeClass('sorting-disabled');
+		var last_not_empty_form = $('#uses-formset li.ingredient:not(".empty-form"), #uses-formset li.group:not(".empty-form")').last();
 		new_form.insertAfter(last_not_empty_form);
 		fix_ingredient_list();
 		return false;
@@ -42,7 +43,8 @@
 		var empty_group = $("#uses-formset .group.empty-form");
 		var new_group = empty_group.clone();
 		new_group.removeClass("empty-form");
-		var last_not_empty_form = $('#uses-formset li:not(".empty-form")').last();
+		new_group.removeClass("sorting-disabled");
+		var last_not_empty_form = $('#uses-formset li.ingredient:not(".empty-form"), #uses-formset li.group:not(".empty-form")').last();
 		new_group.insertAfter(last_not_empty_form);
 		fix_ingredient_list();
 		return false;
@@ -50,7 +52,9 @@
 	
 	function fix_ingredient_list() {
 		var lis = $("#uses-formset #sortable-ingredients li:not('.column-labels, .empty-form')");
-		if (!lis.first().hasClass("group")) {
+		if (lis.first().hasClass("group")) {
+			$("#uses-formset #sortable-ingredients .column-labels").hide();
+		} else {
 			$("#uses-formset #sortable-ingredients .column-labels").show();
 		}
         var group_name = "";
@@ -74,11 +78,12 @@
         });
         $("#sortable-ingredients .delete-button").click(function() {
         	var delete_checkbox = $(this).children("input");
-        	if (delete_checkbox) {
-        		$(this).parent("li").hide()
+        	if (delete_checkbox.length) {
+        		$(this).parents("li").hide()
         	} else {
-        		$(this).parent("li").remove();
+        		$(this).parents("li").remove();
         	}
+			delete_checkbox.val("True");
         	return false;
         });
         
@@ -292,14 +297,23 @@
 	          {% endif %}
 	          {% for form in group.list %}
 	      	  {{ form.non_field_errors }}
+	      	  {% if forloop.parentloop.last or form.ingredient.value or form.amount.value or form.unit.value %}
 	          <li class="ingredient">
 	          	<span class="move-handle"> </span>
-	          	{{ form.id }}{{ form.group }}{{ form.ingredient }}{{ form.amount }}{{ form.unit }}<a href="#" class="delete-button">{{ form.DELETE.as_hidden }}</a>
-	          	{{ form.group.errors }}{{ form.ingredient.errors }}{{ form.amount.errors }}{{ form.unit.errors }}
+	          	<span class="ingredient-name">{{ form.id }}{{ form.group }}{{ form.ingredient }}</span>
+	          	<span cass="ingredient-amount">{{ form.amount }}</span>
+	          	<span>{{ form.unit }}</span>
+	          	<span><a href="#" class="delete-button">{{ form.DELETE.as_hidden }}</a></span>
+	          	<br class="clear" />
+	          	<span class="ingredient-name-errors">{{ form.group.errors }}{{ form.ingredient.errors }}</span>
+	          	<span class="ingredient-amount-errors">{{ form.amount.errors }}</span>
+	          	<span class="ingredient-unit-errors">{{ form.unit.errors }}</span>
+	          	<br class="clear" />
 	          </li>
+	          {% endif %}
 	          {% endfor %}
 	          {% endfor %}
-	          <li class="group empty-form">
+	          <li class="group empty-form sorting-disabled">
 	          	<span class="move-handle"> </span>
 	          	<strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" /><br />
 	          	<span class="name-label">Naam</span>
@@ -307,22 +321,24 @@
 	          	<span class="unit-label">Eenheid</span>
 	          	<span class="delete-label">Verwijderen</span>
 	          </li>
-	          <li class="colum-labels empty-form">
+	          <li class="colum-labels empty-form sorting-disabled">
 	          	<span>Naam</span>
 	          	<span>Hoeveelheid</span>
 	          	<span>Eenheid</span>
 	          	<span>Verwijderen</span>
 	          </li>
-	          <li class="ingredient empty-form">
-	          	  <span class="move-handle"> </span>
-	              {{ usesingredient_formset.empty_form.id }}{{ usesingredient_formset.empty_form.group }}{{ usesingredient_formset.empty_form.ingredient }}{{ usesingredient_formset.empty_form.amount }}{{ usesingredient_formset.empty_form.unit }}
-	              <span class="delete-button"> </span>
+	          <li class="ingredient empty-form sorting-disabled">
+	          	<span class="move-handle"> </span>
+	          	<span class="ingredient-name">{{ usesingredient_formset.empty_form.id }}{{ usesingredient_formset.empty_form.group }}{{ usesingredient_formset.empty_form.ingredient }}</span>
+	          	<span class="ingredient-amount">{{ usesingredient_formset.empty_form.amount }}</span>
+	          	<span>{{ usesingredient_formset.empty_form.unit }}</span>
+	          	<span class="delete-button"> </span>
 	          </li>
 	      </ul>
 	  </div>
 	      <div class="button-group">
-		      <a href="/recipes/add/" class="add-button add-ingredient-button">Ingrediënt toevoegen</a>
-		      <a href="/recipes/add/" class="add-button add-ingredientgroup-button">Ingrediëntengroep toevoegen</a>
+		      <a href="#" class="add-button add-ingredient-button">Ingrediënt toevoegen</a>
+		      <a href="#" class="add-button add-ingredientgroup-button">Ingrediëntengroep toevoegen</a>
 		  </div>
 	  <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
 	</form>

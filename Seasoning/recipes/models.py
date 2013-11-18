@@ -233,23 +233,29 @@ class UsesIngredient(models.Model):
     save_allowed = True
     
     def clean(self, *args, **kwargs):
-        if self.ingredient_id is None:
+        # Validate that is ingredient is using a unit that it can use
+        if self.ingredient_id is None or self.unit_id is None:
+            # Something is wrong with the model, these errors will be caught elsewhere, and the
+            # useable unit validation is not required 
             return self
         if not self.ingredient.accepted:
+            # If the ingredient is not accepted, it might not have any useable units. To prevent
+            # false positivies, skip the validation
             return self
         try:
+            # Get all units useable by this ingredient
             all_useable_units = list(CanUseUnit.objects.useable_by(self.ingredient.pk))
-            if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:
-                return self 
         except Unit.DoesNotExist:
-            raise Exception('The ingredient ' + self.ingredient + ' does not have any useable units...')
+            # No units are useable, this should not happen if the ingredient is accepted
+            raise Exception('The ingredient %s does not have any useable units...' % str(self.ingredient))
+        if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:
+            # If the given unit is in the useable units, all is fine
+            return self 
         raise ValidationError('This unit cannot be used for measuring this Ingredient.')
     
     def save(self, *args, **kwargs):
         if not self.save_allowed:
             raise PermissionDenied('Saving this object has been disallowed')
-        
-        self.full_clean()
         
         if self.ingredient.accepted:
             unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))

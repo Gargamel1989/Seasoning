@@ -104,6 +104,10 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
         super(AutoCompleteSelectIngredientField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
+        value = super(AutoCompleteSelectIngredientField, self).to_python(value)
+        if value == '':
+            # If the field is not filled in, the parent class will do the validation
+            return value
         try:
             query_filter = models.Q(name__iexact=value) | models.Q(synonyms__name__iexact=value)
             ingredient = Ingredient.objects.distinct().get(query_filter)

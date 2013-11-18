@@ -45,6 +45,8 @@ class UsesIngredientModelTestCase(TestCase):
     @mysqldb_required
     def test_clean(self):
         cuu = G(CanUseUnit)
+        cuu.ingredient.accepted = True
+        cuu.ingredient.save()
         unit = G(Unit)
         
         ui = N(UsesIngredient, ingredient=cuu.ingredient, unit=unit)
@@ -55,7 +57,7 @@ class UsesIngredientModelTestCase(TestCase):
     
     @mysqldb_required
     def test_save(self):
-        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50)
+        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50, accepted=True)
         cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
         uses = G(UsesIngredient, ingredient=ing, unit=cuu.unit, amount=1)
         
@@ -81,15 +83,15 @@ class RecipeModelTestCase(TestCase):
         self.assertEqual(recipe.veganism, Ingredient.VEGETARIAN)
     
     @mysqldb_required
-    def test_footprint_pp(self):
+    def test_total_footprint(self):
         recipe = G(Recipe, portions=5)
-        self.assertEqual(recipe.footprint_pp(), 0)
+        self.assertEqual(recipe.total_footprint(), 0)
         
         ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50)
         cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
         G(UsesIngredient, recipe=recipe, ingredient=ing, unit=cuu.unit, amount=1)
         recipe.save()
-        self.assertEqual(recipe.footprint_pp(), 10)
+        self.assertEqual(recipe.total_footprint(), 50)
     
     @mysqldb_required
     def test_vote(self):

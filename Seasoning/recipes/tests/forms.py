@@ -3,7 +3,7 @@ from django_dynamic_fixture import G
 from authentication.models import User
 from recipes.models import Cuisine
 
-class RecipeViewsTestCase(TestCase):
+class RecipeFormsTestCase(TestCase):
     
     def test_edit_recipe(self):
         location = '/recipes/add/'
