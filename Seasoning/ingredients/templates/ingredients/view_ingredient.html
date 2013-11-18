@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load markdown_filter %}
 
 {% block title %}Ingredienten{% endblock %}
 
@@ -78,7 +79,7 @@ $(function() {
 
 <p>
     <strong>Beschrijving:</strong><br />
-    {{ ingredient.description|linebreaksbr }}
+    {{ ingredient.description|markdown|safe }}
 </p>
 
 <br class="clear" />
@@ -86,21 +87,21 @@ $(function() {
 {% if ingredient.conservation_tip %}
 <p>
     <strong>Bewaringstip:</strong><br />
-    {{ ingredient.conservation_tip|linebreaksbr }}
+    {{ ingredient.conservation_tip|markdown|safe }}
 </p>
 {% endif %}
 
 {% if ingredient.preparation_tip %}
 <p>
     <strong>Bereidingstip:</strong><br />
-    {{ ingredient.preparation_tip|linebreaksbr }}
+    {{ ingredient.preparation_tip|markdown|safe }}
 </p>
 {% endif %}
 
 {% if ingredient.properties %}
 <p>
     <strong>Speciale Eigenschappen:</strong><br />
-    {{ ingredient.properties|linebreaksbr }}
+    {{ ingredient.properties|markdown|safe }}
 </p>
 {% endif %}
 
