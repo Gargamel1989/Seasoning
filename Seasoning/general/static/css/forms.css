@@ -1,0 +1,287 @@
+.empty-form, .tooltip {
+	display: none;
+}
+
+.errorlist {
+	color: red;
+	font-size: 12px;
+	margin: -15px 0 0 5px;
+	clear: both;
+}
+
+
+/* #Edit Recipe
+ ================================================== */
+
+#add-recipe-form h3 {
+	margin: 20px 0 15px;
+	border-bottom: 1px solid #CCC;
+}
+
+#add-recipe-form .field-wrapper {
+	clear: both;
+	position: relative;
+	min-height: 30px;
+	margin-bottom: 10px;
+}
+
+#add-recipe-form label {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 105px;
+	height: 100%;
+	line-height: 30px;
+}
+
+#add-recipe-form #description-field label,
+#add-recipe-form #imageinput-field label,
+#add-recipe-form #extra_info-field label,
+#add-recipe-form #portions-field label {
+	line-height: 15px;
+}
+
+#add-recipe-form .field-wrapper .input-wrapper {
+	padding-left: 113px;
+	position: relative;
+}
+
+#add-recipe-form .field-wrapper .select-wrapper,
+#add-recipe-form .field-wrapper .spinner-wrapper {
+	padding-left: 105px;
+	position: relative;
+	margin: 5px 0;
+}
+
+#add-recipe-form .input-wrapper input,
+#add-recipe-form .input-wrapper textarea {
+	width: 100%;
+	margin-left: -8px;
+}
+
+#add-recipe-form .select-wrapper select {
+	width: 100%;
+}
+
+#add-recipe-form .spinner-wrapper input {
+	box-shadow: none;
+	-webkit-box-shadow: none; 
+	-moz-box-shadow: none;
+}
+
+#add-recipe-form #course-field, 
+#add-recipe-form #cuisine-field {
+	float: left;
+	clear: none;
+	width: 46%;
+}
+
+#add-recipe-form #course-field {
+	margin-right: 8%;
+}
+
+#add-recipe-form #description-field {
+	float: left;
+	width: 46%;
+	margin-right: 8%;
+	clear: none;
+}
+
+#add-recipe-form #imageinput-field {
+	float: left;
+	width: 46%;
+	clear: none;
+}
+
+#add-recipe-form #imageinput-field .input-wrapper {
+	margin: -3px 0;
+}
+
+#add-recipe-form #imagedisplay-field {
+	float: left;
+	width: 46%;
+	clear: none;
+}
+
+#add-recipe-form #imagedisplay-field img {
+	height: 130px;
+}
+
+#add-recipe-form #id_extra_info {
+	height: 1px;
+}
+
+#add-recipe-form #ingredient-field {
+	margin-bottom: 20px;
+}
+
+#add-recipe-form #ingredient-field label {
+	height: 30px;
+	position: static;
+}
+
+#add-recipe-form #ingredient-field #uses-formset {
+	clear: both;
+}
+
+#uses-formset .error {
+	clear: both;
+}
+
+.add-ingredient-button {
+	right: 250px;
+}
+
+#uses-formset #sortable-ingredients .group {
+	line-height: 25px;
+	height: 50px;
+}
+
+#uses-formset #sortable-ingredients .group .move-handle {
+	height: 50px;
+}
+
+#uses-formset #sortable-ingredients .group input {
+	background-color: transparent;
+	border: none;
+}
+
+#uses-formset #sortable-ingredients .group .name-label {
+	margin-left: 20px;
+}
+
+#uses-formset #sortable-ingredients .group input:focus {
+	background-color: white;
+}
+
+#uses-formset #sortable-ingredients .column-labels {
+	height: 20px;
+	margin-top: 10px;
+	display: none;
+}
+
+#uses-formset #sortable-ingredients li {
+	clear: both;
+	padding-left: 30px;
+	margin-bottom: 10px;
+}
+
+#uses-formset #sortable-ingredients .move-handle {
+	position: absolute;
+	left: 0;
+	height: 30px;
+	width: 30px;
+	background-image: url('/static/img/icons/move.png');
+	background-size: 15px 25px;
+	background-repeat: no-repeat;
+	background-position: center;
+	cursor: pointer;
+}
+
+#uses-formset #sortable-ingredients li input {
+	display: inline;
+	width: 400px;
+	margin: 0 80px 0 0;
+}
+
+#uses-formset #sortable-ingredients .name-label {
+	display: inline-block;
+	width: 400px;
+	margin: 0 86px 0 0;
+}
+
+#uses-formset #sortable-ingredients li input.amount {
+	width: 100px;
+	text-align: right;
+	margin: 0 20px 0 3px;
+}
+
+#uses-formset #sortable-ingredients .amount-label {
+	display: inline-block;
+	width: 88px;
+	text-align: right;
+	margin-right: 18px;
+}
+
+#uses-formset #sortable-ingredients li select {
+	display: inline;
+	width: 100px;
+	margin-right: 20px;
+	height: 30px;
+	margin-top: -5px;
+	margin-bottom: 0px;
+	position: relative;
+	line-height: 1;
+	padding: 5px;
+	-webkit-appearance: none;
+}
+
+#uses-formset #sortable-ingredients li select option {
+	padding-right: 6px;
+}
+
+#uses-formset #sortable-ingredients li .ingredient-name-errors {
+	float: left;
+	display: block;
+	width: 500px;
+	min-height: 1px;
+}
+
+#uses-formset #sortable-ingredients li .ingredient-amount-errors {
+	float: left;
+	display: block;
+	width: 120px;
+	min-height: 1px;
+	margin-right: 15px;
+}
+
+#uses-formset #sortable-ingredients li .ingredient-unit-errors {
+	float: left;
+	display: block;
+	width: 100px;
+	min-height: 1px;
+}
+
+#uses-formset #sortable-ingredients li .errorlist {
+	margin: 0;
+}
+
+#uses-formset #sortable-ingredients li .errorlist li {
+	margin: 0;
+	padding: 0;
+}
+
+#uses-formset #sortable-ingredients .unit-label {
+	display: inline-block;
+	width: 98px;
+	text-align: right;
+	margin-right: 20px;
+}
+
+#uses-formset #sortable-ingredients .delete-label {
+	float: right;
+	width: 100px;
+	text-align: center;
+}
+
+#uses-formset #sortable-ingredients .delete-button {
+	height: 30px;
+	width: 100px;
+	background-image: url('/static/img/icons/delete.png');
+	background-size: 30px 30px;
+	background-position: center;
+	background-repeat: no-repeat;
+	float: right;
+	transition: all 0.25s ease-in-out;
+}
+
+#uses-formset #sortable-ingredients .delete-button:hover {
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+}
+
+#add-recipe-form input[type="submit"] {
+	margin: 30px auto;
+	width: 50%;
+	display: block;
+}

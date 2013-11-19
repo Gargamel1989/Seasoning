@@ -25,6 +25,7 @@ from ingredients.fields import AutoCompleteSelectIngredientField
 from ingredients.models import Ingredient, Unit
 from django.forms.models import BaseInlineFormSet
 from django.core.exceptions import ValidationError
+from general.widgets import WMDWidget
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -33,6 +34,13 @@ class AddRecipeForm(forms.ModelForm):
         exclude = ['author', 'time_added',
                    'rating', 'number_of_votes',
                    'thumbnail', 'accepted']
+    
+    class Media:
+        css = {
+            'all': ('css/forms.css',)
+        }
+        
+#    instructions = forms.CharField(widget=WMDWidget())
     
     def save(self, author, commit=True):
         recipe = super(AddRecipeForm, self).save(commit=False)

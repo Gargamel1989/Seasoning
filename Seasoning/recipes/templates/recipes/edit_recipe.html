@@ -122,8 +122,10 @@
         // TODO: voeg deze functie toe op nieuw toegevoegde elementen en roep fix_ing_list() aan als
         // een nieuwe groep toegevoegd wordt
         
+        $(".spinner-wrapper input").spinner();
     });
 </script>
+{{ recipe_form.media }}
 {% endblock %}
 
 {% block recipes-active %}active{% endblock %}
@@ -154,14 +156,28 @@
 	  	</ol>
 	  	<input type="submit" value="Annuleren" name="stop-submit" /><input type="submit" value="Ingredi�nten Aanvragen" name="ingrequest-submit" />
 	  </p>
+	  {% elif new_recipe %}
+	  <p>
+	      Met dit formulier kan je recepten toevoegen aan Seasoning. Onze software probeert daarna automatisch de huidige voetafdruk
+	      van jouw recept te berekenen. 
+	  </p>
+	  <p>
+	      De berekening is enkel mogelijk als alle gebruikte ingrediënten teruggevonden worden in onze databank. Indien
+	      dit niet het geval is, krijg je de optie om die niet-gekende ingrediënten aan te vragen. Wij proberen deze dan zo snel
+	      mogelijk toe te voegen!
+	  </p>
 	  {% endif %}
 	  
+	  <h3>Algemene Informatie</h3>
+	  
 	  {% csrf_token %}
-	  {{ form.non_field_errors }}
+	  {{ recipe_form.non_field_errors }}
 	  
 	  <div class="field-wrapper tooltip-field">
 	    {{ recipe_form.name.label_tag }}
-	    {{ recipe_form.name }}
+	    <div class="input-wrapper">
+	       {{ recipe_form.name }}
+	    </div>
 	    <div class="tooltip">{{ recipe_form.name.help_text }}</div>
 	    
 	    {% if recipe_form.name.errors %}        
@@ -169,9 +185,11 @@
 	    {% endif %}
 	  </div>
 	  
-	  <div class="field-wrapper tooltip-field">
+	  <div id="course-field" class="field-wrapper tooltip-field">
 	    {{ recipe_form.course.label_tag }}
-	    {{ recipe_form.course }}
+	    <div class="select-wrapper">
+           {{ recipe_form.course }}
+        </div>
 	    <div class="tooltip">{{ recipe_form.course.help_text }}</div>
 	    
 	    {% if recipe_form.course.errors %}        
@@ -179,9 +197,11 @@
 	    {% endif %}
 	  </div>
 	  
-	  <div class="field-wrapper tooltip-field">
+	  <div id="cuisine-field" class="field-wrapper tooltip-field">
 	    {{ recipe_form.cuisine.label_tag }}
-	    {{ recipe_form.cuisine }}
+	    <div class="select-wrapper">
+           {{ recipe_form.cuisine }}
+        </div>
 	    <div class="tooltip">{{ recipe_form.cuisine.help_text }}</div>
 	    
 	    {% if recipe_form.cuisine.errors %}        
@@ -189,29 +209,149 @@
 	    {% endif %}
 	  </div>
 	  
-	  <div class="field-wrapper tooltip-field">
+	  <div id="description-field" class="field-wrapper tooltip-field">
 	    {{ recipe_form.description.label_tag }}
-	    {{ recipe_form.description }}
+	    <div class="input-wrapper">
+           {{ recipe_form.description }}
+        </div>
 	    <div class="tooltip">{{ recipe_form.description.help_text }}</div>
 	    
 	    {% if recipe_form.description.errors %}        
 	        {{ recipe_form.description.errors }} 
 	    {% endif %}
 	  </div>
+      
+      <div id="imageinput-field" class="field-wrapper tooltip-field">
+        {{ recipe_form.image.label_tag }}
+        <div class="input-wrapper">
+           <input id="id_image" type="file" name="image">
+        </div>
+        <div class="tooltip">{{ recipe_form.image.help_text }}</div>
+        
+        {% if recipe_form.image.errors %}        
+            {{ recipe_form.image.errors }} 
+        {% endif %}
+      </div>
+      
+      <div id="imagedisplay-field" class="field-wrapper">
+        {% if recipe_form.instance %}
+        <div class="select-wrapper">
+           <img id="recipe-image" src="{{ recipe_form.instance.image.url }}" />
+        </div>
+        {% endif %}
+      </div>
+      
+      <br class="clear" />
+      <h3>Ingrediënten</h3>
 	  
-	  <div class="field-wrapper tooltip-field">
+      <div id="portions-field" class="field-wrapper tooltip-field">
 	    {{ recipe_form.portions.label_tag }}
-	    {{ recipe_form.portions }}
+	    <div class="spinner-wrapper">
+           {{ recipe_form.portions }}
+        </div>
 	    <div class="tooltip">{{ recipe_form.portions.help_text }}</div>
 	    
 	    {% if recipe_form.portions.errors %}        
 	        {{ recipe_form.portions.errors }} 
 	    {% endif %}
 	  </div>
+      
+	  <div id="extra_info-field" class="field-wrapper tooltip-field">
+	    {{ recipe_form.extra_info.label_tag }}
+	    <div class="input-wrapper">
+           {{ recipe_form.extra_info }}
+        </div>
+	    <div class="tooltip">{{ recipe_form.extra_info.help_text }}</div>
+	    
+	    {% if recipe_form.extra_info.errors %}        
+	        {{ recipe_form.extra_info.errors }} 
+	    {% endif %}
+	  </div>
+	  
+	  <div id="ingredient-field" class="field-wrapper tooltip-field">
+        <label>Ingrediënten</label>
+	  
+    	  {% if usesingredient_formset.non_form_errors %}
+    	  		<br style="margin-top: 20px;" />
+    	  		{{ usesingredient_formset.non_form_errors }} 
+    	  {% endif %}
+    	  
+    	  <div id="uses-formset" class="formset">
+    	  	  {% regroup usesingredient_formset by group.value as usesingredient_groups %}
+    	      {{ usesingredient_formset.management_form }}
+    	      <ul id="sortable-ingredients">
+    	          <li class="column-labels sorting-disabled">
+    	          	<span class="name-label">Naam</span>
+    	          	<span class="amount-label">Hoeveelheid</span>
+    	          	<span class="unit-label">Eenheid</span>
+    	          	<span class="delete-label">Verwijderen</span>
+    	          </li>
+    	          {% for group in usesingredient_groups %}
+    	      	  {% if group.grouper != "" and group.grouper != None %}
+    	          <li class="group">
+    	          	<span class="move-handle"> </span>
+    	          	<strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" value="{{ group.grouper }}" /><br />
+    	          	<span class="name-label">Naam</span>
+    	          	<span class="amount-label">Hoeveelheid</span>
+    	          	<span class="unit-label">Eenheid</span>
+    	          	<span class="delete-label">Verwijderen</span>
+    	          </li>
+    	          {% endif %}
+    	          {% for form in group.list %}
+    	      	  {{ form.non_field_errors }}
+    	      	  {% if forloop.parentloop.last or form.ingredient.value or form.amount.value or form.unit.value %}
+    	          <li class="ingredient">
+    	          	<span class="move-handle"> </span>
+    	          	<span class="ingredient-name">{{ form.id }}{{ form.group }}{{ form.ingredient }}</span>
+    	          	<span class="ingredient-amount">{{ form.amount }}</span>
+    	          	<span>{{ form.unit }}</span>
+    	          	<span><a href="#" class="delete-button">{{ form.DELETE.as_hidden }}</a></span>
+    	          	<span class="ingredient-name-errors error">{{ form.group.errors }}{{ form.ingredient.errors }}</span>
+    	          	<span class="ingredient-amount-errors error">{{ form.amount.errors }}</span>
+    	          	<span class="ingredient-unit-errors error">{{ form.unit.errors }}</span>
+    	          	<br class="clear" />
+    	          </li>
+    	          {% endif %}
+    	          {% endfor %}
+    	          {% endfor %}
+    	          <li class="group empty-form sorting-disabled">
+    	          	<span class="move-handle"> </span>
+    	          	<strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" /><br />
+    	          	<span class="name-label">Naam</span>
+    	          	<span class="amount-label">Hoeveelheid</span>
+    	          	<span class="unit-label">Eenheid</span>
+    	          	<span class="delete-label">Verwijderen</span>
+    	          </li>
+    	          <li class="colum-labels empty-form sorting-disabled">
+    	          	<span>Naam</span>
+    	          	<span>Hoeveelheid</span>
+    	          	<span>Eenheid</span>
+    	          	<span>Verwijderen</span>
+    	          </li>
+    	          <li class="ingredient empty-form sorting-disabled">
+    	          	<span class="move-handle"> </span>
+    	          	<span class="ingredient-name">{{ usesingredient_formset.empty_form.id }}{{ usesingredient_formset.empty_form.group }}{{ usesingredient_formset.empty_form.ingredient }}</span>
+    	          	<span class="ingredient-amount">{{ usesingredient_formset.empty_form.amount }}</span>
+    	          	<span>{{ usesingredient_formset.empty_form.unit }}</span>
+    	          	<span class="delete-button"> </span>
+    	          </li>
+    	      </ul>
+    	  </div>
+    	      <div class="button-group">
+    		      <a href="#" class="add-button add-ingredient-button">Ingrediënt toevoegen</a>
+    		      <a href="#" class="add-button add-ingredientgroup-button">Ingrediëntengroep toevoegen</a>
+    		  </div>
+    	  
+	  </div>
+	  
+	  <br class="clear" />
+	  <h3>Bereiding</h3>
 	  
 	  <div class="field-wrapper tooltip-field">
 	    {{ recipe_form.active_time.label_tag }}
-	    {{ recipe_form.active_time }}
+	    <div class="input-wrapper">
+           {{ recipe_form.active_time }}
+        </div>
 	    <div class="tooltip">{{ recipe_form.active_time.help_text }}</div>
 	    
 	    {% if recipe_form.active_time.errors %}        
@@ -221,7 +361,9 @@
 	  
 	  <div class="field-wrapper tooltip-field">
 	    {{ recipe_form.passive_time.label_tag }}
-	    {{ recipe_form.passive_time }}
+	    <div class="input-wrapper">
+           {{ recipe_form.passive_time }}
+        </div>
 	    <div class="tooltip">{{ recipe_form.passive_time.help_text }}</div>
 	    
 	    {% if recipe_form.passive_time.errors %}        
@@ -230,18 +372,10 @@
 	  </div>
 	  
 	  <div class="field-wrapper tooltip-field">
-	    {{ recipe_form.extra_info.label_tag }}
-	    {{ recipe_form.extra_info }}
-	    <div class="tooltip">{{ recipe_form.extra_info.help_text }}</div>
-	    
-	    {% if recipe_form.extra_info.errors %}        
-	        {{ recipe_form.extra_info.errors }} 
-	    {% endif %}
-	  </div>
-	  
-	  <div class="field-wrapper tooltip-field">
 	    {{ recipe_form.instructions.label_tag }}
-	    {{ recipe_form.instructions }}
+	    <div class="input-wrapper">
+           {{ recipe_form.instructions }}
+        </div>
 	    <div class="tooltip">{{ recipe_form.instructions.help_text }}</div>
 	    
 	    {% if recipe_form.instructions.errors %}        
@@ -249,98 +383,7 @@
 	    {% endif %}
 	  </div>
 	  
-	  <div class="field-wrapper">
-	    {% if recipe_form.instance %}
-	    <img id="recipe-image" src="{{ recipe_form.instance.image.url }}" />
-	    {% endif %}
-	  </div>
-	  
-	  <div class="field-wrapper tooltip-field">
-	    {{ recipe_form.image.label_tag }}
-	    <input id="id_image" type="file" name="image">
-	    <div class="tooltip">{{ recipe_form.image.help_text }}</div>
-	    
-	    {% if recipe_form.image.errors %}        
-	        {{ recipe_form.image.errors }} 
-	    {% endif %}
-	  </div>
-	  
-	  <br /><br />
-	  
-	  <label>Ingrediënten</label>
-	  
-	  {% if usesingredient_formset.non_form_errors %}
-	  		<br style="margin-top: 20px;" />
-	  		{{ usesingredient_formset.non_form_errors }} 
-	  {% endif %}
-	  
-	  <div id="uses-formset" class="formset">
-	  	  {% regroup usesingredient_formset by group.value as usesingredient_groups %}
-	      {{ usesingredient_formset.management_form }}
-	      <ul id="sortable-ingredients">
-	          <li class="column-labels sorting-disabled">
-	          	<span class="name-label">Naam</span>
-	          	<span class="amount-label">Hoeveelheid</span>
-	          	<span class="unit-label">Eenheid</span>
-	          	<span class="delete-label">Verwijderen</span>
-	          </li>
-	          {% for group in usesingredient_groups %}
-	      	  {% if group.grouper != "" and group.grouper != None %}
-	          <li class="group">
-	          	<span class="move-handle"> </span>
-	          	<strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" value="{{ group.grouper }}" /><br />
-	          	<span class="name-label">Naam</span>
-	          	<span class="amount-label">Hoeveelheid</span>
-	          	<span class="unit-label">Eenheid</span>
-	          	<span class="delete-label">Verwijderen</span>
-	          </li>
-	          {% endif %}
-	          {% for form in group.list %}
-	      	  {{ form.non_field_errors }}
-	      	  {% if forloop.parentloop.last or form.ingredient.value or form.amount.value or form.unit.value %}
-	          <li class="ingredient">
-	          	<span class="move-handle"> </span>
-	          	<span class="ingredient-name">{{ form.id }}{{ form.group }}{{ form.ingredient }}</span>
-	          	<span cass="ingredient-amount">{{ form.amount }}</span>
-	          	<span>{{ form.unit }}</span>
-	          	<span><a href="#" class="delete-button">{{ form.DELETE.as_hidden }}</a></span>
-	          	<br class="clear" />
-	          	<span class="ingredient-name-errors">{{ form.group.errors }}{{ form.ingredient.errors }}</span>
-	          	<span class="ingredient-amount-errors">{{ form.amount.errors }}</span>
-	          	<span class="ingredient-unit-errors">{{ form.unit.errors }}</span>
-	          	<br class="clear" />
-	          </li>
-	          {% endif %}
-	          {% endfor %}
-	          {% endfor %}
-	          <li class="group empty-form sorting-disabled">
-	          	<span class="move-handle"> </span>
-	          	<strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" /><br />
-	          	<span class="name-label">Naam</span>
-	          	<span class="amount-label">Hoeveelheid</span>
-	          	<span class="unit-label">Eenheid</span>
-	          	<span class="delete-label">Verwijderen</span>
-	          </li>
-	          <li class="colum-labels empty-form sorting-disabled">
-	          	<span>Naam</span>
-	          	<span>Hoeveelheid</span>
-	          	<span>Eenheid</span>
-	          	<span>Verwijderen</span>
-	          </li>
-	          <li class="ingredient empty-form sorting-disabled">
-	          	<span class="move-handle"> </span>
-	          	<span class="ingredient-name">{{ usesingredient_formset.empty_form.id }}{{ usesingredient_formset.empty_form.group }}{{ usesingredient_formset.empty_form.ingredient }}</span>
-	          	<span class="ingredient-amount">{{ usesingredient_formset.empty_form.amount }}</span>
-	          	<span>{{ usesingredient_formset.empty_form.unit }}</span>
-	          	<span class="delete-button"> </span>
-	          </li>
-	      </ul>
-	  </div>
-	      <div class="button-group">
-		      <a href="#" class="add-button add-ingredient-button">Ingrediënt toevoegen</a>
-		      <a href="#" class="add-button add-ingredientgroup-button">Ingrediëntengroep toevoegen</a>
-		  </div>
 	  <input id="submit-btn" type="submit" value="{% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}" name="normal-submit" />
-	</form>
+    </form>
 </div>
 {% endblock %}
