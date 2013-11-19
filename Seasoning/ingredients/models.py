@@ -24,6 +24,7 @@ from imagekit.models.fields import ProcessedImageField, ImageSpecField
 from imagekit.processors.resize import ResizeToFill, SmartResize
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
+import recipes
 
 def get_image_filename(instance, old_filename):
     """
@@ -272,8 +273,18 @@ class Ingredient(models.Model):
     def save(self):
         if not self.type == Ingredient.SEASONAL:
             self.preservability = 0
-            self.preservation_footprint = 0 
-        super(Ingredient, self).save()
+            self.preservation_footprint = 0
+        saved = super(Ingredient, self).save()
+        
+        # Update all recipes using this ingredient
+        uses = recipes.models.UsesIngredient.objects.filter(ingredient=self)
+        if len(uses) > 0 and len(uses) < 100:
+            # If more than 100 recipes use this ingredient, just wait for the cron job to
+            # avoid overloading the server
+            for uses_ingredient in uses:
+                uses_ingredient.save()
+        
+        return saved
 
 class Synonym(models.Model):
     """

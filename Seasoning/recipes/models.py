@@ -188,7 +188,7 @@ class Recipe(models.Model):
         self.footprint = total_footprint / self.portions
         
                 
-        super(Recipe, self).save(*args, **kwargs)
+        return super(Recipe, self).save(*args, **kwargs)
         
     def total_footprint(self):
         return self.footprint * self.portions
@@ -265,8 +265,12 @@ class UsesIngredient(models.Model):
             self.footprint = (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
         else:
             self.footprint = 0
-    
-        return super(UsesIngredient, self).save(*args, **kwargs)
+        
+        saved = super(UsesIngredient, self).save(*args, **kwargs)
+        # Update the recipe as well
+        self.recipe.save()
+        
+        return saved
 
 class UnknownIngredient(models.Model):
     class Meta:

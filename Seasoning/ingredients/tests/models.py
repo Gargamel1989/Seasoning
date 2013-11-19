@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django_dynamic_fixture import G
 from ingredients.tests import test_datetime
 from general.decorators import mysqldb_required
+from recipes.models import Recipe, UsesIngredient, Cuisine
 
 # All calls to datetime.date.today within ingredients.models will
 # return 2013-05-05 as the current date
@@ -283,6 +284,20 @@ class IngredientModelTestCase(TestCase):
     
     def test_save(self):
         bing = G(Ingredient, type=Ingredient.BASIC, preservability=10,
-                 preservation_footprint=100)
+                 preservation_footprint=100, base_footprint=1, accepted=True)
         self.assertEqual(bing.preservability, 0)
         self.assertEqual(bing.preservation_footprint, 0)
+        
+        # Check if recipe footprint is updated
+        G(Cuisine, name='Andere')
+        recipe = G(Recipe)
+        cuu = G(CanUseUnit, ingredient=bing, is_primary_unit=True)
+        G(UsesIngredient, recipe=recipe, ingredient=bing, amount=1, unit=cuu.unit)
+        recipe.save()
+        current_fp = recipe.footprint
+        self.assertEqual(recipe.footprint, 1)
+        
+        bing.base_footprint = 10*bing.base_footprint
+        bing.save()
+        
+        self.assertNotEqual(current_fp, Recipe.objects.get(id=recipe.id).footprint)

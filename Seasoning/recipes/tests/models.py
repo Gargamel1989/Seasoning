@@ -62,6 +62,14 @@ class UsesIngredientModelTestCase(TestCase):
         uses = G(UsesIngredient, ingredient=ing, unit=cuu.unit, amount=1)
         
         self.assertEqual(uses.footprint, 50)
+        self.assertEqual(uses.recipe.footprint, 50)
+        
+        ing.base_footprint = 5
+        ing.save()
+        uses.save()
+        
+        self.assertEqual(uses.footprint, 5)
+        self.assertEqual(uses.recipe.footprint, 5)
 
 class RecipeModelTestCase(TestCase):
     
