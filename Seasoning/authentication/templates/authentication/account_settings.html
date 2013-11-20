@@ -52,7 +52,7 @@
 			 <div class="account-info-stat">
             	<strong>Gemiddelde<br />voetafdruk</strong>
 	        	{% if average_fp %}
-            	<span id="mean-footprint" class="account-info-stat-img" title="De recepten toegevoegd door deze gebruiker hebben een gemiddelde voetafdruk van {{ average_fp|floatformat:"-2" }} kgCO2 per portie"><span id="mean-footprint-text">{{ average_fp|floatformat:"-2" }}</span></span>
+            	<span id="mean-footprint" class="account-info-stat-img" title="De recepten toegevoegd door deze gebruiker hebben een gemiddelde voetafdruk van {{ average_fp|floatformat:"-2" }} kgCO2 per 4 porties"><span id="mean-footprint-text">{{ average_fp|floatformat:"-2" }}</span></span>
 	        	{% else %}
             	<span id="mean-footprint" class="account-info-stat-img" title="Deze gebruiker heeft nog geen recepten toegevoegd"></span></span>
 	        	{% endif %}

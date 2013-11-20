@@ -142,6 +142,7 @@ class Recipe(models.Model):
     thumbnail = ImageSpecField([SmartResize(230, 230)], image_field='image', format='PNG')
     
     # Derived Parameters
+    # Footprint per portion
     footprint = FloatField(editable=False)
     veganism = models.PositiveSmallIntegerField(choices=Ingredient.VEGANISMS, editable=False)
     
@@ -189,9 +190,16 @@ class Recipe(models.Model):
         
                 
         return super(Recipe, self).save(*args, **kwargs)
-        
+    
     def total_footprint(self):
         return self.footprint * self.portions
+    
+    def normalized_footprint(self):
+        """
+        The footprint of this recipe for 4 portions
+        
+        """
+        return self.footprint * 4
     
     def vote(self, user, score):
         try:

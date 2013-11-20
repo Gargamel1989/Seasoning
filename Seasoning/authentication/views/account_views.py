@@ -56,7 +56,7 @@ def account_settings(request, user_id=None):
     return render(request, 'authentication/account_settings.html', {'viewed_user': user,
                                                                     'viewing_other': not viewing_self,
                                                                     'recipes': recipes,
-                                                                    'average_fp': averages['footprint__avg'],
+                                                                    'average_fp': 4*averages['footprint__avg'],
                                                                     'average_rating': averages['rating__avg'],
                                                                     'most_used_veganism': most_used_veganism})
 
