@@ -1577,11 +1577,18 @@
 
 			#below-recipe-name {
 				margin-bottom: 30px;
-				float: left;
 			}
 			
 			#below-recipe-name #add-info {
 				float: left;
+			}
+			
+			#below-recipe-name #rating-display {
+				float: right;
+			}
+			
+			#below-recipe-name #rating-display img {
+				height: 38px;
 			}
 			
 			#add-info #time-added {
@@ -1590,6 +1597,11 @@
 			
 			#recipe {
 				margin-bottom: 50px;
+			}
+			
+			#recipe #first-information {
+				clear: both;
+				position: relative;
 			}
 
 			#recipe #img-and-basic-user-options {
@@ -1826,8 +1838,9 @@
 			#recipe #recipe-charts {
 				clear: left;
 				width: 510px;
-				height: 250px;
-				margin-top: 50px;
+				height: 300px;
+				position: absolute;
+				bottom: 5px;
 			}
 			
 			.ingredient.dark-row {

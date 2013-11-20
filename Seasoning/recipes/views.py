@@ -373,7 +373,10 @@ def get_recipe_footprint_evolution(request):
                 for uses in usess:
                     for i in range(12):
                         footprints[i] += uses.normalized_footprint(uses.ingredient.footprint(date=dates[i]))
-                data = {'footprints': [float('%.2f' % footprint) for footprint in footprints],
+                footprints = [float('%.2f' % (footprint/recipe.portions)) for footprint in footprints]
+                footprints.append(footprints[-1])
+                footprints.insert(0, footprints[0])
+                data = {'footprints': footprints,
                         'doy': datetime.date.today().timetuple().tm_yday}
                 json_data = simplejson.dumps(data)
             
