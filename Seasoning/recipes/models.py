@@ -25,7 +25,8 @@ from imagekit.processors.resize import ResizeToFit, SmartResize
 import ingredients
 from ingredients.models import CanUseUnit, Ingredient, Unit
 import datetime
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator,\
+    MaxLengthValidator
 from django.db.models.fields import FloatField
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import ugettext_lazy as _
@@ -123,7 +124,8 @@ class Recipe(models.Model):
                                               help_text=_("The type of course this recipe will provide."))
     cuisine = models.ForeignKey(Cuisine, db_column='cuisine', null=True, blank=True,
                                 help_text=_("The type of cuisine this recipe represents."))
-    description = models.TextField(help_text=_("A few sentences describing the recipe."))
+    description = models.TextField(validators=[MaxLengthValidator(140)],
+                                   help_text=_("A few sentences describing the recipe (Maximum 140 characters)."))
     portions = models.PositiveIntegerField(help_text=_('The average amount of people that can be fed by this recipe '
                                                        'using the given amounts of ingredients.'))
     active_time = models.IntegerField(help_text=_('The time needed to prepare this recipe where you are actually doing something.'))
