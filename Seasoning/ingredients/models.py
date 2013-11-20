@@ -170,11 +170,11 @@ class Ingredient(models.Model):
         elif self.type == Ingredient.SEASONAL_SEA:
             return self.available_in_sea.all()
     
-    def get_active_available_ins(self):
+    def get_active_available_ins(self, date=None):
         """
         Returns a list of the available in objects belonging to this ingredient
-        that are currently available (The current date is between the from and until
-        date)
+        that are available on the given date (The given date is between the from and until
+        date). If no date is given, the current date will be used
         
         The until date is extended with the preservability of the ingredient
         
@@ -183,18 +183,20 @@ class Ingredient(models.Model):
         every ingredient will only have a few available_ins
         
         """
-        today = datetime.date.today()
+        if date is None:
+            date = datetime.date.today()
         
         active_available_ins = []
         for available_in in self.get_available_ins():
-            if available_in.is_active(today, date_until_extension=self.preservability):
+            if available_in.is_active(date, date_until_extension=self.preservability):
                 active_available_ins.append(available_in)
         return active_available_ins
     
-    def get_available_in_with_smallest_footprint(self):
+    def get_available_in_with_smallest_footprint(self, date=None):
         """
-        Return the AvailableIn with the smallest footprint of the currently active
-        AvailableIn objects beloning to this ingredient
+        Return the AvailableIn with the smallest footprint of the AvailableIn objects 
+        that are active on the given date beloning to this ingredient. If no date
+        is given, the current date will be assumed
         
         If this is a basic ingredient, the footprint is just the base_footprint of the
         object
@@ -203,8 +205,13 @@ class Ingredient(models.Model):
         object, plus the minimal of the currently available AvailableIn* objects.
         
         """
+        if date is None:
+            date = datetime.date.today()
+        
         smallest_footprint = None
-        for available_in in self.get_active_available_ins():
+        for available_in in self.get_active_available_ins(date):
+            if self.name == 'Rode kool':
+                x =1
             if not available_in.is_active(date_until_extension=0):
                 # This means this available in is currently under preservation
                 footprint = available_in.footprint + available_in.days_apart()*self.preservation_footprint
@@ -249,9 +256,10 @@ class Ingredient(models.Model):
                         break
             return False
     
-    def footprint(self):
+    def footprint(self, date=None):
         """
-        Return the current (minimal available) footprint of this ingredient
+        Return the (minimal available) footprint of this ingredient on the given date.
+        If no date is given, the current date will be assumed.
         
         If this is a basic ingredient, the footprint is just the base_footprint of the
         object
@@ -260,8 +268,11 @@ class Ingredient(models.Model):
         object, plus the minimal of the currently available AvailableIn* objects.
         
         """
+        if date is None:
+            date = datetime.date.today()
+        
         try:
-            available_in = self.get_available_in_with_smallest_footprint()
+            available_in = self.get_available_in_with_smallest_footprint(date)
             if not available_in.is_active(date_until_extension=0):
                 # This means this available in is currently under preservation
                 footprint = available_in.footprint + available_in.days_apart()*self.preservation_footprint

@@ -32,4 +32,7 @@ urlpatterns = patterns('',
     url(r'^add/$', 'recipes.views.edit_recipe'),
     url(r'^edit/(\d*)/$', 'recipes.views.edit_recipe'),
     url(r'^delete/(\d*)/$', 'recipes.views.delete_recipe'),
+    
+    # Statistical data about recipes
+    url(r'^data/fpevo/$', 'recipes.views.get_recipe_footprint_evolution')
 )

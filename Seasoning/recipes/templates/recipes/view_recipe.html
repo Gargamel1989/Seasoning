@@ -27,6 +27,25 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script>
     $(document).ready(function() {
+        $.ajax({
+            url: '/recipes/data/fpevo/',
+            type: "POST",
+            dataType: "json",
+            data : {recipe : {{ recipe.id }}},
+            success: function(data) {
+                chart.addSeries({
+                  name: "Voetafdruk",
+                  data: data.footprints
+                });
+                chart.renderer.path(['M', 52+(450/366)*data.doy, 222, 'L', 52+(450/366)*data.doy, 38]).attr({
+                    'stroke-width': 1,
+                    'stroke': 'black',
+                    'zIndex': 1000
+                }).add();
+            },
+            cache: false
+        });
+            
     	$("#recipe-img").click(function() {
     		$("#zoomed-recipe-image-container").fadeIn(500);
     	});
@@ -120,8 +139,9 @@
     }
     
     $(function () { 
-        $('#recipe-charts').highcharts({
+        chart = new Highcharts.Chart({
             chart: {
+                renderTo: 'recipe-charts',
                 type: 'spline'
             },
             title: {

@@ -43,6 +43,8 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from recipes.forms import RequireOneFormSet
 from django.core.mail import send_mail
+import datetime
+import ingredients
 
 class Group:
     
@@ -259,66 +261,16 @@ def edit_recipe(request, recipe_id=None):
     context['recipe_form'] = recipe_form
     context['usesingredient_formset'] = usesingredient_formset
     return render(request, 'recipes/edit_recipe.html', context)
+
+@login_required
+def delete_recipe_comment(request, recipe_id, comment_id):
+    comment = get_object_or_404(comments.get_model(), pk=comment_id)
+    if comment.user == request.user:
+        perform_delete(request, comment)
+        return redirect(view_recipe, recipe_id)
+    else:
+        raise PermissionDenied
                     
-#             else:
-#                # Check if the formset is not valid because an unknown ingredient was given, or
-#                # because of a general input error
-#                try:
-#                    for usesingredient_form in usesingredient_formset:
-#                        if not usesingredient_form.is_valid_after_ingrequest():
-#                            raise ValidationError('haha')
-#                except ValidationError:
-#                    # An input error occured in the ingredient fields
-#                    pass
-#                 pass
-#                     
-#         elif 'ingrequest-submit' in request.POST:
-#             pass
-#            # User pressed a valid submit button
-#            if 'stop-submit' in request.POST:
-#                # User wants to discard all progress
-#                return redirect(home)
-#            
-#            try: 
-#                if recipe_form.is_valid():
-#                    # Recipe form is valid
-#                    ok = True
-#                    for usesingredient_form in usesingredient_formset:
-#                        # Check if all uses_ingredient forms would be valid if their used ingredients would be present in
-#                        # the database
-#                        if not usesingredient_form.is_valid_before_ingrequest():
-#                            ok = False
-#                    if not ok:
-#                        raise ValidationError('Something went wrong...')
-#                    # All uses_ingredient forms should be valid when ingredients are added
-#                    if usesingredient_formset.is_valid():
-#                        # No ingredients have to be added, everything is fine!
-#                        recipe_form.save(author=request.user)
-#                        usesingredient_formset.save()
-#                        recipe.save()
-#                        if new:
-#                            messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
-#                        else:
-#                            messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast')
-#                        return redirect('/recipes/' + str(recipe.id) + '/')
-#                    else:
-#                        # Unknown ingredients were used
-#                        unknown_ingredients = []
-#                        for usesingredient_form in usesingredient_formset:
-#                            if not usesingredient_form.uses_existing_ingredient():
-#                                unknown_ingredients.append(usesingredient_form['ingredient'].value())
-#                        
-#                        if 'ingrequest-submit' in request.POST:
-#                            # Only when this button is pressed, should we add all the ingredients, otherwise, just show the dialog
-#                            # about the unknown ingredients
-#                            for ingredient in unknown_ingredients:
-#                                # FIXME: request the ingredient -> send a mail to admins with all needed information
-#                                pass
-#                        elif 'normal-submit' in request.POST:
-#                            context['unknown_ingredients'] = unknown_ingredients
-#                
-#            except ValidationError:
-#                pass
 
 @login_required
 def delete_recipe(request, recipe_id):
@@ -371,7 +323,7 @@ def get_recipe_portions(request):
         recipe_id = request.POST.get('recipe', None)
         portions = request.POST.get('portions', None)
         
-        if recipe_id and portions:
+        if recipe_id is not None and portions is not None and portions > 0:
             try:
                 recipe = Recipe.objects.get(pk=recipe_id)
                 usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe).order_by('group', 'ingredient__name')
@@ -399,18 +351,34 @@ def get_recipe_portions(request):
             
             data = {'ingredient_list': render_to_string('includes/ingredient_list.html', {'ingredient_groups': ingredient_groups}),
                     'new_footprint': new_footprint}
-            json_data = simplejson.dumps(data);
+            json_data = simplejson.dumps(data)
             
             return HttpResponse(json_data)
     
     raise PermissionDenied
 
-@login_required
-def delete_recipe_comment(request, recipe_id, comment_id):
-    comment = get_object_or_404(comments.get_model(), pk=comment_id)
-    if comment.user == request.user:
-        perform_delete(request, comment)
-        return redirect(view_recipe, recipe_id)
-    else:
-        raise PermissionDenied
+@csrf_exempt
+def get_recipe_footprint_evolution(request):
     
+    if request.is_ajax() and request.method == 'POST':
+        recipe_id = request.POST.get('recipe', None)
+    
+        if recipe_id is not None:
+            try:
+                recipe = Recipe.objects.get(pk=recipe_id)
+                usess = UsesIngredient.objects.select_related('ingredient', 'unit').prefetch_related('ingredient__available_in_country', 'ingredient__available_in_sea').filter(recipe=recipe).order_by('group', 'ingredient__name')
+                # One footprint per month
+                footprints = [0] * 12
+                dates = [datetime.date(day=1, month=month, year=ingredients.models.AvailableIn.BASE_YEAR) for month in range(1, 13)]
+                for uses in usess:
+                    for i in range(12):
+                        footprints[i] += uses.normalized_footprint(uses.ingredient.footprint(date=dates[i]))
+                data = {'footprints': [float('%.2f' % footprint) for footprint in footprints],
+                        'doy': datetime.date.today().timetuple().tm_yday}
+                json_data = simplejson.dumps(data)
+            
+                return HttpResponse(json_data)
+            except Recipe.DoesNotExist, UsesIngredient.DoesNotExist:
+                raise Http404
+        
+    raise PermissionDenied

@@ -240,6 +240,18 @@ class UsesIngredient(models.Model):
     # overwritten for portions calculations)
     save_allowed = True
     
+    def normalized_footprint(self, ingredient_footprint):
+        """
+        Returns the footprint normalized by the used unit and the used amount
+        for a given ingredient footprint
+        
+        """
+        unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
+        if self.unit.parent_unit:
+            unit_properties.unit = self.unit
+            unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
+        return self.amount * unit_properties.conversion_factor * ingredient_footprint
+    
     def clean(self, *args, **kwargs):
         # Validate that is ingredient is using a unit that it can use
         if self.ingredient_id is None or self.unit_id is None:
@@ -266,11 +278,7 @@ class UsesIngredient(models.Model):
             raise PermissionDenied('Saving this object has been disallowed')
         
         if self.ingredient.accepted:
-            unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
-            if self.unit.parent_unit:
-                unit_properties.unit = self.unit
-                unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
-            self.footprint = (self.amount * unit_properties.conversion_factor * self.ingredient.footprint())
+            self.footprint = self.normalized_footprint(self.ingredient.footprint())
         else:
             self.footprint = 0
         
