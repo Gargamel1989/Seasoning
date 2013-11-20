@@ -102,7 +102,7 @@ def backup_db(request):
     Backup the Seasoning Database to disk
     '''
     db = settings.DATABASES['default']
-    filename = "/backups/mysql/%s-%s.sql" % (db['NAME'], time.strftime('%Y-%m-%d'))
+    filename = "/backups/mysql/%s-%s.sql.bzip2" % (db['NAME'], time.strftime('%Y-%m-%d'))
     cmd = 'mysqldump --opt -u %s -p%s -e -c %s | bzip2 -c > %s' % (db['USER'], db['PASSWORD'], db['NAME'], filename)
     os.popen(cmd)
     
