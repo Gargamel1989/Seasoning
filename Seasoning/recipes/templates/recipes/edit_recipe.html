@@ -76,15 +76,20 @@
         	$(this).blur();
         	fix_ingredient_list();
         });
-        $("#sortable-ingredients .delete-button").click(function() {
-        	var delete_checkbox = $(this).children("input");
-        	if (delete_checkbox.length) {
-        		$(this).parents("li").hide()
-        	} else {
-        		$(this).parents("li").remove();
-        	}
-			delete_checkbox.val("True");
-        	return false;
+        $("#sortable-ingredients .ingredient .delete-button").click(function() {
+            var delete_checkbox = $(this).children("input");
+            if (delete_checkbox.length) {
+                $(this).parents("li").hide()
+            } else {
+                $(this).parents("li").remove();
+            }
+            delete_checkbox.val("True");
+            return false;
+        });
+        $("#sortable-ingredients .group .delete-button").click(function() {
+            $(this).parents("li").remove();
+            fix_ingredient_list();
+            return false;
         });
         
         $("input.keywords-searchbar").each(function() {
@@ -287,12 +292,21 @@
     	          {% for group in usesingredient_groups %}
     	      	  {% if group.grouper != "" and group.grouper != None %}
     	          <li class="group">
-    	          	<span class="move-handle"> </span>
-    	          	<strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" value="{{ group.grouper }}" /><br />
-    	          	<span class="name-label">Naam</span>
-    	          	<span class="amount-label">Hoeveelheid</span>
-    	          	<span class="unit-label">Eenheid</span>
-    	          	<span class="delete-label">Verwijderen</span>
+    	          	<span class="definition">
+                        <span class="move-handle"> </span>
+                        <span class="delete-button-wrapper">
+                            <a href="#" class="delete-button"> </a>
+                        </span>
+                        <span class="group-name-wrapper">
+                            <strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" value="{{ group.grouper }}" />
+                        </span>
+                    </span>
+                    <span class="labels">
+                        <span class="name-label">Naam</span>
+                        <span class="amount-label">Hoeveelheid</span>
+                        <span class="unit-label">Eenheid</span>
+                        <span class="delete-label">Verwijderen</span>
+                    </span>
     	          </li>
     	          {% endif %}
     	          {% for form in group.list %}
@@ -304,21 +318,32 @@
     	          	<span class="ingredient-amount">{{ form.amount }}</span>
     	          	<span>{{ form.unit }}</span>
     	          	<span><a href="#" class="delete-button">{{ form.DELETE.as_hidden }}</a></span>
-    	          	<span class="ingredient-name-errors error">{{ form.group.errors }}{{ form.ingredient.errors }}</span>
-    	          	<span class="ingredient-amount-errors error">{{ form.amount.errors }}</span>
-    	          	<span class="ingredient-unit-errors error">{{ form.unit.errors }}</span>
+    	          	<span class="ingredient-errors">
+        	          	<span class="ingredient-name-errors error">{{ form.group.errors }}{{ form.ingredient.errors }}</span>
+        	          	<span class="ingredient-amount-errors error">{{ form.amount.errors }}</span>
+        	          	<span class="ingredient-unit-errors error">{{ form.unit.errors }}</span>
+        	        </span>
     	          	<br class="clear" />
     	          </li>
     	          {% endif %}
     	          {% endfor %}
     	          {% endfor %}
     	          <li class="group empty-form sorting-disabled">
-    	          	<span class="move-handle"> </span>
-    	          	<strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" /><br />
-    	          	<span class="name-label">Naam</span>
-    	          	<span class="amount-label">Hoeveelheid</span>
-    	          	<span class="unit-label">Eenheid</span>
-    	          	<span class="delete-label">Verwijderen</span>
+    	            <span class="definition">
+        	          	<span class="move-handle"> </span>
+        	          	<span class="delete-button-wrapper">
+        	          	    <a href="#" class="delete-button"> </a>
+        	          	</span>
+        	          	<span class="group-name-wrapper">
+        	          	    <strong>Ingrediëntgroep: </strong><input type="text" placeholder="(Geef groepsnaam in)" class="group-name" />
+        	          	</span>
+        	        </span>
+        	        <span class="labels">
+        	          	<span class="name-label">Naam</span>
+        	          	<span class="amount-label">Hoeveelheid</span>
+        	          	<span class="unit-label">Eenheid</span>
+        	          	<span class="delete-label">Verwijderen</span>
+        	        </span>
     	          </li>
     	          <li class="colum-labels empty-form sorting-disabled">
     	          	<span>Naam</span>
@@ -334,11 +359,11 @@
     	          	<span class="delete-button"> </span>
     	          </li>
     	      </ul>
+              <div class="button-group">
+                  <a href="#" class="add-button add-ingredient-button">Ingrediënt toevoegen</a>
+                  <a href="#" class="add-button add-ingredientgroup-button">Ingrediëntengroep toevoegen</a>
+              </div>
     	  </div>
-    	      <div class="button-group">
-    		      <a href="#" class="add-button add-ingredient-button">Ingrediënt toevoegen</a>
-    		      <a href="#" class="add-button add-ingredientgroup-button">Ingrediëntengroep toevoegen</a>
-    		  </div>
     	  
 	  </div>
 	  
