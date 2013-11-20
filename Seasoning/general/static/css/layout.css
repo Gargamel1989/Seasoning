@@ -73,6 +73,10 @@
 		height: 24px;
 	} 
 	
+	#id_honeypot {
+		display: none;
+	}
+	
 	.add-button {
 		position: absolute;
 		right: 0;

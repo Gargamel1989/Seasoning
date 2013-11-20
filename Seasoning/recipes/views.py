@@ -140,7 +140,7 @@ def view_recipe(request, recipe_id):
     active_time_perc = (float(recipe.active_time) / total_time) * 100
     passive_time_perc = 100 - active_time_perc
     
-    comments = Comment.objects.filter(content_type=ContentType.objects.get_for_model(Recipe), object_pk=recipe.id).select_related('user')
+    comments = Comment.objects.filter(content_type=ContentType.objects.get_for_model(Recipe), object_pk=recipe.id, is_removed=False, is_public=True).select_related('user')
     
     return render(request, 'recipes/view_recipe.html', {'recipe': recipe,
                                                         'ingredient_groups': ingredient_groups,
