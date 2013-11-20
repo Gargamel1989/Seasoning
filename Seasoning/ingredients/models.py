@@ -133,6 +133,7 @@ class Ingredient(models.Model):
     
     image_source = models.TextField(blank=True)
     accepted = models.BooleanField(default=False)
+    bramified = models.BooleanField(default=False)
     
     base_useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
     
