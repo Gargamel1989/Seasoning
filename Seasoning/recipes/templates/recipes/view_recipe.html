@@ -24,6 +24,7 @@
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/raty.min.js"></script>
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
 <script>
     $(document).ready(function() {
     	$("#recipe-img").click(function() {
@@ -117,6 +118,32 @@
             }, 1000);
         });
     }
+    
+    $(function () { 
+        $('#recipe-charts').highcharts({
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: 'Evolutie voetafdruk doorheen het jaar'
+            },
+            legend: {
+                enabled: false
+            },
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Maa', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
+            },
+            yAxis: {
+                title: {
+                    text: 'Voetafdruk (kgCO2)'
+                },
+                min: 0
+            },
+            tooltip: {
+                valueSuffix: ' kgCO2 per portie'
+            }
+        });
+    });
 </script>
 {% endblock %}
 
@@ -154,7 +181,7 @@
 <div id="recipe">
     
     <div id="img-and-basic-user-options">
-        <img id="recipe-img" src="{{ MEDIA_URL }}{{ recipe.image }}"/>
+        <img id="recipe-img" src="{{ recipe.thumbnail.url }}"/>
         
         <div id="rating">
             <strong>Jouw waardering</strong>
@@ -212,18 +239,26 @@
     </div>
     
     <div id="basic-info">
-    	<p class="vague-description">{{ recipe.get_veganism_display }} {{ recipe.cuisine }} {{ recipe.get_course_display }}</p>
-    	<div id="veganism">
-    		{% if recipe.veganism == 2 %}<img src="{{ STATIC_URL }}img/vegan.png" />{% endif %}
-    		{% if recipe.veganism == 1 %}<img src="{{ STATIC_URL }}img/vegetarian.png" />{% endif %}
-    		{% if recipe.veganism == 0 %}<img src="{{ STATIC_URL }}img/non-vegetarian.png" />{% endif %}
-    	</div>
+        <div id="vague-description">
+            <strong>Categorie:</strong><br />
+            {{ recipe.cuisine }} {{ recipe.get_course_display }}
+            
+            <div id="veganism">
+                <img src="{{ STATIC_URL }}img/non-vegetarian.png" {% if not recipe.veganism == 0 %}class="not-this"{% else %}title="Dit is een niet-vegetarisch recept"{% endif %} />
+                <img src="{{ STATIC_URL }}img/vegetarian.png" {% if not recipe.veganism == 1 %}class="not-this"{% else %}title="Dit is een vegetarisch recept"{% endif %} />
+                <img src="{{ STATIC_URL }}img/vegan.png" {% if not recipe.veganism == 2 %}class="not-this"{% else %}title="Dit is een veganistisch recept"{% endif %} />
+            </div>
+        </div>
+        
+        <div id="description">
+    		<strong>Beschrijving</strong>
+        	{{ recipe.description|linebreaks }}
+        </div>
+        
+    </div>
     
-		<p>Totale voetafdruk: <span id="total-footprint">{{ recipe.total_footprint|floatformat:"3" }}</span> kgCO2 ({{ recipe.footprint|floatformat:"3" }} kgCO2 pp.)</p>
-    
-    	<strong>Beschrijving</strong>
-    	<p>{{ recipe.description|linebreaks }}</p>
-    
+    <div id="recipe-charts">
+        
     </div>
     
     <br class="clear" />

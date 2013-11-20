@@ -1594,7 +1594,7 @@
 
 			#recipe #img-and-basic-user-options {
 				float: right;
-				width: 40%;
+				width: 350px;
 				margin: 0 0 10px 10px;
 				background-color: rgba(118, 186, 59, 0.1);
 			}
@@ -1787,16 +1787,47 @@
 			
 			#recipe #basic-info {
 				clear: left;
-				width: 53%;
+				width: 510px;
 				margin-top: 20px;
 			}
-			
-			#basic-info .vague-description {
-				font-weight: bold;
+
+			#basic-info #vague-description {
+				position: relative;
 			}
 
-			#basic-info #veganism img {
-				width: 15%;
+			#basic-info #vague-description #veganism {
+				position: absolute;
+				right: 0;
+				bottom: 3px;
+				width: 200px;
+				height: 100%;
+			}
+
+			#basic-info #vague-description #veganism img {
+				height: 100%;
+				float: right;
+				margin-left: 5px;
+			}
+
+			#basic-info #vague-description #veganism img.not-this {
+				opacity:0.1;
+				filter:alpha(opacity=10); /* For IE8 and earlier */
+			}
+
+			#basic-info #description {
+				clear: left;
+				margin-top: 50px;
+			}
+
+			#basic-info #description p {
+				margin-top: 0;
+			}
+			
+			#recipe #recipe-charts {
+				clear: left;
+				width: 510px;
+				height: 250px;
+				margin-top: 50px;
 			}
 			
 			.ingredient.dark-row {
