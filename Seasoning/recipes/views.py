@@ -83,7 +83,7 @@ def browse_recipes(request):
             # A simple search with only the recipe name was done (from the homepage)
             search_form.is_valid()
             if 'search_string' in search_form.cleaned_data:
-                recipes_list = Recipe.objects.filter(name__icontains=search_form.cleaned_data['search_string']).order_by('footprint')
+                recipes_list = Recipe.objects.filter(name__icontains=search_form.cleaned_data['search_string'], accepted=True).order_by('footprint')
             else:
                 recipes_list = []
             search_form = SearchRecipeForm()

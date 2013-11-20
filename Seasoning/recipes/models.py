@@ -58,7 +58,7 @@ class RecipeManager(models.Manager):
             
         veg_filter = models.Q()
         incl_ingredient_filter = models.Q()
-        additional_filters = models.Q()
+        additional_filters = models.Q(accepted=True)
         if advanced_search:
             # Filter for Veganism
             if ven:
@@ -175,6 +175,7 @@ class Recipe(models.Model):
         self.veganism = Ingredient.VEGAN
         
         total_footprint = 0
+        self.accepted = True
         for uses in self.uses.all():
             # Add the footprint for this used ingredient to the total
             total_footprint += uses.footprint
