@@ -151,9 +151,10 @@
         			$('#instructions-warning').slideUp('1000');
         		}
         		var parsed_data = $.parseJSON(data);
-        		$('#total-footprint').text(parsed_data['new_footprint'].toFixed(3));
+        		$('#recipe-footprint').text(parsed_data['new_footprint'].toFixed(2));
         		$('#ingredients').html(parsed_data['ingredient_list']);
         		adjust_footprint_percentages();
+        		fix_moreinfo_links();
         		$('#ingredients-loader').hide();
         	}).fail(function() {
         	   alert('Er is iets misgegaan bij het contacteren van de server. Probeer het later opnieuw...')
@@ -161,22 +162,25 @@
         });
         
         adjust_footprint_percentages();
-        
+        fix_moreinfo_links();
+    });
+    
+    function fix_moreinfo_links() {
         $('.ingredient-moreinfo-link').click(function() {
             var $moreinfo = $(this).parents('.ingredient').find('.moreinfo');
             if ($moreinfo.is(':hidden')) {
-                $(this).parents('.ingredient').find('.moreinfo').slideDown(500);
+                $moreinfo.slideDown(500);
                 $(this).children('img').attr('src', '/static/img/icons/less.png');
             } else {
-                $(this).parents('.ingredient').find('.moreinfo').slideUp(500);
+                $moreinfo.slideUp(500);
                 $(this).children('img').attr('src', '/static/img/icons/add.png');
             }
             return false;
         });
-    });
+    }
     
     function adjust_footprint_percentages() {
-        var total_footprint = parseFloat($('#total-footprint').text());
+        var total_footprint = parseFloat($('#recipe-footprint').text());
         $('.ingredient').each(function() {
             var footprint = parseFloat($(this).find('.footprint-number').text());
             var percentage = (footprint/total_footprint)*100;
@@ -351,6 +355,9 @@
     <div id="first-information">
 	    <div id="img-and-basic-user-options">
 	        <img id="recipe-img" src="{{ recipe.thumbnail.url }}"/>
+	        <span id="recipe-footprint-wrapper">
+	            <span id="recipe-footprint" title="Dit recept heeft een voetafdruk van {{ recipe.total_footprint|floatformat:-2 }} kgCO2 per {{ recipe.portions }} porties">{{ recipe.total_footprint|floatformat:-2 }}</span>
+            </span>
 	        
 	        <div id="rating">
 	            <strong>Jouw waardering</strong>
@@ -451,7 +458,7 @@
     </div>
     
     <div class="recipe-info-wrapper">
-    	<h2><span style="position:relative;">Ingrediënten<div id="ingredients-loader" style="position:absolute;top:2px;right:-55px;height:50px;display:none;">{% include "includes/ajax-loader.html" %}</div></span></h2>
+    	<h3><span style="position:relative;">Ingrediënten<div id="ingredients-loader" style="position:absolute;top:2px;right:-55px;height:50px;display:none;">{% include "includes/ajax-loader.html" %}</div></span></h3>
     	
     	<div id="ingredients">
 			{% include "includes/ingredient_list.html" %}
@@ -465,7 +472,7 @@
     </div>
     
     <div class="recipe-info-wrapper">
-        <h2>Bereidingswijze</h2>
+        <h3>Bereidingswijze</h3>
         <div id="instructions">
     	   <div id="instructions-warning">
                 Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.portions }} porties. U hebt het aantal porties aangepast, waardoor het mogelijk
@@ -477,8 +484,7 @@
 </div>
 
 <div id="give-comment">
-    <h2>Geef een reactie op dit recept:</h2>
-	<br>
+    <h3>Geef een reactie op dit recept:</h3>
 	{% if user.is_authenticated %}
     	<div id="new-comment" class="comment">
             <div class="commenter-img">
@@ -509,7 +515,7 @@
 	    <p><a href="{% url 'login' %}?next={{ request.path  }}">Meld je aan</a> om een reactie te geven.</p>
 	{% endif %}
 </div>
-<h2>Reacties op dit recept:</h2>
+<h3>Reacties op dit recept:</h3>
 <div id="comment-list">
 	{% for comment in comments %}
     <div id="comment-{{ forloop.counter }}" class="comment">

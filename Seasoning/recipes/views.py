@@ -47,15 +47,6 @@ import datetime
 import ingredients
 from django.db.models.aggregates import Max, Min
 
-class Group:
-    
-    def __init__(self, name):
-        self.name = name
-        self.usess = []
-    
-    def append(self, uses):
-        self.usess.append(uses)
-
 def browse_recipes(request):
     """
     Browse or search through recipes
@@ -119,19 +110,8 @@ def browse_recipes(request):
 def view_recipe(request, recipe_id):
     
     recipe = Recipe.objects.select_related('author', 'cuisine').get(pk=recipe_id)
-    usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe).order_by('group', 'ingredient__name')
+    usess = UsesIngredient.objects.select_related('ingredient', 'unit').filter(recipe=recipe).order_by('-group', 'ingredient__name')
     
-    groups = {}
-    for uses in usess:
-        group_name = uses.group or None
-        if not group_name in groups:
-            groups[group_name] = Group(group_name)
-        groups[group_name].append(uses)
-    if len(groups) > 1 and None in groups:
-        groups[None].name = _('Remaining Ingredients')
-    
-    ingredient_groups = sorted(groups.values(), key=lambda x: x.name)
-
     user_vote = None
     if request.user.is_authenticated():
         try:
@@ -146,7 +126,7 @@ def view_recipe(request, recipe_id):
     comments = Comment.objects.filter(content_type=ContentType.objects.get_for_model(Recipe), object_pk=recipe.id, is_removed=False, is_public=True).select_related('user')
     
     return render(request, 'recipes/view_recipe.html', {'recipe': recipe,
-                                                        'ingredient_groups': ingredient_groups,
+                                                        'usess': usess,
                                                         'user_vote': user_vote,
                                                         'active_time_perc': active_time_perc,
                                                         'passive_time_perc': passive_time_perc,
@@ -332,25 +312,14 @@ def get_recipe_portions(request):
                 raise Http404
             
             ratio = float(portions)/recipe.portions
-            new_footprint = ratio * recipe.footprint
+            new_footprint = ratio * recipe.total_footprint()
             
             for uses in usess:
                 uses.save_allowed = False
                 uses.amount = ratio * uses.amount
                 uses.footprint = ratio * uses.footprint
             
-            groups = {}
-            for uses in usess:
-                group_name = uses.group or None
-                if not group_name in groups:
-                    groups[group_name] = Group(group_name)
-                groups[group_name].append(uses)
-            if len(groups) > 1 and None in groups:
-                groups[None].name = _('Remaining Ingredients')
-            
-            ingredient_groups = sorted(groups.values(), key=lambda x: x.name)
-            
-            data = {'ingredient_list': render_to_string('includes/ingredient_list.html', {'ingredient_groups': ingredient_groups}),
+            data = {'ingredient_list': render_to_string('includes/ingredient_list.html', {'usess': usess}),
                     'new_footprint': new_footprint}
             json_data = simplejson.dumps(data)
             

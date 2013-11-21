@@ -436,6 +436,10 @@ class AvailableIn(models.Model):
     def month_until(self):
         return self.date_until.strftime('%B')
     
+    def extended_month_until(self):
+        date = self.date_until.replace(month=(self.date_until.month + (self.ingredient.preservability // 30) - 1) % 12 + 1)
+        return date.strftime('%B')
+    
     def is_active(self, date=None, date_until_extension=0):
         """
         Returns if this available in is currently active. This means the
