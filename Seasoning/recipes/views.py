@@ -366,7 +366,7 @@ def get_recipe_footprint_evolution(request):
         if recipe_id is not None:
             try:
                 recipe = Recipe.objects.get(pk=recipe_id)
-                usess = UsesIngredient.objects.select_related('ingredient', 'unit').prefetch_related('ingredient__available_in_country', 'ingredient__available_in_sea').filter(recipe=recipe).order_by('group', 'ingredient__name')
+                usess = UsesIngredient.objects.select_related('ingredient', 'unit').prefetch_related('ingredient__available_in_country', 'ingredient__available_in_sea', 'ingredient__canuseunit_set__unit').filter(recipe=recipe).order_by('group', 'ingredient__name')
                 # One footprint per month
                 footprints = [0] * 12
                 dates = [datetime.date(day=1, month=month, year=ingredients.models.AvailableIn.BASE_YEAR) for month in range(1, 13)]
