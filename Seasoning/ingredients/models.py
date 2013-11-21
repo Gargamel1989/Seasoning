@@ -135,7 +135,7 @@ class Ingredient(models.Model):
     accepted = models.BooleanField(default=False)
     bramified = models.BooleanField(default=False)
     
-    base_useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
+    useable_units = models.ManyToManyField(Unit, through='CanUseUnit')
     
     def __unicode__(self):
         return self.name
@@ -150,13 +150,6 @@ class Ingredient(models.Model):
             return None
         except CanUseUnit.DoesNotExist:
             return None
-    
-    def can_use_unit(self, unit):
-        useable_units = Unit.objects.filter(models.Q(useable_by__ingredient=self) | models.Q(parent_unit__useable_by__ingredient=self))
-        return unit in useable_units
-    
-    def all_useable_units(self):
-        return CanUseUnit.objects.useable_by(self)
     
     def get_available_ins(self):
         """
@@ -315,28 +308,6 @@ class Synonym(models.Model):
     def __unicode__(self):
         return self.name
     
-class CanUseUnitManager(models.Manager):
-    
-    def useable_by(self, ingredient):
-        if isinstance(ingredient, Ingredient):
-            ingredient = ingredient.pk
-            
-        query = ('(SELECT `canuseunit`.`id`, `canuseunit`.`ingredient`, `canuseunit`.`unit`, `canuseunit`.`is_primary_unit`, `canuseunit`.`conversion_factor` '
-                 ' FROM unit '
-                 ' LEFT JOIN canuseunit '
-                 ' ON unit.id=canuseunit.unit '
-                 ' WHERE ingredient=%s) '
-                 'UNION '
-                 '(SELECT 0, `canuseunit`.`ingredient`, derived_unit.id, 0, (canuseunit.conversion_factor*derived_unit.ratio) AS conversion_factor '
-                 ' FROM unit AS derived_unit '
-                 ' LEFT JOIN unit AS parent_unit '
-                 ' ON derived_unit.parent_unit_id=parent_unit.id '
-                 ' LEFT JOIN canuseunit '
-                 ' ON parent_unit.id=canuseunit.unit '
-                 ' WHERE derived_unit.parent_unit_id IS NOT NULL '
-                 ' AND ingredient=%s)')
-        return self.raw(query, [ingredient, ingredient])
-        
 class CanUseUnit(models.Model):
     """
     Relates a unit to an ingredient.
@@ -349,8 +320,6 @@ class CanUseUnit(models.Model):
     class Meta:
         db_table = 'canuseunit'
         
-    objects = CanUseUnitManager()
-        
     ingredient = models.ForeignKey('Ingredient', db_column='ingredient')
     unit = models.ForeignKey('Unit', related_name='useable_by', db_column='unit', limit_choices_to=models.Q(parent_unit__exact=None))
     
@@ -360,6 +329,25 @@ class CanUseUnit(models.Model):
     
     def __unicode__(self):
         return self.ingredient.name + ' can use ' + self.unit.name
+    
+    def save(self, *args, **kwargs):
+        super(CanUseUnit, self).save(*args, **kwargs)
+        if self.unit.parent_unit is None:
+            for unit in self.unit.derived_units.all():
+                try:
+                    canuseunit = CanUseUnit.objects.get(ingredient=self.ingredient, unit=unit)
+                    canuseunit.conversion_factor = self.conversion_factor*unit.ratio
+                    canuseunit.save()
+                except CanUseUnit.DoesNotExist:
+                    CanUseUnit(ingredient=self.ingredient, unit=unit, is_primary_unit=False, conversion_factor=self.conversion_factor*unit.ratio).save()
+    
+    def delete(self, *args, **kwargs):
+        super(CanUseUnit, self).delete(*args, **kwargs)
+        if self.unit.parent_unit is None:
+            # If this is a base unit, check if it has any derived canuseunits that need to be deleted
+            for canuseunit in CanUseUnit.objects.filter(ingredient=self.ingredient, unit__parent_unit=self.unit):
+                canuseunit.delete()
+        
 
 class Country(models.Model):
     """

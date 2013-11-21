@@ -249,7 +249,7 @@ class UsesIngredient(models.Model):
         for a given ingredient footprint
         
         """
-        unit_properties = CanUseUnit.objects.get(models.Q(ingredient=self.ingredient) & (models.Q(unit=self.unit) | models.Q(unit=self.unit.parent_unit)))
+        unit_properties = self.ingredient.canuseunit_set.get(unit=self.unit)
         if self.unit.parent_unit:
             unit_properties.unit = self.unit
             unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
@@ -266,15 +266,11 @@ class UsesIngredient(models.Model):
             # false positivies, skip the validation
             return self
         try:
-            # Get all units useable by this ingredient
-            all_useable_units = list(CanUseUnit.objects.useable_by(self.ingredient.pk))
+            self.ingredient.useable_units.get(pk=self.unit.pk)
+            return self
         except Unit.DoesNotExist:
-            # No units are useable, this should not happen if the ingredient is accepted
-            raise Exception('The ingredient %s does not have any useable units...' % str(self.ingredient))
-        if self.unit in [useable_unit.unit for useable_unit in all_useable_units]:
-            # If the given unit is in the useable units, all is fine
-            return self 
-        raise ValidationError('This unit cannot be used for measuring this Ingredient.')
+            raise ValidationError('This unit cannot be used for measuring this Ingredient.')
+        
     
     def save(self, *args, **kwargs):
         if not self.save_allowed:
