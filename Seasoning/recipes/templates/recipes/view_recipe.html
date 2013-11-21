@@ -26,26 +26,68 @@
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script src="{{ STATIC_URL }}js/highcharts.js"></script>
 <script>
-    $(document).ready(function() {
+    function load_evochart() {
+        $("#charts-ajax-loader").show();
         $.ajax({
             url: '/recipes/data/fpevo/',
             type: "POST",
             dataType: "json",
             data : {recipe : {{ recipe.id }}},
             success: function(data) {
-                chart.addSeries({
+                evochart.addSeries({
                   name: "Voetafdruk",
                   data: data.footprints
                 });
-                chart.renderer.path(['M', 63+(427/366)*data.doy, 268, 'L', 63+(427/366)*data.doy, 50]).attr({
+                evochart.renderer.path(['M', 63+(427/366)*data.doy, 250, 'L', 63+(427/366)*data.doy, 40]).attr({
                     'stroke-width': 1,
                     'stroke': 'black',
                     'zIndex': 1000
                 }).add();
+                $("#charts-ajax-loader").hide();
             },
             cache: false
         });
-            
+    }
+    
+    function load_relchart() {
+        $("#charts-ajax-loader").show();
+        $.ajax({
+            url: '/recipes/data/fprel/',
+            type: "POST",
+            dataType: "json",
+            data : {recipe : {{ recipe.id }}},
+            success: function(data) {
+                relchart.addSeries({
+                  name: "Alle recepten",
+                  data: data.all_fps,
+                  pointInterval: data.interval_length,
+                });
+                relchart.addSeries({
+                  name: "Binnen categorie",
+                  data: data.cat_fps,
+                  pointInterval: data.interval_length,
+                });
+                relchart.addSeries({
+                  name: "Binnen voedingswijze",
+                  data: data.veg_fps,
+                  pointInterval: data.interval_length,
+                });
+                relchart.xAxis[0].setExtremes(data.min_fp, data.max_fp, true);
+                var len = data.max_fp - data.min_fp
+                relchart.renderer.path(['M', 63+(427/len)*(data.fp-data.min_fp), 250, 'L', 63+(427/len)*(data.fp-data.min_fp), 40]).attr({
+                    'stroke-width': 1,
+                    'stroke': 'black',
+                    'zIndex': 1000
+                }).add();
+                $("#charts-ajax-loader").hide();
+            },
+            cache: false
+        });
+    }
+    
+    $(document).ready(function() {
+        load_evochart();
+        
     	$("#recipe-img").click(function() {
     		$("#zoomed-recipe-image-container").fadeIn(500);
     	});
@@ -146,37 +188,44 @@
     }
     
     $(function () { 
-        chart = new Highcharts.Chart({
+        evochart = new Highcharts.Chart({
             chart: {
-                renderTo: 'recipe-charts',
+                renderTo: 'recipe-fpevo-chart',
                 type: 'spline',
             },
-	        plotOptions: {
-	            spline: {
-	                //pointPlacement: "on"
-	            }
-	        },
+            plotOptions: {
+                spline: {
+                    //pointPlacement: "on"
+                }
+            },
             title: {
                 text: 'Evolutie voetafdruk doorheen het jaar',
                 style: {
-                	color: '#333'
+                    color: '#333'
                 }
             },
             legend: {
                 enabled: false
             },
             xAxis: {
-            	min: 1,
-            	max: 12,
+                title: {
+                    text: 'Maand',
+                    style: {
+                        fontWeight: 'normal',
+                        color: '#333'
+                    }
+                },
+                min: 1,
+                max: 12,
                 categories: ['prejan', 'Jan', 'Feb', 'Maa', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec', 'postdec']
             },
             yAxis: {
                 title: {
                     text: 'Voetafdruk (kgCO2)',
-	                style: {
-	                	fontWeight: 'normal',
-	                	color: '#333'
-	                }
+                    style: {
+                        fontWeight: 'normal',
+                        color: '#333'
+                    }
                 },
                 min: 0
             },
@@ -184,13 +233,82 @@
                 valueSuffix: ' kgCO2 per portie'
             },
             colors: [
-            	'#629B31'
+                '#629B31'
+            ]
+        });
+        relchart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'recipe-fprel-chart',
+                type: 'spline',
+            },
+            title: {
+                text: 'Voetafdruk relatief tov andere recepten',
+                style: {
+                    color: '#333'
+                }
+            },
+            plotOptions: {
+                spline: {
+                  marker: {
+                      enabled: false,
+                      states: {
+                          hover: {
+                              enabled: false
+                          }
+                      }
+                  },
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                floating: true,
+                y: 30,
+                backgroundColor: "#FFF"
+            },
+            xAxis: {
+                title: {
+                    text: 'Voetafdruk (kgCO2)',
+                    style: {
+                        fontWeight: 'normal',
+                        color: '#333'
+                    }
+                },
+                min: 0,
+                max: 1,
+            },
+            yAxis: {
+                title: {
+                    text: 'Aantal recepten met deze voetafdruk',
+                    style: {
+                        fontWeight: 'normal',
+                        color: '#333'
+                    }
+                },
+                min: 0,
+                tickInterval: 1,
+            },
+            tooltip: {
+                headerFormat: "",
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>'
+            },
+            colors: [
+                '#629B31', '#1E2F0F', '#C0E2A2'
             ]
         });
     }); 
     
+    var tab_1_loaded = false;
     $(function() {
-		$( "#chart-tabs" ).tabs();
+		$( "#chart-tabs" ).tabs({
+		    activate: function(event, ui) {
+		        if (ui.newTab.index() == 1 && !tab_1_loaded) {
+		            load_relchart();
+		            tab_1_loaded = true;
+		        }
+		    }
+		});
 	});
 </script>
  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
@@ -315,14 +433,20 @@
 				<li><a href="#tabs-2">Voetafdruk relatief tov andere recepten</a></li>
 			</ul>
 			<div id="tabs-1">
-			    <div id="recipe-charts">
+			    <div id="recipe-fpevo-chart">
 			        
 			    </div>
 			</div>
 			<div id="tabs-2">
-				<p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+                <div id="recipe-fprel-chart">
+                    
+                </div>
 			</div>
 		</div>
+        
+        <div id="charts-ajax-loader">
+            {% include "includes/big-ajax-loader.html" %}
+        </div>
 	    
 	    <br class="clear" />
     </div>

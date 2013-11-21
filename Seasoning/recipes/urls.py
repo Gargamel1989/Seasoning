@@ -34,5 +34,6 @@ urlpatterns = patterns('',
     url(r'^delete/(\d*)/$', 'recipes.views.delete_recipe'),
     
     # Statistical data about recipes
-    url(r'^data/fpevo/$', 'recipes.views.get_recipe_footprint_evolution')
+    url(r'^data/fpevo/$', 'recipes.views.get_recipe_footprint_evolution'),
+    url(r'^data/fprel/$', 'recipes.views.get_relative_footprint'),
 )

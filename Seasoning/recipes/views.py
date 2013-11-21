@@ -45,6 +45,7 @@ from recipes.forms import RequireOneFormSet
 from django.core.mail import send_mail
 import datetime
 import ingredients
+from django.db.models.aggregates import Max, Min
 
 class Group:
     
@@ -373,7 +374,7 @@ def get_recipe_footprint_evolution(request):
                 for uses in usess:
                     for i in range(12):
                         footprints[i] += uses.normalized_footprint(uses.ingredient.footprint(date=dates[i]))
-                footprints = [float('%.2f' % (footprint/recipe.portions)) for footprint in footprints]
+                footprints = [float('%.2f' % (4*footprint/recipe.portions)) for footprint in footprints]
                 footprints.append(footprints[-1])
                 footprints.insert(0, footprints[0])
                 data = {'footprints': footprints,
@@ -382,6 +383,59 @@ def get_recipe_footprint_evolution(request):
             
                 return HttpResponse(json_data)
             except Recipe.DoesNotExist, UsesIngredient.DoesNotExist:
+                raise Http404
+        
+    raise PermissionDenied
+
+@csrf_exempt
+def get_relative_footprint(request):
+    
+    if request.is_ajax() and request.method == 'POST':
+        recipe_id = request.POST.get('recipe', None)
+    
+        if recipe_id is not None:
+            try:
+                recipe = Recipe.objects.get(pk=recipe_id)
+                bounds = Recipe.objects.aggregate(Max('footprint'), Min('footprint'))
+                min_fp = 4*bounds['footprint__min']
+                max_fp = 4*bounds['footprint__max']
+                interval_count = 10
+                interval_length = (max_fp-min_fp)/interval_count
+                recipes = Recipe.objects.values('footprint', 'course', 'veganism').all().order_by('footprint')
+                
+                intervals = [min_fp+i*interval_length for i in range(interval_count+1)]
+                all_footprints = []
+                category_footprints = []
+                veganism_footprints = []
+                
+                footprint_index = 0
+                for upper_bound in intervals[1:]:
+                    # Don't check the first value in the intervals, because we only need upper bounds
+                    # of intervals
+                    all_footprints.append(0)
+                    category_footprints.append(0)
+                    veganism_footprints.append(0)
+                    while 4*recipes[footprint_index]['footprint'] <= upper_bound:
+                        all_footprints[-1] += 1
+                        if recipe.course == recipes[footprint_index]['course']:
+                            category_footprints[-1] += 1
+                        if recipe.veganism == recipes[footprint_index]['veganism']:
+                            veganism_footprints[-1] += 1
+                        footprint_index += 1
+                        if footprint_index >= len(recipes):
+                            break
+                data = {'all_fps': all_footprints,
+                        'cat_fps': category_footprints,
+                        'veg_fps': veganism_footprints,
+                        'min_fp': min_fp,
+                        'max_fp': max_fp,
+                        'interval_length': interval_length,
+                        'fp': 4*recipe.footprint}
+                json_data = simplejson.dumps(data)
+            
+                return HttpResponse(json_data)
+            
+            except Recipe.DoesNotExist:
                 raise Http404
         
     raise PermissionDenied

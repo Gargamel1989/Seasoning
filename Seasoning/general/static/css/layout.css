@@ -1851,9 +1851,17 @@
 				padding: 5px 0;
 			}
 			
-			#recipe #recipe-charts {
+			#recipe #recipe-fpevo-chart,
+			#recipe #recipe-fprel-chart {
 				width: 500px;
 				height: 300px;
+			}
+			
+			#recipe #charts-ajax-loader {
+				position: absolute;
+				bottom: 200px;
+				left: 240px;
+				display: none;
 			}
 			
 			.ingredient.dark-row {
