@@ -43,7 +43,7 @@ class RecipeViewsTestCase(TestCase):
                                      'password': 'test'})
         self.client.get(location)
         
-        useable_unit = Ingredient.objects.get(name='Aardappel').base_useable_units.all()[0]
+        useable_unit = Ingredient.objects.get(name='Aardappel').useable_units.all()[0]
         
         # Add recipe with 1 ingredient
         post_dict = {u'uses-TOTAL_FORMS': [u'1'], u'uses-INITIAL_FORMS': [u'0'], u'uses-MAX_NUM_FORMS': [u'1000'], 
@@ -69,7 +69,7 @@ class RecipeViewsTestCase(TestCase):
                                      'password': 'test'})
         self.client.get(location)
         
-        useable_unit = Ingredient.objects.get(name='Aardappel').base_useable_units.all()[0]
+        useable_unit = Ingredient.objects.get(name='Aardappel').useable_units.all()[0]
         
         # Add recipe with 2 ingredients
         post_dict = {u'uses-TOTAL_FORMS': [u'2'], u'uses-INITIAL_FORMS': [u'0'], u'uses-MAX_NUM_FORMS': [u'1000'], 
@@ -117,7 +117,7 @@ class RecipeViewsTestCase(TestCase):
                                      'password': 'test'})
         self.client.get(location)
         
-        useable_unit = Ingredient.objects.get(name='Aardappel').base_useable_units.all()[0]
+        useable_unit = Ingredient.objects.get(name='Aardappel').useable_units.all()[0]
         
         # Add recipe with 1 empty ingredient, with only the group filled in. The empty ingredient should not be validated, and therefor
         # will not prevent the form from being saved 

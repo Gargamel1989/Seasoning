@@ -44,14 +44,14 @@ class CanUseUnitManagerTestCase(TestCase):
         ing = cuu.ingredient
         G(CanUseUnit, ingredient=ing, unit=unit)
         
-        cuus = CanUseUnit.objects.useable_by(cuu.ingredient.pk)
+        cuus = ing.canuseunit_set.all()
         
         self.assertEqual(len(list(cuus)), 3)
         self.assertTrue(punit in [x.unit for x in cuus])
         self.assertTrue(cunit in [x.unit for x in cuus])
         self.assertTrue(unit in [x.unit for x in cuus])
         
-        cuus = CanUseUnit.objects.useable_by(cuu.ingredient)
+        cuus = ing.canuseunit_set.all()
         
         self.assertEqual(len(list(cuus)), 3)
 
@@ -290,8 +290,8 @@ class IngredientModelTestCase(TestCase):
         
         # Check if recipe footprint is updated
         G(Cuisine, name='Andere')
-        recipe = G(Recipe)
-        cuu = G(CanUseUnit, ingredient=bing, is_primary_unit=True)
+        recipe = G(Recipe, portions=1)
+        cuu = G(CanUseUnit, ingredient=bing, is_primary_unit=True, conversion_factor=1)
         G(UsesIngredient, recipe=recipe, ingredient=bing, amount=1, unit=cuu.unit)
         recipe.save()
         current_fp = recipe.footprint

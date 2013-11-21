@@ -249,10 +249,10 @@ class UsesIngredient(models.Model):
         for a given ingredient footprint
         
         """
-        unit_properties = self.ingredient.canuseunit_set.get(unit=self.unit)
-        if self.unit.parent_unit:
-            unit_properties.unit = self.unit
-            unit_properties.conversion_factor = unit_properties.conversion_factor * self.unit.ratio
+        for canuseunit in self.ingredient.canuseunit_set.all():
+            if canuseunit.unit == self.unit:
+                unit_properties = canuseunit
+                break
         return self.amount * unit_properties.conversion_factor * ingredient_footprint
     
     def clean(self, *args, **kwargs):

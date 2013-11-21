@@ -275,6 +275,9 @@ class Ingredient(models.Model):
         except self.BasicIngredientException:
             return self.base_footprint
     
+    def can_use_unit(self, unit):
+        return unit in self.useable_units.all()
+    
     def save(self):
         if not self.type == Ingredient.SEASONAL:
             self.preservability = 0

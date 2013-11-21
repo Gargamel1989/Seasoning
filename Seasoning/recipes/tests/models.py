@@ -59,7 +59,8 @@ class UsesIngredientModelTestCase(TestCase):
     def test_save(self):
         ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50, accepted=True)
         cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
-        uses = G(UsesIngredient, ingredient=ing, unit=cuu.unit, amount=1)
+        rec = G(Recipe, portions=1)
+        uses = G(UsesIngredient, recipe=rec, ingredient=ing, unit=cuu.unit, amount=1)
         
         self.assertEqual(uses.footprint, 50)
         self.assertEqual(uses.recipe.footprint, 50)
@@ -78,11 +79,11 @@ class RecipeModelTestCase(TestCase):
     
     @mysqldb_required
     def test_save(self):
-        recipe = G(Recipe, footprint=10)
+        recipe = G(Recipe, footprint=10, portions=1)
         self.assertEqual(recipe.footprint, 0)
         self.assertEqual(recipe.veganism, Ingredient.VEGAN)
         
-        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50, veganism=Ingredient.VEGETARIAN)
+        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50, veganism=Ingredient.VEGETARIAN, accepted=True)
         cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
         G(UsesIngredient, recipe=recipe, ingredient=ing, unit=cuu.unit, amount=1)
         recipe.save()
@@ -95,7 +96,7 @@ class RecipeModelTestCase(TestCase):
         recipe = G(Recipe, portions=5)
         self.assertEqual(recipe.total_footprint(), 0)
         
-        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50)
+        ing = G(Ingredient, type=Ingredient.BASIC, base_footprint=50, accepted=True)
         cuu = G(CanUseUnit, ingredient=ing, conversion_factor=1)
         G(UsesIngredient, recipe=recipe, ingredient=ing, unit=cuu.unit, amount=1)
         recipe.save()
