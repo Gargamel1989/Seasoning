@@ -26,6 +26,7 @@ from django.http.response import HttpResponse, Http404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from ingredients.forms import SearchIngredientForm
+from django.views.decorators.csrf import csrf_exempt
 
 def view_ingredients(request):
     
@@ -108,33 +109,20 @@ def ajax_ingredient_name_list(request):
     # If this is not an ajax request, permission is denied
     raise PermissionDenied
 
-def ajax_ingredients_page(request):
+@csrf_exempt
+def ajax_ingredient_availability(request):
     """
-    An ajax call that returns a certain page of the ingredient
-    list resulting from a given query string filter.
+    An ajax call that returns html containing the availability
+    data of the requested ingredient
     
     """
     if request.is_ajax() and request.method == 'POST':
-        query = request.POST.get('query', '')
-        name = Q(name__icontains=query)
-        synonym = Q(synonym__name__icontains=query)
-        ingredient_list = Ingredient.objects.filter(name | synonym).order_by('name')
-        paginator = Paginator(ingredient_list, 25)
+        ingredient_id = request.POST.get('ingredient', '')
+        ingredient = Ingredient.objects.get(id=ingredient_id)
         
-        page = request.POST.get('page', 1)
-        try:
-            ingredients = paginator.page(page)
-        except PageNotAnInteger:
-            ingredients = paginator.page(1)
-        except EmptyPage:
-            ingredients = paginator.page(paginator.num_pages)
-        
-        # FIXME: send ingredients page to template and send template to client instead of ing list
-        ingredients_json = json.dumps(ingredients.object_list)
-        return HttpResponse(ingredients_json, mimetype='application/javascript')
+        return render(request, 'includes/ingredient_moreinfo.html', {'ingredient': ingredient})
     
     raise PermissionDenied
-
 
 
 """

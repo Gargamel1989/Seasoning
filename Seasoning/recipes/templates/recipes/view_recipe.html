@@ -25,6 +25,7 @@
 <script src="{{ STATIC_URL }}js/raty.min.js"></script>
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
 <script src="{{ STATIC_URL }}js/highcharts.js"></script>
+<script src="{{ STATIC_URL }}js/ingredient_availability.js"></script>
 <script>
     function load_evochart() {
         $("#charts-ajax-loader").show();
@@ -167,10 +168,29 @@
     
     function fix_moreinfo_links() {
         $('.ingredient-moreinfo-link').click(function() {
+            var ing_id = $(this).parents('.ingredient').find('.ingredient-id').text();
             var $moreinfo = $(this).parents('.ingredient').find('.moreinfo');
             if ($moreinfo.is(':hidden')) {
                 $moreinfo.slideDown(500);
                 $(this).children('img').attr('src', '/static/img/icons/less.png');
+                $.ajax({
+                    url: '/ingredients/ing_avail/',
+                    type: "POST",
+                    data : {ingredient: ing_id},
+                    success: function(data) {
+                        $moreinfo.html(data);
+                        fix_ingredient_availabilities();
+                        $(".basic-moreinfo").each(function() {
+                            var height = 0;
+                            $(this).parent(".moreinfo").children().each(function() {
+                                height = height + $(this).height();
+                            })
+                            $(this).parent(".moreinfo").animate({
+                                height: height + 20,
+                            });
+                        });
+                    }
+                });
             } else {
                 $moreinfo.slideUp(500);
                 $(this).children('img').attr('src', '/static/img/icons/add.png');

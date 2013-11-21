@@ -64,43 +64,13 @@
 </p>
 {% endif %}
 
-{% if ingredient.type == 1 or ingredient.type == 2 %}
-<strong>Beschikbaarheidsdata:</strong>
-<div id="ingredient-availability">
-    <span class="month alpha">
-        Jan
-    </span><span class="month">
-        Feb
-    </span><span class="month">
-        Maa
-    </span><span class="month">
-        Apr
-    </span><span class="month">
-        Mei
-    </span><span class="month">
-        Jun
-    </span><span class="month">
-        Jul
-    </span><span class="month">
-        Aug
-    </span><span class="month">
-        Sep
-    </span><span class="month">
-        Okt
-    </span><span class="month">
-        Nov
-    </span><span class="month omega">
-        Dec
-    </span>
+
     
-    {% include "includes/ingredient_availability.html" %}
-</div>
+{% include "includes/ingredient_availability.html" %}
 
 <div>
     <strong>Bronnen:</strong>
     {{ ingredient.source|linebreaks }}
 </div>
-
-{% endif %}
 
 {% endblock %}
