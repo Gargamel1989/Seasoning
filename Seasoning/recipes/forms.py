@@ -203,7 +203,7 @@ class SearchRecipeForm(forms.Form):
     OPERATOR_CHOICES = (('and', 'Allemaal'), ('or', 'Minstens 1'))
     
     search_string = forms.CharField(required=False, label='Zoektermen',
-                                    widget=forms.TextInput(attrs={'placeholder': 'Zoek Recepten', 'class': 'keywords-searchbar'}))
+                                    widget=forms.TextInput(attrs={'placeholder': 'Zoek recepten', 'class': 'keywords-searchbar'}))
     
     advanced_search = forms.BooleanField(initial=True, required=False)
     

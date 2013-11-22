@@ -50,17 +50,9 @@ $(function() {
 {% endblock %}
 
 {% block content %}
-
+<h2>Registreren</h2>
 <p>
-	Registreren op Seasoning gaat snel, gemakkelijk en biedt je volgende voordelen:
-	<ul>
-		<li>Je eigen recepten toevoegen</li>
-		<li>Je eigen profiel aanmaken en voorkeuren instellen</li>
-	</ul>
-	Vul hieronder je gegevens in, of gebruiken een van je sociale netwerken om nog sneller te registreren.
-	<br />
-	<br />
-	Seasoning zal je gegevens nooit doorgeven aan derden of gebruiken voor commerciële doeleinden.
+	Registreren op Seasoning hoeft slechts één keer en is heel eenvoudig. Je kan een persoonlijk profiel aanmaken via de verschillende portaalwebsites (Facebook en Google) of via Seasoning zelf.
 </p>
 
 <div id="seasoning-register">
@@ -87,8 +79,6 @@ $(function() {
             {% endif %}
     	</div>
     	
-    	<div class="spacer"> </div>
-    	
     	<div class="field-wrapper tooltip-field">
             {{ form.email.label_tag }}
             {{ form.email }}
@@ -98,8 +88,6 @@ $(function() {
     			{{ form.email.errors }}	
             {% endif %}
     	</div>
-        
-        <div class="spacer"> </div>
     	
     	<div class="field-wrapper">
             {{ form.password.label_tag }}
@@ -122,8 +110,6 @@ $(function() {
             {{ form.non_field_errors }}
             {% endif %}
     	</div>
-        
-        <div class="spacer"> </div>
     	
     	<div class="field-wrapper tooltip-field">
             {{ form.date_of_birth.label_tag }}
@@ -134,8 +120,8 @@ $(function() {
     			{{ form.date_of_birth.errors }}
             {% endif %}
     	</div>
-        
-        <div class="spacer"> </div>
+    	
+    	<div class="spacer"> </div>
     	
     	<div class="field-wrapper" id="captcha-wrapper">
             {{ form.captcha }}

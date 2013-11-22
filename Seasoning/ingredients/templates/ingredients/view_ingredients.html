@@ -25,13 +25,15 @@
 
 {% block content %}
 
+<h2>Ingrediënten zoeken</h2>
+
 <div id="ingredient-search-container">
 	<p>
-		Hier kan je onze uitgebreide ingredientendatabase raadplegen. Je kan met het onderstaande veld naar specifieke ingredienten zoeken, of gewoon
-		wat rondkijken. Als je op een ingredient klikt, verschijnt er meer informatie
+		Hier kan je de uitgebreide ingrediëntendatabase van Seasoning raadplegen. Je kan met het onderstaande veld naar specifieke ingrediënten zoeken of gewoon
+		wat rondkijken. Als je op een ingrediënt klikt, verschijnt er meer informatie.
 	</p>
 	
-	<form target="" method="post">
+	<form id="browse-ingredients-form" target="" method="post">
 		{% csrf_token %}
 		
 		<div id="basic-search">
@@ -41,6 +43,8 @@
 			</button>
 		</div>
 	</form>
+	
+	<hr id="browse-ingredients-line" />
 	
 	
 	<div id="ingredient-summaries-wrapper" class="summaries-wrapper">
