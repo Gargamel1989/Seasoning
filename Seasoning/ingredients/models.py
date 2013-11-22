@@ -277,8 +277,6 @@ class Ingredient(models.Model):
         return unit in self.useable_units.all()
     
     def clean(self):
-        if self.accepted:
-            raise ValidationError(_('This ingredient is not always available somewhere, and should not be accepted.'))
         if self.accepted and not self.always_available():
             raise ValidationError(_('This ingredient is not always available somewhere, and should not be accepted.'))
         
