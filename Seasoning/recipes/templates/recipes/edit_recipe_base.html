@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %} (stap {% block title-step %}{% endblock %} van 3){% endblock %}
+
+{% block extra_script %}
+{{ recipe_form.media }}
+{% endblock %}
+
+{% block recipes-active %}active{% endblock %}
+
+{% block content %}
+
+<div id="edit-recipe">
+	<h1>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
+	
+	<form id="add-recipe-form" action="" method="post" enctype="{% block form-enctype %}application/x-www-form-urlencoded{% endblock %}">
+	    {% csrf_token %}
+	    {{ wizard.management_form }}
+	    
+        {% block recipe-form %}
+    	{% endblock %}
+    	
+    	{% if wizard.steps.prev %}
+    	<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Vorige</button>
+        {% endif %}
+        {% if wizard.steps.next %}
+        <input type="submit" value="Volgende"/>
+        {% else %}
+        <input type="submit" value="Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}"/>
+        {% endif %}
+	</form>
+</div>
+{% endblock %}

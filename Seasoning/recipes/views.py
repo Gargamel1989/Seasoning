@@ -20,7 +20,8 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 from django.shortcuts import render, redirect, get_object_or_404
 from recipes.models import Recipe, Vote, UsesIngredient, UnknownIngredient
 from recipes.forms import AddRecipeForm, UsesIngredientForm, SearchRecipeForm,\
-    IngredientInRecipeSearchForm
+    IngredientInRecipeSearchForm, EditRecipeBasicInfoForm,\
+    EditRecipeIngredientsForm, EditRecipeInstructionsForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied,\
     ValidationError
@@ -46,6 +47,13 @@ from django.core.mail import send_mail
 import datetime
 import ingredients
 from django.db.models.aggregates import Max, Min
+from django.contrib.formtools.wizard.views import SessionWizardView
+from django.utils.decorators import method_decorator
+from django.core.files.storage import FileSystemStorage
+import os
+from django.conf import settings
+from django import forms
+from general.forms import FormContainer
 
 def browse_recipes(request):
     """
@@ -132,6 +140,87 @@ def view_recipe(request, recipe_id):
                                                         'passive_time_perc': passive_time_perc,
                                                         'total_time': total_time,
                                                         'comments': comments})
+
+class EditRecipWizard(SessionWizardView):
+    
+    FORMS = [('basic_info', EditRecipeBasicInfoForm),
+             ('ingredients', EditRecipeIngredientsForm),
+             ('instructions', EditRecipeInstructionsForm)]
+    
+    TEMPLATES = {'basic_info': 'recipes/edit_recipe_basic_info.html',
+                 'ingredients': 'recipes/edit_recipe_basic_info.html',
+                 'instructions': 'recipes/edit_recipe_basic_info.html'}
+    
+    file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'tmp_recipe_imgs'))
+    
+    instance = None
+    
+    def get_form_instance(self, step):
+        return self.instance
+
+    def get_form(self, step=None, data=None, files=None):
+        """
+        We need to overwrite this, because otherwise 'instance' is not passed
+        to the FormContainer
+        
+        """
+        if step is None:
+            step = self.steps.current
+        # prepare the kwargs for the form instance.
+        kwargs = self.get_form_kwargs(step)
+        kwargs.update({
+            'data': data,
+            'files': files,
+            'prefix': self.get_form_prefix(step, self.form_list[step]),
+            'initial': self.get_form_initial(step),
+        })
+        if issubclass(self.form_list[step], forms.ModelForm) or issubclass(self.form_list[step], FormContainer):
+            # If the form is based on ModelForm, add instance if available
+            # and not previously set.
+            kwargs.setdefault('instance', self.get_form_instance(step))
+        elif issubclass(self.form_list[step], forms.models.BaseModelFormSet) or issubclass(self.form_list[step], FormContainer):
+            # If the form is based on ModelFormSet, add queryset if available
+            # and not previous set.
+            kwargs.setdefault('queryset', self.get_form_instance(step))
+        return self.form_list[step](**kwargs)
+        
+    def get_template_names(self):
+        return self.TEMPLATES[self.steps.current]
+    
+    def get_context_data(self, form, **kwargs):
+        context = SessionWizardView.get_context_data(self, form, **kwargs)
+        # Check if we are adding a new or editing an existing recipe
+        if 'recipe_id' in self.kwargs:
+            context['new_recipe'] = False
+        else:
+            context['new_recipe'] = True
+        return context
+    
+    # Make sure login is required for every view in this class
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        if 'recipe_id' in self.kwargs:
+            try:
+                self.instance = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.kwargs['recipe_id'])
+            except Recipe.DoesNotExist:
+                raise Http404
+            if (not self.request.user == self.instance.author_id) and not self.request.user.is_staff:
+                raise PermissionDenied
+        else:
+            self.instance = Recipe()
+        return SessionWizardView.dispatch(self, *args, **kwargs)
+    
+    def done(self, form_list, **kwargs):
+        if not self.instance.pk:
+            # recipe has not been saved yet
+            self.instance.save()
+        # save the usesingredient formset
+        form_list[1].forms['ingredients'].save()
+        # And save the recipe again to update the footprint
+        recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.instance.pk)
+        recipe.save()   
+        messages.add_message(self.request, messages.INFO, 'Gelukt')
+        return redirect('/recipes/%d/' % self.instance.id)
 
 
 @login_required

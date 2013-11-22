@@ -23,9 +23,10 @@ import recipes
 from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from ingredients.fields import AutoCompleteSelectIngredientField
 from ingredients.models import Ingredient, Unit
-from django.forms.models import BaseInlineFormSet
+from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.core.exceptions import ValidationError
 from general.widgets import WMDWidget
+from general.forms import FormContainer
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -46,6 +47,32 @@ class AddRecipeForm(forms.ModelForm):
         recipe = super(AddRecipeForm, self).save(commit=False)
         recipe.author = author
         return recipe.save()
+
+class EditRecipeBasicInfoForm(forms.ModelForm):
+    
+    class Meta:
+        model = Recipe
+        fields = ['name', 'course', 'cuisine',
+                  'description', 'image']
+    
+    class Media:
+        css = {
+            'all': ('css/forms.css',)
+        }
+    
+    def save(self):
+        super(EditRecipeInstructionsForm, self).save()
+
+class EditRecipeIngredientInfoForm(forms.ModelForm):
+    
+    class Meta:
+        model = Recipe
+        fields = ['portions', 'extra_info']
+    
+    class Media:
+        css = {
+            'all': ('css/forms.css',)
+        }
 
 class UsesIngredientForm(forms.ModelForm):    
     class Meta:
@@ -123,7 +150,22 @@ class RequireOneFormSet(BaseInlineFormSet):
             raise forms.ValidationError("At least one %s is required." %
                 self.model._meta.object_name.lower())
 
-            
+class EditRecipeIngredientsForm(FormContainer):
+    
+    ingredients_general_info = EditRecipeIngredientInfoForm
+    ingredients = inlineformset_factory(Recipe, UsesIngredient, extra=1,
+                                        form=UsesIngredientForm, formset=RequireOneFormSet)
+
+
+class EditRecipeInstructionsForm(forms.ModelForm):
+    
+    class Meta:
+        model = Recipe
+        fields = ['active_time', 'passive_time', 'instructions']
+    
+    def save(self):
+        super(EditRecipeInstructionsForm, self).save()
+    
 
 class SearchRecipeForm(forms.Form):
     

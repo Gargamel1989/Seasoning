@@ -273,6 +273,8 @@ class UsesIngredient(models.Model):
         
     
     def save(self, *args, **kwargs):
+        update_recipe = kwargs.pop('update_recipe', False)
+        
         if not self.save_allowed:
             raise PermissionDenied('Saving this object has been disallowed')
         
@@ -282,8 +284,10 @@ class UsesIngredient(models.Model):
             self.footprint = 0
         
         saved = super(UsesIngredient, self).save(*args, **kwargs)
-        # Update the recipe as well
-        self.recipe.save()
+        
+        if update_recipe:
+            # Update the recipe as well
+            self.recipe.save()
         
         return saved
 

@@ -290,7 +290,7 @@ class Ingredient(models.Model):
             # If more than 100 recipes use this ingredient, just wait for the cron job to
             # avoid overloading the server
             for uses_ingredient in uses:
-                uses_ingredient.save()
+                uses_ingredient.save(update_recipe=True)
         
         return saved
 
