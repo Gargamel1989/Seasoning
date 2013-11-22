@@ -254,6 +254,17 @@ class IngredientModelTestCase(TestCase):
           date_from=datetime.date(2013, 10, 3),
           date_until=datetime.date(2013, 2, 1))
         self.assertTrue(ing.always_available())
+        
+        # Preservability pushes until date over edge
+        ing2 = G(Ingredient, type=Ingredient.SEASONAL, preservability=90)
+        G(AvailableInCountry, ingredient=ing2,
+          date_from=datetime.date(2013, 6, 1),
+          date_until=datetime.date(2013, 7, 31))
+        G(AvailableInCountry, ingredient=ing2,
+          date_from=datetime.date(2013, 8, 1),
+          date_until=datetime.date(2013, 12, 31))
+        self.assertFalse(ing2.always_available())
+        
     
     def test_footprint(self):
         bing = G(Ingredient, type=Ingredient.BASIC)

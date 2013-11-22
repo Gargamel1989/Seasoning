@@ -26,6 +26,7 @@ from django.utils.safestring import mark_safe
 import calendar
 from django.core.exceptions import ValidationError
 from django.db import models
+import datetime
 
 class MonthWidget(Widget):
         
@@ -35,7 +36,10 @@ class MonthWidget(Widget):
         try:
             month_val = value.month
         except AttributeError:
-            month_val = None
+            try:
+                month_val = datetime.datetime.strptime(value, '%Y-%m-%d').month
+            except TypeError:
+                month_val = None
         
         output = []
 
@@ -59,20 +63,20 @@ class MonthWidget(Widget):
     id_for_label = classmethod(id_for_label)
 
     def value_from_datadict(self, data, files, name):
-        m = data.get(self.month_field % name)
-        if m == "0":
+        m = int(data.get(self.month_field % name))
+        if m == 0:
             return None
         if m:
-            return '%s-%s-%s' % (2000, m, 1)
+            return '%d-%02d-%02d' % (2000, m, 1)
         return data.get(name, None)
 
 class LastOfMonthWidget(MonthWidget):
     def value_from_datadict(self, data, files, name):
-        m = data.get(self.month_field % name)
-        if m == "0":
+        m = int(data.get(self.month_field % name))
+        if m == 0:
             return None
         if m:
-            return '%s-%s-%s' % (2000, m, calendar.monthrange(2000, int(m))[1])
+            return '%d-%02d-%02d' % (2000, m, calendar.monthrange(2000, int(m))[1])
         return data.get(name, None)
     
 class AutoCompleteSelectIngredientWidget(forms.widgets.TextInput):

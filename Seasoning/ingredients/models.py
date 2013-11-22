@@ -23,8 +23,9 @@ import time
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
 from imagekit.processors.resize import ResizeToFill, SmartResize
 import datetime
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 import recipes
+from django.utils.translation import ugettext_lazy as _
 
 def get_image_filename(instance, old_filename):
     """
@@ -230,24 +231,21 @@ class Ingredient(models.Model):
         current_date = datetime.date(AvailableIn.BASE_YEAR, 1, 1)
         
         while available_ins:
-            for index in xrange(len(available_ins)):
-                # Find an available in that is currently active
-                avail = available_ins[index]
+            before_loop_date = current_date
+            for avail in available_ins:
                 if avail.is_active(current_date, date_until_extension=self.preservability):
-                    if avail.date_until < avail.date_from:
-                        # avail has an outer interval, which means the ingredient will be available
-                        # from the current_date until the end of the year
-                        return True
+                    extended_until_date = avail.extended_date_until(date_until_extension=self.preservability)
+                    if current_date < extended_until_date:
+                        current_date = extended_until_date + datetime.timedelta(days=1)
+                        if current_date.year > extended_until_date.year:
+                            # We've wrapped around
+                            return True                        
                     else:
-                        current_date = avail.date_until + datetime.timedelta(days=self.preservability + 1)
-                        if current_date.year > AvailableIn.BASE_YEAR:
-                            # If the extended until date goes beyond the current year, the ingredient will be available
-                            # from the current_date until the end of the year
-                            return True
-                        # We don't need this avail anymore
-                        del available_ins[index]
-                        break
-            return False
+                        # the availability wrapped around the year => we're finished
+                        return True
+            if before_loop_date == current_date:
+                # This loop did nothing
+                return False        
     
     def footprint(self, date=None):
         """
@@ -278,6 +276,12 @@ class Ingredient(models.Model):
     def can_use_unit(self, unit):
         return unit in self.useable_units.all()
     
+    def clean(self):
+        if self.accepted:
+            raise ValidationError(_('This ingredient is not always available somewhere, and should not be accepted.'))
+        if self.accepted and not self.always_available():
+            raise ValidationError(_('This ingredient is not always available somewhere, and should not be accepted.'))
+        
     def save(self):
         if not self.type == Ingredient.SEASONAL:
             self.preservability = 0
@@ -430,14 +434,19 @@ class AvailableIn(models.Model):
     # it is calculated when the model is saved
     footprint = models.FloatField(editable=False)
     
+    def extended_date_until(self, date_until_extension=0):
+        return (self.date_until + datetime.timedelta(days=date_until_extension)).replace(year=self.BASE_YEAR)
+        
     def month_from(self):
         return self.date_from.strftime('%B')
     
     def month_until(self):
         return self.date_until.strftime('%B')
     
-    def extended_month_until(self):
-        date = self.date_until.replace(month=(self.date_until.month + (self.ingredient.preservability // 30) - 1) % 12 + 1)
+    def extended_month_until(self, date_until_extension=None):
+        if date_until_extension is None:
+            date_until_extension = self.ingredient.preservability
+        date = self.date_until.replace(month=(self.date_until.month + (date_until_extension // 30) - 1) % 12 + 1, year=self.BASE_YEAR)
         return date.strftime('%B')
     
     def is_active(self, date=None, date_until_extension=0):
