@@ -1,0 +1,17 @@
+{% extends "recipes/edit_recipe_base.html" %}
+
+{% block title-step %}2{% endblock %}
+
+{% block recipe-form %}
+{% if wizard.form.ingredients.unknown_ingredients %}
+Je hebt ongekende ingredienten gebruikt:
+<ul>
+    {% for unknown_ingredient in wizard.form.ingredients.unknown_ingredients %}
+    <li>{{ unknown_ingredient.name }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+{{ wizard.form.ingredients.non_form_errors }}
+{% endif %}
+{{ wizard.form }}
+{% endblock %}

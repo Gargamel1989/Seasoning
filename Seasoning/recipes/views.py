@@ -42,7 +42,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 import json
 from django.core.serializers.json import DjangoJSONEncoder
-from recipes.forms import RequireOneFormSet
+from recipes.forms import IngredientsFormSet
 from django.core.mail import send_mail
 import datetime
 import ingredients
@@ -141,14 +141,14 @@ def view_recipe(request, recipe_id):
                                                         'total_time': total_time,
                                                         'comments': comments})
 
-class EditRecipWizard(SessionWizardView):
+class EditRecipeWizard(SessionWizardView):
     
     FORMS = [('basic_info', EditRecipeBasicInfoForm),
              ('ingredients', EditRecipeIngredientsForm),
              ('instructions', EditRecipeInstructionsForm)]
     
     TEMPLATES = {'basic_info': 'recipes/edit_recipe_basic_info.html',
-                 'ingredients': 'recipes/edit_recipe_basic_info.html',
+                 'ingredients': 'recipes/edit_recipe_ingredients.html',
                  'instructions': 'recipes/edit_recipe_basic_info.html'}
     
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'tmp_recipe_imgs'))
@@ -237,7 +237,7 @@ def edit_recipe(request, recipe_id=None):
         new = True
     
     UsesIngredientInlineFormSet = inlineformset_factory(Recipe, UsesIngredient, extra=1,
-                                                        form=UsesIngredientForm, formset=RequireOneFormSet)
+                                                        form=UsesIngredientForm, formset=IngredientsFormSet)
     
     if request.method == 'POST' and ('stop-submit' in request.POST or 'normal-submit' in request.POST or 'ingrequest-submit' in request.POST):
         recipe_form = AddRecipeForm(request.POST, request.FILES, instance=recipe)

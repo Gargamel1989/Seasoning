@@ -27,6 +27,7 @@ from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.core.exceptions import ValidationError
 from general.widgets import WMDWidget
 from general.forms import FormContainer
+from django.forms.util import ErrorDict
 
 class AddRecipeForm(forms.ModelForm):
     
@@ -126,20 +127,41 @@ class UsesIngredientForm(forms.ModelForm):
             pass
         return False
 
-class RequireOneFormSet(BaseInlineFormSet):
-    
-    def __init__(self, *args, **kwargs):
-        return super(RequireOneFormSet, self).__init__(*args, **kwargs)
+class IngredientsFormSet(BaseInlineFormSet):
     """
     Require at least one form in the formset to be completed.
     
     """
+    unknown_ingredients = []
+    
     def clean(self):
+        # TODO: fix so that when a certain parameter is given, unknown ingredient errors are ignored
+        super(IngredientsFormSet, self).clean()
+        if len(self.errors) > 0:
+            # Check if any errors were made except unknown ingredient errors
+            for form in self.forms:
+                errors = dict(form.errors)
+                if len(errors) > 1 or not 'ingredient' in errors:
+                    # Multiple fields have errors, or ingredient doesn't have errors
+                    return self
+                unknown_ing_error_msg = form['ingredient'].field.unknown_ingredient_error_message
+                if len(errors['ingredient']) > 1 or not unknown_ing_error_msg in errors['ingredient'][0]:
+                    # Ingredient field has multiple errors, or not the error we are looking for
+                    return self
+            
+            # Only unknown ingredient errors after this point
+            unknown_ingredients = []
+            for form in self.forms:
+                if form.errors:
+                    # If the form has errors, we known its an unknown ingredient error
+                    unknown_ingredients.append({'name': form['ingredient'].value(),
+                                                'unit': form.cleaned_data['unit']})
+                    form._errors = ErrorDict()
+            self._errors = self.error_class()
+            self.unknown_ingredients = unknown_ingredients
+            raise ValidationError('Unknown ingredients found')
+        
         # Check that at least one form has been completed.
-        super(RequireOneFormSet, self).clean()
-        for error in self.errors:
-            if error:
-                return
         completed = 0
         for cleaned_data in self.cleaned_data:
             # form has data and we aren't deleting it.
@@ -149,12 +171,18 @@ class RequireOneFormSet(BaseInlineFormSet):
         if completed < 1:
             raise forms.ValidationError("At least one %s is required." %
                 self.model._meta.object_name.lower())
+    
+    def save(self, commit=True):
+        # TODO: check for unknown ingredients and save them
+        if commit and self.unknown_ingredients:
+            pass
+        return BaseInlineFormSet.save(self, commit=commit)
 
 class EditRecipeIngredientsForm(FormContainer):
     
     ingredients_general_info = EditRecipeIngredientInfoForm
-    ingredients = inlineformset_factory(Recipe, UsesIngredient, extra=1,
-                                        form=UsesIngredientForm, formset=RequireOneFormSet)
+    ingredients = inlineformset_factory(Recipe, UsesIngredient, extra=2,
+                                        form=UsesIngredientForm, formset=IngredientsFormSet)
 
 
 class EditRecipeInstructionsForm(forms.ModelForm):

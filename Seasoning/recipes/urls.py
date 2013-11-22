@@ -19,7 +19,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
 """
 from django.conf.urls import patterns, url
 from recipes.views import delete_recipe_comment
-from recipes.views import EditRecipWizard
+from recipes.views import EditRecipeWizard
 
 urlpatterns = patterns('',
     url(r'^$', 'recipes.views.browse_recipes', name='browse_recipes'),
@@ -30,8 +30,8 @@ urlpatterns = patterns('',
     url(r'^removevote/(\d*)/$', 'recipes.views.remove_vote'),
     url(r'^deletecomment/(\d*)/(\d*)/$', delete_recipe_comment),
     
-    url(r'^add/$', EditRecipWizard.as_view(EditRecipWizard.FORMS)),
-    url(r'^edit/(?P<recipe_id>\d+)/$', EditRecipWizard.as_view(EditRecipWizard.FORMS)),
+    url(r'^add/$', EditRecipeWizard.as_view(EditRecipeWizard.FORMS)),
+    url(r'^edit/(?P<recipe_id>\d+)/$', EditRecipeWizard.as_view(EditRecipeWizard.FORMS)),
     url(r'^delete/(\d*)/$', 'recipes.views.delete_recipe'),
     
     # Statistical data about recipes

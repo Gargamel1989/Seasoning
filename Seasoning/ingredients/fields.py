@@ -100,7 +100,9 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
     """
     Form field to select a model for a ForeignKey db field
     """
-
+    
+    unknown_ingredient_error_message = 'The given ingredient was not found.'
+    
     def __init__(self, *args, **kwargs):
         widget = kwargs.get('widget', False)
         if not widget or not isinstance(widget, AutoCompleteSelectIngredientWidget):
@@ -116,6 +118,6 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
             query_filter = models.Q(name__iexact=value) | models.Q(synonyms__name__iexact=value)
             ingredient = Ingredient.objects.distinct().get(query_filter)
         except (ValueError, Ingredient.DoesNotExist):
-            raise ValidationError('The given ingredient was not found.')
+            raise ValidationError(self.unknown_ingredient_error_message)
         return ingredient
             
