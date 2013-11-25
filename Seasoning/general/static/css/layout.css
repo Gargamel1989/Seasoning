@@ -71,7 +71,11 @@
 	.button-group {
 		position: relative;
 		height: 24px;
-	} 
+	}
+	
+	.tooltip {
+		display: none;
+	}
 	
 	#id_honeypot {
 		display: none;
@@ -80,7 +84,7 @@
 	.add-button {
 		position: absolute;
 		right: 0;
-		top: 0;
+		top: 9px;
 		text-decoration: none;
 		background-color: #DDDDDD;
 		padding: 0 8px 0 24px;
@@ -1355,7 +1359,7 @@
 			
 			#advanced-link {
 				position: absolute;
-				top: 40px;
+				top: 80px;
 				font-size: 12px;
 				
 			}
@@ -1539,7 +1543,7 @@
 			#browse-recipe-summaries-wrapper #search-result-count {
 				position: absolute;
 				right: 0;
-				top: 40px;
+				top: 80px;
 				font-size: 12px;
 			}
 			
@@ -1826,17 +1830,11 @@
 			}
 
 			#basic-info #vague-description #veganism {
-				position: absolute;
-				right: 0;
-				bottom: 3px;
-				width: 200px;
-				height: 100%;
+				margin-top: 10px;
 			}
 
 			#basic-info #vague-description #veganism img {
-				height: 100%;
-				float: right;
-				margin-left: 5px;
+				height: 40px;
 			}
 
 			#basic-info #vague-description #veganism img.not-this {
@@ -1846,7 +1844,7 @@
 
 			#basic-info #description {
 				clear: left;
-				margin-top: 50px;
+				margin-top: 25px;
 			}
 
 			#basic-info #description p {
@@ -2133,6 +2131,14 @@
 	/* #Ingredient Styles
 	================================================== */
 	
+		#browse-ingredients-form {
+			margin-bottom: 0;
+		}
+		
+		#browse-ingredients-line {
+			margin: 10px 0 20px;
+		}
+	
 		/* #Ingredient Summary
 		================================================== */
 			
@@ -2187,7 +2193,7 @@
 			#ingredient-summaries-wrapper #search-result-count {
 				position: absolute;
 				right: 0;
-				top: -30px;
+				top: -35px;
 				font-size: 12px;
 			}
 			
