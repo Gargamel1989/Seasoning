@@ -1830,17 +1830,11 @@
 			}
 
 			#basic-info #vague-description #veganism {
-				position: absolute;
-				right: 0;
-				bottom: 3px;
-				width: 200px;
-				height: 100%;
+				margin-top: 10px;
 			}
 
 			#basic-info #vague-description #veganism img {
-				height: 100%;
-				float: right;
-				margin-left: 5px;
+				height: 40px;
 			}
 
 			#basic-info #vague-description #veganism img.not-this {
@@ -1850,7 +1844,7 @@
 
 			#basic-info #description {
 				clear: left;
-				margin-top: 50px;
+				margin-top: 25px;
 			}
 
 			#basic-info #description p {

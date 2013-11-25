@@ -250,9 +250,9 @@ def edit_recipe(request, recipe_id=None):
             # User tried to submit a new recipe
             if  recipe_form.is_valid() & usesingredient_formset.is_valid():
                 if new:
-                    messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank')
+                    messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank.')
                 else:
-                    messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast')
+                    messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast.')
                 recipe_form.save(author=request.user)
                 usesingredient_formset.save()
                 recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=recipe_form.instance.pk)
@@ -337,6 +337,7 @@ def delete_recipe_comment(request, recipe_id, comment_id):
     comment = get_object_or_404(comments.get_model(), pk=comment_id)
     if comment.user == request.user:
         perform_delete(request, comment)
+        messages.add_message(request, messages.INFO, 'Je reactie werd succesvol verwijderd.')
         return redirect(view_recipe, recipe_id)
     else:
         raise PermissionDenied

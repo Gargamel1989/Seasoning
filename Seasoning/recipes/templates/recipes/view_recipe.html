@@ -64,12 +64,12 @@
                   pointInterval: data.interval_length,
                 });
                 relchart.addSeries({
-                  name: "Binnen categorie",
+                  name: "Binnen dezelfde categorie",
                   data: data.cat_fps,
                   pointInterval: data.interval_length,
                 });
                 relchart.addSeries({
-                  name: "Binnen voedingswijze",
+                  name: "Binnen dezelfde voedingswijze",
                   data: data.veg_fps,
                   pointInterval: data.interval_length,
                 });
@@ -224,7 +224,7 @@
                 }
             },
             title: {
-                text: 'Evolutie voetafdruk doorheen het jaar',
+                text: 'Verloop voetafdruk doorheen het jaar',
                 style: {
                     color: '#333'
                 }
@@ -267,7 +267,7 @@
                 type: 'spline',
             },
             title: {
-                text: 'Voetafdruk relatief tov andere recepten',
+                text: 'Voetafdruk relatief t.o.v. andere recepten',
                 style: {
                     color: '#333'
                 }
@@ -441,9 +441,9 @@
 	            {{ recipe.cuisine }} {{ recipe.get_course_display }}
 	            
 	            <div id="veganism">
-	                <img src="{{ STATIC_URL }}img/non-vegetarian.png" {% if not recipe.veganism == 0 %}class="not-this"{% else %}title="Dit is een niet-vegetarisch recept"{% endif %} />
-	                <img src="{{ STATIC_URL }}img/vegetarian.png" {% if not recipe.veganism == 1 %}class="not-this"{% else %}title="Dit is een vegetarisch recept"{% endif %} />
 	                <img src="{{ STATIC_URL }}img/vegan.png" {% if not recipe.veganism == 2 %}class="not-this"{% else %}title="Dit is een veganistisch recept"{% endif %} />
+	                <img src="{{ STATIC_URL }}img/vegetarian.png" {% if not recipe.veganism == 1 %}class="not-this"{% else %}title="Dit is een vegetarisch recept"{% endif %} />
+	                <img src="{{ STATIC_URL }}img/non-vegetarian.png" {% if not recipe.veganism == 0 %}class="not-this"{% else %}title="Dit is een niet-vegetarisch recept"{% endif %} />
 	            </div>
 	        </div>
 	        
@@ -456,8 +456,8 @@
 	    
 	    <div id="chart-tabs">
 			<ul>
-				<li><a href="#tabs-1">Evolutie voetafdruk</a></li>
-				<li><a href="#tabs-2">Voetafdruk relatief tov andere recepten</a></li>
+				<li><a href="#tabs-1">Dynamiek</a></li>
+				<li><a href="#tabs-2">Verhoudingen</a></li>
 			</ul>
 			<div id="tabs-1">
 			    <div id="recipe-fpevo-chart">
@@ -496,8 +496,8 @@
         <h3>Bereidingswijze</h3>
         <div id="instructions">
     	   <div id="instructions-warning">
-                Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.portions }} porties. U hebt het aantal porties aangepast, waardoor het mogelijk
-                is dat deze instructies niet meer volledig accuraat zijn. Houdt hier rekening mee.
+                Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.portions }} porties. Je hebt het aantal porties aangepast waardoor het mogelijk
+                is dat deze instructies niet meer volledig accuraat zijn. Hou hier rekening mee.
             </div>
             {{ recipe.instructions|linebreaks }}
     	</div>	
