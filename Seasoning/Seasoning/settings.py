@@ -112,6 +112,35 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
+PIPELINE_CSS = {
+    'master': {
+        'source_filenames': {
+            'css/base/reset.scss',
+            'css/base/global.scss',
+            'css/base/skeleton.scss',
+            'css/base/base.scss',
+            'css/authentication/*.scss',
+            'css/contribute/*.scss',
+            'css/faq/*.scss',
+            'css/general/*.scss',
+            'css/ingredients/*.scss',
+            'css/news/*.scss',
+            'css/plugins/*.scss',
+            'css/recipes/*.scss',
+        },
+        'output_filename': 'css/master.css',
+    }
+}
+
+PIPELINE_COMPILERS = (
+  'pipeline.compilers.sass.SASSCompiler',
+)
+
+PIPELINE_SASS_BINARY = secrets.SASS_BINARY
+PIPELINE_SASS_ARGUMENTS = '--update --force --load-path %s/css/imports/' % STATIC_ROOT
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -175,8 +204,9 @@ INSTALLED_APPS = (
     # Admin
     'django.contrib.admin',
     
-    # Images
+    # Misc
     'imagekit',
+    'pipeline',
 )
 
 AUTH_USER_MODEL = 'authentication.User'

@@ -1,7 +1,12 @@
-<h1>Serverfout</h1>
+{% extends "error_base.html" %}
 
-Er is een fout opgetreden. Indien dit zich blijft voordoen, mag u steeds <a href="/contact/">contact opnemen met
-de beheerders van Seasoning.</a>
+{% block title %}500{% endblock %}
 
-<br /><br />
-<a href="/">Terugkeren naar Seasoning</a>
+{% block page_name %}Serverfout{% endblock %}
+
+{% block content %}
+
+<p>
+    Er is een fout opgetreden. Indien dit zich blijft voordoen, mag u steeds <a href="/contact/">contact opnemen met
+    de beheerders van Seasoning.</a>
+</p>

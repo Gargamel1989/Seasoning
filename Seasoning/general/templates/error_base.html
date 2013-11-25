@@ -1,17 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block default_static_stuff %}
-<link rel="icon" href="{% get_static_prefix %}img/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" href="{% get_static_prefix %}css/base.css">
-<link rel="stylesheet" href="{% get_static_prefix %}css/skeleton.css">
-<link rel="stylesheet" href="{% get_static_prefix %}css/layout.css">
-{% block extra_link %}{% endblock %}
-		
-<script src="{% get_static_prefix %}js/jquery.min.js" type="text/javascript"></script>
-<script src="{% get_static_prefix %}js/base.js" type="text/javascript"></script>
-{% endblock %}
-
 
 {% block content-wrapper %}
 <h2>{% block page_name %}{% endblock %}</h2>
