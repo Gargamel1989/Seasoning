@@ -1,7 +1,105 @@
 {% extends "recipes/edit_recipe_base.html" %}
 
-{% block title-step %}1{% endblock %}
+{% block extra_script %}
+{{ recipe_form.media }}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.imgareaselect.js"></script>
+<script type="text/javascript">
+    
+    
+    $(document).ready(function() {
+        function setThumbCoords(x1, y1, x2, y2) {
+            $("#id_basic_info-x1").val(x1);
+            $("#id_basic_info-y1").val(y1);
+            $("#id_basic_info-x2").val(x2);
+            $("#id_basic_info-y2").val(y2);
+        }
+        
+        var ias = $('#img-preview').imgAreaSelect({
+            aspectRatio: '1:1',
+            x1: 0, y1: 0, x2: 100, y2: 100,
+            instance: true,
+            onSelectEnd: function (img, selection) {
+                setThumbCoords(selection.x1, selection.y1, selection.x2, selection.y2);
+            }
+        });
+        
+        setThumbCoords(0, 0, 100, 100);
+        
+        function readURL(input) {
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+        
+                reader.onload = function (e) {
+                    $('#img-preview').attr('src', e.target.result);
+                }
+        
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    
+        $("#id_basic_info-image").change(function(){
+            readURL(this);
+            ias.update();
+        });
+    });
+    
+</script>
+{% endblock %}
+
+{% block form-enctype %}multipart/form-data{% endblock %}
 
 {% block recipe-form %}
-{{ wizard.form }}
+
+<div id="left">
+    <p>
+        Vul hier de basisinformatie over het recept in. Alle velden met een asteriks (*) zijn verplicht.
+    </p>
+    
+    <p>
+        <label>{{ wizard.form.name.label }}*</label>
+        {{ wizard.form.name }}
+    </p>
+    
+    <p class="aligned">
+        <label>{{ wizard.form.course.label }}*</label>
+        {{ wizard.form.course }}
+        <br class="clear" />
+    </p>
+    
+    <p class="aligned">
+        {{ wizard.form.cuisine.label_tag }}
+        {{ wizard.form.cuisine }}
+        <br class="clear" />
+    </p>
+    
+    <p>
+        <label>{{ wizard.form.description.label }}*</label>
+        {{ wizard.form.description }}
+    </p>
+</div>
+<div id="right">
+    <p>
+        Hier kan je een afbeelding van je recept uploaded. Dit is niet verplicht. 
+    </p>
+    <p>
+        Nadat je afbeelding geupload is, kan
+        je aangeven welk deel van de afbeelding je zou willen gebruiken als thumbnail. Dit is een verkleinde versie van
+        je afbeelding die perfect vierkant moet zijn en wordt op sommige plekken op de site gebruikt.
+    </p>
+    <p>
+        <label>Kies een afbeelding:</label>
+        <input id="id_basic_info-image" type="file" name="basic_info-image">
+    </p>
+    <br class="clear" />
+    <div class="img-frame">
+        <img id="img-preview" src="{{ STATIC_URL }}img/no_image.png" />
+    </div>
+    {{ wizard.form.x1.as_hidden }}
+    {{ wizard.form.y1.as_hidden }}
+    {{ wizard.form.x2.as_hidden }}
+    {{ wizard.form.y2.as_hidden }}
+</div>
+<br class="clear" />
+
 {% endblock %}

@@ -61,8 +61,10 @@ class EditRecipeBasicInfoForm(forms.ModelForm):
             'all': ('css/forms.css',)
         }
     
-    def save(self):
-        super(EditRecipeInstructionsForm, self).save()
+    x1 = forms.IntegerField()
+    y1 = forms.IntegerField()
+    x2 = forms.IntegerField()
+    y2 = forms.IntegerField()
 
 class EditRecipeIngredientInfoForm(forms.ModelForm):
     

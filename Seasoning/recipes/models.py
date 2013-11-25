@@ -21,7 +21,8 @@ import os, time
 from django.db import models
 from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
-from imagekit.processors.resize import ResizeToFit, SmartResize
+from imagekit.processors.resize import ResizeToFill
+from imagekit.processors.crop import Crop
 import ingredients
 from ingredients.models import CanUseUnit, Ingredient, Unit
 import datetime
@@ -141,7 +142,7 @@ class Recipe(models.Model):
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png',
                                 help_text=_('An image of this recipe. Please do not use copyrighted images, these will be removed as quick as possible.'))
-    thumbnail = ImageSpecField([SmartResize(230, 230)], image_field='image', format='PNG')
+    thumbnail = ImageSpecField([Crop(100, 100, 0, 0), ResizeToFill(230, 230)], image_field='image', format='PNG')
     
     # Derived Parameters
     # Footprint per portion

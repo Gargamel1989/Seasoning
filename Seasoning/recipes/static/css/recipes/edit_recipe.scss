@@ -1,6 +1,99 @@
-#edit-recipe h1 {
-  border-bottom: 2px solid #333; }
-  
+@import "variables";
+
+$indicator-height: 30px;
+
+#edit-recipe {
+  margin-bottom: 50px;
+}
+
+#edit-recipe #steps-indicator {
+  border-bottom: 1px solid $dark-border-color;
+  height: $indicator-height;
+  margin: 10px 0 0;
+}
+
+#edit-recipe #steps-indicator .step {
+  float: left;
+  height: $indicator-height;
+  width: calc((100% - 4px) / 3);
+  line-height: $indicator-height;
+  text-align: center;
+  border: none;
+  border-left: 1px solid $dark-border-color;
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  text-shadow: none;
+  margin: 0;
+}
+
+#edit-recipe #steps-indicator #step-1 {
+  border-left: none;
+}
+
+#edit-recipe #steps-indicator .step.active {
+  background-color: $green-light;
+}
+
+
+#edit-recipe #left {
+  width: calc(50% - 1px);
+  float: left;
+  padding-top: 20px;
+}
+
+#edit-recipe #right {
+  width: calc(50% - 11px);
+  float: right;
+  padding: 20px 0 0 10px;
+  border-left: 1px solid $light-border-color;
+}
+
+
+#edit-recipe #left input,
+#edit-recipe #left textarea, {
+  width: 80%;
+}
+
+#edit-recipe #left .aligned {
+  width: calc(80% + 10px);
+  height: 30px;
+}
+
+#edit-recipe #left .aligned label {
+  float: left;
+}
+
+#edit-recipe #left .aligned select {
+  float: right;
+  width: 70%;
+  margin-top: 5px; 
+}
+
+#edit-recipe #right label {
+  width: 150px;
+  float: left;
+}
+
+#edit-recipe #right input {
+  float: right;
+  margin-top: 2px;
+  width: auto;
+}
+
+#edit-recipe #right .img-frame {
+  margin-top: 10px;
+}
+
+#edit-recipe #right img {
+  max-width: 100%;
+  max-height: 400px;
+  display: block;
+  float: left;
+}
+
+
+
 #add-recipe-form h3 {
   margin: 20px 0 15px;
   border-bottom: 1px solid #CCC;
@@ -14,7 +107,6 @@
 }
 
 #add-recipe-form label {
-  position: absolute;
   left: 0;
   top: 0;
   width: 105px;

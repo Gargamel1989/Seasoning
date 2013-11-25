@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %} (stap {% block title-step %}{% endblock %} van 3){% endblock %}
+{% block title %}Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %} (stap {{ wizard.steps.step1 }} van 3){% endblock %}
 
 {% block extra_script %}
 {{ recipe_form.media }}
@@ -11,9 +11,25 @@
 {% block content %}
 
 <div id="edit-recipe">
-	<h1>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h1>
+	<h2>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h2>
 	
 	<form id="add-recipe-form" action="" method="post" enctype="{% block form-enctype %}application/x-www-form-urlencoded{% endblock %}">
+        <p>
+    	    Met onderstaande formulieren kan je je eigen recepten aan de databank van Seasoning toevoegen. 
+    	</p>
+    	
+    	<div id="steps-indicator">
+    	    <button class="step{% if wizard.steps.step1 == 1 %} active{% endif %}" id="step-1" name="wizard_goto_step" type="submit" value="{{ wizard.steps.all.0 }}">
+                1. Basisinformatie
+            </button>
+            <button class="step{% if wizard.steps.step1 == 2 %} active{% endif %}" id="step-2" name="wizard_goto_step" type="submit" value="{{ wizard.steps.all.1 }}">
+                2. Ingrediënten
+            </button>
+            <button class="step{% if wizard.steps.step1 == 3 %} active{% endif %}" id="step-3" name="wizard_goto_step" type="submit" value="{{ wizard.steps.all.2 }}">
+                3. Bereiding
+            </button>
+    	</div>
+	
 	    {% csrf_token %}
 	    {{ wizard.management_form }}
 	    

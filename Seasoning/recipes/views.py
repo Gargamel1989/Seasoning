@@ -149,7 +149,7 @@ class EditRecipeWizard(SessionWizardView):
     
     TEMPLATES = {'basic_info': 'recipes/edit_recipe_basic_info.html',
                  'ingredients': 'recipes/edit_recipe_ingredients.html',
-                 'instructions': 'recipes/edit_recipe_basic_info.html'}
+                 'instructions': 'recipes/edit_recipe_instructions.html'}
     
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'tmp_recipe_imgs'))
     
@@ -211,9 +211,12 @@ class EditRecipeWizard(SessionWizardView):
         return SessionWizardView.dispatch(self, *args, **kwargs)
     
     def done(self, form_list, **kwargs):
+        if not self.instance.author:
+            self.instance.author = self.request.user
         if not self.instance.pk:
             # recipe has not been saved yet
             self.instance.save()
+        # TODO: change image cropping to values in the form before save
         # save the usesingredient formset
         form_list[1].forms['ingredients'].save()
         # And save the recipe again to update the footprint
