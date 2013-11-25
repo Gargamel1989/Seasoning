@@ -152,6 +152,9 @@ class Ingredient(models.Model):
         except CanUseUnit.DoesNotExist:
             return None
     
+    def months_preservable(self):
+        return self.preservability // 30
+    
     def get_available_ins(self):
         """
         Returns a queryset for all the available in objects belonging to this ingredient

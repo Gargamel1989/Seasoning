@@ -28,12 +28,11 @@
     <strong>Voetafdruk:</strong> {{ ingredient.footprint|floatformat:2 }} kgCO2/{{ ingredient.primary_unit.short }}
 </p>
 {% if ingredient.type == 1 or ingredient.type == 2 %}
+{% if ingredient.preservability > 0 %}
 <p>
-    <strong>Bewaarbaarheid:</strong> {{ ingredient.preservability }} dagen
+    <strong>Bewaarbaarheid:</strong> {{ ingredient.months_preservable }} maanden
 </p>
-<p>
-    <strong>Uitstoot tijdens bewaring:</strong> {{ ingredient.preservation_footprint|floatformat     }} kgCO2/dag
-</p>
+{% endif %}
 {% endif %}
 
 <p>

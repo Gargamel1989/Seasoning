@@ -265,6 +265,10 @@ class IngredientModelTestCase(TestCase):
           date_until=datetime.date(2013, 12, 31))
         self.assertFalse(ing2.always_available())
         
+        G(AvailableInCountry, ingredient=ing2,
+          date_from=datetime.date(2013, 4, 1),
+          date_until=datetime.date(2013, 5, 31))
+        self.assertTrue(ing2.always_available())
     
     def test_footprint(self):
         bing = G(Ingredient, type=Ingredient.BASIC)
