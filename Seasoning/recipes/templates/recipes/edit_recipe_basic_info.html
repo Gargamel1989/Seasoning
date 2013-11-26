@@ -59,23 +59,27 @@
     <p>
         <label>{{ wizard.form.name.label }}*</label>
         {{ wizard.form.name }}
+        {{ wizard.form.name.errors }}
     </p>
     
     <p class="aligned">
         <label>{{ wizard.form.course.label }}*</label>
         {{ wizard.form.course }}
+        {{ wizard.form.course.errors }}
         <br class="clear" />
     </p>
     
     <p class="aligned">
         {{ wizard.form.cuisine.label_tag }}
         {{ wizard.form.cuisine }}
+        {{ wizard.form.cuisine.errors }}
         <br class="clear" />
     </p>
     
     <p>
         <label>{{ wizard.form.description.label }}*</label>
         {{ wizard.form.description }}
+        {{ wizard.form.description.errors }}
     </p>
 </div>
 <div id="right">
@@ -90,6 +94,7 @@
     <p>
         <label>Kies een afbeelding:</label>
         <input id="id_basic_info-image" type="file" name="basic_info-image">
+        {{ wizard.form.image.errors }}
     </p>
     <br class="clear" />
     <div class="img-frame">
