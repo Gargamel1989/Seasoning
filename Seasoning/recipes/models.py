@@ -21,15 +21,14 @@ import os, time
 from django.db import models
 from authentication.models import User
 from imagekit.models.fields import ProcessedImageField, ImageSpecField
-from imagekit.processors.resize import ResizeToFill, Resize
+from imagekit.processors.resize import ResizeToFill, Resize, SmartResize
 from imagekit.processors.crop import Crop
 import ingredients
 from ingredients.models import CanUseUnit, Ingredient, Unit
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator,\
     MaxLengthValidator
-from django.db.models.fields import FloatField, PositiveIntegerField,\
-    IntegerField
+from django.db.models.fields import FloatField
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import ugettext_lazy as _
 
@@ -98,9 +97,6 @@ class RecipeManager(models.Manager):
         
         return recipes_list.distinct()
 
-def get_recipe_thumbnail_processors(instance, file):
-    return [Crop(width=instance.t_w, height=instance.t_h, x=instance.t_x, y=instance.t_y), Resize(230, 230)]
-    
 class Recipe(models.Model):
     
     class Meta:
@@ -146,8 +142,7 @@ class Recipe(models.Model):
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png',
                                 help_text=_('An image of this recipe. Please do not use copyrighted images, these will be removed as quick as possible.'))
-    thumbnail = ImageSpecField(get_recipe_thumbnail_processors, image_field='image', format='PNG')
-    t_x, t_y, t_w, t_h = IntegerField(), IntegerField(), IntegerField(), IntegerField()
+    thumbnail = ImageSpecField([SmartResize(230, 230)], image_field='image', format='PNG')
     
     # Derived Parameters
     # Footprint per portion
