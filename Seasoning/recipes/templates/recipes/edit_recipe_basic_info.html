@@ -7,9 +7,9 @@
     
     
     $(document).ready(function() {
-        function setThumbCoords(full_height, x1, y1, x2, y2) {
+        function setThumbCoords(x1, y1, x2, y2) {
             $("#id_basic_info-t_x").val(x1);
-            $("#id_basic_info-t_y").val(full_height - y1);
+            $("#id_basic_info-t_y").val(y2);
             $("#id_basic_info-t_w").val(x2-x1);
             $("#id_basic_info-t_h").val(y2-y1);
         }
@@ -19,11 +19,11 @@
             x1: 0, y1: 0, x2: 100, y2: 100,
             instance: true,
             onSelectEnd: function (img, selection) {
-                setThumbCoords(parseInt(img.height), selection.x1, selection.y1, selection.x2, selection.y2);
+                setThumbCoords(selection.x1, selection.y1, selection.x2, selection.y2);
             }
         });
         
-        setThumbCoords(parseInt($('#img-preview').height()), 0, 0, 100, 100);
+        setThumbCoords(0, 0, 100, 100);
         
         function readURL(input) {
 
