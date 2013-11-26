@@ -37,9 +37,10 @@ $indicator-height: 30px;
 
 
 #edit-recipe #left {
-  width: calc(50% - 1px);
+  width: calc(50% - 11px);
   float: left;
   padding-top: 20px;
+  margin-right: 10px;
 }
 
 #edit-recipe #right {
