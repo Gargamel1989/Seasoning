@@ -9,7 +9,7 @@
     $(document).ready(function() {
         function setThumbCoords($img, x1, y1, x2, y2) {
             $("#id_basic_info-t_x").val(x1);
-            $("#id_basic_info-t_y").val(parseInt($img.height) - y1);
+            $("#id_basic_info-t_y").val(parseInt($img.css('height')) - y1);
             $("#id_basic_info-t_w").val(x2-x1);
             $("#id_basic_info-t_h").val(y2-y1);
         }
@@ -23,7 +23,7 @@
             }
         });
         
-        setThumbCoords(0, 0, 100, 100);
+        setThumbCoords($('#img-preview'), 0, 0, 100, 100);
         
         function readURL(input) {
 
