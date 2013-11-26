@@ -9,6 +9,7 @@ media/*
 \#*\#
 .\#*
 *.css
+.sass-cache
 
 secrets.py
 initial_data.json
