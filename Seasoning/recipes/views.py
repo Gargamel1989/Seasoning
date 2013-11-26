@@ -351,7 +351,7 @@ def delete_recipe(request, recipe_id):
     
     if recipe.author == request.user:
         recipe.delete()
-        messages.add_message(request, messages.INFO, 'Uw recept \'' + recipe.name + '\' werd met succes uit onze databank verwijderd.')
+        messages.add_message(request, messages.INFO, 'Je recept \'' + recipe.name + '\' werd met succes uit onze databank verwijderd.')
         return redirect('home')
         
         

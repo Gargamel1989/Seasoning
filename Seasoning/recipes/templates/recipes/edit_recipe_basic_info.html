@@ -2,9 +2,10 @@
 
 {% block extra_script %}
 {{ recipe_form.media }}
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.imgareaselect.js"></script>
 <script type="text/javascript">
-        
+    
+    
+    $(document).ready(function() {
         function readURL(input) {
 
             if (input.files && input.files[0]) {
@@ -18,7 +19,16 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-    
+        
+        function updateImage() {
+            $img = $("#img-preview")
+            if ($img.height() <= 0) {
+                $img.attr('src', "/static/img/no_image.png");
+            }
+        }
+        
+        updateImage();
+        
         $("#id_basic_info-image").change(function(){
             readURL(this);
         });
@@ -67,23 +77,18 @@
         Hier kan je een afbeelding van je recept uploaded. Dit is niet verplicht. 
     </p>
     <p>
-        Nadat je afbeelding geupload is, kan
-        je aangeven welk deel van de afbeelding je zou willen gebruiken als thumbnail. Dit is een verkleinde versie van
-        je afbeelding die perfect vierkant moet zijn en wordt op sommige plekken op de site gebruikt.
-    </p>
-    <p>
         <label>Kies een afbeelding:</label>
         <input id="id_basic_info-image" type="file" name="basic_info-image">
         {{ wizard.form.image.errors }}
     </p>
     <br class="clear" />
     <div class="img-frame">
+        {% if wizard.form.instance.image.url %}
+        <img id="img-preview" src="{{ wizard.form.instance.image.url }}" />
+        {% else %}
         <img id="img-preview" src="{{ STATIC_URL }}img/no_image.png" />
+        {% endif %}
     </div>
-    {{ wizard.form.t_x.as_hidden }}
-    {{ wizard.form.t_y.as_hidden }}
-    {{ wizard.form.t_w.as_hidden }}
-    {{ wizard.form.t_h.as_hidden }}
 </div>
 <br class="clear" />
 
