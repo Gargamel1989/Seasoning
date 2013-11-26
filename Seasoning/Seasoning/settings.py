@@ -283,7 +283,7 @@ FACEBOOK_SECRET = secrets.FACEBOOK_SECRET
 GOOGLE_APP_ID = secrets.GOOGLE_APP_ID
 GOOGLE_SECRET = secrets.GOOGLE_SECRET
 
-DDF_DEFAULT_DATA_FIXTURE = 'Seasoning.__init__.UserNamesOverwriter'
+DDF_DEFAULT_DATA_FIXTURE = 'Seasoning.utils.UserNamesOverwriter'
 
 # If no MySQL server is available for testing, you might want to us sqlite. This
 # will cause certain tests depending on MySQL fail. Set this setting to True to
