@@ -213,9 +213,8 @@ class EditRecipeWizard(SessionWizardView):
     def done(self, form_list, **kwargs):
         if not self.instance.author:
             self.instance.author = self.request.user
-        if not self.instance.pk:
-            # recipe has not been saved yet
-            self.instance.save()
+        # recipe has not been saved yet
+        self.instance.save()
         # TODO: change image cropping to values in the form before save
         # save the usesingredient formset
         form_list[1].forms['ingredients'].save()

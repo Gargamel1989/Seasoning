@@ -28,7 +28,7 @@ from ingredients.models import CanUseUnit, Ingredient, Unit
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator,\
     MaxLengthValidator
-from django.db.models.fields import FloatField
+from django.db.models.fields import FloatField, PositiveIntegerField
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import ugettext_lazy as _
 
@@ -99,6 +99,32 @@ class RecipeManager(models.Manager):
     
 class Recipe(models.Model):
     
+    class RecipeThumbCrop(object):
+        """
+        Crops an image, cropping it to the specified width and height. You may
+        optionally provide either an anchor or x and y coordinates. This processor
+        functions exactly the same as ``ResizeCanvas`` except that it will never
+        enlarge the image.
+    
+        """
+    
+        def __init__(self, width=None, height=None, anchor=None, x=None, y=None):
+            self.width = width
+            self.height = height
+            self.anchor = anchor
+            self.x = x
+            self.y = y
+    
+        def process(self, img):
+            from imagekit.processors.resize import ResizeCanvas
+    
+            original_width, original_height = img.size
+            new_width, new_height = min(original_width, self.width()), \
+                    min(original_height, self.height())
+    
+            return ResizeCanvas(new_width, new_height, anchor=self.anchor(),
+                    x=self.x(), y=self.y()).process(img)
+    
     class Meta:
         db_table = 'recipe'
         
@@ -142,7 +168,8 @@ class Recipe(models.Model):
     
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png',
                                 help_text=_('An image of this recipe. Please do not use copyrighted images, these will be removed as quick as possible.'))
-    thumbnail = ImageSpecField([Crop(100, 100, 0, 0), ResizeToFill(230, 230)], image_field='image', format='PNG')
+    thumbnail = ImageSpecField([RecipeThumbCrop(100, 100, 0, 0), ResizeToFill(230, 230)], image_field='image', format='PNG')
+    t_x, t_y, t_w, t_h = PositiveIntegerField(), PositiveIntegerField(), PositiveIntegerField(), PositiveIntegerField()
     
     # Derived Parameters
     # Footprint per portion
@@ -151,6 +178,11 @@ class Recipe(models.Model):
     
     accepted = models.BooleanField(default=False)
     
+    def __init__(self, *args, **kwargs):
+        rec = super(Recipe, self).__init__(self, *args, **kwargs)
+        print(self.thumbnail)
+        return rec
+        
     
     def __unicode__(self):
         return self.name

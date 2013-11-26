@@ -8,10 +8,10 @@
     
     $(document).ready(function() {
         function setThumbCoords(x1, y1, x2, y2) {
-            $("#id_basic_info-x1").val(x1);
-            $("#id_basic_info-y1").val(y1);
-            $("#id_basic_info-x2").val(x2);
-            $("#id_basic_info-y2").val(y2);
+            $("#id_basic_info-t_x").val(x1);
+            $("#id_basic_info-t_y").val(y1);
+            $("#id_basic_info-t_w").val(x2-x1);
+            $("#id_basic_info-t_h").val(y2-y1);
         }
         
         var ias = $('#img-preview').imgAreaSelect({
@@ -95,10 +95,10 @@
     <div class="img-frame">
         <img id="img-preview" src="{{ STATIC_URL }}img/no_image.png" />
     </div>
-    {{ wizard.form.x1.as_hidden }}
-    {{ wizard.form.y1.as_hidden }}
-    {{ wizard.form.x2.as_hidden }}
-    {{ wizard.form.y2.as_hidden }}
+    {{ wizard.form.t_x.as_hidden }}
+    {{ wizard.form.t_y.as_hidden }}
+    {{ wizard.form.t_w.as_hidden }}
+    {{ wizard.form.t_h.as_hidden }}
 </div>
 <br class="clear" />
 
