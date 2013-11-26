@@ -1,6 +1,6 @@
 # Used for testing with dynamic fixtures
-from django_dynamic_fixture.ddf import DataFixture
 from django_dynamic_fixture.fixture_algorithms.sequential_fixture import SequentialDataFixture
+
 class UserNamesOverwriter(SequentialDataFixture):
     def charfield_config(self, field, key):
         if field.name == 'surname':
