@@ -98,7 +98,7 @@ class RecipeManager(models.Manager):
         return recipes_list.distinct()
 
 def get_recipe_thumbnail_processors(instance, file):
-    return [Crop(width=instance.t_w, height=instance.t_h, x=instance.t_x, y=instance.t_y), Resize(230, 230)]
+    return [Crop(width=instance.t_w, height=instance.t_h, x=instance.t_x, y=instance.t_y)]
     
 class Recipe(models.Model):
     
