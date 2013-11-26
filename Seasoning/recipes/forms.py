@@ -54,7 +54,7 @@ class EditRecipeBasicInfoForm(forms.ModelForm):
     class Meta:
         model = Recipe
         fields = ['name', 'course', 'cuisine',
-                  'description', 'image', 't_x', 't_y', 't_w', 't_h']
+                  'description', 'image']
     
     class Media:
         css = {
