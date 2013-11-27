@@ -8,8 +8,9 @@ media/*
 *~
 \#*\#
 .\#*
-css/*/*.css
+*.css
 .sass-cache
+!style.css
 
 secrets.py
 initial_data.json
