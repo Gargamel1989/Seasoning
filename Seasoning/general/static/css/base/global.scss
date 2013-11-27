@@ -22,30 +22,18 @@
     display: none;
   }
   
-  .leaf-line {
-    height: 30px;
-    position: relative;
-    margin: 10px 0;
-    clear: both;
+  hr.leaf-line {
+    margin: 20px 0;  
   }
   
-  .leaf-line .leaf {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url('#{$logos}/facebook icoon.png');
+  hr.leaf-line:after {
+    background: url('#{$logos}/facebook icoon.png') no-repeat top center;
     background-size: 30px;
-    background-repeat: no-repeat;
-    background-position: center;
-    z-index: 1;
-  }
-  
-  .leaf-line .line {
-    position: absolute;
-    margin: 0;
-    top: 14px;
-    width: 100%;
-    z-index: 0;
+    content: "";
+    display: block;
+    height: 30px; /* height of the ornament */
+    position: relative;
+    top: -10px; /* half the height of the ornament */
   }
   
   .button-group {
