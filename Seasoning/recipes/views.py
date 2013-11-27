@@ -183,6 +183,19 @@ class EditRecipeWizard(SessionWizardView):
             # and not previous set.
             kwargs.setdefault('queryset', self.get_form_instance(step))
         return self.form_list[step](**kwargs)
+    
+    def form_is_valid(self, step=None):
+        if step is None:
+            step = self.steps.current
+        
+        form = self.get_form(step=step, data=self.storage.get_step_data(step),
+                             files=self.storage.get_step_files(step))
+        if hasattr(form, 'is_bound') and not form.is_bound:
+            # The form did not receive any new data. It can only be valid if an instance was present
+            return self.instance is not None and self.instance.id is not None
+        
+        # The form received new data, check the validity of the new data
+        return form.is_valid()    
         
     def get_template_names(self):
         return self.TEMPLATES[self.steps.current]
@@ -194,6 +207,8 @@ class EditRecipeWizard(SessionWizardView):
             context['new_recipe'] = False
         else:
             context['new_recipe'] = True
+        for step in self.steps.all:
+            context['%s_form_valid' % step] = self.form_is_valid(step)
         return context
     
     # Make sure login is required for every view in this class

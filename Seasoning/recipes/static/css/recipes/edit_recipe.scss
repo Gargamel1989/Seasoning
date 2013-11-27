@@ -25,6 +25,12 @@ $indicator-height: 30px;
   padding: 0;
   text-shadow: none;
   margin: 0;
+  position: relative;
+}
+
+#edit-recipe #steps-indicator .step .checkbox {
+  position: absolute;
+  top: 6px;
 }
 
 #edit-recipe #steps-indicator #step-1 {
