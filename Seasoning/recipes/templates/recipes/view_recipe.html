@@ -47,12 +47,12 @@
                   pointInterval: data.interval_length,
                 });
                 relchart.addSeries({
-                  name: "Binnen dezelfde categorie",
+                  name: "Enkel {{ recipe.get_course_display }}en",
                   data: data.cat_fps,
                   pointInterval: data.interval_length,
                 });
                 relchart.addSeries({
-                  name: "Binnen dezelfde voedingswijze",
+                  name: "Enkel {{ recipe.get_veganism_display }}e gerechten",
                   data: data.veg_fps,
                   pointInterval: data.interval_length,
                 });
