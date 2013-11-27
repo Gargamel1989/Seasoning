@@ -25,7 +25,7 @@ from ingredients.fields import AutoCompleteSelectIngredientField
 from ingredients.models import Ingredient, Unit
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.core.exceptions import ValidationError
-from general.widgets import WMDWidget
+from markitup.widgets import MarkItUpWidget
 from general.forms import FormContainer
 from django.forms.util import ErrorDict
 
@@ -187,6 +187,8 @@ class EditRecipeInstructionsForm(forms.ModelForm):
     class Meta:
         model = Recipe
         fields = ['active_time', 'passive_time', 'instructions']
+    
+    instructions = forms.CharField(widget=MarkItUpWidget(markitup_set='js/recipes'))
     
     def save(self):
         super(EditRecipeInstructionsForm, self).save()

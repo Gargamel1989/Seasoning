@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load comments %}
+{% load markdown_filter %}
 
 {% block title %}Recept bekijken{% endblock %}
 
@@ -431,7 +432,7 @@
             
             <div id="description">
                 <strong>Beschrijving</strong>
-                {{ recipe.description|linebreaks }}
+                {{ recipe.description }}
             </div>
             
         </div>
