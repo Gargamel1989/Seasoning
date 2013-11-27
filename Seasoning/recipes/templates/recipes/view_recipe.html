@@ -164,6 +164,7 @@
                     success: function(data) {
                         $moreinfo.html(data);
                         fix_ingredient_availabilities();
+                        update_tooltips();
                         $(".basic-moreinfo").each(function() {
                             var height = 0;
                             $(this).parent(".moreinfo").children().each(function() {
