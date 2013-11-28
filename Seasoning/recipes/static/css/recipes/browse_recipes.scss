@@ -32,7 +32,7 @@ form.keywords {
   vertical-align: middle;
   z-index: 3;
   background: none;
-  background-image: url("#{$icons}/search.png");
+  background-image: url("/static/img/icons/search.png");
   background-size: 26px 26px;
   border: none; }
 
@@ -163,7 +163,7 @@ form.keywords {
   transition: all 0.25s ease-in-out;
   -webkit-transition: all 0.25s ease-in-out;
   -moz-transition: all 0.25s ease-in-out;
-  background-image: url("#{$icons}/delete.png");
+  background-image: url("/static/img/icons/delete.png");
   background-size: 20px 20px;
   background-repeat: no-repeat;
   background-position: 98% 0%; }

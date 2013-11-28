@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load comments %}
+{% load markdown_filter %}
 
 {% block title %}Recept bekijken{% endblock %}
 
@@ -46,12 +47,12 @@
                   pointInterval: data.interval_length,
                 });
                 relchart.addSeries({
-                  name: "Binnen dezelfde categorie",
+                  name: "Enkel {{ recipe.get_course_display }}en",
                   data: data.cat_fps,
                   pointInterval: data.interval_length,
                 });
                 relchart.addSeries({
-                  name: "Binnen dezelfde voedingswijze",
+                  name: "Enkel {{ recipe.get_veganism_display }}e gerechten",
                   data: data.veg_fps,
                   pointInterval: data.interval_length,
                 });
@@ -163,6 +164,7 @@
                     success: function(data) {
                         $moreinfo.html(data);
                         fix_ingredient_availabilities();
+                        update_tooltips();
                         $(".basic-moreinfo").each(function() {
                             var height = 0;
                             $(this).parent(".moreinfo").children().each(function() {
@@ -431,7 +433,7 @@
             
             <div id="description">
                 <strong>Beschrijving</strong>
-                {{ recipe.description|linebreaks }}
+                {{ recipe.description }}
             </div>
             
         </div>

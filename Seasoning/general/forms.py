@@ -90,6 +90,10 @@ class FormContainer(StrAndUnicode):
 
     def is_valid(self):
         return all(f.is_valid() for f in self.forms.values())
+    
+    @property
+    def is_bound(self):
+        return all(f.is_bound for f in self.forms.values())
 
     @property
     def data(self):

@@ -131,7 +131,7 @@ PIPELINE_CSS = {
             'css/recipes/*.scss',
         },
         'output_filename': 'css/master.css',
-    }
+    },
 }
 
 PIPELINE_COMPILERS = (
@@ -143,6 +143,8 @@ PIPELINE_SASS_ARGUMENTS = '--update --force --load-path %s/css/imports/' % STATI
 
 PIPELINE_CSS_COMPRESSOR = None
 PIPELINE_JS_COMPRESSOR = None
+
+MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -210,6 +212,7 @@ INSTALLED_APPS = (
     # Misc
     'imagekit',
     'pipeline',
+    'markitup',
 )
 
 AUTH_USER_MODEL = 'authentication.User'
