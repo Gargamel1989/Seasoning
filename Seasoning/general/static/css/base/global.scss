@@ -88,7 +88,8 @@
     height: 1px;
   }
   
-  li.info {
+  li.info,
+  div.message {
     padding: 5px;
     margin: 0 0 10px 0;
     background-color: rgba(98, 155, 49, 0.5);

@@ -144,5 +144,7 @@ $(document).ready(function() {
 	$(".add-ingredientgroup-button").click(add_group);
 	
 	// Make the portions button a spinner
-	$(".spinner-wrapper input").spinner();
+	$(".spinner-wrapper input").spinner({
+		min: 0,
+	});
 });

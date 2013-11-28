@@ -8,12 +8,20 @@
 <script type="text/javascript">
     $(function() {
         $("input, select, textarea").tooltip({
-            items: "input, select, textarea",
+            items: "input, select, textarea, span",
             content: function() {
                 return $(this).next(".tooltip").text();
             },
             position:  {my: "left+15 top", at: "right top"}
         }).off("mouseover mouseout");
+        
+        $(".spinner-wrapper").tooltip({
+            items: "span",
+            content: function() {
+                return $(this).parent().next(".tooltip").text();
+            },
+            position:  {my: "left+15 top", at: "right top"}
+        })
     })
 </script>
 {% endblock %}

@@ -111,16 +111,24 @@ class IngredientsFormSet(BaseInlineFormSet):
     def clean(self):
         # TODO: fix so that when a certain parameter is given, unknown ingredient errors are ignored
         super(IngredientsFormSet, self).clean()
-        if len(self.errors) > 0:
+        if any(len(errors) > 0 for errors in self.errors):
             # Check if any errors were made except unknown ingredient errors
             for form in self.forms:
                 errors = dict(form.errors)
                 if len(errors) <= 0:
                     continue
-                if len(errors) > 1 or not 'ingredient' in errors:
-                    # Multiple fields have errors, or ingredient doesn't have errors
+                if not 'ingredient' in errors:
+                    # Ingredient doesn't have errors
                     return self
                 unknown_ing_error_msg = form['ingredient'].field.unknown_ingredient_error_message
+                if len(errors) > 1:
+                    # Multiple fields have errors
+                    if 'ingredient' in errors:
+                        for i in range(len(errors['ingredient'])):
+                            if unknown_ing_error_msg in errors['ingredient'][i]:
+                                del form.errors['ingredient'][i]
+                                break
+                    return self
                 if len(errors['ingredient']) > 1 or not unknown_ing_error_msg in errors['ingredient'][0]:
                     # Ingredient field has multiple errors, or not the error we are looking for
                     return self
@@ -159,7 +167,7 @@ class IngredientsFormSet(BaseInlineFormSet):
 class EditRecipeIngredientsForm(FormContainer):
     
     ingredients_general_info = EditRecipeIngredientInfoForm
-    ingredients = inlineformset_factory(Recipe, UsesIngredient, extra=2,
+    ingredients = inlineformset_factory(Recipe, UsesIngredient, extra=1,
                                         form=UsesIngredientForm, formset=IngredientsFormSet)
     
     def is_valid(self):
