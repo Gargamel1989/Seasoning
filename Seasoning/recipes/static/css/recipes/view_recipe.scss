@@ -48,7 +48,7 @@ h1 #recipe-actions {
 #img-and-basic-user-options #recipe-img {
   width: 95%;
   margin: 2.5% 0 0 2.5%;
-  cursor: url(#{$icons}/zoom.cur), -moz-zoom-in; }
+  cursor: url(/static/img/icons/zoom.cur), -moz-zoom-in; }
 
 #img-and-basic-user-options #recipe-footprint-wrapper {
   position: absolute;
@@ -56,7 +56,7 @@ h1 #recipe-actions {
   right: 15px;
   width: 100px;
   height: 74px;
-  background-image: url("#{$icons}/cloud.png"); }
+  background-image: url("/static/img/icons/cloud.png"); }
 
 #img-and-basic-user-options #recipe-footprint-wrapper #recipe-footprint {
   font-size: 20px;
@@ -72,7 +72,7 @@ h1 #recipe-actions {
   max-width: 100%;
   max-height: 100%;
   z-index: 9995;
-  cursor: url("#{$icons}/zoomout.cur"), -moz-zoom-out;
+  cursor: url("/static/img/icons/zoomout.cur"), -moz-zoom-out;
   display: none; }
 
 #zoomed-recipe-image-container #page-darkener {
