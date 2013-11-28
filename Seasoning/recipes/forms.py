@@ -174,7 +174,7 @@ class EditRecipeIngredientsForm(FormContainer):
         valid = self.forms['ingredients_general_info'].is_valid()
         if valid and 'request_unknown_ingredients' in self.forms['ingredients_general_info'].cleaned_data and self.forms['ingredients_general_info'].cleaned_data['request_unknown_ingredients']:
             self.forms['ingredients'].unknown_ingredients_allowed = True
-        return super(EditRecipeIngredientsForm, self).is_valid()
+        return valid & self.forms['ingredients'].is_valid()
 
 
 class EditRecipeInstructionsForm(forms.ModelForm):

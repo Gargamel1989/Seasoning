@@ -294,6 +294,29 @@ class EditRecipeWizard(SessionWizardView):
         
         return self.render(form)
 
+    def render_next_step(self, form, **kwargs):
+        """
+        This method gets called when the next step/form should be rendered.
+        `form` contains the last/current form.
+        """
+        # get the form instance based on the data from the storage backend
+        # (if available).
+        next_step = self.steps.next
+        
+        data = self.storage.get_step_data(next_step)
+        files = self.storage.get_step_files(next_step)
+        
+        new_form = self.get_form(next_step,
+            data=data,
+            files=files)
+        
+        if data or files:
+            new_form.is_valid()
+        
+        # change the stored current step
+        self.storage.current_step = next_step
+        return self.render(new_form, **kwargs)
+
     def render_done(self, form, **kwargs):
         """
         This method gets called when all forms passed. The method should also

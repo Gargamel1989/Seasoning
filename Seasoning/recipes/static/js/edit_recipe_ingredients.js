@@ -142,9 +142,4 @@ $(document).ready(function() {
 	// Add functionality to the add buttons
 	$(".add-ingredient-button").click(add_ingredient);
 	$(".add-ingredientgroup-button").click(add_group);
-	
-	// Make the portions button a spinner
-	$(".spinner-wrapper input").spinner({
-		min: 0,
-	});
 });

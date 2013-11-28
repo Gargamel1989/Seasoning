@@ -102,11 +102,12 @@ $indicator-height: 30px;
 
 #edit-recipe .aligned label {
   float: left;
+  width: 150px;
 }
 
 #edit-recipe .aligned select {
   float: right;
-  width: 70%;
+  width: calc(100% - 160px);
   margin: 5px 7px 0 0; 
 }
 
@@ -122,9 +123,8 @@ $indicator-height: 30px;
 }
 
 #edit-recipe #right .img-frame {
-  margin: 10px auto 0;
+  margin: 10px 0;
   height: 400px;
-  display: block;
 }
 
 #edit-recipe #right img {
@@ -132,6 +132,10 @@ $indicator-height: 30px;
   max-height: 400px;
   display: block;
   float: left;
+}
+
+#edit-recipe .spinner-wrapper input {
+  text-align: right;
 }
 
 
@@ -149,10 +153,6 @@ $indicator-height: 30px;
   margin: 10px auto;
   display: block;
   width: 200px;
-}
-
-#edit-recipe .spinner-wrapper {
-  margin-left: 100px;
 }
 
 #edit-recipe #id_ingredients-ingredients_general_info-extra_info {
@@ -208,15 +208,15 @@ $indicator-height: 30px;
 
   #uses-formset #sortable-ingredients .name-label {
     display: inline-block;
-    width: 400px;
-    margin: 0 86px 0 0;
+    width: 410px;
+    margin: 0 82px 0 0;
   }
   
   #uses-formset #sortable-ingredients .amount-label {
     display: inline-block;
-    width: 88px;
+    width: 110px;
     text-align: right;
-    margin-right: 18px;
+    margin-right: 22px;
   }
   
   #uses-formset #sortable-ingredients .unit-label {

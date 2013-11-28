@@ -4,7 +4,6 @@
 
 {% block extra_script %}
 <script src="/static/js/jquery-ui.min.js" type="text/javascript"></script>
-{{ wizard.form.media }}
 <script type="text/javascript">
     $(function() {
         $("input, select, textarea").tooltip({
@@ -21,7 +20,7 @@
                 return $(this).parent().next(".tooltip").text();
             },
             position:  {my: "left+15 top", at: "right top"}
-        })
+        });
     })
 </script>
 {% endblock %}
