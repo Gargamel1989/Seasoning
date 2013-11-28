@@ -30,7 +30,7 @@ $indicator-height: 30px;
 
 #edit-recipe #steps-indicator .step .checkbox {
   position: absolute;
-  top: 6px;
+  top: 5px;
 }
 
 #edit-recipe #steps-indicator #step-1 {
@@ -41,25 +41,54 @@ $indicator-height: 30px;
   background-color: $green-light;
 }
 
+#edit-recipe #button-group {
+  margin-top: 40px;
+  text-align: center;
+}
+
+#edit-recipe #button-group span {
+  display: block;
+  height: 10px;
+}
+
+#edit-recipe .prev-button {
+  float: left;
+  width: 100px;
+}
+
+#edit-recipe .next-button {
+  float: right;
+  width: 100px;
+}
+
 
 #edit-recipe #left {
-  width: calc(50% - 11px);
+  width: calc(50% - 2px);
   float: left;
-  padding-top: 20px;
-  margin-right: 10px;
 }
 
 #edit-recipe #right {
-  width: calc(50% - 11px);
+  width: calc(50% - 10px);
   float: right;
   padding: 20px 0 0 10px;
   border-left: 1px solid $light-border-color;
 }
 
 
-#edit-recipe #left input,
-#edit-recipe #left textarea, {
+#edit-recipe #left p {
+  margin: 20px 10px 0 0;
+}
+
+
+#edit-recipe #left input, {
   width: 80%;
+  margin: 0;
+}
+
+#edit-recipe #left textarea {
+  width: 80%;
+  height: 50px;
+  margin: 0;
 }
 
 #edit-recipe #left .aligned {
@@ -74,7 +103,7 @@ $indicator-height: 30px;
 #edit-recipe #left .aligned select {
   float: right;
   width: 70%;
-  margin-top: 5px; 
+  margin: 5px 0 0 0; 
 }
 
 #edit-recipe #right label {
@@ -103,19 +132,19 @@ $indicator-height: 30px;
 
 
 
-#add-recipe-form h3 {
+#edit-recipe-form h3 {
   margin: 20px 0 15px;
   border-bottom: 1px solid #CCC;
 }
 
-#add-recipe-form .field-wrapper {
+#edit-recipe-form .field-wrapper {
   clear: both;
   position: relative;
   min-height: 30px;
   margin-bottom: 10px;
 }
 
-#add-recipe-form label {
+#edit-recipe-form label {
   left: 0;
   top: 0;
   width: 105px;
@@ -123,93 +152,93 @@ $indicator-height: 30px;
   line-height: 30px;
 }
 
-#add-recipe-form #description-field label,
-#add-recipe-form #imageinput-field label,
-#add-recipe-form #extra_info-field label,
-#add-recipe-form #portions-field label {
+#edit-recipe-form #description-field label,
+#edit-recipe-form #imageinput-field label,
+#edit-recipe-form #extra_info-field label,
+#edit-recipe-form #portions-field label {
   line-height: 15px;
 }
 
-#add-recipe-form .field-wrapper .input-wrapper {
+#edit-recipe-form .field-wrapper .input-wrapper {
   padding-left: 113px;
   position: relative;
 }
 
-#add-recipe-form .field-wrapper .select-wrapper,
-#add-recipe-form .field-wrapper .spinner-wrapper {
+#edit-recipe-form .field-wrapper .select-wrapper,
+#edit-recipe-form .field-wrapper .spinner-wrapper {
   padding-left: 105px;
   position: relative;
   margin: 5px 0;
 }
 
-#add-recipe-form .input-wrapper input,
-#add-recipe-form .input-wrapper textarea {
+#edit-recipe-form .input-wrapper input,
+#edit-recipe-form .input-wrapper textarea {
   width: 100%;
   margin-left: -8px;
 }
 
-#add-recipe-form .select-wrapper select {
+#edit-recipe-form .select-wrapper select {
   width: 100%;
 }
 
-#add-recipe-form .spinner-wrapper input {
+#edit-recipe-form .spinner-wrapper input {
   box-shadow: none;
   -webkit-box-shadow: none; 
   -moz-box-shadow: none;
 }
 
-#add-recipe-form #course-field, 
-#add-recipe-form #cuisine-field {
+#edit-recipe-form #course-field, 
+#edit-recipe-form #cuisine-field {
   float: left;
   clear: none;
   width: 46%;
 }
 
-#add-recipe-form #course-field {
+#edit-recipe-form #course-field {
   margin-right: 8%;
 }
 
-#add-recipe-form #description-field {
+#edit-recipe-form #description-field {
   float: left;
   width: 46%;
   margin-right: 8%;
   clear: none;
 }
 
-#add-recipe-form #imageinput-field {
+#edit-recipe-form #imageinput-field {
   float: left;
   width: 46%;
   clear: none;
 }
 
-#add-recipe-form #imageinput-field .input-wrapper {
+#edit-recipe-form #imageinput-field .input-wrapper {
   margin: -3px 0;
 }
 
-#add-recipe-form #imagedisplay-field {
+#edit-recipe-form #imagedisplay-field {
   float: left;
   width: 46%;
   clear: none;
 }
 
-#add-recipe-form #imagedisplay-field img {
+#edit-recipe-form #imagedisplay-field img {
   height: 130px;
 }
 
-#add-recipe-form #id_extra_info {
+#edit-recipe-form #id_extra_info {
   height: 1px;
 }
 
-#add-recipe-form #ingredient-field {
+#edit-recipe-form #ingredient-field {
   margin-bottom: 20px;
 }
 
-#add-recipe-form #ingredient-field label {
+#edit-recipe-form #ingredient-field label {
   height: 30px;
   position: static;
 }
 
-#add-recipe-form #ingredient-field #uses-formset {
+#edit-recipe-form #ingredient-field #uses-formset {
   clear: both;
 }
 

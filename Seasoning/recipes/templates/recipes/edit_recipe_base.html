@@ -3,7 +3,19 @@
 {% block title %}Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %} (stap {{ wizard.steps.step1 }} van 3){% endblock %}
 
 {% block extra_script %}
-{{ recipe_form.media }}
+<script src="/static/js/jquery-ui.min.js" type="text/javascript"></script>
+{{ wizard.form.media }}
+<script type="text/javascript">
+    $(function() {
+        $("input, select, textarea").tooltip({
+            items: "input, select, textarea",
+            content: function() {
+                return $(this).next(".tooltip").text();
+            },
+            position:  {my: "left+15 top", at: "right top"}
+        }).off("mouseover mouseout");
+    })
+</script>
 {% endblock %}
 
 {% block recipes-active %}active{% endblock %}
@@ -13,7 +25,7 @@
 <div id="edit-recipe">
 	<h2>Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}</h2>
 	
-	<form id="add-recipe-form" action="" method="post" enctype="{% block form-enctype %}application/x-www-form-urlencoded{% endblock %}">
+	<form id="edit-recipe-form" action="" method="post" enctype="{% block form-enctype %}application/x-www-form-urlencoded{% endblock %}">
         <p>
     	    Met onderstaande formulieren kan je je eigen recepten aan de databank van Seasoning toevoegen. 
     	</p>
@@ -36,14 +48,21 @@
         {% block recipe-form %}
     	{% endblock %}
     	
-    	{% if wizard.steps.prev %}
-    	<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Vorige</button>
-        {% endif %}
-        {% if wizard.steps.next %}
-        <input type="submit" value="Volgende"/>
-        {% else %}
-        <input type="submit" value="Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}"/>
-        {% endif %}
+    	<div id="button-group">
+        	{% if wizard.steps.prev %}
+        	<button class="prev-button" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Vorige</button>
+        	{% else %}
+        	<span class="prev-button"> </span>
+            {% endif %}
+            
+            {% if wizard.steps.next %}
+            <input class="next-button" type="submit" value="Volgende"/>
+            {% else %}
+            <span  class="next-button"> </span>
+            {% endif %}
+            
+            <input id="finish-button" name="wizard_finish" type="submit" value="Recept {% if new_recipe %}Toevoegen{% else %}Aanpassen{% endif %}"/>
+        </div>
 	</form>
 </div>
 {% endblock %}

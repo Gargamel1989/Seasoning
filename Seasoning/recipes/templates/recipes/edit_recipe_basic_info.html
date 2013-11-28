@@ -1,7 +1,7 @@
 {% extends "recipes/edit_recipe_base.html" %}
 
 {% block extra_script %}
-{{ recipe_form.media }}
+{{ block.super }}
 <script type="text/javascript">
     
     
@@ -49,28 +49,30 @@
     <p>
         <label>{{ wizard.form.name.label }}*</label>
         {{ wizard.form.name }}
-        {{ wizard.form.name.errors }}
+        <span class="tooltip">{{ wizard.form.name.help_text }}</span>
     </p>
+    {{ wizard.form.name.errors }}
     
     <p class="aligned">
         <label>{{ wizard.form.course.label }}*</label>
         {{ wizard.form.course }}
-        {{ wizard.form.course.errors }}
-        <br class="clear" />
+        <span class="tooltip">{{ wizard.form.course.help_text }}</span>
     </p>
+    {{ wizard.form.course.errors }}
     
     <p class="aligned">
         {{ wizard.form.cuisine.label_tag }}
         {{ wizard.form.cuisine }}
-        {{ wizard.form.cuisine.errors }}
-        <br class="clear" />
+        <span class="tooltip">{{ wizard.form.cuisine.help_text }}</span>
     </p>
+    {{ wizard.form.cuisine.errors }}
     
     <p>
         <label>{{ wizard.form.description.label }}*</label>
         {{ wizard.form.description }}
-        {{ wizard.form.description.errors }}
+        <span class="tooltip">{{ wizard.form.description.help_text }}</span>
     </p>
+    {{ wizard.form.description.errors }}
 </div>
 <div id="right">
     <p>

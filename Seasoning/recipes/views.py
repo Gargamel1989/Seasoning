@@ -54,6 +54,7 @@ import os
 from django.conf import settings
 from django import forms
 from general.forms import FormContainer
+from django.contrib.formtools.wizard.forms import ManagementForm
 
 def browse_recipes(request):
     """
@@ -190,12 +191,16 @@ class EditRecipeWizard(SessionWizardView):
         
         form = self.get_form(step=step, data=self.storage.get_step_data(step),
                              files=self.storage.get_step_files(step))
-        if hasattr(form, 'is_bound') and not form.is_bound:
+        if not form.is_bound:
             # The form did not receive any new data. It can only be valid if an instance was present
             return self.instance is not None and self.instance.id is not None
         
         # The form received new data, check the validity of the new data
-        return form.is_valid()    
+        return form.is_valid()
+    
+    def is_valid(self):
+        return all(self.form_is_valid(step) for step in self.steps.all)
+            
         
     def get_template_names(self):
         return self.TEMPLATES[self.steps.current]
@@ -224,18 +229,108 @@ class EditRecipeWizard(SessionWizardView):
         else:
             self.instance = Recipe()
         return SessionWizardView.dispatch(self, *args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        """
+        This method handles POST requests.
+
+        The wizard will render either the current step (if form validation
+        wasn't successful), the next step (if the current step was stored
+        successful and the next step was requested) or the done view (if no 
+        more steps are available or the entire wizard was submitted)
+        """
+        # Look for a wizard_goto_step element in the posted data which
+        # contains a valid step name. If one was found, render the requested
+        # form. (This makes stepping back a lot easier).
+        wizard_goto_step = self.request.POST.get('wizard_goto_step', None)
+        wizard_finish = self.request.POST.get('wizard_finish', None)
+        if wizard_goto_step and wizard_goto_step in self.get_form_list():
+            self.storage.current_step = wizard_goto_step
+            form = self.get_form(
+                data=self.storage.get_step_data(self.steps.current),
+                files=self.storage.get_step_files(self.steps.current))
+            return self.render(form)
+
+        # Check if form was refreshed
+        management_form = ManagementForm(self.request.POST, prefix=self.prefix)
+        if not management_form.is_valid():
+            raise ValidationError(
+                'ManagementForm data is missing or has been tampered.')
+
+        form_current_step = management_form.cleaned_data['current_step']
+        if (form_current_step != self.steps.current and
+                self.storage.current_step is not None):
+            # form refreshed, change current step
+            self.storage.current_step = form_current_step
+
+        # get the form for the current step
+        form = self.get_form(data=self.request.POST, files=self.request.FILES)
+
+        # and try to validate
+        if form.is_valid():
+            # if the form is valid, store the cleaned data and files.
+            self.storage.set_step_data(self.steps.current, self.process_step(form))
+            self.storage.set_step_files(self.steps.current, self.process_step_files(form))
+            
+            if wizard_finish:
+                # User tried to submit the entire form
+                if self.is_valid():
+                    return self.render_done(form, **kwargs)
+                else:
+                    # TODO: Return the first form with errors
+                    pass
+                
+            # check if the current step is the last step
+            if self.steps.current == self.steps.last:
+                # no more steps, render done view
+                return self.render_done(form, **kwargs)
+            else:
+                # proceed to the next step
+                return self.render_next_step(form)
+        return self.render(form)
+
+    def render_done(self, form, **kwargs):
+        """
+        This method gets called when all forms passed. The method should also
+        re-validate all steps to prevent manipulation. If any form don't
+        validate, `render_revalidation_failure` should get called.
+        If everything is fine call `done`.
+        """
+        final_form_list = []
+        # walk through the form list and try to validate the data again.
+        for form_key in self.get_form_list():
+            form_obj = self.get_form(step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key))
+            if form_obj.is_bound or self.instance is None or self.instance.id is None:
+                # only add the form if it changes the instances attributes
+                if not form_obj.is_valid():
+                    return self.render_revalidation_failure(form_key, form_obj, **kwargs)
+                final_form_list.append(form_obj)
+
+        # render the done view and reset the wizard before returning the
+        # response. This is needed to prevent from rendering done with the
+        # same data twice.
+        done_response = self.done(final_form_list, **kwargs)
+        self.storage.reset()
+        return done_response
     
     def done(self, form_list, **kwargs):
         if not self.instance.author:
             self.instance.author = self.request.user
         # recipe has not been saved yet
         self.instance.save()
-        # TODO: change image cropping to values in the form before save
-        # save the usesingredient formset
-        form_list[1].forms['ingredients'].save()
-        # And save the recipe again to update the footprint
-        recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.instance.pk)
-        recipe.save()   
+        
+        # Check if the ingredients form is present
+        for form in form_list:
+            if hasattr(form, 'forms') and 'ingredients' in form.forms:
+                # save the usesingredient formset
+                form.forms['ingredients'].save()
+        
+                # And save the recipe again to update the footprint
+                recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.instance.pk)
+                recipe.save()
+        
         messages.add_message(self.request, messages.INFO, 'Gelukt')
         return redirect('/recipes/%d/' % self.instance.id)
 
