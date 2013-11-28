@@ -199,8 +199,7 @@ class EditRecipeWizard(SessionWizardView):
         return form.is_valid()
     
     def is_valid(self):
-        return all(self.form_is_valid(step) for step in self.steps.all)
-            
+        return all(self.form_is_valid(step) for step in self.steps.all)            
         
     def get_template_names(self):
         return self.TEMPLATES[self.steps.current]
@@ -249,13 +248,13 @@ class EditRecipeWizard(SessionWizardView):
             form = self.get_form(
                 data=self.storage.get_step_data(self.steps.current),
                 files=self.storage.get_step_files(self.steps.current))
+            form.is_valid()
             return self.render(form)
 
         # Check if form was refreshed
         management_form = ManagementForm(self.request.POST, prefix=self.prefix)
         if not management_form.is_valid():
-            raise ValidationError(
-                'ManagementForm data is missing or has been tampered.')
+            raise ValidationError('ManagementForm data is missing or has been tampered.')
 
         form_current_step = management_form.cleaned_data['current_step']
         if (form_current_step != self.steps.current and
@@ -277,8 +276,13 @@ class EditRecipeWizard(SessionWizardView):
                 if self.is_valid():
                     return self.render_done(form, **kwargs)
                 else:
-                    # TODO: Return the first form with errors
-                    pass
+                    for step in self.steps.all:
+                        if not self.form_is_valid(step):
+                            self.storage.current_step = step
+                            form = self.get_form(step=step, data=self.storage.get_step_data(step),
+                                                 files=self.storage.get_step_files(step))
+                            form.is_valid()
+                            return self.render(form)
                 
             # check if the current step is the last step
             if self.steps.current == self.steps.last:
@@ -287,6 +291,7 @@ class EditRecipeWizard(SessionWizardView):
             else:
                 # proceed to the next step
                 return self.render_next_step(form)
+        
         return self.render(form)
 
     def render_done(self, form, **kwargs):

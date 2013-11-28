@@ -71,6 +71,8 @@ class EditRecipeIngredientInfoForm(forms.ModelForm):
         css = {
             'all': ('css/forms.css',)
         }
+    
+    request_unknown_ingredients = forms.BooleanField(required=False)
 
 class UsesIngredientForm(forms.ModelForm):    
     class Meta:
@@ -97,32 +99,6 @@ class UsesIngredientForm(forms.ModelForm):
                 self._changed_data.remove('group')
         return self._changed_data
     changed_data = property(_get_changed_data)
-        
-    def is_valid_after_ingrequest(self):
-        """
-        Check if this form would be valid if a known ingredient was used
-        
-        """
-        if super(UsesIngredientForm, self).is_valid():
-            # Check if the form is valid anyway
-            return True
-        if not 'amount' in self.cleaned_data or not 'unit' in self.cleaned_data:
-            # Check if any fields except ingredient are invalid, if so, the form would be invalid anyway
-            return False
-        if not self['ingredient'].value() or len(self['ingredient'].value()) > 50:
-            # Check if anything else is wrong with the ingredient field
-            return False
-        return True
-            
-    
-    def uses_existing_ingredient(self):
-        try:
-            if self['ingredient'].value():
-                Ingredient.objects.get(name__iexact=self['ingredient'].value())
-            return True
-        except Ingredient.DoesNotExist:
-            pass
-        return False
 
 class IngredientsFormSet(BaseInlineFormSet):
     """
@@ -130,6 +106,7 @@ class IngredientsFormSet(BaseInlineFormSet):
     
     """
     unknown_ingredients = []
+    unknown_ingredients_allowed = False
     
     def clean(self):
         # TODO: fix so that when a certain parameter is given, unknown ingredient errors are ignored
@@ -138,6 +115,8 @@ class IngredientsFormSet(BaseInlineFormSet):
             # Check if any errors were made except unknown ingredient errors
             for form in self.forms:
                 errors = dict(form.errors)
+                if len(errors) <= 0:
+                    continue
                 if len(errors) > 1 or not 'ingredient' in errors:
                     # Multiple fields have errors, or ingredient doesn't have errors
                     return self
@@ -156,6 +135,8 @@ class IngredientsFormSet(BaseInlineFormSet):
                     form._errors = ErrorDict()
             self._errors = self.error_class()
             self.unknown_ingredients = unknown_ingredients
+            if self.unknown_ingredients_allowed:
+                return self
             raise ValidationError('Unknown ingredients found')
         
         # Check that at least one form has been completed.
@@ -180,6 +161,12 @@ class EditRecipeIngredientsForm(FormContainer):
     ingredients_general_info = EditRecipeIngredientInfoForm
     ingredients = inlineformset_factory(Recipe, UsesIngredient, extra=2,
                                         form=UsesIngredientForm, formset=IngredientsFormSet)
+    
+    def is_valid(self):
+        valid = self.forms['ingredients_general_info'].is_valid()
+        if valid and 'request_unknown_ingredients' in self.forms['ingredients_general_info'].cleaned_data and self.forms['ingredients_general_info'].cleaned_data['request_unknown_ingredients']:
+            self.forms['ingredients'].unknown_ingredients_allowed = True
+        return super(EditRecipeIngredientsForm, self).is_valid()
 
 
 class EditRecipeInstructionsForm(forms.ModelForm):
