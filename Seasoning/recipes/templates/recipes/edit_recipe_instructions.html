@@ -2,6 +2,7 @@
 
 {% block extra_script %}
 {{ block.super }}
+{{ wizard.form.media }}
 <script type="text/javascript">
     
     
@@ -41,7 +42,6 @@
 <p>
     <label>{{ wizard.form.instructions.label }}*</label>
     {{ wizard.form.instructions }}
-    <span class="tooltip">{{ wizard.form.instructions.help_text }}</span>
 </p>
 {{ wizard.form.instructions.errors }}
 

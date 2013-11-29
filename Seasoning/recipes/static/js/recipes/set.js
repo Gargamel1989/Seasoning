@@ -6,18 +6,18 @@
 // ----------------------------------------------------------------------------
 mySettings = {
     nameSpace:          'markdown', // Useful to prevent multi-instances CSS conflict
-    previewParserPath:  '~/sets/markdown/preview.php',
+    previewParserPath:  '/recipes/markdownpreview/',
     onShiftEnter:       {keepDefault:false, openWith:'\n\n'},
     markupSet: [
-        {name:'Heading', key:"1", openWith:'#### ', placeHolder:'Your title here...' },
-        {name:'Bold', key:"B", openWith:'**', closeWith:'**'},
-        {name:'Italic', key:"I", openWith:'_', closeWith:'_'},
+        {name:'Titel', key:"1", openWith:'#### ', placeHolder:'Typ hier een titel...' },
+        {name:'Vetgedrukt', key:"B", openWith:'**', closeWith:'**'},
+        {name:'Schuingedrukt', key:"I", openWith:'_', closeWith:'_'},
         {separator:'---------------' },
-        {name:'Bulleted List', openWith:'- ' },
-        {name:'Numeric List', openWith:function(markItUp) {
+        {name:'Ongenummerde lijst', openWith:'- ' },
+        {name:'Genummerde lijst', openWith:function(markItUp) {
             return markItUp.line+'. ';
         }},
         {separator:'---------------'},
-        {name:'Preview', call:'preview', className:"preview"}
+        {name:'Toon/verberg voorbeeld', call:'preview', className:"preview"}
     ]
 }

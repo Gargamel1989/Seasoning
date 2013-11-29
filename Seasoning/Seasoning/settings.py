@@ -146,6 +146,8 @@ PIPELINE_JS_COMPRESSOR = None
 
 MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
 
+JQUERY_URL = None
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',

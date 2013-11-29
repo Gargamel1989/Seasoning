@@ -164,6 +164,22 @@ $indicator-height: 30px;
   margin-top: 10px;
 }
 
+#edit-recipe .markdown {
+  margin-top: 10px;
+}
+
+#edit-recipe .markdown .markItUpHeader {
+  margin-left: 2px;
+}
+
+#edit-recipe .markdown div:not(.markItUpResizeHandle) {
+  width: 100%;
+}
+
+#edit-recipe .markdown textarea {
+  width: 100%;
+}
+
 /**
  *  Ingredient formset
  */

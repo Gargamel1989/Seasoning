@@ -306,9 +306,7 @@ class EditRecipeWizard(SessionWizardView):
         data = self.storage.get_step_data(next_step)
         files = self.storage.get_step_files(next_step)
         
-        new_form = self.get_form(next_step,
-            data=data,
-            files=files)
+        new_form = self.get_form(next_step, data=data, files=files)
         
         if data or files:
             new_form.is_valid()
@@ -362,7 +360,12 @@ class EditRecipeWizard(SessionWizardView):
         messages.add_message(self.request, messages.INFO, 'Gelukt')
         return redirect('/recipes/%d/' % self.instance.id)
 
-
+def ajax_markdown_preview(request):
+    if request.method == 'POST' and request.is_ajax():
+        markdown = request.POST.get('data', '')
+        print markdown
+    raise PermissionDenied()
+    
 @login_required
 def edit_recipe(request, recipe_id=None):
     context = {}
