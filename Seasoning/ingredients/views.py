@@ -18,7 +18,7 @@ along with Seasoning.  If not, see <http://www.gnu.org/licenses/>.
     
 """
 from django.shortcuts import render
-from ingredients.models import Ingredient, CanUseUnit
+from ingredients.models import Ingredient, CanUseUnit, Synonym
 from django.core.exceptions import PermissionDenied
 from django.db import connection, models
 import json
@@ -34,10 +34,7 @@ def view_ingredients(request):
         search_form = SearchIngredientForm(request.POST)
         
         if search_form.is_valid():
-            query_filter = models.Q(name__icontains=search_form.cleaned_data['name']) | models.Q(synonyms__name__icontains=search_form.cleaned_data['name'])
-            query_filter = query_filter & Q(accepted=True)
-            
-            ingredient_list = Ingredient.objects.distinct().filter(query_filter).order_by('name')       
+            ingredient_list = Ingredient.objects.accepted_with_name_like(search_form.cleaned_data['name']).order_by('name')       
         else:
             ingredient_list = []
     else:
@@ -87,18 +84,11 @@ def ajax_ingredient_name_list(request):
         query = request.GET['term']
         
         # Query the database for ingredients with a name of synonym like the query
-        cursor = connection.cursor()
-        cursor.execute('SELECT name '
-                       'FROM ingredient '
-                       'WHERE name LIKE %s '
-                       'UNION '
-                       'SELECT name '
-                       'FROM synonym '
-                       'WHERE name LIKE %s '
-                       'ORDER BY name', ['%%%s%%' % query, '%%%s%%' % query])
+        names = list(Ingredient.objects.filter(name__icontains=query).values_list('name', flat=True).order_by('name'))
+        names.extend(Synonym.objects.filter(name__icontains=query).values_list('name', flat=True).order_by('name'))
         
         # Convert results to dict
-        result = [dict(zip(['value', 'label'], [row[0], row[0]])) for row in cursor.fetchall()]
+        result = [dict(zip(['value', 'label'], [name, name])) for name in sorted(names)]
         
         # Serialize to json
         ingredients_json = json.dumps(result)

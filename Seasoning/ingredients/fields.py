@@ -115,8 +115,7 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
             # If the field is not filled in, the parent class will do the validation
             return value
         try:
-            query_filter = models.Q(name__iexact=value) | models.Q(synonyms__name__iexact=value)
-            ingredient = Ingredient.objects.distinct().get(query_filter)
+            ingredient = Ingredient.objects.accepted_with_name(value)
         except (ValueError, Ingredient.DoesNotExist):
             raise ValidationError(self.unknown_ingredient_error_message)
         return ingredient

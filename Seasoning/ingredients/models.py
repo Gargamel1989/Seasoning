@@ -70,6 +70,24 @@ class Unit(models.Model):
             return self.short_name
         return self.name
     
+class IngredientManager(models.Manager):
+    
+    def with_name(self, name):
+        name_filter = models.Q(name__iexact=name) | models.Q(synonyms__name__iexact=name)
+        return self.distinct().get(name_filter)
+    
+    def accepted_with_name(self, name):
+        name_filter = models.Q(name__iexact=name) | models.Q(synonyms__name__iexact=name)
+        return self.distinct().get(name_filter, accepted=True)
+    
+    def with_name_like(self, name):
+        name_filter = models.Q(name__icontains=name) | models.Q(synonyms__name__icontains=name)
+        return self.distinct().filter(name_filter)
+    
+    def accepted_with_name_like(self, name):
+        name_filter = models.Q(name__icontains=name) | models.Q(synonyms__name__icontains=name)
+        return self.distinct().filter(name_filter, accepted=True)
+
 class Ingredient(models.Model):
     """
     This is the base class for ingredients. It is not an abstract class, as simple
@@ -82,6 +100,8 @@ class Ingredient(models.Model):
     
     class BasicIngredientException(Exception):
         pass
+    
+    objects = IngredientManager()
     
     # Choices
     DRINKS, FRUIT, CEREAL, VEGETABLES, HERBS_AND_SPICES, NUTS_AND_SEEDS, OILS, LEGUME, SEAFOOD, SUPPLEMENTS, FISH, MEAT, MEAT_SUBS, DAIRY_PRODUCTS = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
