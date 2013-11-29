@@ -157,12 +157,6 @@ class IngredientsFormSet(BaseInlineFormSet):
         if completed < 1:
             raise forms.ValidationError("At least one %s is required." %
                 self.model._meta.object_name.lower())
-    
-    def save(self, commit=True):
-        # TODO: check for unknown ingredients and save them
-        if commit and self.unknown_ingredients:
-            pass
-        return BaseInlineFormSet.save(self, commit=commit)
 
 class EditRecipeIngredientsForm(FormContainer):
     

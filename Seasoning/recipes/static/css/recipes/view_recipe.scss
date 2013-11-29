@@ -48,7 +48,9 @@ h1 #recipe-actions {
   position: relative; }
 
 #img-and-basic-user-options #recipe-img {
-  width: 95%;
+  width: 330px;
+  height: 330px;
+  display: block;
   margin: 2.5% 0 0 2.5%;
   cursor: url(/static/img/icons/zoom.cur), -moz-zoom-in; }
 

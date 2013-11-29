@@ -350,12 +350,42 @@ class EditRecipeWizard(SessionWizardView):
         # Check if the ingredients form is present
         for form in form_list:
             if hasattr(form, 'forms') and 'ingredients' in form.forms:
-                # save the usesingredient formset
-                form.forms['ingredients'].save()
-        
-                # And save the recipe again to update the footprint
-                recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.instance.pk)
-                recipe.save()
+                ing_form = form.forms['ingredients']
+                if ing_form.has_changed():
+                    # Check for unknown ingredients
+                    if ing_form.unknown_ingredients:
+                        request_string = ''
+                        for ingredient_info in ing_form.unknown_ingredients:
+                            request_string += 'Naam ingredient: %s\nGevraagde eenheid: %s\n\n' % (ingredient_info['name'], ingredient_info['unit'])
+                            try:
+                                ingredient = Ingredient.objects.with_name(ingredient_info['name'])
+                                # If this works, the ingredient exists, but isn't accepted
+                            except Ingredient.DoesNotExist:
+                                # An ingredient with the given name does not exist, so we need to add it
+                                ingredient = Ingredient(name=ingredient_info['name'], category=Ingredient.DRINKS, base_footprint=0)
+                                ingredient.save()
+                            if not ingredient.can_use_unit(ingredient_info['unit']):
+                                ingredients.models.CanUseUnit(ingredient=ingredient, unit=ingredient_info['unit'], conversion_factor=0).save()
+                            if not UnknownIngredient.objects.filter(name=ingredient_info['name'], requested_by=self.request.user, real_ingredient=ingredient, for_recipe=self.instance).exists():
+                                UnknownIngredient(name=ingredient_info['name'], requested_by=self.request.user, real_ingredient=ingredient, for_recipe=self.instance).save()
+                        
+                        # revalidate the ingredient forms
+                        for form in ing_form:
+                            # Allow unaccepted ingredients this time around
+                            form.fields['ingredient'].unaccepted_ingredients_allowed = True
+                            form.full_clean()
+                        
+                        # Send mail
+                        send_mail('Aanvraag voor Ingredienten', render_to_string('emails/request_ingredients_email.txt', {'user': self.request.user,
+                                                                                                                          'request_string': request_string}), 
+                                  self.request.user.email,
+                                  ['info@seasoning.be'], fail_silently=True)
+            
+                    ing_form.save()
+                        
+                    # And save the recipe again to update the footprint
+                    recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.instance.pk)
+                    recipe.save()
         
         messages.add_message(self.request, messages.INFO, 'Gelukt')
         return redirect('/recipes/%d/' % self.instance.id)
@@ -434,6 +464,7 @@ def edit_recipe(request, recipe_id=None):
                             ingredient.save()
                             unknowningredient = UnknownIngredient(name=ingredient_info['name'], requested_by=request.user, real_ingredient=ingredient)
                             ingredient_info['unknown_ingredient_model'] = unknowningredient
+                        
                         # Force form revalidation
                         usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
                         if usesingredient_formset.is_valid():
