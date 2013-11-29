@@ -84,8 +84,8 @@ def ajax_ingredient_name_list(request):
         query = request.GET['term']
         
         # Query the database for ingredients with a name of synonym like the query
-        names = list(Ingredient.objects.filter(name__icontains=query).values_list('name', flat=True).order_by('name'))
-        names.extend(Synonym.objects.filter(name__icontains=query).values_list('name', flat=True).order_by('name'))
+        names = list(Ingredient.objects.filter(name__icontains=query, accepted=True).values_list('name', flat=True).order_by('name'))
+        names.extend(Synonym.objects.filter(name__icontains=query, ingredient__accepted=True).values_list('name', flat=True).order_by('name'))
         
         # Convert results to dict
         result = [dict(zip(['value', 'label'], [name, name])) for name in sorted(names)]

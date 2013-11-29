@@ -107,6 +107,7 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
         widget = kwargs.get('widget', False)
         if not widget or not isinstance(widget, AutoCompleteSelectIngredientWidget):
             kwargs['widget'] = AutoCompleteSelectIngredientWidget(attrs={'placeholder': 'Zoek Ingredienten', 'class': 'keywords-searchbar'})
+        self.unaccepted_ingredients_allowed = kwargs.pop('unaccepted_ingredients_allowed', False)
         super(AutoCompleteSelectIngredientField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
@@ -115,7 +116,10 @@ class AutoCompleteSelectIngredientField(forms.fields.CharField):
             # If the field is not filled in, the parent class will do the validation
             return value
         try:
-            ingredient = Ingredient.objects.accepted_with_name(value)
+            if self.unaccepted_ingredients_allowed:
+                ingredient = Ingredient.objects.with_name(value)
+            else:
+                ingredient = Ingredient.objects.accepted_with_name(value)
         except (ValueError, Ingredient.DoesNotExist):
             raise ValidationError(self.unknown_ingredient_error_message)
         return ingredient
