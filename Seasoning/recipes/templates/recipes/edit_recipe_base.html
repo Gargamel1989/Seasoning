@@ -21,6 +21,17 @@
             },
             position:  {my: "left+15 top", at: "right top"}
         });
+        
+        var action_is_post = false;
+        
+        $('input[type="submit"]').click(function() {
+        	action_is_post = true;
+        });
+    
+	    window.onbeforeunload = function(e) {
+	    	if (!action_is_post)
+		  		return 'Dialog text here.';
+		};
     })
 </script>
 {% endblock %}
