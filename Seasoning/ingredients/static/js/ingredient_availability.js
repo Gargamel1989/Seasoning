@@ -15,7 +15,7 @@
 		    		offset_top = offset_top + 10;
 		    		extra_top = 10;
 		    	}
-		        var preservability = parseInt($(".available-in-preservability").text()) / 30;
+		        var preservability = Math.round(parseInt($(".available-in-preservability").text()) / 30);
 		        $(this).children(".availability-indicator").each(function() {
 		            var from = parseInt($(this).children(".available-from").text());
 		            var until = parseInt($(this).children(".available-until").text());
@@ -47,8 +47,10 @@
 		                $(this).css("top", extra_top + "px");
 		            }
 		            
-		            // add preservability
+		            // Add preservability bars
 		            if (preservability > 0 && from != (until + 1)) {
+		            	// preservability > 0: We only need to display a preservability bar if the ingredient is preservable
+		            	// from != (until + 1): No need to display preservability if the ingredient is available all year
 		                var preservability_indicator = $(this).clone();
 		                preservability_indicator.addClass('preservability');
 		                if (extended_until > until) {
