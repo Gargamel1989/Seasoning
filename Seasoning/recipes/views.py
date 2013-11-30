@@ -387,7 +387,7 @@ class EditRecipeWizard(SessionWizardView):
                     recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.instance.pk)
                     recipe.save()
         
-        messages.add_message(self.request, messages.INFO, 'Gelukt')
+        messages.add_message(self.request, messages.INFO, 'Je nieuwe recept werd met succes toegevoegd!')
         return redirect('/recipes/%d/' % self.instance.id)
 
 def ajax_markdown_preview(request):

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load markdown_filter %}
 
-{% block title %}Ingredienten{% endblock %}
+{% block title %}{{ ingredient.name }}{% endblock %}
 
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>

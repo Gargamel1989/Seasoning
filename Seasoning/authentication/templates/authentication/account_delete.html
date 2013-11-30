@@ -1,6 +1,6 @@
 {% extends "authentication/account_settings.html" %}
 
-{% block title %}Account verwijderen{% endblock %}
+{% block title %}Profiel verwijderen{% endblock %}
 
 {% block myaccount-active %}active{% endblock %}
 
@@ -45,17 +45,17 @@ $(function() {
 {% csrf_token %}
 
 <p>
-    Met dit formulier kan u aangeven dat u uw account wil verwijderen. Wanneer het formulier doorgestuurd is,
-    zal uw account inactief worden. Indien u zich binnen de 7 dagen opnieuw aanmeldt op Seasoning, zal het 
-    account opnieuw geactiveerd worden en blijven al uw gegevens bewaard.
+    Met dit formulier kan u aangeven dat u uw profiel wil verwijderen. Wanneer het formulier doorgestuurd is,
+    zal uw profiel inactief worden. Indien u zich binnen de 7 dagen opnieuw aanmeldt op Seasoning, zal het 
+    profiel opnieuw geactiveerd worden en blijven al uw gegevens bewaard.
 </p>
 <p>
-    Een account dat meer dan 7 dagen inactief is, zal onomkeerbeer uit onze databank verwijderd worden. Wij houden
+    Een profiel dat meer dan 7 dagen inactief is, zal onomkeerbeer uit onze databank verwijderd worden. Wij houden
     hierna geen informatie meer bij over uw profiel.
 </p>
 <br />
 <p>
-    Vul in het onderstaande veld het woord 'DELETEME' (zonder aanhalingstekens) in om je account te verwijderen.
+    Vul in het onderstaande veld het woord 'DELETEME' (zonder aanhalingstekens) in om je profiel te verwijderen.
 </p>
     
 <div class="field-wrapper tooltip-field">
@@ -65,7 +65,7 @@ $(function() {
 
 <p>
     Duid onderstaande optie aan indien u ook al uw toegevoegde recepten van Seasoning wil verwijderen.
-    Recepten die toegevoegd werden door een gebruiker die zijn account verwijderd heeft, zullen als 
+    Recepten die toegevoegd werden door een gebruiker die zijn profiel verwijderd heeft, zullen als 
     auteur 'Onbekend' krijgen.
 </p>
     
@@ -82,7 +82,7 @@ $(function() {
 </div>
 
 <div id="submit-button">
-    <input type="submit" value="Verwijder Account" />
+    <input type="submit" value="Verwijder Profiel" />
 </div>
 </form>
 

@@ -2,7 +2,7 @@
 {% load comments %}
 {% load markdown_filter %}
 
-{% block title %}Recept bekijken{% endblock %}
+{% block title %}{{ recipe.name }}{% endblock %}
 
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/raty.min.js"></script>
@@ -422,7 +422,7 @@
         <div id="basic-info">
             <div id="vague-description">
                 <strong>Categorie:</strong><br />
-                {{ recipe.cuisine }} {{ recipe.get_course_display }}
+                {% if recipe.cuisine %}{{ recipe.cuisine }} {% endif %}{{ recipe.get_course_display }}
                 
                 <div id="veganism">
                     <img src="{{ STATIC_URL }}img/icons/vegan.png" {% if not recipe.veganism == 2 %}class="not-this"{% else %}title="Dit is een veganistisch recept"{% endif %} />
@@ -478,12 +478,12 @@
     
     <div class="recipe-info-wrapper">
         <h3>Bereidingswijze</h3>
-        <div id="instructions">
+        <div id="instructions" class="markdown-container">
            <div id="instructions-warning">
                 Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.portions }} porties. Je hebt het aantal porties aangepast waardoor het mogelijk
                 is dat deze instructies niet meer volledig accuraat zijn. Hou hier rekening mee.
             </div>
-            {{ recipe.instructions|linebreaks }}
+            {{ recipe.instructions|markdown|safe }}
         </div>  
     </div>
 </div>
