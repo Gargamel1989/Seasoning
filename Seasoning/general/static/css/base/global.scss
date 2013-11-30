@@ -150,3 +150,8 @@
 .markdown-container ul li {
 	margin-bottom: 8px;
 }
+
+.markdown-container.preview {
+	background-color: $green-very-light;
+	padding: 10px;
+}

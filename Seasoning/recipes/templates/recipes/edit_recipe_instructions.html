@@ -42,6 +42,11 @@
 <p>
     <label>{{ wizard.form.instructions.label }}*</label>
     {{ wizard.form.instructions }}
+    <script>
+	    $(function() {
+			$('li.preview a').trigger('mouseup');
+		}); 
+    </script>
 </p>
 {{ wizard.form.instructions.errors }}
 

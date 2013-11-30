@@ -15,7 +15,7 @@ $indicator-height: 30px;
 #edit-recipe #steps-indicator .step {
   float: left;
   height: $indicator-height;
-  width: calc((100% - 4px) / 3);
+  width: calc(100% / 3);
   line-height: $indicator-height;
   text-align: center;
   border: none;
@@ -177,7 +177,11 @@ $indicator-height: 30px;
 }
 
 #edit-recipe .markdown textarea {
-  width: 100%;
+  width: calc(100% - 12px);
+}
+
+#edit-recipe .markdown li.preview {
+  display: none;
 }
 
 /**

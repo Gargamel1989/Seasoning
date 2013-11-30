@@ -6,7 +6,20 @@
 // ----------------------------------------------------------------------------
 mySettings = {
     nameSpace:          'markdown', // Useful to prevent multi-instances CSS conflict
-    previewParserPath:  '/recipes/markdownpreview/',
+    previewHandler:  function(text) {
+    	markdown_preview = $('.markdown-preview');
+    	$.ajax({
+    		url: '/recipes/markdownpreview/',
+    		type: "POST",
+    		data: {data : text},
+    		success: function(data) {
+    			if (markdown_preview.length > 0) {
+    	    		markdown_preview.remove();
+    	    	}	
+    			$(data).insertAfter($('div.markdown'));
+    		} 
+	    });
+    },
     onShiftEnter:       {keepDefault:false, openWith:'\n\n'},
     markupSet: [
         {name:'Titel', key:"1", openWith:'#### ', placeHolder:'Typ hier een titel...' },
@@ -35,7 +48,6 @@ mySettings = {
         	}
             return "1. ";
         }},
-        {separator:'---------------'},
-        {name:'Toon/verberg voorbeeld', call:'preview', className:"preview"}
+        {name:'Toon/verberg voorbeeld', call: 'preview', className:"preview"}
     ]
 }

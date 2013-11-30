@@ -8,7 +8,7 @@ register = template.Library()
 
 @register.filter
 def markdown(text):
-    return markdown_lib.markdown(text, extensions=['sane_lists'], safe_mode='escape')
+    return markdown_lib.markdown(text, extensions=['sane_lists', 'nl2br'], safe_mode='escape')
 
 class LeafLinePattern(Pattern):
     def handleMatch(self, m):
@@ -23,4 +23,4 @@ class SeasoningMarkdownExtension(Extension):
 
 @register.filter
 def markdown_safe(text):
-    return markdown_lib.markdown(text, extensions=['sane_lists', SeasoningMarkdownExtension()])
+    return markdown_lib.markdown(text, extensions=['sane_lists', 'nl2br', SeasoningMarkdownExtension()])
