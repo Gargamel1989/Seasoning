@@ -30,7 +30,7 @@
 </p>
 <p>
     <strong>Beschrijving:</strong><br />
-    {{ ingredient.description|markdown|safe }}
+    {{ ingredient.description|markdown_safe|safe }}
 </p>
 
 <br class="clear" />
@@ -38,21 +38,21 @@
 {% if ingredient.conservation_tip %}
 <p>
     <strong>Bewaringstip:</strong><br />
-    {{ ingredient.conservation_tip|markdown|safe }}
+    {{ ingredient.conservation_tip|markdown_safe|safe }}
 </p>
 {% endif %}
 
 {% if ingredient.preparation_tip %}
 <p>
     <strong>Bereidingstip:</strong><br />
-    {{ ingredient.preparation_tip|markdown|safe }}
+    {{ ingredient.preparation_tip|markdown_safe|safe }}
 </p>
 {% endif %}
 
 {% if ingredient.properties %}
 <p>
     <strong>Speciale Eigenschappen:</strong><br />
-    {{ ingredient.properties|markdown|safe }}
+    {{ ingredient.properties|markdown_safe|safe }}
 </p>
 {% endif %}
 

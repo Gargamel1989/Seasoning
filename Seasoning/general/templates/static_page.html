@@ -11,6 +11,6 @@
 {% endif %}
 
 <div id="static-page-wrapper" class="{{ page_info.name }}">
-    {{ page_info.body_html|markdown|safe }}
+    {{ page_info.body_html|markdown_safe|safe }}
 </div>
 {% endblock %}
