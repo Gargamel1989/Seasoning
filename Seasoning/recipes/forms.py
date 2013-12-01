@@ -81,6 +81,12 @@ class UsesIngredientForm(forms.ModelForm):
     ingredient = AutoCompleteSelectIngredientField()
     group = forms.CharField(max_length=100, required=False, widget=forms.HiddenInput(attrs={'class': 'group'}))
     amount = forms.FloatField(widget=forms.TextInput(attrs={'class': 'amount'}))
+    
+    def __init__(self, *args, **kwargs):
+        form = super(UsesIngredientForm, self).__init__(*args, **kwargs)
+        if self.instance.pk is not None:
+            self.fields['unit'].queryset = self.instance.ingredient.useable_units.all()
+        return form
 
     def _get_changed_data(self, *args, **kwargs):
         super(UsesIngredientForm, self)._get_changed_data(*args, **kwargs)

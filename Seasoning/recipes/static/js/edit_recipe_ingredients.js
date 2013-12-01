@@ -124,6 +124,28 @@ function fix_ingredient_list() {
 			source: "/ingredients/ing_list/",
 			minLength: 2
         });
+		$(this).blur(function() {
+	    	$.ajax({
+	    		url: '/recipes/ingunits/',
+	    		type: "POST",
+	    		data: {ingredient_name: $(this).val()},
+	    		context: this,
+	    	    success: function(data) {
+	    			var $options = $(this).closest('li').find('select');
+	    			var selected_id = $options.find('option:selected').val();
+	    			$options.empty();
+	    			$("<option value=\"\">---------</option>").appendTo($options);
+	    			$.each($.parseJSON(data), function(id, val) {
+	    				var option_string = "<option value=\"" + id.toString() + "\"";
+	    				if (selected_id == id) {
+	    					option_string = option_string + " selected=\"selected\"";
+	    				}
+	    				option_string = option_string + ">" + val + "</option>";
+	    				$(option_string).appendTo($options);
+	    			});
+	    		} 
+		    });
+		})
     });
 }   
 

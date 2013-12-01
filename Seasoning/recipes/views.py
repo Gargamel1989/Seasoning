@@ -55,6 +55,7 @@ from django.conf import settings
 from django import forms
 from general.forms import FormContainer
 from django.contrib.formtools.wizard.forms import ManagementForm
+from ingredients.models import Unit
 
 def browse_recipes(request):
     """
@@ -389,6 +390,18 @@ class EditRecipeWizard(SessionWizardView):
         
         messages.add_message(self.request, messages.INFO, 'Je nieuwe recept werd met succes toegevoegd!')
         return redirect('/recipes/%d/' % self.instance.id)
+
+@csrf_exempt
+def ajax_ingredient_units(request):
+    if request.method == 'POST' and request.is_ajax():
+        name = request.POST.get('ingredient_name', '')
+        try:
+            units = Ingredient.objects.accepted_with_name(name).useable_units.all().values('id', 'name')
+        except Ingredient.DoesNotExist:
+            units = Unit.objects.all().values('id', 'name')
+        data = simplejson.dumps({unit['id']: unit['name'] for unit in units})
+        return HttpResponse(data)
+    raise PermissionDenied()
 
 def ajax_markdown_preview(request):
     if request.method == 'POST' and request.is_ajax():

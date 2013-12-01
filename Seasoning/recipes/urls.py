@@ -38,5 +38,6 @@ urlpatterns = patterns('',
     url(r'^data/fpevo/$', 'recipes.views.get_recipe_footprint_evolution'),
     url(r'^data/fprel/$', 'recipes.views.get_relative_footprint'),
     
-    url(r'^markdownpreview/$', 'recipes.views.ajax_markdown_preview')
+    url(r'^ingunits/$', 'recipes.views.ajax_ingredient_units'),
+    url(r'^markdownpreview/$', 'recipes.views.ajax_markdown_preview'),
 )
