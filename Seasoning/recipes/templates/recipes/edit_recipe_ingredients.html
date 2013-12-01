@@ -13,6 +13,16 @@
 		$(".spinner-wrapper input").spinner({
 			min: 1,
 		});
+		
+		$("#ingredient-help-button").click(function() {
+			$helpbox = $("#edit-recipe #ingredient-field .message");
+			if ($helpbox.is(":visible")) {
+				$helpbox.slideUp(500);
+			} else {
+				$helpbox.slideDown(500);
+			}
+			return false;
+		});
 	}); 
 </script>
 {% endblock %}
@@ -88,18 +98,20 @@
 {{ wizard.form.ingredients_general_info.extra_info.errors }}
 
 <div id="ingredient-field" class="field-wrapper tooltip-field">
-    <label>Ingrediënten</label>
+    <label>Ingrediënten<a href="#" id="ingredient-help-button"><img src="{{ STATIC_URL }}img/icons/information.png" /></a></label>
     
-    <p id="first-ing-instr">
-        Hier moet uitleg komen over hoe je juist ingrediënten toevoegd. Omdat we dat nog niet hebben:
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vulputate justo non lorem hendrerit sollicitudin. 
-    </p>
-    <p>
-        Nullam bibendum felis lectus, a pulvinar metus tincidunt ut. Nam eu ipsum laoreet enim gravida tincidunt. Morbi nec laoreet eros. Etiam eleifend sed lacus sit amet facilisis. Quisque placerat urna est, ut rhoncus purus ornare at. Fusce eget nibh eu lectus condimentum aliquet. Suspendisse sit amet lacinia erat. 
-    </p>
-    <p>
-        Vivamus elit velit, suscipit et ante sed, ultrices interdum lectus. Phasellus nec justo placerat, semper lectus nec, vulputate urna. Ut tristique lectus ut sem egestas vehicula. Donec est sapien, rhoncus a volutpat viverra, cursus sed est. Sed eu mauris arcu. Pellentesque laoreet sodales mollis. Vestibulum congue risus eu purus ullamcorper adipiscing. Proin lobortis blandit congue. 
-    </p>
+    <div class="message">
+	    <p id="first-ing-instr">
+	        Hier moet uitleg komen over hoe je juist ingrediënten toevoegd. Omdat we dat nog niet hebben:
+	        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vulputate justo non lorem hendrerit sollicitudin. 
+	    </p>
+	    <p>
+	        Nullam bibendum felis lectus, a pulvinar metus tincidunt ut. Nam eu ipsum laoreet enim gravida tincidunt. Morbi nec laoreet eros. Etiam eleifend sed lacus sit amet facilisis. Quisque placerat urna est, ut rhoncus purus ornare at. Fusce eget nibh eu lectus condimentum aliquet. Suspendisse sit amet lacinia erat. 
+	    </p>
+	    <p>
+	        Vivamus elit velit, suscipit et ante sed, ultrices interdum lectus. Phasellus nec justo placerat, semper lectus nec, vulputate urna. Ut tristique lectus ut sem egestas vehicula. Donec est sapien, rhoncus a volutpat viverra, cursus sed est. Sed eu mauris arcu. Pellentesque laoreet sodales mollis. Vestibulum congue risus eu purus ullamcorper adipiscing. Proin lobortis blandit congue. 
+	    </p>
+    </div>
 
     {% if wizard.form.ingredients.non_form_errors %}
     <br style="margin-top: 20px;" />
