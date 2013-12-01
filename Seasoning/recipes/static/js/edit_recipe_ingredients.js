@@ -11,7 +11,7 @@ function add_ingredient() {
 	new_form.removeClass('sorting-disabled');
 	
 	// Update the new forms number
-	var total_forms = $("#id_uses-TOTAL_FORMS");
+	var total_forms = $("#id_ingredients-ingredients-TOTAL_FORMS");
 	var new_form_number = parseInt(total_forms.val());
 	updateFormNumber(new_form, new_form_number);
 	
