@@ -157,25 +157,28 @@
             if ($moreinfo.is(':hidden')) {
                 $moreinfo.slideDown(500);
                 $(this).children('img').attr('src', '/static/img/icons/less.png');
-                $.ajax({
-                    url: '/ingredients/ing_avail/',
-                    type: "POST",
-                    data : {ingredient: ing_id},
-                    success: function(data) {
-                        $moreinfo.html(data);
-                        fix_ingredient_availabilities();
-                        update_tooltips();
-                        $(".basic-moreinfo").each(function() {
-                            var height = 0;
-                            $(this).parent(".moreinfo").children().each(function() {
-                                height = height + $(this).height();
-                            })
-                            $(this).parent(".moreinfo").animate({
-                                height: height + 20,
-                            });
-                        });
-                    }
-                });
+                if (!$moreinfo.hasClass('loaded')) {
+	                $.ajax({
+	                    url: '/ingredients/ing_avail/',
+	                    type: "POST",
+	                    data : {ingredient: ing_id},
+	                    success: function(data) {
+	                        $moreinfo.html(data);
+	                        fix_ingredient_availabilities();
+	                        update_tooltips();
+	                        $(".basic-moreinfo").each(function() {
+	                            var height = 0;
+	                            $(this).parent(".moreinfo").children().each(function() {
+	                                height = height + $(this).height();
+	                            })
+	                            $(this).parent(".moreinfo").animate({
+	                                height: height + 20,
+	                            });
+	                        });
+	                        $moreinfo.addClass('loaded');
+	                    }
+	                });
+	            }
             } else {
                 $moreinfo.slideUp(500);
                 $(this).children('img').attr('src', '/static/img/icons/add.png');
