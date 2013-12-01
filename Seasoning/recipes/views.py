@@ -391,24 +391,6 @@ class EditRecipeWizard(SessionWizardView):
         messages.add_message(self.request, messages.INFO, 'Je nieuwe recept werd met succes toegevoegd!')
         return redirect('/recipes/%d/' % self.instance.id)
 
-@csrf_exempt
-def ajax_ingredient_units(request):
-    if request.method == 'POST' and request.is_ajax():
-        name = request.POST.get('ingredient_name', '')
-        try:
-            units = Ingredient.objects.accepted_with_name(name).useable_units.all().values('id', 'name')
-        except Ingredient.DoesNotExist:
-            units = Unit.objects.all().values('id', 'name')
-        data = simplejson.dumps({unit['id']: unit['name'] for unit in units})
-        return HttpResponse(data)
-    raise PermissionDenied()
-
-def ajax_markdown_preview(request):
-    if request.method == 'POST' and request.is_ajax():
-        markdown = request.POST.get('data', '')
-        return render(request, 'recipes/markdown_preview.html', {'markdown_text': markdown})
-    raise PermissionDenied()
-
 @login_required
 def delete_recipe_comment(request, recipe_id, comment_id):
     comment = get_object_or_404(comments.get_model(), pk=comment_id)
@@ -426,7 +408,7 @@ def delete_recipe(request, recipe_id):
     
     if recipe.author == request.user:
         recipe.delete()
-        messages.add_message(request, messages.INFO, 'Je recept \'' + recipe.name + '\' werd met succes uit onze databank verwijderd.')
+        messages.add_message(request, messages.INFO, 'Je recept \'' + recipe.name + '\' werd met succes verwijderd.')
         return redirect('home')
         
         
@@ -575,3 +557,21 @@ def get_relative_footprint(request):
                 raise Http404
         
     raise PermissionDenied
+
+@csrf_exempt
+def ajax_ingredient_units(request):
+    if request.method == 'POST' and request.is_ajax():
+        name = request.POST.get('ingredient_name', '')
+        try:
+            units = Ingredient.objects.accepted_with_name(name).useable_units.all().values('id', 'name')
+        except Ingredient.DoesNotExist:
+            units = Unit.objects.all().values('id', 'name')
+        data = simplejson.dumps({unit['id']: unit['name'] for unit in units})
+        return HttpResponse(data)
+    raise PermissionDenied()
+
+def ajax_markdown_preview(request):
+    if request.method == 'POST' and request.is_ajax():
+        markdown = request.POST.get('data', '')
+        return render(request, 'recipes/markdown_preview.html', {'markdown_text': markdown})
+    raise PermissionDenied()

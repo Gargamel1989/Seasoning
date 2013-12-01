@@ -1,3 +1,5 @@
+{% load markdown_filter %}
+
 {% for news_item in news %}
 <a href="/news/{{ news_item.id }}" class="news-item-wrapper">
 	<div class="subject">{{ news_item.subject }}</div>
