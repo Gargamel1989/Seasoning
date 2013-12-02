@@ -17,7 +17,22 @@
 		
 		{% block default_static_stuff %}
         <link rel="icon" href="/static/img/logos/favicon.png" type="image/png" />
-		{% compressed_css 'master' %}
+		{% compressed_css 'global' %}
+        {% if 'authentication' in request.path %}
+        {% compressed_css 'authentication' %}
+        {% endif %}
+        {% if 'ingredients' in request.path %}
+        {% compressed_css 'ingredients' %}
+        {% endif %}
+        {% if 'recipes' in request.path %}
+        {% compressed_css 'recipes' %}
+        {% endif %}
+        {% if 'faq' in request.path %}
+        {% compressed_css 'faq' %}
+        {% endif %}
+        {% if 'news' in request.path %}
+        {% compressed_css 'news' %}
+        {% endif %}
 		{% block extra_link %}{% endblock %}
 		
 		<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>

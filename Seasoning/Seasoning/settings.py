@@ -115,22 +115,47 @@ STATICFILES_FINDERS = (
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 PIPELINE_CSS = {
-    'master': {
+    'global': {
         'source_filenames': {
             'css/base/reset.scss',
             'css/base/global.scss',
             'css/base/skeleton.scss',
             'css/base/base.scss',
-            'css/authentication/*.scss',
             'css/contribute/*.scss',
-            'css/faq/*.scss',
             'css/general/*.scss',
-            'css/ingredients/*.scss',
-            'css/news/*.scss',
             'css/plugins/*.scss',
+        },
+        'output_filename': 'css/global.css',
+    },
+    'authentication': {
+        'source_filenames': {
+            'css/authentication/*.scss',
+        },
+        'output_filename': 'css/authentication.css',
+    },
+    'ingredients': {
+        'source_filenames': {
+            'css/ingredients/*.scss',
+        },
+        'output_filename': 'css/ingredients.css',
+    },
+    'recipes': {
+        'source_filenames': {
             'css/recipes/*.scss',
         },
-        'output_filename': 'css/master.css',
+        'output_filename': 'css/recipes.css',
+    },
+    'faq': {
+        'source_filenames': {
+            'css/faq/*.scss',
+        },
+        'output_filename': 'css/faq.css',
+    },
+    'news': {
+        'source_filenames': {
+            'css/news/*.scss',
+        },
+        'output_filename': 'css/news.css',
     },
 }
 
