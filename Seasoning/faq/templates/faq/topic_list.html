@@ -38,7 +38,7 @@
 				<a href="#faq-index-anchor" class="back-to-index-link">Terug naar het overzicht</a>
 			</div>
 			<div>
-				{{ question.answer|safe|markdown|safe }}
+				{{ question.answer|markdown_safe|safe }}
 			</div>
 		</div>
 		{% endfor %}

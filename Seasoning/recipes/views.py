@@ -55,6 +55,7 @@ from django.conf import settings
 from django import forms
 from general.forms import FormContainer
 from django.contrib.formtools.wizard.forms import ManagementForm
+from ingredients.models import Unit
 
 def browse_recipes(request):
     """
@@ -294,6 +295,27 @@ class EditRecipeWizard(SessionWizardView):
         
         return self.render(form)
 
+    def render_next_step(self, form, **kwargs):
+        """
+        This method gets called when the next step/form should be rendered.
+        `form` contains the last/current form.
+        """
+        # get the form instance based on the data from the storage backend
+        # (if available).
+        next_step = self.steps.next
+        
+        data = self.storage.get_step_data(next_step)
+        files = self.storage.get_step_files(next_step)
+        
+        new_form = self.get_form(next_step, data=data, files=files)
+        
+        if data or files:
+            new_form.is_valid()
+        
+        # change the stored current step
+        self.storage.current_step = next_step
+        return self.render(new_form, **kwargs)
+
     def render_done(self, form, **kwargs):
         """
         This method gets called when all forms passed. The method should also
@@ -366,119 +388,8 @@ class EditRecipeWizard(SessionWizardView):
                     recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=self.instance.pk)
                     recipe.save()
         
-        messages.add_message(self.request, messages.INFO, 'Gelukt')
+        messages.add_message(self.request, messages.INFO, 'Je nieuwe recept werd met succes toegevoegd!')
         return redirect('/recipes/%d/' % self.instance.id)
-
-
-@login_required
-def edit_recipe(request, recipe_id=None):
-    context = {}
-    
-    if recipe_id:
-        recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=recipe_id)
-        if (not request.user == recipe.author_id) and not request.user.is_staff:
-            raise PermissionDenied
-        new = False
-    else:
-        recipe = Recipe()
-        new = True
-    
-    UsesIngredientInlineFormSet = inlineformset_factory(Recipe, UsesIngredient, extra=1,
-                                                        form=UsesIngredientForm, formset=IngredientsFormSet)
-    
-    if request.method == 'POST' and ('stop-submit' in request.POST or 'normal-submit' in request.POST or 'ingrequest-submit' in request.POST):
-        recipe_form = AddRecipeForm(request.POST, request.FILES, instance=recipe)
-        usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
-        
-        if 'stop-submit' in request.POST:
-            # User wants to discard all progress
-            return redirect(home)
-        elif 'normal-submit' in request.POST or 'ingrequest-submit' in request.POST:
-            # User tried to submit a new recipe
-            if  recipe_form.is_valid() & usesingredient_formset.is_valid():
-                if new:
-                    messages.add_message(request, messages.INFO, 'Het recept werd met succes toegevoegd aan onze databank.')
-                else:
-                    messages.add_message(request, messages.INFO, 'Het recept werd met succes aangepast.')
-                recipe_form.save(author=request.user)
-                usesingredient_formset.save()
-                recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=recipe_form.instance.pk)
-                recipe.save()
-                
-                return redirect('/recipes/' + str(recipe.id) + '/')
-            elif not usesingredient_formset.is_valid():
-                # Recipe input is fine, check if the ingredient input is fine. If this is the case,
-                # the user has tried to add an unknown ingredient
-                invalid_ingredient = False
-                for usesingredient_form in usesingredient_formset:
-                    if not usesingredient_form.is_valid_after_ingrequest():
-                        invalid_ingredient = True
-                        break
-                if not recipe_form.is_valid() or invalid_ingredient:
-                    # There was an invalid ingredient, so remove all 'unknown_ingredient' errors
-                    for usesingredient_form in usesingredient_formset:
-                        if 'ingredient' in usesingredient_form._errors :
-                            if 'ingredient was not found' in ''.join(usesingredient_form._errors['ingredient']):
-                                for i in range(len(usesingredient_form._errors['ingredient'])):
-                                    if 'ingredient was not found' in usesingredient_form._errors['ingredient'][i]:
-                                        del usesingredient_form._errors['ingredient'][i]
-                else:
-                    # All ingredient input was valid. Find the unknown ingredients
-                    unknown_ingredients = []
-                    for usesingredient_form in usesingredient_formset:
-                        if not usesingredient_form.uses_existing_ingredient():
-                            unknown_ingredients.append({'name': usesingredient_form['ingredient'].value(),
-                                                        'unit': usesingredient_form.cleaned_data['unit']})
-                    if 'ingrequest-submit' in request.POST:
-                        # The user wants to request new ingredients
-                        request_string = 'Aangevraagd door %s:\n' % request.user.email
-                        for ingredient_info in unknown_ingredients:
-                            request_string += 'Naam ingredient: %s\nGevraagde eenheid: %s\n\n' % (ingredient_info['name'], ingredient_info['unit'])
-                            ingredient = Ingredient(name=ingredient_info['name'], category=Ingredient.DRINKS, base_footprint=0)
-                            ingredient.save()
-                            unknowningredient = UnknownIngredient(name=ingredient_info['name'], requested_by=request.user, real_ingredient=ingredient)
-                            ingredient_info['unknown_ingredient_model'] = unknowningredient
-                        
-                        # Force form revalidation
-                        usesingredient_formset = UsesIngredientInlineFormSet(request.POST, instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
-                        if usesingredient_formset.is_valid():
-                            # Send mail
-                            send_mail('Aanvraag voor Ingredienten', render_to_string('emails/request_ingredients_email.txt', {'user': request.user,
-                                                                                                                       'request_string': request_string}), 
-                                      request.user.email,
-                                      ['info@seasoning.be'], fail_silently=True)
-            
-                            # Save recipe
-                            recipe_form.save(author=request.user)
-                            usesingredient_formset.save()
-                            recipe = Recipe.objects.select_related().prefetch_related('uses__unit').get(pk=recipe_form.instance.pk)
-                            recipe.save()
-                            
-                            # Save unknown ingredients
-                            for ingredient_info in unknown_ingredients:
-                                unknowningredient = ingredient_info['unknown_ingredient_model']
-                                unknowningredient.for_recipe = recipe
-                                unknowningredient.save() 
-                            return redirect('/recipes/' + str(recipe.id) + '/')
-                        else:
-                            # Delete temp ingredients
-                            for ingredient_info in unknown_ingredients:
-                                ingredient = Ingredient.objects.get(name=ingredient_info['name'])
-                                ingredient.delete()                                 
-                            # Raise exception
-                            raise Exception('Unknown error occured during ingredient validation: %s' % request.POST)
-                            
-                    elif 'normal-submit' in request.POST:
-                        # Ask the user if he would like to request the new ingredients
-                        context['unknown_ingredients'] = unknown_ingredients
-    else:
-        recipe_form = AddRecipeForm(instance=recipe)
-        usesingredient_formset = UsesIngredientInlineFormSet(instance=recipe, queryset=UsesIngredient.objects.filter(recipe=recipe).order_by('group'))
-    
-    context['new_recipe'] = new
-    context['recipe_form'] = recipe_form
-    context['usesingredient_formset'] = usesingredient_formset
-    return render(request, 'recipes/edit_recipe.html', context)
 
 @login_required
 def delete_recipe_comment(request, recipe_id, comment_id):
@@ -497,7 +408,7 @@ def delete_recipe(request, recipe_id):
     
     if recipe.author == request.user:
         recipe.delete()
-        messages.add_message(request, messages.INFO, 'Je recept \'' + recipe.name + '\' werd met succes uit onze databank verwijderd.')
+        messages.add_message(request, messages.INFO, 'Je recept \'' + recipe.name + '\' werd met succes verwijderd.')
         return redirect('home')
         
         
@@ -646,3 +557,21 @@ def get_relative_footprint(request):
                 raise Http404
         
     raise PermissionDenied
+
+@csrf_exempt
+def ajax_ingredient_units(request):
+    if request.method == 'POST' and request.is_ajax():
+        name = request.POST.get('ingredient_name', '')
+        try:
+            units = Ingredient.objects.accepted_with_name(name).useable_units.all().values('id', 'name')
+        except Ingredient.DoesNotExist:
+            units = Unit.objects.all().values('id', 'name')
+        data = simplejson.dumps({unit['id']: unit['name'] for unit in units})
+        return HttpResponse(data)
+    raise PermissionDenied()
+
+def ajax_markdown_preview(request):
+    if request.method == 'POST' and request.is_ajax():
+        markdown = request.POST.get('data', '')
+        return render(request, 'recipes/markdown_preview.html', {'markdown_text': markdown})
+    raise PermissionDenied()

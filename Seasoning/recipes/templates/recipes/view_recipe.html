@@ -2,7 +2,7 @@
 {% load comments %}
 {% load markdown_filter %}
 
-{% block title %}Recept bekijken{% endblock %}
+{% block title %}{{ recipe.name }}{% endblock %}
 
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/raty.min.js"></script>
@@ -157,25 +157,28 @@
             if ($moreinfo.is(':hidden')) {
                 $moreinfo.slideDown(500);
                 $(this).children('img').attr('src', '/static/img/icons/less.png');
-                $.ajax({
-                    url: '/ingredients/ing_avail/',
-                    type: "POST",
-                    data : {ingredient: ing_id},
-                    success: function(data) {
-                        $moreinfo.html(data);
-                        fix_ingredient_availabilities();
-                        update_tooltips();
-                        $(".basic-moreinfo").each(function() {
-                            var height = 0;
-                            $(this).parent(".moreinfo").children().each(function() {
-                                height = height + $(this).height();
-                            })
-                            $(this).parent(".moreinfo").animate({
-                                height: height + 20,
-                            });
-                        });
-                    }
-                });
+                if (!$moreinfo.hasClass('loaded')) {
+	                $.ajax({
+	                    url: '/ingredients/ing_avail/',
+	                    type: "POST",
+	                    data : {ingredient: ing_id},
+	                    success: function(data) {
+	                        $moreinfo.html(data);
+	                        fix_ingredient_availabilities();
+	                        update_tooltips();
+	                        $(".basic-moreinfo").each(function() {
+	                            var height = 0;
+	                            $(this).parent(".moreinfo").children().each(function() {
+	                                height = height + $(this).height();
+	                            })
+	                            $(this).parent(".moreinfo").animate({
+	                                height: height + 20,
+	                            });
+	                        });
+	                        $moreinfo.addClass('loaded');
+	                    }
+	                });
+	            }
             } else {
                 $moreinfo.slideUp(500);
                 $(this).children('img').attr('src', '/static/img/icons/add.png');
@@ -422,7 +425,7 @@
         <div id="basic-info">
             <div id="vague-description">
                 <strong>Categorie:</strong><br />
-                {{ recipe.cuisine }} {{ recipe.get_course_display }}
+                {% if recipe.cuisine %}{{ recipe.cuisine }} {% endif %}{{ recipe.get_course_display }}
                 
                 <div id="veganism">
                     <img src="{{ STATIC_URL }}img/icons/vegan.png" {% if not recipe.veganism == 2 %}class="not-this"{% else %}title="Dit is een veganistisch recept"{% endif %} />
@@ -478,12 +481,12 @@
     
     <div class="recipe-info-wrapper">
         <h3>Bereidingswijze</h3>
-        <div id="instructions">
+        <div id="instructions" class="markdown-container">
            <div id="instructions-warning">
                 Opgelet! De onderstaande instructies zijn opgesteld voor {{ recipe.portions }} porties. Je hebt het aantal porties aangepast waardoor het mogelijk
                 is dat deze instructies niet meer volledig accuraat zijn. Hou hier rekening mee.
             </div>
-            {{ recipe.instructions|linebreaks }}
+            {{ recipe.instructions|markdown|safe }}
         </div>  
     </div>
 </div>

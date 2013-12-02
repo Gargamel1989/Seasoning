@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load markdown_filter %}
 
-{% block title %}Ingredienten{% endblock %}
+{% block title %}{{ ingredient.name }}{% endblock %}
 
 {% block extra_script %}
 <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
@@ -12,7 +12,7 @@
 
 {% block content %}
 
-<h1>
+<h1 class="ingredient-title">
     {{ ingredient.name }}{% if ingredient.synonyms.all %}<span id="ingredient-synonyms">{% for synonym in ingredient.synonyms.all %}, {{ synonym.name }}{% endfor %}</span>{% endif %}
     {% if user.is_staff %}<a href="/admin/ingredients/ingredient/{{ ingredient.id }}/">Aanpassen</a>{% endif %}
 </h1>
@@ -28,17 +28,9 @@
 <p>
     <strong>Voetafdruk:</strong> {{ ingredient.footprint|floatformat:2 }} kgCO2/{{ ingredient.primary_unit.short }}
 </p>
-{% if ingredient.type == 1 or ingredient.type == 2 %}
-{% if ingredient.preservability > 0 %}
-<p>
-    <strong>Bewaarbaarheid:</strong> {{ ingredient.months_preservable }} maanden
-</p>
-{% endif %}
-{% endif %}
-
 <p>
     <strong>Beschrijving:</strong><br />
-    {{ ingredient.description|markdown|safe }}
+    {{ ingredient.description|markdown_safe|safe }}
 </p>
 
 <br class="clear" />
@@ -46,21 +38,21 @@
 {% if ingredient.conservation_tip %}
 <p>
     <strong>Bewaringstip:</strong><br />
-    {{ ingredient.conservation_tip|markdown|safe }}
+    {{ ingredient.conservation_tip|markdown_safe|safe }}
 </p>
 {% endif %}
 
 {% if ingredient.preparation_tip %}
 <p>
     <strong>Bereidingstip:</strong><br />
-    {{ ingredient.preparation_tip|markdown|safe }}
+    {{ ingredient.preparation_tip|markdown_safe|safe }}
 </p>
 {% endif %}
 
 {% if ingredient.properties %}
 <p>
     <strong>Speciale Eigenschappen:</strong><br />
-    {{ ingredient.properties|markdown|safe }}
+    {{ ingredient.properties|markdown_safe|safe }}
 </p>
 {% endif %}
 

@@ -133,3 +133,25 @@
   margin: 0;
   clear: both;
 }
+
+.markdown-container h4 {
+	text-decoration: underline !important;
+}
+
+.markdown-container p {
+	margin: 10px 0 !important;
+}
+
+.markdown-container ul {
+	list-style: disc outside none;
+	margin: 10px 0 10px 30px;
+}
+
+.markdown-container ul li {
+	margin-bottom: 8px;
+}
+
+.markdown-container.preview {
+	background-color: $green-very-light;
+	padding: 10px;
+}

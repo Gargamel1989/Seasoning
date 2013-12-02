@@ -22,6 +22,7 @@ class NewsItem(models.Model):
     content = models.TextField()
     image = ProcessedImageField(format='PNG', upload_to=get_image_filename, processors=[ResizeToFill(500, 500)],
                                 help_text=_('An image of this news item.'))
+    image_source = models.TextField(blank=True)
     
     visible = models.BooleanField(default=False)
     

@@ -152,7 +152,6 @@ class Ingredient(models.Model):
     image = ProcessedImageField(processors=[ResizeToFill(350, 350)], format='PNG', upload_to=get_image_filename, default='images/ingredients/no_image.png')
     thumbnail = ImageSpecField([SmartResize(230, 230)], image_field='image', format='PNG')
     
-    image_source = models.TextField(blank=True)
     accepted = models.BooleanField(default=False)
     bramified = models.BooleanField(default=False)
     
@@ -455,8 +454,15 @@ class AvailableIn(models.Model):
     # it is calculated when the model is saved
     footprint = models.FloatField(editable=False)
     
-    def extended_date_until(self, date_until_extension=0):
-        return (self.date_until + datetime.timedelta(days=date_until_extension)).replace(year=self.BASE_YEAR)
+    def extended_date_until(self, date_until_extension=None):
+        if date_until_extension is None:
+            date_until_extension = self.ingredient.preservability
+        date = self.date_until + datetime.timedelta(days=date_until_extension)
+        if date.year > self.BASE_YEAR:
+            date = date.replace(year=self.BASE_YEAR)
+            if date > self.date_from:
+                return self.date_from
+        return date
         
     def month_from(self):
         return self.date_from.strftime('%B')
@@ -465,10 +471,7 @@ class AvailableIn(models.Model):
         return self.date_until.strftime('%B')
     
     def extended_month_until(self, date_until_extension=None):
-        if date_until_extension is None:
-            date_until_extension = self.ingredient.preservability
-        date = self.date_until.replace(month=(self.date_until.month + (date_until_extension // 30) - 1) % 12 + 1, year=self.BASE_YEAR)
-        return date.strftime('%B')
+        return self.extended_date_until(date_until_extension).strftime('%B')
     
     def is_active(self, date=None, date_until_extension=0):
         """

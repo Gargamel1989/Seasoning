@@ -4,10 +4,16 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.forms.models import ModelForm
 from django.forms.widgets import ClearableFileInput
 from django.utils.html import format_html
+from django.template import loader
+from django.utils.http import int_to_base36
+from django.contrib.sites.models import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail.message import EmailMultiAlternatives
+from django.conf import settings
 
         
 class ShownImageInput(ClearableFileInput):
@@ -234,3 +240,41 @@ class DeleteAccountForm(forms.Form):
         if not checkstring == 'DELETEME':
             raise forms.ValidationError('You must provide the string \'DELETEME\' if you would like to delete your account')
         return checkstring
+
+class MultiEmailPasswordResetForm(PasswordResetForm):
+    
+    def save(self, domain_override=None,
+             subject_template_name='authentication/password_reset_subject.txt',
+             email_template_name='registration/password_reset_email.html',
+             use_https=False, token_generator=default_token_generator,
+             from_email=None, request=None):
+        """
+        Generates a one-use only link for resetting password and sends to the
+        user.
+        """
+        for user in self.users_cache:
+            if not domain_override:
+                current_site = get_current_site(request)
+                site_name = current_site.name
+                domain = current_site.domain
+            else:
+                site_name = domain = domain_override
+            c = {
+                'email': user.email,
+                'domain': domain,
+                'site_name': site_name,
+                'uid': int_to_base36(user.pk),
+                'user': user,
+                'token': token_generator.make_token(user),
+                'protocol': use_https and 'https' or 'http',
+            }
+            subject = loader.render_to_string('authentication/password_reset_subject.txt', c)
+            # Email subject *must not* contain newlines
+            subject = ''.join(subject.splitlines())
+            message_text = loader.render_to_string('authentication/password_reset_email.txt', c)
+            message_html = loader.render_to_string('authentication/password_reset_email.html', c)            
+            
+
+            msg = EmailMultiAlternatives(subject, message_text, settings.DEFAULT_FROM_EMAIL, [self.user.email])
+            msg.attach_alternative(message_html, "text/html")
+            msg.send()

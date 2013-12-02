@@ -80,7 +80,7 @@
                     <a href="/news/"><div class="{% block news-active %}{% endblock %} navlink three columns alpha omega">NIEUWS</div></a>
                     <a href="/contribute/"><div class="{% block contribute-active %}{% endblock %} navlink three columns alpha omega">BIJDRAGEN</div></a>
                     {% if user.is_authenticated %}
-                    <a href="/profile/"><div class="{% block myaccount-active %}{% endblock %} navlink three columns alpha omega">MIJN ACCOUNT</div></a>
+                    <a href="/profile/"><div class="{% block myaccount-active %}{% endblock %} navlink three columns alpha omega">MIJN PROFIEL</div></a>
                     <a href="/logout/"><div class="navlink three columns alpha omega">AFMELDEN</div></a>
                     {% else %}
                     <a href="/register/"><div class="{% block register-active %}{% endblock %} navlink three columns alpha omega">REGISTREREN</div></a>
@@ -145,7 +145,7 @@
                             <a href="/privacypolicy/">Privacybeleid</a>
                         </li>
                         <li>
-                            <a href="/sitemap.xml">Sitemap</a>
+                            <a href="/sitemap/">Sitemap</a>
                         </li>
                     </ul>
                 </div>

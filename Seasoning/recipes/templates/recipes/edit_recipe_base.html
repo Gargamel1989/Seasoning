@@ -4,15 +4,22 @@
 
 {% block extra_script %}
 <script src="/static/js/jquery-ui.min.js" type="text/javascript"></script>
-{{ wizard.form.media }}
 <script type="text/javascript">
     $(function() {
-        $("input, select, textarea").tooltip({
-            items: "input, select, textarea, span",
+        $("input, select").tooltip({
+            items: "input, select, span",
             content: function() {
                 return $(this).next(".tooltip").text();
             },
             position:  {my: "left+15 top", at: "right top"}
+        }).off("mouseover mouseout");
+        
+        $("textarea").tooltip({
+            items: "textarea",
+            content: function() {
+                return $(this).next(".tooltip").text();
+            },
+            position:  {my: "left top+15", at: "left bottom"}
         }).off("mouseover mouseout");
         
         $(".spinner-wrapper").tooltip({
@@ -21,7 +28,18 @@
                 return $(this).parent().next(".tooltip").text();
             },
             position:  {my: "left+15 top", at: "right top"}
-        })
+        });
+        
+        var action_is_post = false;
+        
+        $('input[type="submit"]').click(function() {
+        	action_is_post = true;
+        });
+    
+	    window.onbeforeunload = function(e) {
+	    	if (!action_is_post)
+		  		return 'Dialog text here.';
+		};
     })
 </script>
 {% endblock %}
