@@ -20,18 +20,16 @@
 		{% compressed_css 'global' %}
         {% if 'authentication' in request.path %}
         {% compressed_css 'authentication' %}
-        {% endif %}
-        {% if 'ingredients' in request.path %}
+        {% elif 'ingredients' in request.path %}
         {% compressed_css 'ingredients' %}
-        {% endif %}
-        {% if 'recipes' in request.path %}
+        {% elif 'recipes' in request.path %}
         {% compressed_css 'recipes' %}
-        {% endif %}
-        {% if 'faq' in request.path %}
+        {% elif 'faq' in request.path %}
         {% compressed_css 'faq' %}
-        {% endif %}
-        {% if 'news' in request.path %}
+        {% elif 'news' in request.path %}
         {% compressed_css 'news' %}
+        {% else %}
+        {% compressed_css 'general' %}
         {% endif %}
 		{% block extra_link %}{% endblock %}
 		

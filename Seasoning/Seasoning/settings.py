@@ -121,11 +121,17 @@ PIPELINE_CSS = {
             'css/base/global.scss',
             'css/base/skeleton.scss',
             'css/base/base.scss',
-            'css/contribute/*.scss',
-            'css/general/*.scss',
+            'css/includes/*.scss',
             'css/plugins/*.scss',
         },
         'output_filename': 'css/global.css',
+    },
+    'general': {
+        'source_filenames': {
+            'css/contribute/*.scss',
+            'css/general/*.scss',
+        },
+        'output_filename': 'css/general.css',
     },
     'authentication': {
         'source_filenames': {
